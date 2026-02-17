@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
     /// <summary>
     /// The OCPI SCSP client.
     /// </summary>
-    public partial class SCSPClient : CommonClient
+    public partial class SCSPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                           RemoteParty                  RemoteParty,
                           HTTPHostname?                VirtualHostname   = null,
                           I18NString?                  Description       = null,
-                          HTTPClientLogger?            HTTPLogger        = null,
+                          org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                           Boolean?                     DisableLogging    = false,
                           String?                      LoggingPath       = null,

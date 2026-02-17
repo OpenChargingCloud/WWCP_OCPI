@@ -252,6 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
     #endregion
 
+
     #region OnPutTariff      (Request|Response)Delegate
 
     /// <summary>
@@ -286,6 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       CancellationToken    CancellationToken);
 
     #endregion
+
 
     #region OnPutSession     (Request|Response)Delegate
 
@@ -359,6 +361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
     #endregion
 
+
     #region OnPostCDR        (Request|Response)Delegate
 
     /// <summary>
@@ -394,6 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     CancellationToken    CancellationToken);
 
     #endregion
+
 
     #region OnPostToken      (Request|Response)Delegate
 
@@ -3125,6 +3129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             this.AllowDowngrades  = AllowDowngrades;
+
+            this.Counters         = new APICounters();
 
             this.HTTPLogger       = this.DisableLogging == false
                                         ? new EMSP_HTTPAPI_Logger(
@@ -8773,6 +8779,905 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public void EventsToJSON(Func<String, JObject, CancellationToken, Task> Processor)
         {
 
+            #region OnPutLocationRequest
+
+            OnPutLocationRequest += async (timestamp,
+                                           sender,
+                                           eventTrackingId,
+                                           from_CountryCode,
+                                           from_PartyId,
+                                           to_CountryCode,
+                                           to_PartyId,
+
+                                           location,
+                                           cancellationToken) => {
+
+                await Processor(
+                    "OnPutLocationRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("location",   location.ToJSON(
+                                                              null, //EMSPId
+                                                              CustomLocationSerializer,
+                                                              CustomPublishTokenSerializer,
+                                                              CustomAdditionalGeoLocationSerializer,
+                                                              CustomEVSESerializer,
+                                                              CustomStatusScheduleSerializer,
+                                                              CustomConnectorSerializer,
+                                                              CustomLocationEnergyMeterSerializer,
+                                                              CustomEVSEEnergyMeterSerializer,
+                                                              CustomTransparencySoftwareStatusSerializer,
+                                                              CustomTransparencySoftwareSerializer,
+                                                              CustomDisplayTextSerializer,
+                                                              CustomBusinessDetailsSerializer,
+                                                              CustomHoursSerializer,
+                                                              CustomImageSerializer,
+                                                              CustomEnergyMixSerializer,
+                                                              CustomEnergySourceSerializer,
+                                                              CustomEnvironmentalImpactSerializer,
+                                                              true //IncludeCreatedTimestamp
+                                                          ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPutLocationResponse
+
+            OnPutLocationResponse += async (timestamp,
+                                            sender,
+                                            eventTrackingId,
+                                            from_CountryCode,
+                                            from_PartyId,
+                                            to_CountryCode,
+                                            to_PartyId,
+
+                                            location,
+                                            runtime,
+                                            cancellationToken) => {
+
+                await Processor(
+                    "OnPutLocationResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("location",   location.ToJSON(
+                                                              null, //EMSPId
+                                                              CustomLocationSerializer,
+                                                              CustomPublishTokenSerializer,
+                                                              CustomAdditionalGeoLocationSerializer,
+                                                              CustomEVSESerializer,
+                                                              CustomStatusScheduleSerializer,
+                                                              CustomConnectorSerializer,
+                                                              CustomLocationEnergyMeterSerializer,
+                                                              CustomEVSEEnergyMeterSerializer,
+                                                              CustomTransparencySoftwareStatusSerializer,
+                                                              CustomTransparencySoftwareSerializer,
+                                                              CustomDisplayTextSerializer,
+                                                              CustomBusinessDetailsSerializer,
+                                                              CustomHoursSerializer,
+                                                              CustomImageSerializer,
+                                                              CustomEnergyMixSerializer,
+                                                              CustomEnergySourceSerializer,
+                                                              CustomEnvironmentalImpactSerializer,
+                                                              true //IncludeCreatedTimestamp
+                                                         )),
+
+                              new JProperty("runtime",   runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchLocationRequest
+
+            OnPatchLocationRequest += async (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             from_CountryCode,
+                                             from_PartyId,
+                                             to_CountryCode,
+                                             to_PartyId,
+
+                                             locationId,
+                                             locationPatch,
+                                             cancellationToken) => {
+
+                await Processor(
+                    "OnPatchLocationRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",            $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",              $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("locationId",      locationId.ToString()),
+                              new JProperty("locationPatch",   locationPatch)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchLocationResponse
+
+            OnPatchLocationResponse += async (timestamp,
+                                              sender,
+                                              eventTrackingId,
+                                              from_CountryCode,
+                                              from_PartyId,
+                                              to_CountryCode,
+                                              to_PartyId,
+
+                                              locationId,
+                                              locationPatch,
+                                              runtime,
+                                              cancellationToken) => {
+
+                await Processor(
+                    "OnPatchLocationResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",            $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",              $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("locationId",      locationId.ToString()),
+                              new JProperty("locationPatch",   locationPatch),
+
+                              new JProperty("runtime",         runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
+            #region OnPutEVSERequest
+
+            OnPutEVSERequest += async (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       from_CountryCode,
+                                       from_PartyId,
+                                       to_CountryCode,
+                                       to_PartyId,
+
+                                       evse,
+                                       cancellationToken) => {
+
+                await Processor(
+                    "OnPutEVSERequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",   $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",     $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("evse",   evse.ToJSON(
+                                                          null, //EMSPId
+                                                          CustomEVSESerializer,
+                                                          CustomStatusScheduleSerializer,
+                                                          CustomConnectorSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareStatusSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomImageSerializer
+                                                      ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPutEVSEResponse
+
+            OnPutEVSEResponse += async (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        from_CountryCode,
+                                        from_PartyId,
+                                        to_CountryCode,
+                                        to_PartyId,
+
+                                        evse,
+                                        runtime,
+                                        cancellationToken) => {
+
+                await Processor(
+                    "OnPutEVSEResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("evse",      evse.ToJSON(
+                                                             null, //EMSPId
+                                                             CustomEVSESerializer,
+                                                             CustomStatusScheduleSerializer,
+                                                             CustomConnectorSerializer,
+                                                             CustomEVSEEnergyMeterSerializer,
+                                                             CustomTransparencySoftwareStatusSerializer,
+                                                             CustomTransparencySoftwareSerializer,
+                                                             CustomDisplayTextSerializer,
+                                                             CustomImageSerializer
+                                                         )),
+
+                              new JProperty("runtime",   runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchEVSERequest
+
+            OnPatchEVSERequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         to_CountryCode,
+                                         to_PartyId,
+
+                                         evseId,
+                                         evsePatch,
+                                         cancellationToken) => {
+
+                await Processor(
+                    "OnPatchEVSERequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("evseId",      evseId.ToString()),
+                              new JProperty("evsePatch",   evsePatch)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchEVSEResponse
+
+            OnPatchEVSEResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          to_CountryCode,
+                                          to_PartyId,
+
+                                          evseId,
+                                          evsePatch,
+                                          runtime,
+                                          cancellationToken) => {
+
+                await Processor(
+                    "OnPatchEVSEResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("evseId",      evseId.ToString()),
+                              new JProperty("evsePatch",   evsePatch),
+
+                              new JProperty("runtime",     runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
+            #region OnPutConnectorRequest
+
+            OnPutConnectorRequest += async (timestamp,
+                                            sender,
+                                            eventTrackingId,
+                                            from_CountryCode,
+                                            from_PartyId,
+                                            to_CountryCode,
+                                            to_PartyId,
+
+                                            connector,
+                                            cancellationToken) => {
+
+                await Processor(
+                    "OnPutConnectorRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("connector",   connector.ToJSON(
+                                                               true, //IncludeCreatedTimestamp
+                                                               true, //IncludeExtensions
+                                                               null, //EMSPId
+                                                               CustomConnectorSerializer
+                                                           ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPutConnectorResponse
+
+            OnPutConnectorResponse += async (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             from_CountryCode,
+                                             from_PartyId,
+                                             to_CountryCode,
+                                             to_PartyId,
+
+                                             connector,
+                                             runtime,
+                                             cancellationToken) => {
+
+                await Processor(
+                    "OnPutConnectorResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("connector",   connector.ToJSON(
+                                                               true, //IncludeCreatedTimestamp
+                                                               true, //IncludeExtensions
+                                                               null, //EMSPId
+                                                               CustomConnectorSerializer
+                                                           )),
+
+                              new JProperty("runtime",     runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchConnectorRequest
+
+            OnPatchConnectorRequest += async (timestamp,
+                                              sender,
+                                              eventTrackingId,
+                                              from_CountryCode,
+                                              from_PartyId,
+                                              to_CountryCode,
+                                              to_PartyId,
+
+                                              connectorId,
+                                              connectorPatch,
+                                              cancellationToken) => {
+
+                await Processor(
+                    "OnPatchConnectorRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",             $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",               $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("connectorId",      connectorId.ToString()),
+                              new JProperty("connectorPatch",   connectorPatch)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchConnectorResponse
+
+            OnPatchConnectorResponse += async (timestamp,
+                                               sender,
+                                               eventTrackingId,
+                                               from_CountryCode,
+                                               from_PartyId,
+                                               to_CountryCode,
+                                               to_PartyId,
+
+                                               connectorId,
+                                               connectorPatch,
+                                               runtime,
+                                               cancellationToken) => {
+
+                await Processor(
+                    "OnPatchConnectorResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",             $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",               $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("connectorId",      connectorId.ToString()),
+                              new JProperty("connectorPatch",   connectorPatch),
+
+                              new JProperty("runtime",          runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
+            #region OnPutTariffRequest
+
+            OnPutTariffRequest += async (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         to_CountryCode,
+                                         to_PartyId,
+
+                                         tariff,
+                                         cancellationToken) => {
+
+                await Processor(
+                    "OnPutTariffRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",     $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",       $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("tariff",   tariff.ToJSON(
+                                                            true, //IncludeOwnerInformation,
+                                                            true, //IncludeExtensions,
+                                                            CustomTariffSerializer,
+                                                            CustomDisplayTextSerializer,
+                                                            CustomPriceSerializer,
+                                                            CustomTariffElementSerializer,
+                                                            CustomPriceComponentSerializer,
+                                                            CustomTariffRestrictionsSerializer,
+                                                            CustomEnergyMixSerializer,
+                                                            CustomEnergySourceSerializer,
+                                                            CustomEnvironmentalImpactSerializer
+                                                        ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPutTariffResponse
+
+            OnPutTariffResponse += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          to_CountryCode,
+                                          to_PartyId,
+
+                                          tariff,
+                                          runtime,
+                                          cancellationToken) => {
+
+                await Processor(
+                    "OnPutTariffResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("tariff",    tariff.ToJSON(
+                                                             true, //IncludeOwnerInformation,
+                                                             true, //IncludeExtensions,
+                                                             CustomTariffSerializer,
+                                                             CustomDisplayTextSerializer,
+                                                             CustomPriceSerializer,
+                                                             CustomTariffElementSerializer,
+                                                             CustomPriceComponentSerializer,
+                                                             CustomTariffRestrictionsSerializer,
+                                                             CustomEnergyMixSerializer,
+                                                             CustomEnergySourceSerializer,
+                                                             CustomEnvironmentalImpactSerializer
+                                                         )),
+
+                              new JProperty("runtime",   runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
+            #region OnPutSessionRequest
+
+            OnPutSessionRequest += async (timestamp,
+                                          sender,
+                                          eventTrackingId,
+                                          from_CountryCode,
+                                          from_PartyId,
+                                          to_CountryCode,
+                                          to_PartyId,
+
+                                          session,
+                                          cancellationToken) => {
+
+                await Processor(
+                    "OnPutSessionRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("session",   session.ToJSON(
+                                                             CustomSessionSerializer,
+                                                             CustomCDRTokenSerializer,
+                                                             CustomChargingPeriodSerializer,
+                                                             CustomCDRDimensionSerializer,
+                                                             CustomPriceSerializer
+                                                         ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPutSessionResponse
+
+            OnPutSessionResponse += async (timestamp,
+                                           sender,
+                                           eventTrackingId,
+                                           from_CountryCode,
+                                           from_PartyId,
+                                           to_CountryCode,
+                                           to_PartyId,
+
+                                           session,
+                                           runtime,
+                                           cancellationToken) => {
+
+                await Processor(
+                    "OnPutSessionResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("session",   session.ToJSON(
+                                                             CustomSessionSerializer,
+                                                             CustomCDRTokenSerializer,
+                                                             CustomChargingPeriodSerializer,
+                                                             CustomCDRDimensionSerializer,
+                                                             CustomPriceSerializer
+                                                         )),
+
+                              new JProperty("runtime",   runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchSessionRequest
+
+            OnPatchSessionRequest += async (timestamp,
+                                            sender,
+                                            eventTrackingId,
+                                            from_CountryCode,
+                                            from_PartyId,
+                                            to_CountryCode,
+                                            to_PartyId,
+
+                                            sessionId,
+                                            sessionPatch,
+                                            cancellationToken) => {
+
+                await Processor(
+                    "OnPatchSessionRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",           $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",             $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("sessionId",      sessionId.ToString()),
+                              new JProperty("sessionPatch",   sessionPatch)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPatchSessionResponse
+
+            OnPatchSessionResponse += async (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             from_CountryCode,
+                                             from_PartyId,
+                                             to_CountryCode,
+                                             to_PartyId,
+
+                                             sessionId,
+                                             sessionPatch,
+                                             runtime,
+                                             cancellationToken) => {
+
+                await Processor(
+                    "OnPatchSessionResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",           $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",             $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("sessionId",      sessionId.ToString()),
+                              new JProperty("sessionPatch",   sessionPatch),
+
+                              new JProperty("runtime",        runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
+            #region OnPostCDRRequest
+
+            OnPostCDRRequest += async (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       from_CountryCode,
+                                       from_PartyId,
+                                       to_CountryCode,
+                                       to_PartyId,
+
+                                       cdr,
+                                       cancellationToken) => {
+
+                await Processor(
+                    "OnPostCDRRequest",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",   $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",     $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("cdr",    cdr.ToJSON(
+                                                          CustomCDRSerializer,
+                                                          CustomCDRTokenSerializer,
+                                                          CustomCDRLocationSerializer,
+                                                          CustomEVSEEnergyMeterSerializer,
+                                                          CustomTransparencySoftwareSerializer,
+                                                          CustomTariffSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomPriceSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer,
+                                                          CustomChargingPeriodSerializer,
+                                                          CustomCDRDimensionSerializer,
+                                                          CustomSignedDataSerializer,
+                                                          CustomSignedValueSerializer
+                                                      ))
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnPostCDRResponse
+
+            OnPostCDRResponse += async (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        from_CountryCode,
+                                        from_PartyId,
+                                        to_CountryCode,
+                                        to_PartyId,
+
+                                        cdr,
+                                        cdrLocation,
+                                        runtime,
+                                        cancellationToken) => {
+
+                await Processor(
+                    "OnPostCDRResponse",
+                    JSONObject.Create(
+
+                        from_CountryCode.HasValue && from_PartyId.HasValue
+                            ? new JProperty("from",          $"{from_CountryCode}*{from_PartyId}")
+                            : null,
+
+                        to_CountryCode.  HasValue && to_PartyId.  HasValue
+                            ? new JProperty("to",            $"{to_CountryCode}*{to_PartyId}")
+                            : null,
+
+                              new JProperty("cdr",           cdr.ToJSON(
+                                                                 CustomCDRSerializer,
+                                                                 CustomCDRTokenSerializer,
+                                                                 CustomCDRLocationSerializer,
+                                                                 CustomEVSEEnergyMeterSerializer,
+                                                                 CustomTransparencySoftwareSerializer,
+                                                                 CustomTariffSerializer,
+                                                                 CustomDisplayTextSerializer,
+                                                                 CustomPriceSerializer,
+                                                                 CustomTariffElementSerializer,
+                                                                 CustomPriceComponentSerializer,
+                                                                 CustomTariffRestrictionsSerializer,
+                                                                 CustomEnergyMixSerializer,
+                                                                 CustomEnergySourceSerializer,
+                                                                 CustomEnvironmentalImpactSerializer,
+                                                                 CustomChargingPeriodSerializer,
+                                                                 CustomCDRDimensionSerializer,
+                                                                 CustomSignedDataSerializer,
+                                                                 CustomSignedValueSerializer
+                                                             )),
+
+                              new JProperty("cdrLocation",   cdrLocation.ToString()),
+
+                              new JProperty("runtime",       runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+
             #region OnPostTokenRequest
 
             OnPostTokenRequest += async (timestamp,
@@ -8782,14 +9687,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          from_PartyId,
                                          to_CountryCode,
                                          to_PartyId,
+
                                          tokenId,
                                          requestedTokenType,
                                          locationReference,
                                          cancellationToken) => {
 
                 await Processor(
-                    "tokenAuthorizeRequest",
+                    "OnPostTokenRequest",
                     JSONObject.Create(
+
+                              new JProperty("eventTrackingId",      eventTrackingId.ToString()),
 
                         from_CountryCode.HasValue && from_PartyId.HasValue
                             ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
@@ -8828,6 +9736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           from_PartyId,
                                           to_CountryCode,
                                           to_PartyId,
+
                                           tokenId,
                                           requestedTokenType,
                                           locationReference,
@@ -8836,8 +9745,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           cancellationToken) => {
 
                 await Processor(
-                    "tokenAuthorizeResponse",
+                    "OnPostTokenResponse",
                     JSONObject.Create(
+
+                              new JProperty("eventTrackingId",      eventTrackingId.ToString()),
 
                         from_CountryCode.HasValue && from_PartyId.HasValue
                             ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
@@ -8883,20 +9794,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public void LinkEventsToDebugText()
         {
             EventsToText(
-                (txt, ct) => {
+                txt => {
                     DebugX.LogT(txt);
                     return Task.CompletedTask;
                 }
             );
         }
 
-        public void EventsToText(Func<String, CancellationToken, Task> Processor)
+        public void EventsToText(Func<String, Task> Processor)
         {
 
+            #region OnPutLocationRequest
 
-            #region OnPostCDRRequest
+            OnPutLocationRequest += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     from_CountryCode,
+                                     from_PartyId,
+                                     to_CountryCode,
+                                     to_PartyId,
 
-            OnPostCDRRequest += async (timestamp,
+                                     location,
+                                     cancellationToken) =>
+
+                Processor(
+                    $"PutLocation request for '{location.Id}'"
+                );
+
+            #endregion
+
+            #region OnPutLocationResponse
+
+            OnPutLocationResponse += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      from_CountryCode,
+                                      from_PartyId,
+                                      to_CountryCode,
+                                      to_PartyId,
+
+                                      location,
+                                      runtime,
+                                      cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutLocation response for for '{location.Id}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchLocationRequest
+
+            OnPatchLocationRequest += (timestamp,
                                        sender,
                                        eventTrackingId,
                                        from_CountryCode,
@@ -8904,34 +9857,412 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        to_CountryCode,
                                        to_PartyId,
 
-                                       cdr,
+                                       locationId,
+                                       locationPatch,
 
                                        cancellationToken) =>
 
-                String.Concat(
-                    $"PostCDR request '{cdr.Id}' for session '{cdr.SessionId}'"
+                Processor(
+                    String.Concat(
+                        $"PatchLocation request for '{locationId}'"
+                    )
                 );
 
             #endregion
 
-            #region OnPostCDRResponse
+            #region OnPatchLocationResponse
 
-            OnPostCDRResponse += async (timestamp,
+            OnPatchLocationResponse += (timestamp,
                                         sender,
                                         eventTrackingId,
                                         from_CountryCode,
                                         from_PartyId,
                                         to_CountryCode,
                                         to_PartyId,
-                                        cdr,
-                                        cdrLocation,
+
+                                        locationId,
+                                        locationPatch,
                                         runtime,
                                         cancellationToken) =>
 
-                String.Concat(
-                    $"PostCDR response '{cdr.Id}' for session '{cdr.SessionId}' @ {cdrLocation}",
-                    " => ",
-                    $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                Processor(
+                    String.Concat(
+                        $"PatchLocation response for '{locationId}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+
+            #region OnPutEVSERequest
+
+            OnPutEVSERequest += (timestamp,
+                                 sender,
+                                 eventTrackingId,
+                                 from_CountryCode,
+                                 from_PartyId,
+                                 to_CountryCode,
+                                 to_PartyId,
+
+                                 evse,
+                                 cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutEVSE request for '{evse.UId}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPutEVSEResponse
+
+            OnPutEVSEResponse += (timestamp,
+                                  sender,
+                                  eventTrackingId,
+                                  from_CountryCode,
+                                  from_PartyId,
+                                  to_CountryCode,
+                                  to_PartyId,
+
+                                  evse,
+                                  runtime,
+                                  cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutEVSE response for '{evse.UId}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchEVSERequest
+
+            OnPatchEVSERequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   from_CountryCode,
+                                   from_PartyId,
+                                   to_CountryCode,
+                                   to_PartyId,
+
+                                   evseUId,
+                                   evsePatch,
+                                   cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchEVSE request for '{evseUId}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchEVSEResponse
+
+            OnPatchEVSEResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    from_CountryCode,
+                                    from_PartyId,
+                                    to_CountryCode,
+                                    to_PartyId,
+
+                                    evseUId,
+                                    evsePatch,
+                                    runtime,
+                                    cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchEVSE response for '{evseUId}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+
+            #region OnPutConnectorRequest
+
+            OnPutConnectorRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      from_CountryCode,
+                                      from_PartyId,
+                                      to_CountryCode,
+                                      to_PartyId,
+
+                                      connector,
+                                      cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutConnector request for '{connector.Id}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPutConnectorResponse
+
+            OnPutConnectorResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       from_CountryCode,
+                                       from_PartyId,
+                                       to_CountryCode,
+                                       to_PartyId,
+
+                                       connector,
+                                       runtime,
+                                       cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutConnector response for '{connector}",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchConnectorRequest
+
+            OnPatchConnectorRequest += (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        from_CountryCode,
+                                        from_PartyId,
+                                        to_CountryCode,
+                                        to_PartyId,
+
+                                        connectorId,
+                                        connectorPatch,
+                                        cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchConnector request for '{connectorId}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchConnectorResponse
+
+            OnPatchConnectorResponse += (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         from_CountryCode,
+                                         from_PartyId,
+                                         to_CountryCode,
+                                         to_PartyId,
+
+                                         connectorId,
+                                         connectorPatch,
+                                         runtime,
+                                         cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchConnector response for '{connectorId}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+
+            #region OnPutTariffRequest
+
+            OnPutTariffRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   from_CountryCode,
+                                   from_PartyId,
+                                   to_CountryCode,
+                                   to_PartyId,
+
+                                   tariff,
+                                   cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutTariff request for '{tariff.Id}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPutTariffResponse
+
+            OnPutTariffResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    from_CountryCode,
+                                    from_PartyId,
+                                    to_CountryCode,
+                                    to_PartyId,
+
+                                    tariff,
+                                    runtime,
+                                    cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutTariff response for '{tariff.Id}'",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+
+            #region OnPutSessionRequest
+
+            OnPutSessionRequest += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    from_CountryCode,
+                                    from_PartyId,
+                                    to_CountryCode,
+                                    to_PartyId,
+
+                                    session,
+                                    cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutSession request for '{session.Id}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPutSessionResponse
+
+            OnPutSessionResponse += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     from_CountryCode,
+                                     from_PartyId,
+                                     to_CountryCode,
+                                     to_PartyId,
+
+                                     session,
+                                     runtime,
+                                     cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PutSession response for '{session.Id}",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchSessionRequest
+
+            OnPatchSessionRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      from_CountryCode,
+                                      from_PartyId,
+                                      to_CountryCode,
+                                      to_PartyId,
+
+                                      sessionId,
+                                      sessionPatch,
+                                      cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchSession request for '{sessionId}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPatchSessionResponse
+
+            OnPatchSessionResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       from_CountryCode,
+                                       from_PartyId,
+                                       to_CountryCode,
+                                       to_PartyId,
+
+                                       sessionId,
+                                       sessionPatch,
+                                       runtime,
+                                       cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PatchSession response for '{sessionId}",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
+                );
+
+            #endregion
+
+
+            #region OnPostCDRRequest
+
+            OnPostCDRRequest += (timestamp,
+                                 sender,
+                                 eventTrackingId,
+                                 from_CountryCode,
+                                 from_PartyId,
+                                 to_CountryCode,
+                                 to_PartyId,
+
+                                 cdr,
+                                 cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PostCDR request '{cdr.Id}' for session '{cdr.SessionId}'"
+                    )
+                );
+
+            #endregion
+
+            #region OnPostCDRResponse
+
+            OnPostCDRResponse += (timestamp,
+                                  sender,
+                                  eventTrackingId,
+                                  from_CountryCode,
+                                  from_PartyId,
+                                  to_CountryCode,
+                                  to_PartyId,
+
+                                  cdr,
+                                  cdrLocation,
+                                  runtime,
+                                  cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PostCDR response '{cdr.Id}' for session '{cdr.SessionId}' @ {cdrLocation}",
+                        " => ",
+                        $"({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
                 );
 
             #endregion
@@ -8939,60 +10270,65 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnPostTokenRequest
 
-            OnPostTokenRequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         from_CountryCode,
-                                         from_PartyId,
-                                         to_CountryCode,
-                                         to_PartyId,
-                                         tokenId,
-                                         requestedTokenType,
-                                         locationReference,
-                                         cancellationToken) =>
+            OnPostTokenRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   from_CountryCode,
+                                   from_PartyId,
+                                   to_CountryCode,
+                                   to_PartyId,
 
-                String.Concat(
-                    $"PostToken request '{tokenId}'",
-                    requestedTokenType.HasValue
-                        ? $" ({requestedTokenType})"
-                        : "",
-                    locationReference.HasValue
-                        ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
-                        : ""
+                                   tokenId,
+                                   requestedTokenType,
+                                   locationReference,
+                                   cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PostToken request '{tokenId}'",
+                        requestedTokenType.HasValue
+                            ? $" ({requestedTokenType})"
+                            : "",
+                        locationReference.HasValue
+                            ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                            : ""
+                    )
                 );
 
             #endregion
 
             #region OnPostTokenResponse
 
-            OnPostTokenResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          from_CountryCode,
-                                          from_PartyId,
-                                          to_CountryCode,
-                                          to_PartyId,
-                                          tokenId,
-                                          requestedTokenType,
-                                          locationReference,
-                                          result,
-                                          runtime,
-                                          cancellationToken) =>
+            OnPostTokenResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    from_CountryCode,
+                                    from_PartyId,
+                                    to_CountryCode,
+                                    to_PartyId,
 
-                String.Concat(
-                    $"PostToken response '{tokenId}'",
-                    requestedTokenType.HasValue
-                        ? $" ({requestedTokenType})"
-                        : "",
-                    locationReference.HasValue
-                        ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
-                        : "",
-                    " => ",
-                    $"{result.Allowed} ({(UInt64) runtime.TotalMilliseconds} ms)"
+                                    tokenId,
+                                    requestedTokenType,
+                                    locationReference,
+                                    result,
+                                    runtime,
+                                    cancellationToken) =>
+
+                Processor(
+                    String.Concat(
+                        $"PostToken response '{tokenId}'",
+                        requestedTokenType.HasValue
+                            ? $" ({requestedTokenType})"
+                            : "",
+                        locationReference.HasValue
+                            ? $" @{locationReference.Value.LocationId}{(locationReference.Value.EVSEUIds.Any() ? $"/{locationReference.Value.EVSEUIds.AggregateWith(", ")}" : "")}"
+                            : "",
+                        " => ",
+                        $"{result.Allowed} ({(UInt64) runtime.TotalMilliseconds} ms)"
+                    )
                 );
 
             #endregion
-
 
         }
 

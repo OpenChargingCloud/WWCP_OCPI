@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// <summary>
         /// The OCPI SCSP HTTP client logger.
         /// </summary>
-        public new sealed class Logger : CommonClient.Logger
+        public new sealed class Logger : CommonHTTPClient.HTTPClientLogger
         {
 
             #region Data

@@ -1793,7 +1793,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                             );
 
 
-                                                                    var cpoClient = new CPO.HTTP.CPO2EMSPClient(
+                                                                    var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
                                                                                         CPOAPI,
                                                                                         remoteParty,
@@ -1818,7 +1818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                             );
 
 
-                                                                    var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
+                                                                    var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
                                                                                             cpoClient,
                                                                                             ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                                                                             ClientsLoggingContext ?? DefaultLoggingContext,

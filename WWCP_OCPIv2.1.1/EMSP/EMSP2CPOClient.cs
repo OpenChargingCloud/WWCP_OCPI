@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// The OCPI EMSP client.
     /// </summary>
-    public partial class EMSP2CPOClient : CommonClient
+    public partial class EMSP2CPOClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -694,7 +694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                               Boolean?                     DisableLogging    = false,
                               String?                      LoggingPath       = null,

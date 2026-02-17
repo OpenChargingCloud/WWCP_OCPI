@@ -10,5 +10,9 @@
   {
     "outputFile": "HTTPRoot/css/versions/versions.css",
     "inputFile": "HTTPRoot/versions/versions.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/debugLog/debugLog.css",
+    "inputFile": "HTTPRoot/debugLog/debugLog.scss"
   }
 ]

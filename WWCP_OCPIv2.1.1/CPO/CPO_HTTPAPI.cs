@@ -79,6 +79,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public CPO_HTTPAPI_Logger?  HTTPLogger         { get; set; }
 
+
+        public Action<CPO2EMSP_HTTPClient>?  DefaultCPO2EMSP_HTTPClientConfigurator    { get; set; }
+
         #endregion
 
         #region Custom JSON parsers
@@ -1566,12 +1569,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region CPO-2-EMSP Clients
 
-        private readonly ConcurrentDictionary<EMSP_Id, CPO2EMSPClient> cpo2emspClients = new();
+        private readonly ConcurrentDictionary<EMSP_Id, CPO2EMSP_HTTPClient> cpo2emspClients = new();
 
         /// <summary>
         /// Return an enumeration of all CPO2EMSP clients.
         /// </summary>
-        public IEnumerable<CPO2EMSPClient> CPO2EMSPClients
+        public IEnumerable<CPO2EMSP_HTTPClient> CPO2EMSPClients
             => cpo2emspClients.Values;
 
 
@@ -1584,10 +1587,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PartyId">The party identification of the remote EMSP.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                             Party_Id     PartyId,
-                                             I18NString?  Description          = null,
-                                             Boolean      AllowCachedClients   = true)
+        public CPO2EMSP_HTTPClient? GetEMSPClient(CountryCode  CountryCode,
+                                                  Party_Id     PartyId,
+                                                  I18NString?  Description          = null,
+                                                  Boolean      AllowCachedClients   = true)
         {
 
             var emspId         = EMSP_Id.       From(CountryCode, PartyId);
@@ -1603,22 +1606,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2EMSPClient = new CPO2EMSP_HTTPClient(
+                                         this,
+                                         remoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2emspClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpo2EMSPClient);
 
-                return cpoClient;
+                DefaultCPO2EMSP_HTTPClientConfigurator?.Invoke(cpo2EMSPClient);
+
+                return cpo2EMSPClient;
 
             }
 
@@ -1636,9 +1641,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RemoteParty">A remote party.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
-                                             I18NString?  Description          = null,
-                                             Boolean      AllowCachedClients   = true)
+        public CPO2EMSP_HTTPClient? GetEMSPClient(RemoteParty  RemoteParty,
+                                                  I18NString?  Description          = null,
+                                                  Boolean      AllowCachedClients   = true)
         {
 
             var emspId = EMSP_Id.From(RemoteParty.Id);
@@ -1652,22 +1657,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2EMSPClient = new CPO2EMSP_HTTPClient(
+                                         this,
+                                         RemoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2emspClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpo2EMSPClient);
 
-                return cpoClient;
+                DefaultCPO2EMSP_HTTPClientConfigurator?.Invoke(cpo2EMSPClient);
+
+                return cpo2EMSPClient;
 
             }
 
@@ -1685,9 +1692,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RemotePartyId">A remote party identification.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                             I18NString?     Description          = null,
-                                             Boolean         AllowCachedClients   = true)
+        public CPO2EMSP_HTTPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                                  I18NString?     Description          = null,
+                                                  Boolean         AllowCachedClients   = true)
         {
 
             var emspId = EMSP_Id.From(RemotePartyId);
@@ -1702,22 +1709,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2EMSPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2EMSPClient = new CPO2EMSP_HTTPClient(
+                                         this,
+                                         remoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2emspClients.TryAdd(emspId, cpoClient);
+                cpo2emspClients.TryAdd(emspId, cpo2EMSPClient);
 
-                return cpoClient;
+                DefaultCPO2EMSP_HTTPClientConfigurator?.Invoke(cpo2EMSPClient);
+
+                return cpo2EMSPClient;
 
             }
 

@@ -3157,7 +3157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.WebAPI
                 HTTPContentType.Application.JSON_UTF8,
                 HTTPDelegate: request => {
 
-                    var clients = new List<CommonClient>();
+                    var clients = new List<CommonHTTPClient>();
                     clients.AddRange(CPOAPI. CPO2EMSPClients);
                     clients.AddRange(EMSPAPI.EMSP2CPOClients);
 

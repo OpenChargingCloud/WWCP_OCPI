@@ -2094,7 +2094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         private Boolean SetupCPO2EMSPClient(RemoteParty                                       RemoteParty,
-                                            [NotNullWhen(true)] out CPO.HTTP.CPO2EMSPClient?  CPO2EMSPClient)
+                                            [NotNullWhen(true)] out CPO.HTTP.CPO2EMSP_HTTPClient?  CPO2EMSPClient)
         {
 
             var remotePartyLoggingPath = Path.Combine(
@@ -2110,7 +2110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (RemoteParty.CPO2EMSPClient is null)
             {
 
-                RemoteParty.CPO2EMSPClient = new CPO.HTTP.CPO2EMSPClient(
+                RemoteParty.CPO2EMSPClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
                                                  CPOAPI,
                                                  RemoteParty,

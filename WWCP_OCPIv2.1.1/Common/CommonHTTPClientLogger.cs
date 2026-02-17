@@ -30,13 +30,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The OCPI common client.
     /// </summary>
-    public partial class CommonClient : ACommonHTTPClient
+    public partial class CommonHTTPClient : ACommonHTTPClient
     {
 
         /// <summary>
-        /// The OCPI common client (HTTP client) logger.
+        /// The OCPI common client HTTP logger.
         /// </summary>
-        public class Logger : HTTPClientLogger
+        public class HTTPClientLogger : org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger
         {
 
             #region Data
@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public const String  DefaultContext   = $"OCPI{Version.String}_CommonClient";
+            public const String  DefaultContext   = $"OCPI{Version.String}_CommonClientHTTPLogger";
 
             #endregion
 
@@ -53,23 +53,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// The attached common client.
             /// </summary>
-            public CommonClient  CommonClient    { get; }
+            public CommonHTTPClient  CommonClient    { get; }
 
             #endregion
 
             #region Constructor(s)
 
             /// <summary>
-            /// Create a new common client logger using the default logging delegates.
+            /// Create a new common client HTTP logger using the default logging delegates.
             /// </summary>
             /// <param name="CommonClient">A common client.</param>
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CommonClient             CommonClient,
-                          String?                  LoggingPath,
-                          String?                  Context          = DefaultContext,
-                          LogfileCreatorDelegate?  LogfileCreator   = null)
+            public HTTPClientLogger(CommonHTTPClient             CommonClient,
+                                    String?                  LoggingPath,
+                                    String?                  Context          = DefaultContext,
+                                    LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CommonClient,
                        LoggingPath,

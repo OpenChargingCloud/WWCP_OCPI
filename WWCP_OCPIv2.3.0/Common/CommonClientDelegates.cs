@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetVersionsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                       DateTimeOffset                              RequestTimestamp,
-                                                      CommonClient                                Sender,
+                                                      CommonHTTPClient                                Sender,
                                                       String                                      SenderId,
                                                       EventTracking_Id                            EventTrackingId,
 
@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetVersionsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                        DateTimeOffset                              RequestTimestamp,
-                                                       CommonClient                                Sender,
+                                                       CommonHTTPClient                                Sender,
                                                        String                                      SenderId,
                                                        EventTracking_Id                            EventTrackingId,
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetVersionDetailsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                             DateTimeOffset                              RequestTimestamp,
-                                                            CommonClient                                Sender,
+                                                            CommonHTTPClient                                Sender,
                                                             String                                      SenderId,
                                                             EventTracking_Id                            EventTrackingId,
 
@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetVersionDetailsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                              DateTimeOffset                              RequestTimestamp,
-                                                             CommonClient                                Sender,
+                                                             CommonHTTPClient                                Sender,
                                                              String                                      SenderId,
                                                              EventTracking_Id                            EventTrackingId,
 
@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                          DateTimeOffset                              RequestTimestamp,
-                                                         CommonClient                                Sender,
+                                                         CommonHTTPClient                                Sender,
                                                          String                                      SenderId,
                                                          EventTracking_Id                            EventTrackingId,
 
@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnGetCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                           DateTimeOffset                              RequestTimestamp,
-                                                          CommonClient                                Sender,
+                                                          CommonHTTPClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
 
@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnPostCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                           DateTimeOffset                              RequestTimestamp,
-                                                          CommonClient                                Sender,
+                                                          CommonHTTPClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
 
@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnPostCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                            DateTimeOffset                              RequestTimestamp,
-                                                           CommonClient                                Sender,
+                                                           CommonHTTPClient                                Sender,
                                                            String                                      SenderId,
                                                            EventTracking_Id                            EventTrackingId,
 
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnPutCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                          DateTimeOffset                              RequestTimestamp,
-                                                         CommonClient                                Sender,
+                                                         CommonHTTPClient                                Sender,
                                                          String                                      SenderId,
                                                          EventTracking_Id                            EventTrackingId,
 
@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnPutCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                           DateTimeOffset                              RequestTimestamp,
-                                                          CommonClient                                Sender,
+                                                          CommonHTTPClient                                Sender,
                                                           String                                      SenderId,
                                                           EventTracking_Id                            EventTrackingId,
 
@@ -224,7 +224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnDeleteCredentialsRequestDelegate(DateTimeOffset                              LogTimestamp,
                                                             DateTimeOffset                              RequestTimestamp,
-                                                            CommonClient                                Sender,
+                                                            CommonHTTPClient                                Sender,
                                                             String                                      SenderId,
                                                             EventTracking_Id                            EventTrackingId,
 
@@ -240,7 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnDeleteCredentialsResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                              DateTimeOffset                              RequestTimestamp,
-                                                             CommonClient                                Sender,
+                                                             CommonHTTPClient                                Sender,
                                                              String                                      SenderId,
                                                              EventTracking_Id                            EventTrackingId,
 
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnRegisterRequestDelegate (DateTimeOffset                              LogTimestamp,
                                                     DateTimeOffset                              RequestTimestamp,
-                                                    CommonClient                                Sender,
+                                                    CommonHTTPClient                                Sender,
                                                     String                                      SenderId,
                                                     EventTracking_Id                            EventTrackingId,
 
@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Task OnRegisterResponseDelegate(DateTimeOffset                              LogTimestamp,
                                                     DateTimeOffset                              RequestTimestamp,
-                                                    CommonClient                                Sender,
+                                                    CommonHTTPClient                                Sender,
                                                     String                                      SenderId,
                                                     EventTracking_Id                            EventTrackingId,
 

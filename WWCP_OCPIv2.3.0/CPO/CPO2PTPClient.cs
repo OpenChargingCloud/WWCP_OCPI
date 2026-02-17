@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     /// <summary>
     /// The CPO2PTP Client is used by CPOs to talk to PTPs.
     /// </summary>
-    public partial class CPO2PTPClient : CommonClient
+    public partial class CPO2PTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -848,7 +848,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                              RemoteParty                  RemoteParty,
                              HTTPHostname?                VirtualHostname   = null,
                              I18NString?                  Description       = null,
-                             HTTPClientLogger?            HTTPLogger        = null,
+                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                              Boolean?                     DisableLogging    = false,
                              String?                      LoggingPath       = null,

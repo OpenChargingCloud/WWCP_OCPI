@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// The OCPI EMSP HTTP client logger.
         /// </summary>
-        public new sealed class Logger : CommonClient.Logger
+        public new sealed class Logger : CommonHTTPClient.HTTPClientLogger
         {
 
             #region Data

@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// The CPO2PTP HTTP Client Logger.
         /// </summary>
-        public new sealed class Logger : CommonClient.Logger
+        public new sealed class Logger : CommonHTTPClient.HTTPClientLogger
         {
 
             #region Data

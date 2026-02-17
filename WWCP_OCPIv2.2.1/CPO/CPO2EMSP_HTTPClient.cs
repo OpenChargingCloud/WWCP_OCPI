@@ -31,13 +31,13 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 {
 
     /// <summary>
-    /// The CPO2EMSP client.
+    /// The CPO2EMSP client is used by CPOs to talk to EMSPs.
     /// </summary>
-    public partial class CPO2EMSPClient : CommonClient
+    public partial class CPO2EMSP_HTTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -207,21 +207,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSP_HTTPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2EMSP_HTTPClient);
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The EMSP identification of the remote party.
+        /// The identification of the remote E-Mobility Service Provider.
         /// </summary>
-        public EMSP_Id          RemoteEMSPId    { get; }
+        public EMSP_Id               RemoteEMSPId    { get; }
 
         /// <summary>
         /// Our CPO API.
@@ -231,16 +231,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public new APICounters  Counters        { get; }
+        public new APICounters       Counters        { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger       HTTPLogger
+        public new HTTPClientLogger  HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -255,35 +255,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
         #region Custom JSON serializers
-
-        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        { get; set; }
-        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?       CustomLocationEnergyMeterSerializer          { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer              { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         { get; set; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              { get; set; }
-        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        { get; set; }
-        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    { get; set; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 { get; set; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          { get; set; }
-        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                       { get; set; }
-        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           { get; set; }
-        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 { get; set; }
-        public CustomJObjectSerializerDelegate<CDRCostDetails>?              CustomCDRCostDetailsSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?       CustomLocationEnergyMeterSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<LocationReference>?           CustomLocationReferenceSerializer             { get; set; }
+        public CustomJObjectSerializerDelegate<SetChargingProfileCommand>?   CustomSetChargingProfileSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingProfile>?             CustomChargingProfileSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingProfilePeriod>?       CustomChargingProfilePeriodSerializer         { get; set; }
 
         #endregion
 
@@ -833,9 +838,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new CPO2EMSP client.
+        /// Create a new CPO2EMSP HTTP client.
         /// </summary>
-        /// <param name="CPOAPI">The CPOAPI.</param>
+        /// <param name="CPO_HTTPAPI">The CPO HTTP API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -844,19 +849,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(CPO_HTTPAPI                       CPOAPI,
-                              RemoteParty                  RemoteParty,
-                              HTTPHostname?                VirtualHostname   = null,
-                              I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSP_HTTPClient(CPO_HTTPAPI                                               CPO_HTTPAPI,
+                                   RemoteParty                                               RemoteParty,
+                                   HTTPHostname?                                             VirtualHostname   = null,
+                                   I18NString?                                               Description       = null,
+                                   org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                              Boolean?                     DisableLogging    = false,
-                              String?                      LoggingPath       = null,
-                              String?                      LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              IDNSClient?                  DNSClient         = null)
+                                   Boolean?                                                  DisableLogging    = false,
+                                   String?                                                   LoggingPath       = null,
+                                   String?                                                   LoggingContext    = null,
+                                   OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                                   IDNSClient?                                               DNSClient         = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(CPO_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -871,14 +876,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         {
 
             this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPOAPI;
+            this.CPOAPI        = CPO_HTTPAPI;
             this.Counters      = new APICounters();
 
             base.HTTPLogger    = this.DisableLogging == false
-                                     ? new Logger(
+                                     ? new HTTPClientLogger(
                                            this,
                                            LoggingPath,
-                                           LoggingContext ?? DefaultLoggingContext,
+                                           LoggingContext,
                                            LogfileCreator
                                        )
                                      : null;
@@ -888,8 +893,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-
-        #region GetLocation    (LocationId, ...)
+        #region GetLocation        (CountryCode, PartyId, LocationId, ...)
 
         /// <summary>
         /// Get the charging location specified by the given location identification from the remote API.
@@ -899,7 +903,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            GetLocation(Location_Id        LocationId,
+            GetLocation(CountryCode        CountryCode,
+                        Party_Id           PartyId,
+                        Location_Id        LocationId,
 
                         Request_Id?        RequestId           = null,
                         Correlation_Id?    CorrelationId       = null,
@@ -937,14 +943,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -956,6 +964,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -967,7 +976,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1020,17 +1031,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
-
-                          LocationId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1042,7 +1054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutLocation    (Location, ...)
+        #region PutLocation        (Location, ...)
 
         /// <summary>
         /// Put/store the given charging location on/within the remote API.
@@ -1055,6 +1067,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location           Location,
+                        EMSP_Id?           EMSPId              = null,
 
                         Request_Id?        RequestId           = null,
                         Correlation_Id?    CorrelationId       = null,
@@ -1092,14 +1105,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Location,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1111,6 +1124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -1122,12 +1136,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Location.Id.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Location.CountryCode.ToString() +
+                                                                                                    Location.PartyId.    ToString() +
+                                                                                                    Location.Id.         ToString(),
                                                  Content:               Location.ToJSON(
-                                                                            false,
-                                                                            false,
-                                                                            RemoteEMSPId,
+                                                                            EMSPId,
                                                                             CustomLocationSerializer,
+                                                                            CustomPublishTokenSerializer,
                                                                             CustomAdditionalGeoLocationSerializer,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
@@ -1164,11 +1179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Location.Parse(
-                                               json,
-                                               CommonAPI.OurCountryCode,
-                                               CommonAPI.OurPartyId
-                                           )
+                                   json => Location.Parse(json)
                                );
 
                     Counters.PutLocation.IncResponses_OK();
@@ -1200,17 +1211,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Location,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1222,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PatchLocation  (LocationId, LocationPatch, ...)
+        #region PatchLocation      (CountryCode, PartyId, LocationId, LocationPatch, ...)
 
         /// <summary>
         /// Patch a location.
@@ -1232,7 +1242,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            PatchLocation(Location_Id        LocationId,
+            PatchLocation(CountryCode        CountryCode,
+                          Party_Id           PartyId,
+                          Location_Id        LocationId,
                           JObject            LocationPatch,
 
                           Request_Id?        RequestId           = null,
@@ -1278,15 +1290,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           LocationPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1298,6 +1310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -1309,7 +1322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString(),
                                                  Content:               LocationPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -1363,18 +1378,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           LocationPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1387,7 +1401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region GetEVSE        (LocationId, EVSEUId, ...)
+        #region GetEVSE            (CountryCode, PartyId, LocationId, EVSEUId, ...)
 
         /// <summary>
         /// Get the EVSE specified by the given EVSE unique identification from the remote API.
@@ -1397,7 +1411,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            GetEVSE(Location_Id        LocationId,
+            GetEVSE(CountryCode        CountryCode,
+                    Party_Id           PartyId,
+                    Location_Id        LocationId,
                     EVSE_UId           EVSEUId,
 
                     Request_Id?        RequestId           = null,
@@ -1436,15 +1452,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1456,6 +1472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -1467,8 +1484,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
-                                                                                                    EVSEUId.   ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -1521,18 +1540,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1544,7 +1562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutEVSE        (EVSE, ...)
+        #region PutEVSE            (EVSE, ...)
 
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
@@ -1557,6 +1575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE               EVSE,
+                    EMSP_Id?           EMSPId              = null,
 
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
@@ -1574,7 +1593,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             return await PutEVSE(
                              EVSE,
+                             EVSE.ParentLocation.CountryCode,
+                             EVSE.ParentLocation.PartyId,
                              EVSE.ParentLocation.Id,
+                             EMSPId,
 
                              RequestId,
                              CorrelationId,
@@ -1590,12 +1612,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutEVSE        (EVSE, LocationId, ...)
+        #region PutEVSE            (EVSE, CountryCode, PartyId, LocationId, ...)
 
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
         /// </summary>
         /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
+        /// <param name="CountryCode">The country code of the location where to store the given EVSE.</param>
+        /// <param name="PartyId">The party identification of the location where to store the given EVSE.</param>
         /// <param name="LocationId">The identification of the location where to store the given EVSE.</param>
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1604,7 +1628,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE               EVSE,
+                    CountryCode        CountryCode,
+                    Party_Id           PartyId,
                     Location_Id        LocationId,
+                    EMSP_Id?           EMSPId              = null,
 
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
@@ -1642,15 +1669,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           EVSE,
+                          CountryCode,
+                          PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1662,6 +1691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -1673,11 +1703,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
-                                                                                                    EVSE.UId.  ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
+                                                                                                    EVSE.UId.   ToString(),
                                                  Content:               EVSE.ToJSON(
-                                                                            RemoteEMSPId,
-                                                                            false,
+                                                                            EMSPId,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
                                                                             CustomConnectorSerializer,
@@ -1739,18 +1770,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
-
-                          EVSE,
-                          LocationId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
+                          EVSE,
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1762,7 +1794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PatchEVSE      (LocationId, EVSEUId, EVSEPatch, ...)
+        #region PatchEVSE          (CountryCode, PartyId, LocationId, EVSEUId, EVSEPatch, ...)
 
         /// <summary>
         /// Patch a location.
@@ -1772,7 +1804,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PatchEVSE(Location_Id        LocationId,
+            PatchEVSE(CountryCode        CountryCode,
+                      Party_Id           PartyId,
+                      Location_Id        LocationId,
                       EVSE_UId           EVSEUId,
                       JObject            EVSEPatch,
 
@@ -1790,8 +1824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             #region Initial checks
 
             if (!EVSEPatch.HasValues)
-                return OCPIResponse<EVSE>.Error(-1,
-                                                "The given EVSE patch must not be empty!");
+                return OCPIResponse<EVSE>.Error("The given EVSE patch must not be empty!");
 
             #endregion
 
@@ -1820,16 +1853,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           EVSEPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1841,6 +1876,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -1852,8 +1888,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
-                                                                                                    EVSEUId.   ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString(),
                                                  Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -1907,19 +1945,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           EVSEPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1932,17 +1971,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region GetConnector   (LocationId, EVSEUId, ConnectorId, ...)
+        #region GetConnector       (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
         /// Get the connector specified by the given connector identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional connector to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            GetConnector(Location_Id        LocationId,
+            GetConnector(CountryCode        CountryCode,
+                         Party_Id           PartyId,
+                         Location_Id        LocationId,
                          EVSE_UId           EVSEUId,
                          Connector_Id       ConnectorId,
 
@@ -1982,16 +2023,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2003,6 +2046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2014,7 +2058,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
                                                  Authentication:        TokenAuth,
@@ -2069,19 +2115,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2093,7 +2140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutConnector   (Connector, ...)
+        #region PutConnector       (Connector, ...)
 
         /// <summary>
         /// Put/store the given charging connector on/within the remote API.
@@ -2102,10 +2149,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional connector to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector          Connector,
+                         EMSP_Id?           EMSPId              = null,
 
                          Request_Id?        RequestId           = null,
                          Correlation_Id?    CorrelationId       = null,
@@ -2153,14 +2201,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Connector,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2172,6 +2220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2183,11 +2232,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Connector.ParentEVSE.ParentLocation.Id. ToString() +
-                                                                                                    Connector.ParentEVSE.               UId.ToString() +
-                                                                                                    Connector.                          Id. ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
+                                                                                                    Connector.ParentEVSE.ParentLocation.PartyId.    ToString() +
+                                                                                                    Connector.ParentEVSE.ParentLocation.Id.         ToString() +
+                                                                                                    Connector.ParentEVSE.               UId.        ToString() +
+                                                                                                    Connector.                          Id.         ToString(),
                                                  Content:               Connector.ToJSON(
-                                                                            RemoteEMSPId,
+                                                                            true,
+                                                                            true,
+                                                                            EMSPId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
@@ -2206,10 +2259,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
-                                                                    requestId,
-                                                                    correlationId,
-                                                                    json => Connector.Parse(json));
+                    response = OCPIResponse<Connector>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Connector.Parse(json)
+                               );
 
                     Counters.PutConnector.IncResponses_OK();
 
@@ -2240,17 +2295,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Connector,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2262,17 +2316,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PatchConnector (LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
+        #region PatchConnector     (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
 
         /// <summary>
         /// Patch a connector.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional connector to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            PatchConnector(Location_Id        LocationId,
+            PatchConnector(CountryCode        CountryCode,
+                           Party_Id           PartyId,
+                           Location_Id        LocationId,
                            EVSE_UId           EVSEUId,
                            Connector_Id       ConnectorId,
                            JObject            ConnectorPatch,
@@ -2313,17 +2369,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           ConnectorId,
                           ConnectorPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2335,6 +2393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2346,7 +2405,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
                                                  Content:               ConnectorPatch.ToUTF8Bytes(JSONFormatting),
@@ -2402,20 +2463,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           LocationId,
                           EVSEUId,
                           ConnectorId,
                           ConnectorPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2428,14 +2490,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region GetTariff      (CountryCode, PartyId, TariffId, ...)
+        #region GetTariff          (CountryCode, PartyId, TariffId, ...)
 
         /// <summary>
         /// Get the charging tariff specified by the given tariff identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
             GetTariff(CountryCode        CountryCode,
@@ -2478,16 +2540,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2499,6 +2561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tariffs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2565,19 +2628,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2589,7 +2651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutTariff      (Tariff, ...)
+        #region PutTariff          (Tariff, ...)
 
         /// <summary>
         /// Put/store the given charging tariff on/within the remote API.
@@ -2598,7 +2660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
             PutTariff(Tariff             Tariff,
@@ -2639,14 +2701,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Tariff,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2658,6 +2720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tariffs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2669,8 +2732,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Tariff.Id.ToString(),
-                                                 Content:               Tariff.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Path:                  httpClient.RemoteURL.Path + Tariff.CountryCode.ToString() +
+                                                                                                    Tariff.PartyId.    ToString() +
+                                                                                                    Tariff.Id.         ToString(),
+                                                 Content:               Tariff.ToJSON(
+                                                                            true,
+                                                                            true,
+                                                                            CustomTariffSerializer,
+                                                                            CustomDisplayTextSerializer,
+                                                                            CustomPriceSerializer,
+                                                                            CustomTariffElementSerializer,
+                                                                            CustomPriceComponentSerializer,
+                                                                            CustomTariffRestrictionsSerializer,
+                                                                            CustomEnergyMixSerializer,
+                                                                            CustomEnergySourceSerializer,
+                                                                            CustomEnvironmentalImpactSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -2723,17 +2800,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Tariff,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2745,14 +2821,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
+        #region PatchTariff        (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
 
         /// <summary>
         /// Patch a tariff.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
             PatchTariff(CountryCode        CountryCode,
@@ -2790,8 +2866,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             var startTime         = Timestamp.Now;
             var stopwatch         = Stopwatch.StartNew();
 
-            Counters.PatchTariff.IncRequests_OK();
-
             OCPIResponse<Tariff> response;
 
             #endregion
@@ -2803,17 +2877,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
                           TariffPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2825,6 +2899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tariffs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2892,20 +2967,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
                           TariffPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2917,14 +2991,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region DeleteTariff   (CountryCode, PartyId, TariffId, ...)
+        #region DeleteTariff       (CountryCode, PartyId, TariffId, ...)
 
         /// <summary>
         /// Delete the charging tariff specified by the given tariff identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
             DeleteTariff(CountryCode        CountryCode,
@@ -2967,16 +3041,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2988,6 +3062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tariffs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3054,19 +3129,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3079,14 +3153,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region GetSession     (CountryCode, PartyId, SessionId, ...)
+        #region GetSession         (CountryCode, PartyId, SessionId, ...)
 
         /// <summary>
         /// Get the charging session specified by the given session identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional session to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
             GetSession(CountryCode        CountryCode,
@@ -3129,16 +3203,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3150,6 +3224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Sessions,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3216,19 +3291,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3240,7 +3314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PutSession     (Session, ...)
+        #region PutSession         (Session, ...)
 
         /// <summary>
         /// Put/store the given charging session on/within the remote API.
@@ -3249,7 +3323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional session to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
             PutSession(Session            Session,
@@ -3290,14 +3364,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Session,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3309,6 +3383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Sessions,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3320,8 +3395,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Session.Id.ToString(),
-                                                 Content:               Session.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Path:                  httpClient.RemoteURL.Path + Session.CountryCode.ToString() +
+                                                                                                    Session.PartyId.    ToString() +
+                                                                                                    Session.Id.         ToString(),
+                                                 Content:               Session.ToJSON(
+                                                                            CustomSessionSerializer,
+                                                                            CustomCDRTokenSerializer,
+                                                                            CustomChargingPeriodSerializer,
+                                                                            CustomCDRDimensionSerializer,
+                                                                            CustomPriceSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -3368,32 +3451,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnPutSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          eventTrackingId,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
 
-                if (OnPutSessionResponse is not null)
-                    await Task.WhenAll(OnPutSessionResponse.GetInvocationList().
-                                       Cast<OnPutSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          Session,
 
-                                                     Session,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnPutSessionResponse));
-            }
+                          response,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -3403,14 +3477,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PatchSession   (CountryCode, PartyId, SessionId, SessionPatch, ...)
+        #region PatchSession       (CountryCode, PartyId, SessionId, SessionPatch, ...)
 
         /// <summary>
         /// Patch a session.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional session to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
             PatchSession(CountryCode        CountryCode,
@@ -3461,17 +3535,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
                           SessionPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3483,6 +3557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Sessions,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3550,20 +3625,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
                           SessionPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3575,14 +3649,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)    [NonStandard]
+        #region DeleteSession      (CountryCode, PartyId, SessionId, ...)    [NonStandard]
 
         /// <summary>
         /// Delete the charging session specified by the given session identification from the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional session to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
             DeleteSession(CountryCode        CountryCode,
@@ -3625,16 +3699,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3646,6 +3720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Sessions,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3706,34 +3781,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             var endtime = Timestamp.Now;
 
-            try
-            {
+            await LogEvent(
+                      OnDeleteSessionResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          eventTrackingId,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
 
-                if (OnDeleteSessionResponse is not null)
-                    await Task.WhenAll(OnDeleteSessionResponse.GetInvocationList().
-                                       Cast<OnDeleteSessionResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
+                          CountryCode,
+                          PartyId,
+                          SessionId,
 
-                                                     CountryCode,
-                                                     PartyId,
-                                                     SessionId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPO2EMSPClient) + "." + nameof(OnDeleteSessionResponse));
-            }
+                          response,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -3744,7 +3810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region PostCDR        (CDR, ...)
+        #region PostCDR            (CDR, ...)
 
         /// <summary>
         /// Post/store the given charge detail record on/within the remote API.
@@ -3752,7 +3818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
-        public async Task<OCPIResponse>
+        public async Task<OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>>
 
             PostCDR(CDR                CDR,
 
@@ -3781,7 +3847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             Counters.PostCDR.IncRequests_OK();
 
-            OCPIResponse response;
+            OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location> response;
 
             #endregion
 
@@ -3792,14 +3858,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDR,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3811,6 +3877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.CDRs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -3822,43 +3889,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     // The EMSP Id of the CDR might be different from the remote party identification,
-                    // e.g. when the remote party is a hub!
+                    // e.g. when the remote party is a hub!  POST /ocpi/v2.2.1/emsp/cdrs/DE/GEF/CDR0001
                     var realEMSPId    = EMSP_Id.From(
                                             CDR.CountryCode,
                                             CDR.PartyId
                                         );
 
                     var httpResponse  = await httpClient.POST(
-                                                  Path:                  httpClient.RemoteURL.Path,
+                                                  Path:                  httpClient.RemoteURL.Path,//+ CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                                   //  CDR.PartyId.    ToString() +
+                                                                                                   //  CDR.Id.         ToString(),
                                                   Content:               CDR.ToJSON(
-                                                                             false,
-                                                                             false,
-                                                                             false,
-                                                                             null,
                                                                              CustomCDRSerializer,
-                                                                             CustomLocationSerializer,
-                                                                             CustomAdditionalGeoLocationSerializer,
-                                                                             CustomEVSESerializer,
-                                                                             CustomStatusScheduleSerializer,
-                                                                             CustomConnectorSerializer,
-                                                                             CustomLocationEnergyMeterSerializer,
+                                                                             CustomCDRTokenSerializer,
+                                                                             CustomCDRLocationSerializer,
                                                                              CustomEVSEEnergyMeterSerializer,
-                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                              CustomTransparencySoftwareSerializer,
-                                                                             CustomDisplayTextSerializer,
-                                                                             CustomBusinessDetailsSerializer,
-                                                                             CustomHoursSerializer,
-                                                                             CustomImageSerializer,
-                                                                             CustomEnergyMixSerializer,
-                                                                             CustomEnergySourceSerializer,
-                                                                             CustomEnvironmentalImpactSerializer,
                                                                              CustomTariffSerializer,
+                                                                             CustomDisplayTextSerializer,
+                                                                             CustomPriceSerializer,
                                                                              CustomTariffElementSerializer,
                                                                              CustomPriceComponentSerializer,
                                                                              CustomTariffRestrictionsSerializer,
+                                                                             CustomEnergyMixSerializer,
+                                                                             CustomEnergySourceSerializer,
+                                                                             CustomEnvironmentalImpactSerializer,
                                                                              CustomChargingPeriodSerializer,
                                                                              CustomCDRDimensionSerializer,
-                                                                             CustomCDRCostDetailsSerializer,
                                                                              CustomSignedDataSerializer,
                                                                              CustomSignedValueSerializer
                                                                          ).ToUTF8Bytes(JSONFormatting),
@@ -3878,10 +3935,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse.Parse(
+                    response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.ParseHTTPResponse(
                                    httpResponse,
                                    requestId,
-                                   correlationId
+                                   correlationId,
+                                   httpResponse => httpResponse.Location ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.Empty
                                );
 
                     Counters.PostCDR.IncResponses_OK();
@@ -3890,7 +3948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 else
                 {
-                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
+                    response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.Error("No remote URL available!");
                     Counters.PostCDR.IncRequests_Error();
                 }
 
@@ -3898,7 +3956,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             catch (Exception e)
             {
-                response = OCPIResponse<String, CDR>.Exception(e);
+                response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.Exception(e);
                 Counters.PostCDR.IncResponses_Error();
             }
 
@@ -3913,17 +3971,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDR,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3935,7 +3992,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region GetCDR         (CDRId, ...)   // The concrete URL is not specified by OCPI! m(
+        #region GetCDR             (CountryCode, PartyId, CDRId, ...)   // The concrete URL is not specified by OCPI! m(
 
         /// <summary>
         /// Get the charge detail record specified by the given charge detail record identification from the remote API.
@@ -3945,7 +4002,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
-            GetCDR(CDR_Id             CDRId,
+            GetCDR(CountryCode        CountryCode,
+                   Party_Id           PartyId,
+                   CDR_Id             CDRId,
 
                    Request_Id?        RequestId           = null,
                    Correlation_Id?    CorrelationId       = null,
@@ -3983,14 +4042,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
+                          CountryCode,
+                          PartyId,
                           CDRId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4002,6 +4063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.CDRs,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -4013,7 +4075,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    CDRId.      ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
@@ -4066,17 +4130,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
-
-                          CDRId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
+                          CountryCode,
+                          PartyId,
+                          CDRId,
+
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4089,7 +4154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #endregion
 
 
-        #region GetTokens      (Offset = null, Limit = null, ...)
+        #region GetTokens          (Offset = null, Limit = null, ...)
 
         /// <summary>
         /// Get all tokens from the remote API.
@@ -4101,7 +4166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Token>>>
 
             GetTokens(UInt64?            Offset              = null,
@@ -4143,15 +4208,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4163,6 +4228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tokens,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -4239,18 +4305,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4262,14 +4327,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         #endregion
 
-        #region PostToken      (TokenId, TokenType = null, ...)
+        #region PostToken          (TokenId, TokenType = null, ...)
 
         /// <summary>
         /// Post/store the given token identification on/within the remote API.
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<AuthorizationInfo>>
 
             PostToken(Token_Id            TokenId,
@@ -4312,16 +4377,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TokenId,
                           TokenType,
                           LocationReference,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4333,6 +4398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tokens,
+                                           InterfaceRoles.SENDER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -4345,7 +4411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     var httpResponse = await httpClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + TokenId.ToString() + "authorize",
-                                                 Content:               null,
+                                                 Content:               [],
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
@@ -4357,8 +4423,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                                                                             if (LocationReference.HasValue)
                                                                             {
+                                                                                requestBuilder.Content     = LocationReference.Value.ToJSON(
+                                                                                                                 CustomLocationReferenceSerializer
+                                                                                                             ).ToUTF8Bytes(JSONFormatting);
                                                                                 requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
-                                                                                requestBuilder.Content     = LocationReference.Value.ToJSON().ToUTF8Bytes(JSONFormatting);
                                                                             }
 
                                                                         },
@@ -4403,7 +4471,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => AuthorizationInfo.Parse(json)
+                                   json => AuthorizationInfo.Parse(
+                                               json,
+                                               RemoteParty,
+                                               RemoteEMSPId
+                                           )
                                );
 
                     Counters.PostToken.IncResponses_OK();
@@ -4417,11 +4489,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                 }
 
             }
+
             catch (Exception e)
             {
                 response = OCPIResponse<String, AuthorizationInfo>.Exception(e);
                 Counters.PostToken.IncResponses_Error();
             }
+
 
 
             #region Send OnPostTokenResponse event
@@ -4436,19 +4510,190 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TokenId,
                           TokenType,
                           LocationReference,
 
-                          CancellationToken,
+                          response,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+
+        // Commands
+
+        // A CPO wants to send an update towards a EMSP or SCSP: https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
+
+        #region SetChargingProfile (Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
+        public async Task<OCPIResponse<ChargingProfileResponse>>
+
+            SetChargingProfile(Session_Id         SessionId,
+                               ChargingProfile    ChargingProfile,
+
+                               Request_Id?        RequestId           = null,
+                               Correlation_Id?    CorrelationId       = null,
+                               Version_Id?        VersionId           = null,
+
+                               DateTimeOffset?    RequestTimestamp    = null,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               TimeSpan?          RequestTimeout      = null,
+                               CancellationToken  CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
+
+            Counters.SetChargingProfile.IncRequests_OK();
+
+            OCPIResponse<ChargingProfileResponse> response;
+
+            #endregion
+
+            #region Send OnSetChargingProfileRequest event
+
+            await LogEvent(
+                      OnSetChargingProfileRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
                           eventTrackingId,
+                          requestId,
+                          correlationId,
                           requestTimeout,
 
+                          SessionId,
+                          ChargingProfile,
+
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.ChargingProfiles,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
+
+                if (httpClient is not null)
+                {
+
+                    var command = new SetChargingProfileCommand(
+                                      ChargingProfile,
+                                      CommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50)
+                                  );
+
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + SessionId.ToString(),
+                                                 Content:               command.ToJSON(
+                                                                            CustomSetChargingProfileSerializer,
+                                                                            CustomChargingProfileSerializer,
+                                                                            CustomChargingProfilePeriodSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnSetChargingProfileHTTPRequest,
+                                                 ResponseLogDelegate:   OnSetChargingProfileHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<ChargingProfileResponse>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => ChargingProfileResponse.Parse(json)
+                               );
+
+                    Counters.SetChargingProfile.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, ChargingProfileResponse>.Error("No remote URL available!");
+                    Counters.SetChargingProfile.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, ChargingProfileResponse>.Exception(e);
+                Counters.PostToken.IncResponses_Error();
+            }
+
+
+            #region Send OnSetChargingProfileResponse event
+
+            stopwatch.Stop();
+            var endtime = Timestamp.Now;
+
+            await LogEvent(
+                      OnSetChargingProfileResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          eventTrackingId,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          SessionId,
+                          ChargingProfile,
+
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4472,7 +4717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CPO2EMSPClient),
+                   nameof(CPO2EMSP_HTTPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -4485,7 +4730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region ToJSON()
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPO2EMSPClient));
+            => base.ToJSON(nameof(CPO2EMSP_HTTPClient));
 
         #endregion
 
@@ -4505,3 +4750,4 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
     }
 
 }
+

@@ -35,9 +35,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 {
 
     /// <summary>
-    /// The CPO2EMSP Client is used by CPOs to talk to EMSPs.
+    /// The CPO2EMSP client is used by CPOs to talk to EMSPs.
     /// </summary>
-    public partial class CPO2EMSPClient : CommonClient
+    public partial class CPO2EMSP_HTTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -209,12 +209,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2EMSP_HTTPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPO2EMSPClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2EMSP_HTTPClient);
 
         #endregion
 
@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// Our CPO API.
         /// </summary>
-        public CPO_HTTPAPI           CPOAPI          { get; }
+        public CPO_HTTPAPI      CPO_HTTPAPI     { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -238,11 +238,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger       HTTPLogger
+        public new HTTPClientLogger       HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -871,9 +871,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new CPO2EMSP client.
+        /// Create a new CPO2EMSP HTTP client.
         /// </summary>
-        /// <param name="CPOAPI">The CPOAPI.</param>
+        /// <param name="CPO_HTTPAPI">The CPO HTTP API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -882,19 +882,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSPClient(CPO_HTTPAPI                       CPOAPI,
-                              RemoteParty                  RemoteParty,
-                              HTTPHostname?                VirtualHostname   = null,
-                              I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSP_HTTPClient(CPO_HTTPAPI                  CPO_HTTPAPI,
+                                   RemoteParty                  RemoteParty,
+                                   HTTPHostname?                VirtualHostname   = null,
+                                   I18NString?                  Description       = null,
+                                   org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
-                              Boolean?                     DisableLogging    = false,
-                              String?                      LoggingPath       = null,
-                              String?                      LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              IDNSClient?                  DNSClient         = null)
+                                   Boolean?                     DisableLogging    = false,
+                                   String?                      LoggingPath       = null,
+                                   String?                      LoggingContext    = null,
+                                   OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                                   IDNSClient?                  DNSClient         = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(CPO_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -909,11 +909,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         {
 
             this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPOAPI;
+            this.CPO_HTTPAPI   = CPO_HTTPAPI;
             this.Counters      = new APICounters();
 
             base.HTTPLogger    = this.DisableLogging == false
-                                     ? new Logger(
+                                     ? new HTTPClientLogger(
                                            this,
                                            LoggingPath,
                                            LoggingContext,
@@ -924,10 +924,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         }
 
         #endregion
-
-
-        public override JObject ToJSON()
-            => base.ToJSON(nameof(CPO2EMSPClient));
 
 
         #region GetLocation        (CountryCode, PartyId, LocationId, ...)
@@ -980,16 +976,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1070,19 +1066,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1145,14 +1140,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Location,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1256,17 +1251,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Location,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1336,15 +1330,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           LocationPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1427,18 +1421,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           LocationPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1502,15 +1495,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1592,18 +1585,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1722,17 +1714,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           EVSE,
                           CountryCode,
                           PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1830,20 +1822,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           EVSE,
                           CountryCode,
                           PartyId,
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1914,8 +1905,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -1923,9 +1916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           EVSEUId,
                           EVSEPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2009,8 +2000,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -2018,12 +2011,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           EVSEUId,
                           EVSEPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2088,8 +2078,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -2097,9 +2089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2182,8 +2172,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -2191,12 +2183,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2269,14 +2258,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Connector,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2366,17 +2355,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Connector,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2441,8 +2429,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -2451,9 +2441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           ConnectorId,
                           ConnectorPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2538,8 +2526,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
@@ -2548,12 +2538,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           ConnectorId,
                           ConnectorPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2616,16 +2603,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2706,19 +2693,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2780,14 +2766,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Tariff,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2883,17 +2869,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Tariff,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2961,17 +2946,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
                           TariffPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3054,20 +3039,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
                           TariffPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3129,16 +3113,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3219,19 +3203,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TariffId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3294,16 +3277,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3384,19 +3367,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3458,14 +3440,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Session,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3555,17 +3537,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Session,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3635,17 +3616,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
                           SessionPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3728,20 +3709,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
                           SessionPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3803,16 +3783,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3893,19 +3873,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3926,7 +3905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
-        public async Task<OCPIResponse<CDR>>
+        public async Task<OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>>
 
             PostCDR(CDR                CDR,
 
@@ -3955,7 +3934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
             Counters.PostCDR.IncRequests_OK();
 
-            OCPIResponse<CDR> response;
+            OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location> response;
 
             #endregion
 
@@ -3966,14 +3945,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDR,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4048,11 +4027,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(
+                    response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.ParseHTTPResponse(
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => CDR.Parse(json)
+                                   httpResponse => httpResponse.Location ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.Empty
                                );
 
                     Counters.PostCDR.IncResponses_OK();
@@ -4061,7 +4040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
                 else
                 {
-                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
+                    response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.Error("No remote URL available!");
                     Counters.PostCDR.IncRequests_Error();
                 }
 
@@ -4069,7 +4048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
             catch (Exception e)
             {
-                response = OCPIResponse<String, CDR>.Exception(e);
+                response = OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>.Exception(e);
                 Counters.PostCDR.IncResponses_Error();
             }
 
@@ -4084,17 +4063,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDR,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4156,16 +4134,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           CDRId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4246,19 +4224,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           CDRId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4325,15 +4302,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4424,18 +4401,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4497,16 +4473,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TokenId,
                           TokenType,
                           LocationReference,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4625,19 +4601,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TokenId,
                           TokenType,
                           LocationReference,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4651,7 +4626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
 
 
-        #region PutBooking          (Booking, ...)
+        #region PutBooking         (Booking, ...)
 
         /// <summary>
         /// Put/store the given booking on/within the remote API.
@@ -4701,14 +4676,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Booking,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4803,17 +4778,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Booking,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4880,15 +4854,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           SessionId,
                           ChargingProfile,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4979,18 +4953,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endtime,
                           this,
+                          eventTrackingId,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           SessionId,
                           ChargingProfile,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -5013,7 +4986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CPO2EMSPClient),
+                   nameof(CPO2EMSP_HTTPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -5022,6 +4995,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
         #endregion
 
+
+        #region ToJSON()
+
+        public override JObject ToJSON()
+            => base.ToJSON(nameof(CPO2EMSP_HTTPClient));
+
+        #endregion
 
         #region Dispose()
 

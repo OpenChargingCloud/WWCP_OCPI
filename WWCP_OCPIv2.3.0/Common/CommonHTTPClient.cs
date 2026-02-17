@@ -35,13 +35,13 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
-    /// The OCPI common client.
+    /// The OCPI common HTTP client.
     /// </summary>
-    public partial class CommonClient : ACommonHTTPClient
+    public partial class CommonHTTPClient : ACommonHTTPClient
     {
 
         #region (class) CommonAPICounters
@@ -100,7 +100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public const        String                                           DefaultLoggingContext   = nameof(CommonClient);
+        public const        String                                           DefaultLoggingContext   = nameof(CommonHTTPClient);
 
         protected readonly  ConcurrentDictionary<Version_Id, VersionDetail>  versionDetails          = [];
 
@@ -126,11 +126,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?        HTTPLogger
+        public new HTTPClientLogger?   HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -147,22 +147,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// An event fired whenever a request getting all versions will be send.
         /// </summary>
-        public event OnGetVersionsRequestDelegate?     OnGetVersionsRequest;
+        public event OnGetVersionsRequestDelegate?   OnGetVersionsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting all versions will be send.
         /// </summary>
-        public event ClientRequestLogHandler?          OnGetVersionsHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetVersionsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler?         OnGetVersionsHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetVersionsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions request had been received.
         /// </summary>
-        public event OnGetVersionsResponseDelegate?    OnGetVersionsResponse;
+        public event OnGetVersionsResponseDelegate?  OnGetVersionsResponse;
 
         #endregion
 
@@ -316,21 +316,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Custom JSON parsers
 
-        public CustomJObjectParserDelegate<VersionInformation>?   CustomVersionInformationParser     { get; set; }
-        public CustomJObjectParserDelegate<VersionDetail>?        CustomVersionDetailParser          { get; set; }
-        public CustomJObjectParserDelegate<Credentials>?          CustomCredentialsParser            { get; set; }
-
-        #endregion
-
-        #region Custom JSON serializers
-
-        public CustomJObjectSerializerDelegate<Credentials>?      CustomCredentialsSerializer        { get; set; }
-        public CustomJObjectSerializerDelegate<CredentialsRole>?  CustomCredentialsRoleSerializer    { get; set; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer    { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<VersionDetail>?    CustomVersionDetailSerializer      { get; set; }
-        public CustomJObjectSerializerDelegate<VersionEndpoint>?  CustomVersionEndpointSerializer    { get; set; }
+        public CustomJObjectParserDelegate<VersionInformation>?  CustomVersionInformationParser    { get; set; }
+        public CustomJObjectParserDelegate<VersionDetail>?       CustomVersionDetailParser         { get; set; }
+        public CustomJObjectParserDelegate<Credentials>?         CustomCredentialsParser           { get; set; }
 
         #endregion
 
@@ -353,18 +341,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(CommonAPI                    CommonAPI,
+        public CommonHTTPClient(CommonAPI                                                 CommonAPI,
+                                RemoteParty                                               RemoteParty,
+                                HTTPHostname?                                             VirtualHostname   = null,
+                                I18NString?                                               Description       = null,
+                                org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                            RemoteParty                  RemoteParty,
-                            HTTPHostname?                VirtualHostname   = null,
-                            I18NString?                  Description       = null,
-                            HTTPClientLogger?            HTTPLogger        = null,
-
-                            Boolean?                     DisableLogging    = false,
-                            String?                      LoggingPath       = null,
-                            String?                      LoggingContext    = null,
-                            OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                            IDNSClient?                  DNSClient         = null)
+                                Boolean?                                                  DisableLogging    = false,
+                                String?                                                   LoggingPath       = null,
+                                String?                                                   LoggingContext    = null,
+                                OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                                IDNSClient?                                               DNSClient         = null)
 
             : base(RemoteParty.RemoteAccessInfos.First().VersionsURL ?? throw new ArgumentException(
                                                                                   "The given remote party must have at least one remote access info with a remote versions URL defined! Maybe it did not yet complete the registration process!",
@@ -402,8 +389,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            this.CommonAPI    = CommonAPI;
-            this.RemoteParty  = RemoteParty;
+            this.CommonAPI          = CommonAPI;
+            this.RemoteParty        = RemoteParty;
 
             if (!RemoteParty.RemoteAccessInfos.Any())
                 throw new ArgumentException(
@@ -411,22 +398,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           nameof(RemoteParty)
                       );
 
-            this.Counters     = new CommonAPICounters();
+            var remoteAccessInfo    = RemoteParty.RemoteAccessInfos.First();
 
-            base.HTTPLogger   = this.DisableLogging == false
-                                    ? new Logger(
-                                          this,
-                                          LoggingPath,
-                                          LoggingContext,
-                                          LogfileCreator
-                                      )
-                                    : null;
+            //this.RemoteVersionsURL  = remoteAccessInfo.VersionsURL;
+            //this.RemoteAccessToken  = remoteAccessInfo.AccessToken;
+            //this.TokenAuth          = HTTPAuthentication as HTTPTokenAuthentication;
+
+            this.Counters           = new CommonAPICounters();
+
+            base.HTTPLogger         = this.DisableLogging == false
+                                          ? new HTTPClientLogger(
+                                                this,
+                                                LoggingPath,
+                                                LoggingContext,
+                                                LogfileCreator
+                                            )
+                                          : null;
 
         }
 
         #endregion
 
-        #region CommonClient(CommonAPI, RemotePartyId, RemoteVersionsURL, RemoteAccessToken, ...)
+        #region CommonClient(CommonAPI, RemoteVersionsURL, RemoteAccessToken, ...)
 
         /// <summary>
         /// Create a new OCPI Common client.
@@ -464,38 +457,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(CommonAPI                                                  CommonAPI,
-                            RemoteParty_Id                                             RemotePartyId,
+        public CommonHTTPClient(CommonAPI                                                  CommonAPI,
+                                RemoteParty_Id                                             RemotePartyId,
 
-                            URL                                                        RemoteVersionsURL,
-                            AccessToken?                                               RemoteAccessToken                 = null,
-                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
-                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                URL                                                        RemoteVersionsURL,
+                                AccessToken?                                               RemoteAccessToken                 = null,
+                                Boolean?                                                   RemoteAccessTokenBase64Encoding   = true,
+                                TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                            HTTPHostname?                                              VirtualHostname                   = null,
-                            I18NString?                                                Description                       = null,
-                            Boolean?                                                   PreferIPv4                        = null,
-                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
-                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
-                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
-                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
-                            SslProtocols?                                              TLSProtocols                      = null,
-                            HTTPContentType?                                           ContentType                       = null,
-                            AcceptTypes?                                               Accept                            = null,
-                            String?                                                    HTTPUserAgent                     = null,
-                            TimeSpan?                                                  RequestTimeout                    = null,
-                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
-                            UInt16?                                                    MaxNumberOfRetries                = null,
-                            UInt32?                                                    InternalBufferSize                = null,
-                            Boolean?                                                   UseHTTPPipelining                 = null,
-                            HTTPClientLogger?                                          HTTPLogger                        = null,
+                                HTTPHostname?                                              VirtualHostname                   = null,
+                                I18NString?                                                Description                       = null,
+                                Boolean?                                                   PreferIPv4                        = null,
+                                RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                                SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                                IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                                SslProtocols?                                              TLSProtocols                      = null,
+                                HTTPContentType?                                           ContentType                       = null,
+                                AcceptTypes?                                               Accept                            = null,
+                                String?                                                    HTTPUserAgent                     = null,
+                                TimeSpan?                                                  RequestTimeout                    = null,
+                                TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                UInt16?                                                    MaxNumberOfRetries                = null,
+                                UInt32?                                                    InternalBufferSize                = null,
+                                Boolean?                                                   UseHTTPPipelining                 = null,
+                                org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?   HTTPLogger                        = null,
 
-                            Boolean?                                                   DisableLogging                    = false,
-                            String?                                                    LoggingPath                       = null,
-                            String?                                                    LoggingContext                    = null,
-                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
-                            IDNSClient?                                                DNSClient                         = null)
+                                Boolean?                                                   DisableLogging                    = false,
+                                String?                                                    LoggingPath                       = null,
+                                String?                                                    LoggingContext                    = null,
+                                OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                                IDNSClient?                                                DNSClient                         = null)
 
             : this(CommonAPI,
                    new RemoteParty(
@@ -554,72 +547,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ToJSON()
-
-        public virtual JObject ToJSON()
-            => ToJSON(nameof(CommonClient));
-
-        protected JObject ToJSON(String ClientType)
-        {
-
-            return JSONObject.Create(
-
-                             //new JProperty("countryCode",          CountryCode.ToString()),
-                             //new JProperty("partyId",              PartyId.    ToString()),
-                             //new JProperty("role",                 Role.       ToString()),
-
-                             new JProperty("type",                 ClientType),
-
-                       Description.IsNotNullOrEmpty()
-                           ? new JProperty("description",          Description)
-                           : null,
-
-                             new JProperty("remoteVersionsURL",    RemoteVersionsURL.    ToString()),
-                             new JProperty("accessToken",          RemoteAccessToken.    ToString()),
-
-                       VirtualHostname.HasValue
-                           ? new JProperty("virtualHostname",      VirtualHostname.Value.ToString())
-                           : null,
-
-                             new JProperty("requestTimeout",       RequestTimeout.TotalSeconds),
-
-                             new JProperty("maxNumberOfRetries",   MaxNumberOfRetries),
-
-                       versions.SafeAny()
-                           ? new JProperty("versions",             new JObject(
-                                                                       versions.Select(version => new JProperty(
-                                                                                                      version.Key.  ToString(),
-                                                                                                      version.Value.ToString()
-                                                                                                  ))
-                                                                   ))
-                           : null,
-
-                       SelectedOCPIVersionId.HasValue
-                           ? new JProperty("selectedVersionId",    SelectedOCPIVersionId.ToString())
-                           : null,
-
-                       versionDetails.SafeAny()
-                           ? new JProperty("versionDetails",       new JArray(
-                                                                       versionDetails.Values.Select(versionDetail => versionDetail.ToJSON(
-                                                                                                                         CustomVersionDetailSerializer,
-                                                                                                                         CustomVersionEndpointSerializer
-                                                                                                                     ))
-                                                                   ))
-                           : null
-
-                   );
-
-        }
-
-        #endregion
-
-
         #region GetVersions         (...)
 
         /// <summary>
         /// Get versions.
         /// </summary>
-        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -659,7 +592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -687,6 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                  Path:                  RemoteURL.Path,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -782,11 +716,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
-                          RequestId,
-                          CorrelationId,
+                          requestId,
+                          correlationId,
 
                           requestTimeout,
                           response.Data ?? [],
@@ -809,7 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="VersionId">The requested version.</param>
         /// 
-        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -852,7 +786,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           versionId,
@@ -919,7 +853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              Path:                  versionURL.Path,
                                                              Accept:                ocpiAcceptTypes,
                                                              Authentication:        TokenAuth,
-                                                             Connection:            ConnectionType.KeepAlive,
+                                                             Connection:            ConnectionType.Close,
                                                              RequestBuilder:        requestBuilder => {
                                                                                         requestBuilder.Set("X-Request-ID",     requestId);
                                                                                         requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1061,7 +995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           versionId,
@@ -1303,7 +1237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1351,7 +1285,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await NewHTTPClient.GET(
                                                      Path:                  remoteURL.Value.Path,
+                                                     Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,
+                                                     Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
                                                                                 requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1410,7 +1346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1487,7 +1423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1536,11 +1472,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await NewHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               Credentials.ToJSON(
-                                                                                CustomCredentialsSerializer,
-                                                                                CustomCredentialsRoleSerializer,
-                                                                                CustomBusinessDetailsSerializer
-                                                                            ).ToUTF8Bytes(JSONFormatting),
+                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                     Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,
                                                      Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
@@ -1601,7 +1535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           RequestId,
@@ -1679,7 +1613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1728,12 +1662,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await NewHTTPClient.PUT(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               Credentials.ToJSON(
-                                                                                CustomCredentialsSerializer,
-                                                                                CustomCredentialsRoleSerializer,
-                                                                                CustomBusinessDetailsSerializer
-                                                                            ).ToUTF8Bytes(JSONFormatting),
+                                                     Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                     ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                     Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,
+                                                     Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
                                                                                 requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1798,9 +1731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                     // Only the access token and the business details are allowed to be changed!
                                     var result = await CommonAPI.AddOrUpdateRemoteParty(
-
                                                            Id:                  oldRemoteParty.Id,
-                                                           CredentialsRoles:    oldRemoteParty.Roles,// response.Data.Roles,
+                                                           CredentialsRoles:    response.Data.Roles,
 
                                                            Status:              PartyStatus.ENABLED,
 
@@ -1808,11 +1740,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            RemoteVersionsURL:   response.Data.URL,
                                                            RemoteAccessToken:   response.Data.Token,
                                                            RemoteStatus:        RemoteAccessStatus.ONLINE,
-                                                           RemoteVersionIds:    [ Version.Id ],
+                                                           RemoteVersionIds:    [Version.Id ],
                                                            SelectedVersionId:   Version.Id,
 
                                                            LocalAccessStatus:   AccessStatus.ALLOWED
-
                                                        );
 
                                     if (!result.IsSuccess)
@@ -1857,7 +1788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1880,7 +1811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region DeleteCredentials   (Credentials, ...)
+        #region DeleteCredentials   (...)
 
         /// <summary>
         /// Remove our credentials from the remote API.
@@ -1931,7 +1862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -1979,7 +1910,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await NewHTTPClient.DELETE(
                                                      Path:                  remoteURL.Value.Path,
+                                                     Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,
+                                                     Connection:            ConnectionType.Close,
                                                      RequestBuilder:        requestBuilder => {
                                                                                 requestBuilder.Set("X-Request-ID",     requestId);
                                                                                 requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -2034,7 +1967,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -2056,7 +1989,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region Register            (VersionId, ...)
+        #region Register            (VersionId = null, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -2128,7 +2061,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           startTime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -2154,21 +2087,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 try
                 {
 
-                    var remoteURL  = await GetModuleRemoteURL(
-                                               Module_Id.Credentials,
-                                               InterfaceRoles.RECEIVER,
-                                               null,//versionId,
-                                               eventTrackingId,
-                                               CancellationToken
-                                           );
-
-                    remoteURL      = await GetModuleRemoteURL(
-                                               Module_Id.Credentials,
-                                               InterfaceRoles.RECEIVER,
-                                               versionId,
-                                               eventTrackingId,
-                                               CancellationToken
-                                           );
+                    var remoteURL = await GetModuleRemoteURL(
+                                              Module_Id.Credentials,
+                                              InterfaceRoles.RECEIVER,
+                                              versionId,
+                                              eventTrackingId,
+                                              CancellationToken
+                                          );
 
                     // Might be updated!
                     versionId ??= SelectedOCPIVersionId;
@@ -2192,11 +2117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         var httpResponse = await NewHTTPClient.POST(
                                                      Path:                  remoteURL.Value.Path,
-                                                     Content:               credentials.ToJSON(
-                                                                                CustomCredentialsSerializer,
-                                                                                CustomCredentialsRoleSerializer,
-                                                                                CustomBusinessDetailsSerializer
-                                                                            ).ToUTF8Bytes(JSONFormatting),
+                                                     Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                      ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                      Accept:                ocpiAcceptTypes,
                                                      Authentication:        TokenAuth,
@@ -2252,52 +2173,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             RemoteAccessToken      = response.Data.Token;
                             TokenAuth              = HTTPTokenAuthentication.Parse(RemoteAccessToken.Value.ToString().ToBase64());
 
-                            //var oldRemoteParty     = this.RemoteParty;
+                            var oldRemoteParty     = this.RemoteParty;
 
-                            //if (oldRemoteParty is not null)
-                            //{
+                            if (oldRemoteParty is not null)
+                            {
 
                                 // Validate, that the number of credentials roles had not been changed!
-                                //if (oldRemoteParty.Id.CountryCode.ToString() == "XX" ||
-                                //    oldRemoteParty.Roles.Count() == response.Data.Roles.Count())
-                                //{
+                                if (oldRemoteParty.Roles.Count() == response.Data.Roles.Count())
+                                {
 
                                     #region Validate, that neither the credentials roles had not been changed!
 
-                                    //var failed = false;
+                                    var failed = false;
 
-                                    //if (oldRemoteParty.Id.CountryCode.ToString() != "XX")
-                                    //{
-                                    //    foreach (var receivedCredentialsRole in response.Data.Roles)
-                                    //    {
+                                    foreach (var receivedCredentialsRole in response.Data.Roles)
+                                    {
 
-                                    //        CredentialsRole? existingCredentialsRole = null;
+                                        CredentialsRole? existingCredentialsRole = null;
 
-                                    //        foreach (var oldCredentialsRole in oldRemoteParty.Roles)
-                                    //        {
-                                    //            if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
-                                    //                oldCredentialsRole.Role    == receivedCredentialsRole.Role)
-                                    //            {
-                                    //                existingCredentialsRole = receivedCredentialsRole;
-                                    //                break;
-                                    //            }
-                                    //        }
+                                        foreach (var oldCredentialsRole in oldRemoteParty.Roles)
+                                        {
+                                            if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                                                oldCredentialsRole.Role    == receivedCredentialsRole.Role)
+                                            {
+                                                existingCredentialsRole = receivedCredentialsRole;
+                                                break;
+                                            }
+                                        }
 
-                                    //        if (existingCredentialsRole is null)
-                                    //            failed = true;
+                                        if (existingCredentialsRole is null)
+                                            failed = true;
 
-                                    //    }
-                                    //}
+                                    }
 
                                     #endregion
 
-                                    //if (!failed)
-                                    //{
+                                    if (!failed)
+                                    {
 
                                         // Only the access token and the business details are allowed to be changed!
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateRemoteParty(
 
-                                                                          this.RemoteParty.Id,        // Id
+                                                                          oldRemoteParty.Id,          // Id
                                                                           response.Data.Roles,        // CredentialsRoles
 
                                                                           credentialTokenB,           // LocalAccessToken
@@ -2337,7 +2254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                           PartyStatus.ENABLED,        // PartyStatus
 
-                                                                          this.RemoteParty.Created,   // Created
+                                                                          oldRemoteParty.Created,     // Created
                                                                           Timestamp.Now,              // LastUpdated
                                                                           eventTrackingId,            // EventTrackingId
                                                                           null                        // CurrentUserId
@@ -2347,21 +2264,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         if (!addOrUpdateResult.IsSuccess)
                                             DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after Register(...)!");
 
-                                    //}
+                                    }
 
-                                //}
-                                //else
-                                //    DebugX.Log("The number of credentials roles has been changed!");
+                                }
 
-                            //}
-
-                            //else
-                            //{
-
-
-
-                            //}
-
+                            }
 
                         }
 
@@ -2398,7 +2305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           endtime,
                           requestTimestamp,
                           this,
-                          $"{nameof(CommonClient)} {RemoteParty?.Id}",
+                          $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
                           eventTrackingId,
 
                           requestId,
@@ -2431,7 +2338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CommonClient),
+                   nameof(CommonHTTPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -2502,6 +2409,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+
+        #region ToJSON()
+
+        public virtual JObject ToJSON()
+            => ToJSON(nameof(CommonHTTPClient));
+
+        protected JObject ToJSON(String ClientType)
+        {
+
+            return JSONObject.Create(
+
+                       //new JProperty("countryCode",              CountryCode.ToString()),
+                       //new JProperty("partyId",                  PartyId.    ToString()),
+                       //new JProperty("role",                     Role.       ToString()),
+
+                       new JProperty("type",                     ClientType),
+
+                       Description.IsNotNullOrEmpty()
+                           ? new JProperty("description",        Description)
+                           : null,
+
+                       new JProperty("remoteVersionsURL",        RemoteVersionsURL.    ToString()),
+                       new JProperty("accessToken",              RemoteAccessToken.          ToString()),
+
+                       VirtualHostname.HasValue
+                           ? new JProperty("virtualHostname",    VirtualHostname.Value.ToString())
+                           : null,
+
+                       new JProperty("requestTimeout",           RequestTimeout.TotalSeconds),
+
+                       new JProperty("maxNumberOfRetries",       MaxNumberOfRetries),
+
+                       versions.SafeAny()
+                           ? new JProperty("versions",           new JObject(versions.Select(version => new JProperty(version.Key.  ToString(),
+                                                                                                                      version.Value.ToString()))))
+                           : null,
+
+                       SelectedOCPIVersionId.HasValue
+                           ? new JProperty("selectedVersionId",  SelectedOCPIVersionId.ToString())
+                           : null,
+
+                       versionDetails.SafeAny()
+                           ? new JProperty("versionDetails",     new JArray(versionDetails.Values.Select(versionDetail => versionDetail.ToJSON())))
+                           : null
+
+                   );
+
+        }
+
+        #endregion
 
         #region Dispose()
 

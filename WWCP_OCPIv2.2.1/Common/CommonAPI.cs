@@ -32,8 +32,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 
 #endregion
 
@@ -4631,7 +4629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #endregion
 
 
-            var commonClient              = new CommonClient(
+            var commonClient              = new CommonHTTPClient(
 
                                                 CommonAPI:                         this,
                                                 RemotePartyId:                     oldRemoteParty.Id,
@@ -6264,7 +6262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient GetCommonClient(URL                                                        RemoteVersionsURL,
+        public CommonHTTPClient GetCommonClient(URL                                                        RemoteVersionsURL,
                                             AccessToken?                                               RemoteAccessToken                 = null,
                                             Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                                             TOTPConfig?                                                RemoteTOTPConfig                  = null,
@@ -6368,7 +6366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient GetCommonClient(RemoteParty_Id                                             RemotePartyId,
+        public CommonHTTPClient GetCommonClient(RemoteParty_Id                                             RemotePartyId,
 
                                             URL                                                        RemoteVersionsURL,
                                             AccessToken?                                               RemoteAccessToken                 = null,

@@ -655,10 +655,36 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                 #region GET ~/debugLog
 
                 if (UseHTTPSSE)
+                {
+
                     HTTPBaseAPI.HTTPBaseAPI.MapJSONEventSource(
                         DebugLog,
                         OverlayURLPathPrefix.Value + "debugLog"
                     );
+
+                    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+                        HTTPMethod.GET,
+                        OverlayURLPathPrefix.Value + "debug",
+                        //HTTPContentType.Text.HTML_UTF8,
+                        HTTPDelegate: request =>
+
+                            Task.FromResult(
+                                new HTTPResponse.Builder(request) {
+                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                    Server                     = HTTPServerName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
+                                    AccessControlAllowMethods  = [ "GET" ],
+                                    AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                    ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                    Content                    = MixWithHTMLTemplate("debugLog.debugLog.shtml").ToUTF8Bytes(),
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
+                                }.AsImmutable
+                            )
+                    );
+
+                }
 
                 #endregion
 

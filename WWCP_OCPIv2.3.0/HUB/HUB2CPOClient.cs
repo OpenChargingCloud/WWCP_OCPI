@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
     /// <summary>
     /// The HUB2CPO client is used by an HUB to talk to CPO.
     /// </summary>
-    public partial class HUB2CPOClient : CommonClient
+    public partial class HUB2CPOClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -695,7 +695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
                              RemoteParty                  RemoteParty,
                              HTTPHostname?                VirtualHostname   = null,
                              I18NString?                  Description       = null,
-                             HTTPClientLogger?            HTTPLogger        = null,
+                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                              Boolean?                     DisableLogging    = false,
                              String?                      LoggingPath       = null,
