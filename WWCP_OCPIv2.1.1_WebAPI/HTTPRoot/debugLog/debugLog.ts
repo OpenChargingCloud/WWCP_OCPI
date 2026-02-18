@@ -1,4 +1,4 @@
-﻿///<reference path="../../../WWCP_OCPI_Common_WebAPI/HTTPRoot/js/date.format.ts" />
+﻿///<reference path="../../../WWCP_OCPI_Common_WebAPI/HTTPRoot/ts/date.format.ts" />
 
 function StartEventsSSE() {
 

@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     /// <summary>
     /// The CPO2PTP Client is used by CPOs to talk to PTPs.
     /// </summary>
-    public partial class CPO2PTPClient : CommonClient
+    public partial class CPO2PTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -217,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
         #region Properties
 
-        public CPOAPI           CPOAPI      { get; }
+        public CPO_HTTPAPI           CPOAPI      { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -844,11 +844,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2PTPClient(CPOAPI                       CPOAPI,
+        public CPO2PTPClient(CPO_HTTPAPI                       CPOAPI,
                              RemoteParty                  RemoteParty,
                              HTTPHostname?                VirtualHostname   = null,
                              I18NString?                  Description       = null,
-                             HTTPClientLogger?            HTTPLogger        = null,
+                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                              Boolean?                     DisableLogging    = false,
                              String?                      LoggingPath       = null,

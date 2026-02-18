@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
   //      protected       HTTPAPI?                                             cpoHTTPAPI;
         protected       CommonAPI?                                           cpoCommonAPI;
         protected       OCPIWebAPI?                                          cpoWebAPI;
-        protected       CPOAPI?                                              cpoCPOAPI;
+        protected       CPO_HTTPAPI?                                              cpoCPOAPI;
         protected       OCPICSOAdapter?                                      cpoAdapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    cpoAPIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   cpoAPIResponseLogs;
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
    //     protected       HTTPAPI?                                             emsp1HTTPAPI;
         protected       CommonAPI?                                           emsp1CommonAPI;
         protected       OCPIWebAPI?                                          emsp1WebAPI;
-        protected       EMSPAPI?                                             emsp1EMSPAPI;
+        protected       EMSP_HTTPAPI?                                             emsp1EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp1Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp1APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp1APIResponseLogs;
@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
    //     protected       HTTPAPI?                                             emsp2HTTPAPI;
         protected       CommonAPI?                                           emsp2CommonAPI;
         protected       OCPIWebAPI?                                          emsp2WebAPI;
-        protected       EMSPAPI?                                             emsp2EMSPAPI;
+        protected       EMSP_HTTPAPI?                                             emsp2EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp2Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp2APIResponseLogs;
@@ -621,7 +621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo CPO API & emsp1/emsp2 EMP API
 
-            cpoCPOAPI            = new CPOAPI(
+            cpoCPOAPI            = new CPO_HTTPAPI(
 
                                        CommonAPI:                           cpoCommonAPI,
                                        AllowDowngrades:                     null,
@@ -642,7 +642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            emsp1EMSPAPI         = new EMSPAPI(
+            emsp1EMSPAPI         = new EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI,
                                        AllowDowngrades:                     null,
@@ -663,7 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            emsp2EMSPAPI         = new EMSPAPI(
+            emsp2EMSPAPI         = new EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI,
                                        AllowDowngrades:                     null,
@@ -816,19 +816,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoAPIRequestLogs     = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
             cpoAPIResponseLogs    = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
-            cpoCPOAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpoCPOAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                       (loggingPath, context, logEventName, request) => {
                                                           cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
                                                           return Task.CompletedTask;
                                                       });
 
-            cpoCPOAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpoCPOAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                       (loggingPath, context, logEventName, request, response) => {
                                                           cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
                                                           return Task.CompletedTask;
                                                       });
 
-            cpoCPOAPI.Logger?.Debug("all", LogTargets.Debug);
+            cpoCPOAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             cpoCommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"CPO Client for {remotePartyId}");
 
@@ -838,19 +838,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1APIRequestLogs   = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
             emsp1APIResponseLogs  = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
-            emsp1EMSPAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp1EMSPAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
                                                               emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp1EMSPAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp1EMSPAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request, response) => {
                                                               emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp1EMSPAPI.Logger?.Debug("all", LogTargets.Debug);
+            emsp1EMSPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             emsp1CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #1 Client for {remotePartyId}");
 
@@ -860,19 +860,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp2APIRequestLogs   = new ConcurrentDictionary<DateTimeOffset, OCPIRequest>();
             emsp2APIResponseLogs  = new ConcurrentDictionary<DateTimeOffset, OCPIResponse>();
 
-            emsp2EMSPAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
                                                               emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request, response) => {
                                                               emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI.Logger?.Debug("all", LogTargets.Debug);
+            emsp2EMSPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             emsp2CommonAPI.BaseAPI.ClientConfigurations.Description = (remotePartyId) => I18NString.Create($"EMSP #2 Client for {remotePartyId}");
 

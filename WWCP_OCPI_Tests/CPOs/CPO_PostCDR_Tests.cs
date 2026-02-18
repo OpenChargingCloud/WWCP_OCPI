@@ -599,7 +599,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                 Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(201),  response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
 
-                if (response.Data is not null)
+                if (response.Data.ToString() != "/")
                 {
                 }
 
@@ -919,7 +919,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                 Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(201),  response.HTTPResponse?.HTTPBodyAsUTF8String);
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10),  Is.True);
 
-                if (response.Data is not null)
+                if (response.Data.ToString() != "/")
                 {
                 }
 

@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public CPOAPI                                       CPOAPI                               { get; }
+        public CPO_HTTPAPI                                       CPOAPI                               { get; }
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
-            this.CPOAPI                             = new CPOAPI(
+            this.CPOAPI                             = new CPO_HTTPAPI(
 
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
@@ -1835,7 +1835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                  );
 
 
-                                                      remoteParty.CPO2EMSPClient ??= new CPO.HTTP.CPO2EMSPClient(
+                                                      remoteParty.CPO2EMSPClient ??= new CPO.HTTP.CPO2EMSP_HTTPClient(
 
                                                                                          CPOAPI,
                                                                                          remoteParty,
@@ -1860,7 +1860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                  );
 
 
-                                                      var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
+                                                      var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
                                                                                 remoteParty.CPO2EMSPClient,
                                                                                 ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                                                                 ClientsLoggingContext ?? DefaultLoggingContext,

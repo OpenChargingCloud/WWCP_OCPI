@@ -180,6 +180,10 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        public static CountryCode Unknown {  get; }
+            = new CountryCode("XX");
+
+
         #region Operator overloading
 
         #region Operator == (CountryCode1, CountryCode2)

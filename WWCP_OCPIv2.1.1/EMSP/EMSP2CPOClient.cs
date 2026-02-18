@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// The OCPI EMSP client.
     /// </summary>
-    public partial class EMSP2CPOClient : CommonClient
+    public partial class EMSP2CPOClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -210,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Our EMSP API.
         /// </summary>
-        public EMSPAPI          EMSPAPI        { get; }
+        public EMSP_HTTPAPI          EMSPAPI        { get; }
 
         /// <summary>
         /// EMSP client event counters.
@@ -690,11 +690,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPOClient(EMSPAPI                      EMSPAPI,
+        public EMSP2CPOClient(EMSP_HTTPAPI                      EMSPAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                               Boolean?                     DisableLogging    = false,
                               String?                      LoggingPath       = null,

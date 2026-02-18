@@ -252,9 +252,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         public HTTPEventSource<JObject>  DebugLog            { get; }
 
 
-        public CPOAPI?                   CPOAPI              { get; set; }
+        public CPO_HTTPAPI?              CPOAPI              { get; set; }
 
-        public EMSPAPI?                  EMSPAPI             { get; set; }
+        public EMSP_HTTPAPI?             EMSPAPI             { get; set; }
 
         #endregion
 
@@ -264,12 +264,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
-        public CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer     { get; set; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
-        public CustomJObjectSerializerDelegate<OCPI.Image>?        CustomImageSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer     { get; set; }
-        public CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<RemoteParty>?        CustomRemotePartySerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?    CustomCredentialsRoleSerializer     { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?    CustomBusinessDetailsSerializer     { get; set; }
+        public CustomJObjectSerializerDelegate<OCPI.Image>?         CustomImageSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<LocalAccessInfo>?    CustomLocalAccessInfoSerializer     { get; set; }
+        public CustomJObjectSerializerDelegate<RemoteAccessInfo>?   CustomRemoteAccessInfoSerializer    { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<AuthorizationInfo>?  CustomAuthorizationInfoSerializer   { get; set; }
+        public CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?        CustomDisplayTextSerializer         { get; set; }
 
         #endregion
 
@@ -3137,7 +3143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                 HTTPContentType.Application.JSON_UTF8,
                 HTTPDelegate: request => {
 
-                    var clients = new List<CommonClient>();
+                    var clients = new List<CommonHTTPClient>();
                     clients.AddRange(CPOAPI. CPO2EMSPClients);
                     clients.AddRange(EMSPAPI.EMSP2CPOClients);
 

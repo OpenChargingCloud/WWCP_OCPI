@@ -12,7 +12,9 @@
     "HTTPRoot/defaults/defaults.ts",
     "HTTPRoot/defaults/OCPI.ts",
 
-    "HTTPRoot/versions/versions.ts"
+    "HTTPRoot/versions/versions.ts",
+
+    "HTTPRoot/debugLog/debugLog.ts"
 
   ]
 }

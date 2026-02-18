@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
     /// <summary>
     /// The HUB2X client is used by a HUB to talk to EMSPs (and SCSPs).
     /// </summary>
-    public partial class HUB2EMSPClient : CommonClient
+    public partial class HUB2EMSPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// Our HUB API.
         /// </summary>
-        public HUBAPI           HUBAPI      { get; }
+        public HUB_HTTPAPI           HUBAPI      { get; }
 
         /// <summary>
         /// HUB client event counters.
@@ -790,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// An event fired whenever a request posting a token will be send.
         /// </summary>
-        public event OnPostTokenRequestDelegate?   OnPostTokenRequest;
+        public event HUB2EMSP.HTTP.OnPostTokenRequestDelegate?   OnPostTokenRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request posting a token will be send.
@@ -805,7 +805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <summary>
         /// An event fired whenever a response to a posting a token request had been received.
         /// </summary>
-        public event OnPostTokenResponseDelegate?  OnPostTokenResponse;
+        public event HUB2EMSP.HTTP.OnPostTokenResponseDelegate?  OnPostTokenResponse;
 
         #endregion
 
@@ -850,11 +850,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public HUB2EMSPClient(HUBAPI                       HUBAPI,
+        public HUB2EMSPClient(HUB_HTTPAPI                       HUBAPI,
                               RemoteParty                  RemoteParty,
                               HTTPHostname?                VirtualHostname   = null,
                               I18NString?                  Description       = null,
-                              HTTPClientLogger?            HTTPLogger        = null,
+                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                               Boolean?                     DisableLogging    = false,
                               String?                      LoggingPath       = null,

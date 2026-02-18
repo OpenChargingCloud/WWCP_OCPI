@@ -1,4 +1,4 @@
-﻿///<reference path="../../../WWCP_OCPI_Common_WebAPI/HTTPRoot/js/date.format.ts" />
+﻿///<reference path="../../../WWCP_OCPI_Common_WebAPI/HTTPRoot/ts/date.format.ts" />
 
 function StartDebugLog() {
 
@@ -89,7 +89,7 @@ function StartDebugLog() {
 
 
     const eventSource = window.EventSource !== undefined
-                            ? new EventSource('/sse1')
+                            ? new EventSource('/debugLog')
                             : null;
 
     if (eventSource !== null)

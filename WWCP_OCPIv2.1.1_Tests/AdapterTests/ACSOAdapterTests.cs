@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  HTTPTestServerX?           httpServer;
         protected  HTTPExtAPIX?               httpAPI;
         protected  CommonAPI?                 commonAPI;
-        protected  CPOAPI?                    cpoAPI;
+        protected  CPO_HTTPAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
@@ -207,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.That(commonAPI,  Is.Not.Null);
 
 
-            cpoAPI           = new CPOAPI(
+            cpoAPI           = new CPO_HTTPAPI(
 
                                    CommonAPI:                           commonAPI,
                                    AllowDowngrades:                     null,

@@ -1671,6 +1671,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                        To_CountryCode,
                                                        To_PartyId,
                                                        tokenId,
+                                                       tokenType,
                                                        locationReference) => {
 
                     return tokenId.ToString() == "11223344"
@@ -1732,6 +1733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                        To_CountryCode,
                                                        To_PartyId,
                                                        tokenId,
+                                                       tokenType,
                                                        locationReference) => {
 
                     return tokenId.ToString() == "55667788"

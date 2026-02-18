@@ -257,9 +257,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         public HTTPEventSource<JObject>  DebugLog            { get; }
 
 
-        public CPOAPI?                   CPOAPI              { get; set; }
+        public CPO_HTTPAPI?                   CPOAPI              { get; set; }
 
-        public EMSPAPI?                  EMSPAPI             { get; set; }
+        public EMSP_HTTPAPI?                  EMSPAPI             { get; set; }
 
         #endregion
 
@@ -3129,7 +3129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 HTTPContentType.Application.JSON_UTF8,
                 HTTPDelegate: Request => {
 
-                    var clients = new List<CommonClient>();
+                    var clients = new List<CommonHTTPClient>();
                     clients.AddRange(CPOAPI. CPO2EMSPClients);
                     clients.AddRange(EMSPAPI.EMSP2CPOClients);
 

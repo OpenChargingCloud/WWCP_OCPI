@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
     /// <summary>
     /// The HUB2CPO client is used by an HUB to talk to CPO.
     /// </summary>
-    public partial class HUB2CPOClient : CommonClient
+    public partial class HUB2CPOClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
         /// <summary>
         /// Our HUB API.
         /// </summary>
-        public HUBAPI           HUBAPI         { get; }
+        public HUB_HTTPAPI           HUBAPI         { get; }
 
         /// <summary>
         /// HUB client event counters.
@@ -691,11 +691,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public HUB2CPOClient(HUBAPI                       HUBAPI,
+        public HUB2CPOClient(HUB_HTTPAPI                       HUBAPI,
                              RemoteParty                  RemoteParty,
                              HTTPHostname?                VirtualHostname   = null,
                              I18NString?                  Description       = null,
-                             HTTPClientLogger?            HTTPLogger        = null,
+                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
                              Boolean?                     DisableLogging    = false,
                              String?                      LoggingPath       = null,

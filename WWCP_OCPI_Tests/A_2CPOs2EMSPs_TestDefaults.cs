@@ -361,21 +361,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          cpo1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.CPOAPI?                                             cpo1CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo1Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo1APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo1APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          cpo1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.CPOAPI?                                             cpo1CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          cpo1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.CPOAPI?                                             cpo1CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo1APIResponseLogs_v2_3_0 = [];
@@ -416,21 +416,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          cpo2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.CPOAPI?                                             cpo2CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo2Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo2APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo2APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          cpo2CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.CPOAPI?                                             cpo2CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo2Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo2APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          cpo2CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.CPOAPI?                                             cpo2CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo2Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo2APIResponseLogs_v2_3_0 = [];
@@ -481,14 +481,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_2_1.CommonAPI?                                          hub1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HUBAPI?                                             hub1HUBAPI_v2_2_1;
+        protected       OCPIv2_2_1.HUB_HTTPAPI?                                             hub1HUBAPI_v2_2_1;
         //protected       OCPIv2_2_1.OCPICSOAdapter?                                     hub1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   hub1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  hub1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          hub1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HUBAPI?                                             hub1HUBAPI_v2_3_0;
+        protected       OCPIv2_3_0.HUB_HTTPAPI?                                             hub1HUBAPI_v2_3_0;
         //protected       OCPIv2_3_0.OCPICSOAdapter?                                     hub1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   hub1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  hub1APIResponseLogs_v2_3_0 = [];
@@ -530,21 +530,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          emsp1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.EMSPAPI?                                            emsp1EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp1APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp1APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          emsp1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.EMSPAPI?                                            emsp1EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          emsp1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.EMSPAPI?                                            emsp1EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp1APIResponseLogs_v2_3_0 = [];
@@ -585,21 +585,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          emsp2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.EMSPAPI?                                            emsp2EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp2APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp2APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          emsp2CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.EMSPAPI?                                            emsp2EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp2APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          emsp2CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.EMSPAPI?                                            emsp2EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp2Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp2APIResponseLogs_v2_3_0 = [];
@@ -3000,7 +3000,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #1
 
-            cpo1CPOAPI_v2_1_1    = new OCPIv2_1_1.CPOAPI(
+            cpo1CPOAPI_v2_1_1    = new OCPIv2_1_1.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo1CommonAPI_v2_1_1,
                                        AllowDowngrades:                     null,
@@ -3021,22 +3021,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo1CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo1APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo1APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+            cpo1CPOAPI_v2_1_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            cpo1CPOAPI_v2_2_1    = new OCPIv2_2_1.CPOAPI(
+            cpo1CPOAPI_v2_2_1    = new OCPIv2_2_1.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo1CommonAPI_v2_2_1,
                                        AllowDowngrades:                     null,
@@ -3057,22 +3057,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo1CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo1APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo1APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+            cpo1CPOAPI_v2_2_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            cpo1CPOAPI_v2_3_0    = new OCPIv2_3_0.CPOAPI(
+            cpo1CPOAPI_v2_3_0    = new OCPIv2_3_0.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo1CommonAPI_v2_3_0,
                                        AllowDowngrades:                     null,
@@ -3093,25 +3093,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo1CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo1APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo1CPOAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo1APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo1CPOAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+            cpo1CPOAPI_v2_3_0.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
             #region CPO #2
 
-            cpo2CPOAPI_v2_1_1    = new OCPIv2_1_1.CPOAPI(
+            cpo2CPOAPI_v2_1_1    = new OCPIv2_1_1.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo2CommonAPI_v2_1_1,
                                        AllowDowngrades:                     null,
@@ -3132,22 +3132,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo2CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo2APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo2APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+            cpo2CPOAPI_v2_1_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            cpo2CPOAPI_v2_2_1    = new OCPIv2_2_1.CPOAPI(
+            cpo2CPOAPI_v2_2_1    = new OCPIv2_2_1.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo2CommonAPI_v2_2_1,
                                        AllowDowngrades:                     null,
@@ -3168,22 +3168,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo2CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo2APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo2APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+            cpo2CPOAPI_v2_2_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            cpo2CPOAPI_v2_3_0    = new OCPIv2_3_0.CPOAPI(
+            cpo2CPOAPI_v2_3_0    = new OCPIv2_3_0.CPO_HTTPAPI(
 
                                        CommonAPI:                           cpo2CommonAPI_v2_3_0,
                                        AllowDowngrades:                     null,
@@ -3204,19 +3204,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            cpo2CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             cpo2APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            cpo2CPOAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             cpo2APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            cpo2CPOAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+            cpo2CPOAPI_v2_3_0.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -3258,7 +3258,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             //hub1HUBAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
 
 
-            hub1HUBAPI_v2_2_1    = new OCPIv2_2_1.HUBAPI(
+            hub1HUBAPI_v2_2_1    = new OCPIv2_2_1.HUB_HTTPAPI(
 
                                        CommonAPI:                           hub1CommonAPI_v2_2_1,
                                        AllowDowngrades:                     null,
@@ -3279,22 +3279,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            hub1HUBAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            hub1HUBAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             hub1APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            hub1HUBAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            hub1HUBAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             hub1APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            hub1HUBAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+            hub1HUBAPI_v2_2_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            hub1HUBAPI_v2_3_0    = new OCPIv2_3_0.HUBAPI(
+            hub1HUBAPI_v2_3_0    = new OCPIv2_3_0.HUB_HTTPAPI(
 
                                        CommonAPI:                           hub1CommonAPI_v2_3_0,
                                        AllowDowngrades:                     null,
@@ -3315,25 +3315,25 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            hub1HUBAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            hub1HUBAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request) => {
                                                             hub1APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
                                                             return Task.CompletedTask;
                                                         });
 
-            hub1HUBAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            hub1HUBAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                         (loggingPath, context, logEventName, request, response) => {
                                                             hub1APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
                                                             return Task.CompletedTask;
                                                         });
 
-            hub1HUBAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+            hub1HUBAPI_v2_3_0.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
             #region EMSP #1
 
-            emsp1EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSPAPI(
+            emsp1EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI_v2_1_1,
                                        AllowDowngrades:                     null,
@@ -3354,10 +3354,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp1EMSPAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+            emsp1EMSPAPI_v2_1_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            emsp1EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSPAPI(
+            emsp1EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI_v2_2_1,
                                        AllowDowngrades:                     null,
@@ -3378,10 +3378,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp1EMSPAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+            emsp1EMSPAPI_v2_2_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            emsp1EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSPAPI(
+            emsp1EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI_v2_3_0,
                                        AllowDowngrades:                     null,
@@ -3402,13 +3402,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp1EMSPAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+            emsp1EMSPAPI_v2_3_0.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
             #region EMSP #2
 
-            emsp2EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSPAPI(
+            emsp2EMSPAPI_v2_1_1 = new OCPIv2_1_1.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI_v2_1_1,
                                        AllowDowngrades:                     null,
@@ -3429,22 +3429,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp2EMSPAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
                                                               emsp2APIRequestLogs_v2_1_1. TryAdd(Timestamp.Now, request);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_1_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_1_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request, response) => {
                                                               emsp2APIResponseLogs_v2_1_1.TryAdd(Timestamp.Now, response);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_1_1.Logger?.Debug("all", LogTargets.Debug);
+            emsp2EMSPAPI_v2_1_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            emsp2EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSPAPI(
+            emsp2EMSPAPI_v2_2_1 = new OCPIv2_2_1.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI_v2_2_1,
                                        AllowDowngrades:                     null,
@@ -3465,22 +3465,22 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp2EMSPAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
                                                               emsp2APIRequestLogs_v2_2_1. TryAdd(Timestamp.Now, request);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_2_1.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_2_1.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request, response) => {
                                                               emsp2APIResponseLogs_v2_2_1.TryAdd(Timestamp.Now, response);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_2_1.Logger?.Debug("all", LogTargets.Debug);
+            emsp2EMSPAPI_v2_2_1.HTTPLogger?.Debug("all", LogTargets.Debug);
 
 
-            emsp2EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSPAPI(
+            emsp2EMSPAPI_v2_3_0 = new OCPIv2_3_0.EMSP_HTTPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI_v2_3_0,
                                        AllowDowngrades:                     null,
@@ -3501,19 +3501,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                    );
 
-            emsp2EMSPAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request) => {
                                                               emsp2APIRequestLogs_v2_3_0. TryAdd(Timestamp.Now, request);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_3_0.Logger?.RegisterLogTarget(LogTargets.Debug,
+            emsp2EMSPAPI_v2_3_0.HTTPLogger?.RegisterLogTarget(LogTargets.Debug,
                                                           (loggingPath, context, logEventName, request, response) => {
                                                               emsp2APIResponseLogs_v2_3_0.TryAdd(Timestamp.Now, response);
                                                               return Task.CompletedTask;
                                                           });
 
-            emsp2EMSPAPI_v2_3_0.Logger?.Debug("all", LogTargets.Debug);
+            emsp2EMSPAPI_v2_3_0.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 

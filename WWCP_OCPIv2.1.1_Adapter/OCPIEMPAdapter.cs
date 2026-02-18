@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public EMSPAPI                                      EMSPAPI                              { get; }
+        public EMSP_HTTPAPI                                      EMSPAPI                              { get; }
 
 
         #region Logging
@@ -432,7 +432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
-            this.EMSPAPI                            = new EMSPAPI(
+            this.EMSPAPI                            = new EMSP_HTTPAPI(
                                                           this.CommonAPI,
                                                           URLPathPrefix: HTTPPath.Parse($"{Version.String}/emsp")//CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
@@ -469,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               I18NString                                        Description,
                               IRoamingNetwork                                   RoamingNetwork,
 
-                              EMSPAPI                                           EMSPAPI,
+                              EMSP_HTTPAPI                                           EMSPAPI,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
