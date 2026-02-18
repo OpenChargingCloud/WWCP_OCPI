@@ -859,7 +859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    Location:            location,
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
-                                                   CurrentUserId:       null,
+                                                   CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
                                                );
 
@@ -1084,7 +1084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    AllowDowngrades:     null,
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
-                                                   CurrentUserId:       null,
+                                                   CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
                                                );
 
@@ -1584,10 +1584,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddEVSE(location,
-                                                                     evse2,
-                                                                     false,
-                                                                     EventTrackingId);
+                                    result = await CommonAPI.AddEVSE(
+                                                       Location:            location,
+                                                       EVSE:                evse2,
+                                                       SkipNotifications:   false,
+                                                       EventTrackingId:     EventTrackingId,
+                                                       CurrentUserId:       CurrentUserId,
+                                                       CancellationToken:   CancellationToken
+                                                   );
                                 else
                                     result = AddResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
@@ -1722,7 +1726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        null,
                                                        false,
                                                        EventTrackingId,
-                                                       null,
+                                                       CurrentUserId,
                                                        CancellationToken
                                                    );
                                 else
@@ -1871,7 +1875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        null,
                                                        false,
                                                        EventTrackingId,
-                                                       null,
+                                                       CurrentUserId,
                                                        CancellationToken
                                                    );
                                 else

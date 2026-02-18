@@ -769,6 +769,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                             //ToDo: Handle errors!
 
+                            if (result.IsFailed)
+                            {
+                                // DE*822!!!
+                            }
+
                         }
 
 
@@ -1190,10 +1195,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     else
                         result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
+
                     if (result.IsFailed)
                     {
                         // DE*822!!!
                     }
+
 
                     return result.IsSuccess
 
@@ -1322,6 +1329,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     }
                     else
                         result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    if (result.IsFailed)
+                    {
+                        // DE*822!!!
+                    }
 
 
                     return result.IsSuccess

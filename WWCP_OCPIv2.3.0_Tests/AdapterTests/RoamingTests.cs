@@ -1314,9 +1314,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.RoamingTests
                 };
 
                 cpoCommonAPI.OnEVSEStatusChanged += (timestamp,
-                                                             evse,
-                                                             oldEVSEStatus,
-                                                             newEVSEStatus) => {
+                                                     evse,
+                                                     newEVSEStatus,
+                                                     oldEVSEStatus) => {
 
                     updatedOCPIEVSEStatus.Add(newEVSEStatus);
                     return Task.CompletedTask;

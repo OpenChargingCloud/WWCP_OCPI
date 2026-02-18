@@ -1582,6 +1582,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
+        #region GetEVSE(EVSEUId)
+
+        /// <summary>
+        /// Return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEUId">An EVSE identification.</param>
+        public EVSE? GetEVSE(EVSE_UId EVSEUId)
+        {
+
+            if (TryGetEVSE(EVSEUId, out var evse))
+                return evse;
+
+            return null;
+
+        }
+
+        #endregion
+
         #region TryGetEVSE(EVSEUId, out EVSE)
 
         /// <summary>
