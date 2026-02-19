@@ -210,26 +210,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <summary>
         /// The CPO identification of the remote party.
         /// </summary>
-        public CPO_Id           RemoteCPOId    { get; }
+        public CPO_Id                RemoteCPOId     { get; }
 
         /// <summary>
-        /// Our EMSP API.
+        /// Our EMSP HTTP API.
         /// </summary>
-        public EMSP_HTTPAPI          EMSPAPI        { get; }
+        public EMSP_HTTPAPI          EMSP_HTTPAPI    { get; }
 
         /// <summary>
         /// EMSP client event counters.
         /// </summary>
-        public new APICounters  Counters       { get; }
+        public new APICounters       Counters        { get; }
 
         /// <summary>
         /// The EMSP2CPO client (HTTP client) logger.
         /// </summary>
-        public new Logger       HTTPLogger
+        public new HTTPClientLogger  HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -734,9 +734,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP2CPO client.
+        /// Create a new EMSP2CPO HTTP client.
         /// </summary>
-        /// <param name="EMSPAPI">The EMSPAPI.</param>
+        /// <param name="EMSP_HTTPAPI">The EMSP HTTP API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -744,19 +744,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPOClient(EMSP_HTTPAPI                      EMSPAPI,
-                              RemoteParty                  RemoteParty,
-                              HTTPHostname?                VirtualHostname   = null,
-                              I18NString?                  Description       = null,
-                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
+        public EMSP2CPOClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
+                              RemoteParty                                               RemoteParty,
+                              HTTPHostname?                                             VirtualHostname   = null,
+                              I18NString?                                               Description       = null,
+                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                              Boolean?                     DisableLogging    = false,
-                              String?                      LoggingPath       = null,
-                              String?                      LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              IDNSClient?                  DNSClient         = null)
+                              Boolean?                                                  DisableLogging    = false,
+                              String?                                                   LoggingPath       = null,
+                              String?                                                   LoggingContext    = null,
+                              OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                              IDNSClient?                                               DNSClient         = null)
 
-            : base(EMSPAPI.CommonAPI,
+            : base(EMSP_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -770,18 +770,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         {
 
-            this.RemoteCPOId  = RemoteParty.Id.AsCPOId;
-            this.EMSPAPI      = EMSPAPI;
-            this.Counters     = new APICounters();
+            var cpoId          = RemoteParty.Id.AsCPOId();
 
-            base.HTTPLogger   = this.DisableLogging == false
-                                    ? new Logger(
-                                          this,
-                                          LoggingPath,
-                                          LoggingContext,
-                                          LogfileCreator
-                                      )
-                                    : null;
+            if (!cpoId.HasValue)
+                throw new ArgumentException("The given remote party identification is not a valid CPO identification!", nameof(RemoteParty));
+
+            this.RemoteCPOId   = cpoId.Value;
+            this.EMSP_HTTPAPI  = EMSP_HTTPAPI;
+            this.Counters      = new APICounters();
+
+            base.HTTPLogger    = this.DisableLogging == false
+                                     ? new HTTPClientLogger(
+                                           this,
+                                           LoggingPath,
+                                           LoggingContext,
+                                           LogfileCreator
+                                       )
+                                     : null;
 
         }
 

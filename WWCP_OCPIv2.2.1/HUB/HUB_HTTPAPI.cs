@@ -934,7 +934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatoryLocation(CommonAPI,
                                                         //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                        CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                        CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                         out var locationId,
                                                         out var location,
                                                         out var ocpiResponseBuilder))
@@ -1043,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatoryLocationEVSE(CommonAPI,
                                                             //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                            CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                            CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                             out var locationId,
                                                             out var location,
                                                             out var evseId,
@@ -1145,7 +1145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatoryLocationEVSEConnector(CommonAPI,
                                                                      //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                                     CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                                     CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                                      out var locationId,
                                                                      out var location,
                                                                      out var evseId,
@@ -1249,7 +1249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var allTariffs       = CommonAPI.//GetTariffs(tariff => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == tariff.CountryCode &&
                                                      //                                                                role.PartyId     == tariff.PartyId)).
                                                      GetTariffs(tariff => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == tariff.CountryCode &&
-                                                                                                             partyData.Id.Party       == tariff.PartyId)).
+                                                                                                             partyData.Id.PartyId       == tariff.PartyId)).
                                                      ToArray();
 
                     var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
@@ -1392,7 +1392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatoryTariff(CommonAPI,
                                                       //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                      CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                      CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                       out var tariffId,
                                                       out var tariff,
                                                       out var ocpiResponseBuilder))
@@ -1499,7 +1499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var allSessions          = CommonAPI.//GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
                                                          //                                                                  role.PartyId     == session.PartyId)).
                                                          GetSessions(session => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == session.CountryCode &&
-                                                                                                                   partyData.Id.Party       == session.PartyId)).
+                                                                                                                   partyData.Id.PartyId       == session.PartyId)).
                                                          ToArray();
 
                     var filteredSessions     = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -1636,7 +1636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatorySession(CommonAPI,
                                                        //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                       CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                       CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                        out var sessionId,
                                                        out var session,
                                                        out var ocpiResponseBuilder))
@@ -1781,7 +1781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var allCDRs              = CommonAPI.//GetCDRs(cdr => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == cdr.CountryCode &&
                                                          //                                                          role.PartyId     == cdr.PartyId)).
                                                          GetCDRs(cdr => CommonAPI.Parties.Any(partyData => partyData.Id.CountryCode == cdr.CountryCode &&
-                                                                                                           partyData.Id.Party       == cdr.PartyId)).
+                                                                                                           partyData.Id.PartyId       == cdr.PartyId)).
                                                          ToArray();
 
                     var filteredCDRs         = allCDRs.Where(CDR => !filters.From.HasValue || CDR.LastUpdated >  filters.From.Value).
@@ -1931,7 +1931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (!request.ParseMandatoryCDR(CommonAPI,
                                                    //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                                   CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                                   CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                    out var cdrId,
                                                    out var cdr,
                                                    out var ocpiResponseBuilder))
@@ -2097,7 +2097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         //   - Link: <https://www.server.com/ocpi/hub/2.0/cdrs/?offset=150&limit=50>; rel="next"
                         httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
                                                                  ? $"https://{ExternalDNSName}"
-                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tokens/{partyId.Value.CountryCode}/{partyId.Value.Party}{queryParameters}>; rel=\"next\"");
+                                                                 : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}{URLPathPrefix}/tokens/{partyId.Value.CountryCode}/{partyId.Value.PartyId}{queryParameters}>; rel=\"next\"");
 
                     }
 
@@ -5412,7 +5412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var filters           = request.GetDateAndPaginationFilters();
 
                     var allSessions       = CommonAPI.GetSessions(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
-                                                                                                                       role.PartyId.Party       == session.PartyId)).
+                                                                                                                       role.PartyId.PartyId       == session.PartyId)).
                                                       ToArray();
 
                     var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -6125,7 +6125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var filters       = request.GetDateAndPaginationFilters();
 
                     var allCDRs       = CommonAPI.GetCDRs(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
-                                                                                                               role.PartyId.Party       == session.PartyId)).
+                                                                                                               role.PartyId.PartyId       == session.PartyId)).
                                                   ToArray();
 
                     var filteredCDRs  = allCDRs.Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).

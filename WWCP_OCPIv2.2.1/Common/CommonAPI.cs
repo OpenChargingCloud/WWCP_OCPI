@@ -2633,10 +2633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             if (!CommonAPI.TryGetTokenStatus(
-                Party_Idv3.From(
-                    Request.ToCountryCode,
-                    Request.ToPartyId
-                ) ?? CommonAPI.DefaultPartyId,
+                Request.To ?? CommonAPI.DefaultPartyId,
                 TokenId.Value,
                 out TokenStatus))
             {
@@ -2722,10 +2719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             CommonAPI.TryGetTokenStatus(
-                Party_Idv3.From(
-                    Request.ToCountryCode,
-                    Request.ToPartyId
-                ) ?? CommonAPI.DefaultPartyId,
+                Request.To ?? CommonAPI.DefaultPartyId,
                 TokenId.Value,
                 out TokenStatus);
 
@@ -8591,7 +8585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => remoteParties.Values.
                              Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId.Party       == PartyId));
+                                                                                           credentialsRole.PartyId.PartyId       == PartyId));
 
         #endregion
 
@@ -8609,7 +8603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => remoteParties.Values.
                              Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId.Party       == PartyId &&
+                                                                                           credentialsRole.PartyId.PartyId       == PartyId &&
                                                                                            credentialsRole.Role                == Role));
 
         #endregion
@@ -8821,7 +8815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             foreach (var remoteParty in remoteParties.Values.
                                                       Where(remoteParty => remoteParty.Roles.            Any(credentialsRole  => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                                                                 credentialsRole.PartyId.Party       == PartyId &&
+                                                                                                                                 credentialsRole.PartyId.PartyId       == PartyId &&
                                                                                                                                  credentialsRole.Role                == Role) &&
 
                                                                            remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == AccessToken)))

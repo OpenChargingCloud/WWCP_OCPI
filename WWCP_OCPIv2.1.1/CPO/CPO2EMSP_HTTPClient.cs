@@ -222,22 +222,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// The EMSP identification of the remote party.
         /// </summary>
-        public EMSP_Id          RemoteEMSPId    { get; }
+        public EMSP_Id               RemoteEMSPId    { get; }
 
         /// <summary>
-        /// Our CPO API.
+        /// Our CPO HTTP API.
         /// </summary>
-        public CPO_HTTPAPI           CPOAPI          { get; }
+        public CPO_HTTPAPI           CPO_HTTPAPI     { get; }
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public new APICounters  Counters        { get; }
+        public new APICounters       Counters        { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new HTTPClientLogger       HTTPLogger
+        public new HTTPClientLogger  HTTPLogger
         {
             get
             {
@@ -809,9 +809,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new CPO2EMSP client.
+        /// Create a new CPO2EMSP HTTP client.
         /// </summary>
-        /// <param name="CPOAPI">The CPOAPI.</param>
+        /// <param name="CPO_HTTPAPI">The CPO HTTP API.</param>
         /// <param name="RemoteParty">The remote party.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
@@ -820,19 +820,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2EMSP_HTTPClient(CPO_HTTPAPI                       CPOAPI,
-                              RemoteParty                  RemoteParty,
-                              HTTPHostname?                VirtualHostname   = null,
-                              I18NString?                  Description       = null,
-                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2EMSP_HTTPClient(CPO_HTTPAPI                                               CPO_HTTPAPI,
+                                   RemoteParty                                               RemoteParty,
+                                   HTTPHostname?                                             VirtualHostname   = null,
+                                   I18NString?                                               Description       = null,
+                                   org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                              Boolean?                     DisableLogging    = false,
-                              String?                      LoggingPath       = null,
-                              String?                      LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                              IDNSClient?                  DNSClient         = null)
+                                   Boolean?                                                  DisableLogging    = false,
+                                   String?                                                   LoggingPath       = null,
+                                   String?                                                   LoggingContext    = null,
+                                   OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                                   IDNSClient?                                               DNSClient         = null)
 
-            : base(CPOAPI.CommonAPI,
+            : base(CPO_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -846,8 +846,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
         {
 
-            this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPOAPI;
+            var emspId         = RemoteParty.Id.AsEMSPId();
+
+            if (!emspId.HasValue)
+                throw new ArgumentException("The given remote party identification is not a valid EMSP identification!", nameof(RemoteParty));
+
+            this.RemoteEMSPId  = emspId.Value;
+            this.CPO_HTTPAPI   = CPO_HTTPAPI;
             this.Counters      = new APICounters();
 
             base.HTTPLogger    = this.DisableLogging == false

@@ -301,14 +301,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                       Id:                                RemoteParty_Id.From(
                                                              ptpCommonAPI.Parties.First().Id.CountryCode,
-                                                             ptpCommonAPI.Parties.First().Id.Party,
+                                                             ptpCommonAPI.Parties.First().Id.PartyId,
                                                              ptpCommonAPI.Parties.First().Role
                                                          ),
 
                       CredentialsRoles:                  [
                                                              new CredentialsRole(
                                                                  CountryCode:       ptpCommonAPI.Parties.First().Id.CountryCode,
-                                                                 PartyId:           ptpCommonAPI.Parties.First().Id.Party,
+                                                                 PartyId:           ptpCommonAPI.Parties.First().Id.PartyId,
                                                                  Role:              Role.PTP,
                                                                  BusinessDetails:   ptpCommonAPI.Parties.First().BusinessDetails,
                                                                  AllowDowngrades:   false
@@ -333,13 +333,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CPO_PTP
 
                       Id:                                RemoteParty_Id.From(
                                                              cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                             cpoCommonAPI.Parties.First().Id.Party,
+                                                             cpoCommonAPI.Parties.First().Id.PartyId,
                                                              cpoCommonAPI.Parties.First().Role
                                                          ),
                       CredentialsRoles:                  [
                                                              new CredentialsRole(
                                                                  CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                                 PartyId:           cpoCommonAPI.Parties.First().Id.Party,
+                                                                 PartyId:           cpoCommonAPI.Parties.First().Id.PartyId,
                                                                  Role:              Role.CPO,
                                                                  BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                                  AllowDowngrades:   false

@@ -804,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-                var emspClientLogger = new EMSP.HTTP.EMSP2CPOClient.Logger(
+                var emspClientLogger = new EMSP.HTTP.EMSP2CPOClient.HTTPClientLogger(
                                            emspClient,
                                            ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                            ClientsLoggingContext ?? DefaultLoggingContext,

@@ -7601,7 +7601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var countryCode  = PartyId.Value.CountryCode;
-                var partyId      = PartyId.Value.Party;
+                var partyId      = PartyId.Value.PartyId;
 
                 var results      = locations.Values.
                                        Where(location => location.CountryCode == countryCode &&

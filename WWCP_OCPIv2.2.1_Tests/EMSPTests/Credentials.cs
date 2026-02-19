@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                     ClassicAssert.AreEqual ("cso-2-emp1:token",                           credentials.    Token.                            ToString());
                     ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
                     ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
+                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.PartyId.      ToString());
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
                     ClassicAssert.IsNotNull(businessDetails);
@@ -192,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                     ClassicAssert.AreEqual ("cso-2-emp2:token",                           credentials.    Token.                            ToString());
                     ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.2/versions",   credentials.    URL.                              ToString());
                     ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.Party.      ToString());
+                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.PartyId.      ToString());
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
                     ClassicAssert.IsNotNull(businessDetails);

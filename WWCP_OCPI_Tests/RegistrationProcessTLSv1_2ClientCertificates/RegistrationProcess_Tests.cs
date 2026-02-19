@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             var cpoClient = emsp1EMSPAPI_v2_2_1?.GetCPOClient(
                                 cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
-                                cpo1CommonAPI_v2_2_1.DefaultPartyId.Party
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.PartyId
                             );
 
             Assert.That(cpoClient, Is.Not.Null);
@@ -467,7 +467,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             var cpoClient = emsp1EMSPAPI_v2_2_1?.GetCPOClient(
                                 cpo1CommonAPI_v2_2_1.DefaultPartyId.CountryCode,
-                                cpo1CommonAPI_v2_2_1.DefaultPartyId.Party
+                                cpo1CommonAPI_v2_2_1.DefaultPartyId.PartyId
                             );
 
             Assert.That(cpoClient, Is.Not.Null);

@@ -380,10 +380,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Request_Id?           RequestId                   { get; }
         public Correlation_Id?       CorrelationId               { get; }
 
-        public CountryCode?          ToCountryCode               { get; }
-        public Party_Id?             ToPartyId                   { get; }
-        public CountryCode?          FromCountryCode             { get; }
-        public Party_Id?             FromPartyId                 { get; }
+        public Party_Idv3?           From                        { get; }
+        public Party_Idv3?           To                          { get; }
+        //public CountryCode?          ToCountryCode               { get; }
+        //public Party_Id?             ToPartyId                   { get; }
+        //public CountryCode?          FromCountryCode             { get; }
+        //public Party_Id?             FromPartyId                 { get; }
 
         public AccessToken?          AccessToken                 { get; }
 
@@ -436,10 +438,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.RequestId        = Request.TryParseHeaderStruct               ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
             this.CorrelationId    = Request.TryParseHeaderStruct               ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-            this.ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-to-country-code",   CountryCode.   TryParse);
-            this.ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-to-party-id",       Party_Id.      TryParse);
-            this.FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-from-country-code", CountryCode.   TryParse);
-            this.FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-from-party-id",     Party_Id.      TryParse);
+
+            var  ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-to-country-code",   CountryCode.   TryParse);
+            var  ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-to-party-id",       Party_Id.      TryParse);
+            if (ToCountryCode.HasValue &&
+                ToPartyId.    HasValue)
+            {
+                To    = Party_Idv3.From(
+                           ToCountryCode.Value,
+                           ToPartyId.    Value
+                        );
+            }
+
+            var  FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-from-country-code", CountryCode.   TryParse);
+            var  FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-from-party-id",     Party_Id.      TryParse);
+            if (FromCountryCode.HasValue &&
+                FromPartyId.    HasValue)
+            {
+                From  = Party_Idv3.From(
+                           FromCountryCode.Value,
+                           FromPartyId.    Value
+                        );
+            }
+
             var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                   TOTPHTTPHeader.TryParse);
 
             AccessToken?      accessTokenRAW                  = null;
@@ -530,15 +551,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    );
 
                 CPOIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
-                                                         Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
                 EMSPIds          = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
-                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
                 HUBIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.HUB).
-                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
                 if (FromCountryCode.HasValue &&

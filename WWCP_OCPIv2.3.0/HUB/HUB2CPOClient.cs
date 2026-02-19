@@ -206,26 +206,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
         /// <summary>
         /// The identification of the remote Charge Point Operator.
         /// </summary>
-        public CPO_Id           RemoteCPOId    { get; }
+        public CPO_Id                RemoteCPOId    { get; }
 
         /// <summary>
-        /// Our HUB API.
+        /// Our HUB HTTP API.
         /// </summary>
-        public HUB_HTTPAPI           HUBAPI         { get; }
+        public HUB_HTTPAPI           HUB_HTTPAPI    { get; }
 
         /// <summary>
         /// HUB client event counters.
         /// </summary>
-        public new APICounters  Counters       { get; }
+        public new APICounters       Counters       { get; }
 
         /// <summary>
         /// The HUB client (HTTP client) logger.
         /// </summary>
-        public new Logger       HTTPLogger
+        public new HTTPClientLogger  HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -681,9 +681,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new HUB2CPO client.
+        /// Create a new HUB2CPO HTTP client.
         /// </summary>
-        /// <param name="HUBAPI">The HUB API.</param>
+        /// <param name="HUB_HTTPAPI">The HUB HTTP API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -691,19 +691,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public HUB2CPOClient(HUB_HTTPAPI                       HUBAPI,
-                             RemoteParty                  RemoteParty,
-                             HTTPHostname?                VirtualHostname   = null,
-                             I18NString?                  Description       = null,
-                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
+        public HUB2CPOClient(HUB_HTTPAPI                                               HUB_HTTPAPI,
+                             RemoteParty                                               RemoteParty,
+                             HTTPHostname?                                             VirtualHostname   = null,
+                             I18NString?                                               Description       = null,
+                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                             Boolean?                     DisableLogging    = false,
-                             String?                      LoggingPath       = null,
-                             String?                      LoggingContext    = null,
-                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                             IDNSClient?                  DNSClient         = null)
+                             Boolean?                                                  DisableLogging    = false,
+                             String?                                                   LoggingPath       = null,
+                             String?                                                   LoggingContext    = null,
+                             OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                             IDNSClient?                                               DNSClient         = null)
 
-            : base(HUBAPI.CommonAPI,
+            : base(HUB_HTTPAPI.CommonAPI,
                    RemoteParty,
                    VirtualHostname,
                    Description,
@@ -717,12 +717,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
 
         {
 
-            this.RemoteCPOId  = RemoteParty.Id.AsCPOId;
-            this.HUBAPI       = HUBAPI;
+            var cpoId         = RemoteParty.Id.AsCPOId();
+
+            if (!cpoId.HasValue)
+                throw new ArgumentException("The given remote party identification is not a valid CPO identification!", nameof(RemoteParty));
+
+            this.RemoteCPOId  = cpoId.Value;
+            this.HUB_HTTPAPI  = HUB_HTTPAPI;
             this.Counters     = new APICounters();
 
             base.HTTPLogger   = this.DisableLogging == false
-                                    ? new Logger(
+                                    ? new HTTPClientLogger(
                                           this,
                                           LoggingPath,
                                           LoggingContext,

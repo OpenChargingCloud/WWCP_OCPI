@@ -3702,8 +3702,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedLocation,
 
@@ -3733,8 +3733,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedLocation,
 
@@ -3890,8 +3890,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   locationId.Value,
                                   locationPatch,
@@ -3928,8 +3928,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   locationId.Value,
                                   locationPatch,
@@ -4273,8 +4273,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedEVSE,
 
@@ -4305,8 +4305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedEVSE,
 
@@ -4448,8 +4448,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   evseUId.Value,
                                   evsePatch,
@@ -4481,8 +4481,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   evseUId.Value,
                                   evsePatch,
@@ -4810,8 +4810,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedConnector,
 
@@ -4843,8 +4843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedConnector,
 
@@ -4970,8 +4970,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   connectorId.Value,
                                   connectorPatch,
@@ -5004,8 +5004,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   connectorId.Value,
                                   connectorPatch,
@@ -5611,8 +5611,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedTariff,
 
@@ -5642,8 +5642,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newOrUpdatedTariff,
 
@@ -5986,7 +5986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     var filters           = request.    GetDateAndPaginationFilters();
 
                     var allSessions       = CommonAPI.  GetSessions(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
-                                                                                                                        role.PartyId.Party       == session.PartyId)).
+                                                                                                                        role.PartyId.PartyId       == session.PartyId)).
                                                         ToArray();
 
                     var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -6696,7 +6696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     var filters       = request.GetDateAndPaginationFilters();
 
                     var allCDRs       = CommonAPI.GetCDRs(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
-                                                                                                                role.PartyId.Party       == session.PartyId)).
+                                                                                                                role.PartyId.PartyId       == session.PartyId)).
                                                     ToArray();
 
                     var filteredCDRs  = allCDRs.Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
@@ -6933,8 +6933,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newCDR,
 
@@ -6972,8 +6972,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
                                   request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.To?.   CountryCode,
+                                  request.To?.   PartyId,
 
                                   newCDR,
 
@@ -7599,10 +7599,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.FromCountryCode ?? request.CPOId?.CountryCode,
-                                  request.FromPartyId     ?? request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.From?.CountryCode ?? request.CPOId?.CountryCode,
+                                  request.From?.PartyId     ?? request.CPOId?.PartyId,
+                                  request.To?.  CountryCode,
+                                  request.To?.  PartyId,
                                   tokenId.Value,
                                   requestedTokenType,
                                   locationReference,
@@ -7625,10 +7625,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         {
 
                             var result = await onRFIDAuthTokenLocal(
-                                                   request.FromCountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                   request.FromPartyId     ?? CommonAPI.DefaultPartyId.Party,
-                                                   request.ToCountryCode   ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                   request.ToPartyId       ?? CommonAPI.DefaultPartyId.Party,
+                                                   request.From?.CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                   request.From?.PartyId     ?? CommonAPI.DefaultPartyId.PartyId,
+                                                   request.To?.  CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                   request.To?.  PartyId     ?? CommonAPI.DefaultPartyId.PartyId,
                                                    tokenId.Value,
                                                    requestedTokenType,
                                                    locationReference
@@ -7646,7 +7646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                     AllowedType.NOT_ALLOWED,
                                                     new Token(
                                                         CommonAPI.DefaultPartyId.CountryCode,
-                                                        CommonAPI.DefaultPartyId.Party,
+                                                        CommonAPI.DefaultPartyId.PartyId,
                                                         tokenId.Value,
                                                         requestedTokenType ?? TokenType.RFID,
                                                         Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
@@ -7670,10 +7670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         #region Check existing token
 
                         if (!CommonAPI.TryGetTokenStatus(
-                                Party_Idv3.From(
-                                    request.ToCountryCode,
-                                    request.ToPartyId
-                                ) ?? CommonAPI.DefaultPartyId,
+                                request.To ?? CommonAPI.DefaultPartyId,
                                 tokenId.Value,
                                 out var _tokenStatus) ||
                             (_tokenStatus.Token.Type != requestedTokenType))
@@ -7711,14 +7708,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                             Location? validLocation = null;
 
-                            if (request.FromCountryCode.HasValue && request.FromPartyId.HasValue)
+                            if (request.From.HasValue)
                             {
 
                                 if (!CommonAPI.TryGetLocation(
-                                    Party_Idv3.From(
-                                        request.FromCountryCode.Value,
-                                        request.FromPartyId.    Value
-                                    ),
+                                    request.From.Value,
                                     locationReference.Value.LocationId,
                                     out validLocation))
                                 {
@@ -7873,7 +7867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               AllowedType.NOT_ALLOWED,
                                               new Token(
                                                   CommonAPI.DefaultPartyId.CountryCode,
-                                                  CommonAPI.DefaultPartyId.Party,
+                                                  CommonAPI.DefaultPartyId.PartyId,
                                                   tokenId.Value,
                                                   requestedTokenType ?? TokenType.RFID,
                                                   Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
@@ -8063,10 +8057,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   endtime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.FromCountryCode ?? request.CPOId?.CountryCode,
-                                  request.FromPartyId     ?? request.CPOId?.PartyId,
-                                  request.ToCountryCode,
-                                  request.ToPartyId,
+                                  request.From?.CountryCode ?? request.CPOId?.CountryCode,
+                                  request.From?.PartyId     ?? request.CPOId?.PartyId,
+                                  request.To?.  CountryCode,
+                                  request.To?.  PartyId,
                                   tokenId.Value,
                                   requestedTokenType,
                                   locationReference,

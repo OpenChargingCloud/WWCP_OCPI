@@ -980,7 +980,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     if (!request.ParsePaymentTerminal(CommonAPI,
                                                //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.Party)),
+                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
                                                out var terminalId,
                                                out var terminal,
                                                out var ocpiResponseBuilder,

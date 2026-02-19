@@ -512,13 +512,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.From(
                                                                                        emsp1CommonAPI.Parties.First().Id.CountryCode,
-                                                                                       emsp1CommonAPI.Parties.First().Id.Party,
+                                                                                       emsp1CommonAPI.Parties.First().Id.PartyId,
                                                                                        emsp1CommonAPI.Parties.First().Role
                                                                                    ),
                                                 CredentialsRoles:                  [
                                                                                        new CredentialsRole(
                                                                                            CountryCode:       emsp1CommonAPI.Parties.First().Id.CountryCode,
-                                                                                           PartyId:           emsp1CommonAPI.Parties.First().Id.Party,
+                                                                                           PartyId:           emsp1CommonAPI.Parties.First().Id.PartyId,
                                                                                            Role:              Role.EMSP,
                                                                                            BusinessDetails:   emsp1CommonAPI.Parties.First().BusinessDetails,
                                                                                            AllowDowngrades:   false
@@ -538,13 +538,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             await cpoCommonAPI.AddRemoteParty  (Id:                                RemoteParty_Id.From(
                                                                                        emsp2CommonAPI.Parties.First().Id.CountryCode,
-                                                                                       emsp2CommonAPI.Parties.First().Id.Party,
+                                                                                       emsp2CommonAPI.Parties.First().Id.PartyId,
                                                                                        emsp2CommonAPI.Parties.First().Role
                                                                                    ),
                                                 CredentialsRoles:                  [
                                                                                        new CredentialsRole(
                                                                                            CountryCode:       emsp2CommonAPI.Parties.First().Id.CountryCode,
-                                                                                           PartyId:           emsp2CommonAPI.Parties.First().Id.Party,
+                                                                                           PartyId:           emsp2CommonAPI.Parties.First().Id.PartyId,
                                                                                            Role:              Role.EMSP,
                                                                                            BusinessDetails:   emsp2CommonAPI.Parties.First().BusinessDetails,
                                                                                            AllowDowngrades:   false
@@ -564,13 +564,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             await emsp1CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.From(
                                                                                        cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                                                       cpoCommonAPI.Parties.First().Id.Party,
+                                                                                       cpoCommonAPI.Parties.First().Id.PartyId,
                                                                                        cpoCommonAPI.Parties.First().Role
                                                                                    ),
                                                 CredentialsRoles:                  [
                                                                                        new CredentialsRole(
                                                                                            CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                                                           PartyId:           cpoCommonAPI.Parties.First().Id.Party,
+                                                                                           PartyId:           cpoCommonAPI.Parties.First().Id.PartyId,
                                                                                            Role:              Role.CPO,
                                                                                            BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                                                            AllowDowngrades:   false
@@ -591,13 +591,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             await emsp2CommonAPI.AddRemoteParty(Id:                                RemoteParty_Id.From(
                                                                                        cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                                                       cpoCommonAPI.Parties.First().Id.Party,
+                                                                                       cpoCommonAPI.Parties.First().Id.PartyId,
                                                                                        cpoCommonAPI.Parties.First().Role
                                                                                    ),
                                                 CredentialsRoles:                  [
                                                                                        new CredentialsRole(
                                                                                            CountryCode:       cpoCommonAPI.Parties.First().Id.CountryCode,
-                                                                                           PartyId:           cpoCommonAPI.Parties.First().Id.Party,
+                                                                                           PartyId:           cpoCommonAPI.Parties.First().Id.PartyId,
                                                                                            Role:              Role.CPO,
                                                                                            BusinessDetails:   cpoCommonAPI.Parties.First().BusinessDetails,
                                                                                            AllowDowngrades:   false

@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             this.CountryCode  = PartyId.CountryCode;
-            this.PartyId      = PartyId.Party;
+            this.PartyId      = PartyId.PartyId;
 
             unchecked
             {

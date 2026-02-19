@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPI
             var json = JSONObject.Create(
 
                                  new JProperty("country_code",       PartyId.CountryCode.ToString()),
-                                 new JProperty("party_id",           PartyId.Party.      ToString()),
+                                 new JProperty("party_id",           PartyId.PartyId.      ToString()),
                                  new JProperty("role",               Role.               ToString()),
                                  new JProperty("business_details",   BusinessDetails.    ToJSON  (CustomBusinessDetailsSerializer,
                                                                                                   CustomImageSerializer)),
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => $"{BusinessDetails.Name} ({PartyId.CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId.Party} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
+            => $"{BusinessDetails.Name} ({PartyId.CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId.PartyId} {Role}) {(AllowDowngrades.HasValue ? AllowDowngrades.Value ? "[Downgrades allowed]" : "[No downgrades]" : "")}";
 
         #endregion
 

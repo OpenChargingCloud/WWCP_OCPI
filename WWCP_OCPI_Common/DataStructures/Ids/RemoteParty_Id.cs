@@ -46,6 +46,40 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean IsNotNullOrEmpty(this RemoteParty_Id? RemotePartyId)
             => RemotePartyId.HasValue && RemotePartyId.Value.IsNotNullOrEmpty;
 
+
+
+        /// <summary>
+        /// This remote party identification as a CPO identification.
+        /// </summary>
+        public static CPO_Id? AsCPOId(this RemoteParty_Id RemotePartyId)
+            => RemotePartyId.Role == Role.CPO
+                   ? CPO_Id.Parse($"{RemotePartyId.CountryCode}*{RemotePartyId.PartyId}")
+                   : null;
+
+        /// <summary>
+        /// This remote party identification as a CPO identification.
+        /// </summary>
+        public static CPO_Id? AsCPOId(this RemoteParty_Id? RemotePartyId)
+            => RemotePartyId.HasValue
+                   ? RemotePartyId.Value.AsCPOId()
+                   : null;
+
+        /// <summary>
+        /// This remote party identification as a EMSP identification.
+        /// </summary>
+        public static EMSP_Id? AsEMSPId(this RemoteParty_Id RemotePartyId)
+            => RemotePartyId.Role == Role.EMSP
+                   ? EMSP_Id.Parse($"{RemotePartyId.CountryCode}*{RemotePartyId.PartyId}")
+                   : null;
+
+        /// <summary>
+        /// This remote party identification as a EMSP identification.
+        /// </summary>
+        public static EMSP_Id? AsEMSPId(this RemoteParty_Id? RemotePartyId)
+            => RemotePartyId.HasValue
+                   ? RemotePartyId.Value.AsEMSPId()
+                   : null;
+
     }
 
 
@@ -77,19 +111,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// The party role.
         /// </summary>
         public Role         Role           { get;}
-
-
-        /// <summary>
-        /// This remote party identification as a CPO identification.
-        /// </summary>
-        public CPO_Id AsCPOId
-            => CPO_Id.Parse($"{CountryCode}*{PartyId}");
-
-        /// <summary>
-        /// This remote party identification as a EMSP identification.
-        /// </summary>
-        public EMSP_Id AsEMSPId
-            => EMSP_Id.Parse($"{CountryCode}-{PartyId}");
 
 
         /// <summary>
@@ -172,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPI
                                           Role        Role)
 
             => new (PartyIdv3.CountryCode,
-                    PartyIdv3.Party,
+                    PartyIdv3.PartyId,
                     Role);
 
         #endregion

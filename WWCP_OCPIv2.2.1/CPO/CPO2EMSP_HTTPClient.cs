@@ -224,9 +224,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public EMSP_Id               RemoteEMSPId    { get; }
 
         /// <summary>
-        /// Our CPO API.
+        /// Our CPO HTTP API.
         /// </summary>
-        public CPO_HTTPAPI           CPOAPI          { get; }
+        public CPO_HTTPAPI           CPO_HTTPAPI     { get; }
 
         /// <summary>
         /// CPO client event counters.
@@ -875,8 +875,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
         {
 
-            this.RemoteEMSPId  = RemoteParty.Id.AsEMSPId;
-            this.CPOAPI        = CPO_HTTPAPI;
+            var emspId         = RemoteParty.Id.AsEMSPId();
+
+            if (!emspId.HasValue)
+                throw new ArgumentException("The given remote party identification is not a valid EMSP identification!", nameof(RemoteParty));
+
+            this.RemoteEMSPId  = emspId.Value;
+            this.CPO_HTTPAPI   = CPO_HTTPAPI;
             this.Counters      = new APICounters();
 
             base.HTTPLogger    = this.DisableLogging == false

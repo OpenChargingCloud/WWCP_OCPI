@@ -6464,7 +6464,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => remoteParties.Values.
                              Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId.Party       == PartyId));
+                                                                                           credentialsRole.PartyId.PartyId       == PartyId));
 
         #endregion
 
@@ -6482,7 +6482,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => remoteParties.Values.
                              Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                           credentialsRole.PartyId.Party       == PartyId &&
+                                                                                           credentialsRole.PartyId.PartyId       == PartyId &&
                                                                                            credentialsRole.Role                == Role));
 
         #endregion
@@ -6673,7 +6673,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             foreach (var remoteParty in remoteParties.Values.
                                                       Where(remoteParty => remoteParty.Roles.            Any(credentialsRole  => credentialsRole.PartyId.CountryCode == CountryCode &&
-                                                                                                                                 credentialsRole.PartyId.Party       == PartyId &&
+                                                                                                                                 credentialsRole.PartyId.PartyId       == PartyId &&
                                                                                                                                  credentialsRole.Role                == Role) &&
 
                                                                            remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == AccessToken)))

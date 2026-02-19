@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(AccessToken.Parse("ebf3b399-779f-4497-9b9d-ac6ad3cc44d2"),  parsedCredentials.Token);
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),    parsedCredentials.URL);
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.First().Role);
             ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.First().BusinessDetails.Name);
 
@@ -223,13 +223,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.        First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.        First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.        First().Role);
             ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.        First().BusinessDetails.Name);
 
             // Note: Same CountryCode and PartyId, but different roles: Is this really a good idea?
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.EMSP,                                                  parsedCredentials.Roles.Skip(1).First().Role);
             ClassicAssert.AreEqual("Example Provider",                                         parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
 
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),      parsedCredentials.URL);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                      parsedCredentials.Roles.First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                     parsedCredentials.Roles.First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                     parsedCredentials.Roles.First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                     parsedCredentials.Roles.First().Role);
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo.jpg"),        parsedCredentials.Roles.First().BusinessDetails.Logo.URL);
             ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo_thumb.jpg"),  parsedCredentials.Roles.First().BusinessDetails.Logo.Thumbnail);
@@ -342,17 +342,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXO"),                                   parsedCredentials.Roles.        First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("EXO"),                                   parsedCredentials.Roles.        First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.        First().Role);
             ClassicAssert.AreEqual("Excellent Operator",                                       parsedCredentials.Roles.        First().BusinessDetails.Name);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("PFC"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("PFC"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.Skip(1).First().Role);
             ClassicAssert.AreEqual("Plug Flex Charging",                                       parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
 
             ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(2).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("CGP"),                                   parsedCredentials.Roles.Skip(2).First().PartyId.Party);
+            ClassicAssert.AreEqual(Party_Id.   Parse("CGP"),                                   parsedCredentials.Roles.Skip(2).First().PartyId.PartyId);
             ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.Skip(2).First().Role);
             ClassicAssert.AreEqual("Charging Green Power",                                     parsedCredentials.Roles.Skip(2).First().BusinessDetails.Name);
 

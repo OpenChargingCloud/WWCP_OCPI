@@ -4146,7 +4146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     var filters           = request.GetDateAndPaginationFilters();
 
                     var allSessions       = CommonAPI.GetSessions(session => request.LocalAccessInfo.Roles.Any(role => role.PartyId.CountryCode == session.CountryCode &&
-                                                                                                                       role.PartyId.Party       == session.PartyId)).
+                                                                                                                       role.PartyId.PartyId       == session.PartyId)).
                                                       ToArray();
 
                     var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).

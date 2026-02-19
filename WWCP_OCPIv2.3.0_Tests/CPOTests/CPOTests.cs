@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 ClassicAssert.AreEqual("yyyyyy",                             credentials.Token.                            ToString());
                 ClassicAssert.AreEqual("http://127.0.0.1:7235/versions",     credentials.URL.                              ToString());
                 ClassicAssert.AreEqual("DE",                                 credentials.Roles.First().PartyId.CountryCode.ToString());
-                ClassicAssert.AreEqual("GDF",                                credentials.Roles.First().PartyId.Party.      ToString());
+                ClassicAssert.AreEqual("GDF",                                credentials.Roles.First().PartyId.PartyId.      ToString());
 
                 var businessDetails = credentials.Roles.First().BusinessDetails;
                 ClassicAssert.IsNotNull(businessDetails);
@@ -637,7 +637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 ClassicAssert.AreEqual("<any>",                              credentials.Token.                            ToString());
                 ClassicAssert.AreEqual("http://127.0.0.1:7235/versions",     credentials.URL.                              ToString());
                 ClassicAssert.AreEqual("DE",                                 credentials.Roles.First().PartyId.CountryCode.ToString());
-                ClassicAssert.AreEqual("GDF",                                credentials.Roles.First().PartyId.Party.      ToString());
+                ClassicAssert.AreEqual("GDF",                                credentials.Roles.First().PartyId.PartyId.      ToString());
 
                 var businessDetails = credentials.Roles.First().BusinessDetails;
                 ClassicAssert.IsNotNull(businessDetails);

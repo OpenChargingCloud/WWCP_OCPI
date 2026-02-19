@@ -41,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => new (
                    PartyData.Id.CountryCode,
-                   PartyData.Id.Party,
+                   PartyData.Id.PartyId,
                    PartyData.Role,
                    PartyData.BusinessDetails,
                    PartyData.AllowDowngrades

@@ -580,11 +580,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    );
 
                 CPOIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.CPO).
-                                                         Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}*{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
                 EMSPIds          = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.EMSP).
-                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.Party}")).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
                 if (FromCountryCode.HasValue &&

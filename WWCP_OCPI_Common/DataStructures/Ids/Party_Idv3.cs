@@ -46,6 +46,39 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean IsNotNullOrEmpty(this Party_Idv3? PartyId)
             => PartyId.HasValue && PartyId.Value.IsNotNullOrEmpty;
 
+
+        /// <summary>
+        /// Converts a nullable Party_Idv3 value to a nullable CPO_Id.
+        /// </summary>
+        /// <param name="PartyId">The Party_Idv3 to convert.</param>
+        public static CPO_Id  AsCPOId (this Party_Idv3 PartyId)
+            => CPO_Id.Parse(PartyId.ToString());
+
+        /// <summary>
+        /// Converts a nullable Party_Idv3 value to a nullable CPO_Id.
+        /// </summary>
+        /// <param name="PartyId">The Party_Idv3 to convert.</param>
+        public static CPO_Id?  AsCPOId (this Party_Idv3? PartyId)
+            => PartyId.HasValue
+                   ? PartyId.Value.AsCPOId()
+                   : null;
+
+        /// <summary>
+        /// Converts a nullable Party_Idv3 value to a nullable EMSP_Id.
+        /// </summary>
+        /// <param name="PartyId">The Party_Idv3 to convert.</param>
+        public static EMSP_Id AsEMSPId(this Party_Idv3 PartyId)
+            => EMSP_Id.Parse(PartyId.ToString());
+
+        /// <summary>
+        /// Converts a nullable Party_Idv3 value to a nullable EMSP_Id.
+        /// </summary>
+        /// <param name="PartyId">The Party_Idv3 to convert.</param>
+        public static EMSP_Id? AsEMSPId(this Party_Idv3? PartyId)
+            => PartyId.HasValue
+                   ? PartyId.Value.AsEMSPId()
+                   : null;
+
     }
 
 
@@ -80,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The party identification.
         /// </summary>
-        public Party_Id     Party
+        public Party_Id     PartyId
             => Party_Id.Parse(InternalId.Substring(2, 3));
 
 
@@ -405,7 +438,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public String ToString(Role Role)
 
-            => $"{CountryCode}{(Role == Role.EMSP ? "-" : "*")}{Party}";
+            => $"{CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId}";
 
         #endregion
 
