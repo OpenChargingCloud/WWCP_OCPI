@@ -178,18 +178,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             ClassicAssert.IsNotNull(emsp1EMSPAPI);
             ClassicAssert.IsNotNull(emsp2EMSPAPI);
 
-            if (cpoCPOAPI    is not null &&
-                emsp1EMSPAPI is not null &&
-                emsp2EMSPAPI is not null)
+            if (cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null &&
+                emsp2CommonAPI is not null)
             {
 
                 cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
 
                                            Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.csoRoamingNetwork.Id),
-                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
-                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1.1 CSO"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1.1 CSO Roaming"),
 
-                                           CPOAPI:                              cpoCPOAPI,
+                                           CommonAPI:                           cpoCommonAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -212,14 +212,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisableSendChargeDetailRecords:      false
 
                                        );
+
+                cpoCPOAPI             = cpoAdapter?.CPO_HTTPAPI;
+
 
                 emsp1Adapter          = emp1RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
 
                                            Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_EMP1_" + this.emp1RoamingNetwork.Id),
-                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP1"),
-                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP1 Roaming"),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1.1 EMP1"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1.1 EMP1 Roaming"),
 
-                                           EMSPAPI:                             emsp1EMSPAPI,
+                                           CommonAPI:                           emsp1CommonAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -242,14 +245,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisableSendChargeDetailRecords:      false
 
                                        );
+
+                emsp1EMSPAPI          = emsp1Adapter?.EMSP_HTTPAPI;
+
 
                 emsp2Adapter          = emp2RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
 
                                            Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_EMP2_" + this.emp1RoamingNetwork.Id),
-                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP2"),
-                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP2 Roaming"),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.1.1 EMP2"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.1.1 EMP2 Roaming"),
 
-                                           EMSPAPI:                             emsp2EMSPAPI,
+                                           CommonAPI:                           emsp2CommonAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -272,6 +278,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisableSendChargeDetailRecords:      false
 
                                        );
+
+                emsp2EMSPAPI          = emsp2Adapter?.EMSP_HTTPAPI;
 
                 ClassicAssert.IsNotNull(cpoAdapter);
                 ClassicAssert.IsNotNull(emsp1Adapter);

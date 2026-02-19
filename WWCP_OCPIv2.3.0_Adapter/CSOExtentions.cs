@@ -70,9 +70,9 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       OCPIv2_3_0.GetTariffIds_Delegate?                       GetTariffIds                        = null,
 
-                                      OCPI.      ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter       = null,
-                                      OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter              = null,
-                                      OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
+                                                 ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter       = null,
+                                                 WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter              = null,
+                                                 WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
                                       OCPIv2_3_0.WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                 = null,
                                       OCPIv2_3_0.WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter     = null,
                                       OCPIv2_3_0.WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter   = null,
@@ -177,13 +177,15 @@ namespace cloud.charging.open.protocols.WWCP
                                          LoggingContext,
                                          LogfileName,
                                          LogfileCreator is not null
-                                             ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                                             ? (loggingPath, remotePartyId, context, logfileName)
+                                                    => LogfileCreator       (loggingPath, null, context, logfileName)
                                              : null,
 
                                          ClientsLoggingPath,
                                          ClientsLoggingContext,
                                          ClientsLogfileCreator is not null
-                                             ? (loggingPath, remotePartyId, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                                             ? (loggingPath, remotePartyId, context, logfileName)
+                                                    => ClientsLogfileCreator(loggingPath, null, context, logfileName)
                                              : null,
                                          DNSClient
 
@@ -192,8 +194,10 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_3_0.OCPICSOAdapter;
+                       CreateCSORoamingProvider(
+                           newRoamingProvider,
+                           Configurator
+                       ) as OCPIv2_3_0.OCPICSOAdapter;
 
         }
 

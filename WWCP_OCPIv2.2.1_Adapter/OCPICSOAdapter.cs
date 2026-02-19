@@ -62,17 +62,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public  const       String         DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
+        public  const   String    DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
 
-        public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
+        public  const   String    DefaultHTTPAPI_LoggingPath   = "default";
 
-        public  const       String         DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
+        public  const   String    DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
 
 
         /// <summary>
         /// The request timeout.
         /// </summary>
-        public readonly     TimeSpan       RequestTimeout               = TimeSpan.FromSeconds(60);
+        public readonly TimeSpan  RequestTimeout               = TimeSpan.FromSeconds(60);
 
         #endregion
 
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public CPO_HTTPAPI                                       CPOAPI                               { get; }
+        public CPO_HTTPAPI                                  CPO_HTTPAPI                          { get; }
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
@@ -96,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
         public WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter    { get; }
 
-        public new OCPILogfileCreatorDelegate? ClientsLogfileCreator { get; }
+        public new OCPILogfileCreatorDelegate?              ClientsLogfileCreator                { get; }
 
         #endregion
 
@@ -188,7 +188,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
         #endregion
-
 
         #region Constructor(s)
 
@@ -286,13 +285,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    LoggingContext,
                    LogfileName,
                    LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                       ? (loggingPath, context, logfileName)
+                              => LogfileCreator       (loggingPath, null, context, logfileName)
                        : null,
 
                    ClientsLoggingPath,
                    ClientsLoggingContext,
                    ClientsLogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                       ? (loggingPath, context, logfileName)
+                              => ClientsLogfileCreator(loggingPath, null, context, logfileName)
                        : null,
                    DNSClient)
 
@@ -346,9 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
-            WireIncomingRequests();
-
-            this.CPOAPI                             = new CPO_HTTPAPI(
+            this.CPO_HTTPAPI                        = new CPO_HTTPAPI(
 
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
@@ -374,17 +373,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                       );
 
-        }
 
-        #endregion
-
-
-        private void WireIncomingRequests()
-        {
+            // WireIncomingRequests
 
             #region OnStartSessionCommand  => RemoteStart
 
-            this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
+            this.CPO_HTTPAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, startSessionCommand.LocationId, out var location))
                     return new CommandResponse(
@@ -476,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnStopSessionCommand   => RemoteStop
 
-            this.CPOAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
+            this.CPO_HTTPAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
 
                 var result = await RoamingNetwork.RemoteStop(
                                        WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
@@ -512,6 +506,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #endregion
 
         }
+
+        #endregion
 
 
         #region AddRemoteParty(...)
@@ -1951,7 +1947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                       remoteParty.CPO2EMSPClient ??= new CPO.HTTP.CPO2EMSP_HTTPClient(
 
-                                                                                         CPOAPI,
+                                                                                         CPO_HTTPAPI,
                                                                                          remoteParty,
                                                                                          null, // VirtualHostname
                                                                                          null, // Description

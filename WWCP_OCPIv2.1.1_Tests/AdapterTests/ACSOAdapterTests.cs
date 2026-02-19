@@ -234,8 +234,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             csoAdapter       = roamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
 
                                    Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.roamingNetwork.Id),
-                                   Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
-                                   Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
+                                   Name:                                I18NString.Create(Languages.de, "OCPI v2.1.1 CSO"),
+                                   Description:                         I18NString.Create(Languages.de, "OCPI v2.1.1 CSO Roaming"),
 
                                    CommonAPI:                           commonAPI,
 

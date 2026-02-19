@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -31,7 +32,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
-using System.Net.Security;
 
 #endregion
 
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public EMSP_HTTPAPI                                      EMSPAPI                              { get; }
+        public EMSP_HTTPAPI                                      EMSP_HTTPAPI                              { get; }
 
 
         #region Logging
@@ -361,8 +361,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
         }
 
-        #endregion
 
+        public event OnAuthorizeStartRequestDelegate  OnAuthorizeStartRequest;
+        public event OnAuthorizeStartResponseDelegate OnAuthorizeStartResponse;
+
+        public event OnAuthorizeStopRequestDelegate   OnAuthorizeStopRequest;
+        public event OnAuthorizeStopResponseDelegate  OnAuthorizeStopResponse;
+
+        #endregion
 
         #region Constructor(s)
 
@@ -432,107 +438,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
-            this.EMSPAPI                            = new EMSP_HTTPAPI(
+            this.EMSP_HTTPAPI                            = new EMSP_HTTPAPI(
                                                           this.CommonAPI,
                                                           URLPathPrefix: HTTPPath.Parse($"{Version.String}/emsp")//CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
 
-            this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
-            this.CustomEVSEConverter                = CustomEVSEConverter;
-            this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
-            this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
-
-            //this.IncludeChargingStationOperatorIds  = IncludeChargingStationOperatorIds ?? (chargingStationOperatorId  => true);
-            //this.IncludeChargingStationOperators    = IncludeChargingStationOperators   ?? (chargingStationOperator    => true);
-            //this.IncludeChargingPoolIds             = IncludeChargingPoolIds            ?? (chargingPoolId             => true);
-            //this.IncludeChargingPools               = IncludeChargingPools              ?? (chargingPool               => true);
-            //this.IncludeChargingStationIds          = IncludeChargingStationIds         ?? (chargingStationId          => true);
-            //this.IncludeChargingStations            = IncludeChargingStations           ?? (chargingStation            => true);
-            //this.IncludeEVSEIds                     = IncludeEVSEIds                    ?? (evseid                     => true);
-            //this.IncludeEVSEs                       = IncludeEVSEs                      ?? (evse                       => true);
-            //this.ChargeDetailRecordFilter           = ChargeDetailRecordFilter          ?? (chargeDetailRecord         => ChargeDetailRecordFilters.forward);
-
-            //this.DisablePushData                    = DisablePushData;
-            //this.DisablePushAdminStatus             = DisablePushAdminStatus;
-            //this.DisablePushStatus                  = DisablePushStatus;
-            //this.DisablePushEnergyStatus            = DisablePushEnergyStatus;
-            //this.DisableAuthentication              = DisableAuthentication;
-            //this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
-
-            //this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
-
-        }
-
-
-        public OCPIEMPAdapter(EMPRoamingProvider_Id                             Id,
-                              I18NString                                        Name,
-                              I18NString                                        Description,
-                              IRoamingNetwork                                   RoamingNetwork,
-
-                              EMSP_HTTPAPI                                           EMSPAPI,
-
-                              EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
-                              EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
-                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?       CustomEVSEStatusUpdateConverter     = null,
-                              CDR_2_WWCPChargeDetailRecord_Delegate?            CustomChargeDetailRecordConverter   = null,
-
-                              IncludeChargingStationOperatorIdDelegate?         IncludeChargingStationOperatorIds   = null,
-                              IncludeChargingStationOperatorDelegate?           IncludeChargingStationOperators     = null,
-                              IncludeChargingPoolIdDelegate?                    IncludeChargingPoolIds              = null,
-                              IncludeChargingPoolDelegate?                      IncludeChargingPools                = null,
-                              IncludeChargingStationIdDelegate?                 IncludeChargingStationIds           = null,
-                              IncludeChargingStationDelegate?                   IncludeChargingStations             = null,
-                              IncludeEVSEIdDelegate?                            IncludeEVSEIds                      = null,
-                              IncludeEVSEDelegate?                              IncludeEVSEs                        = null,
-                              ChargeDetailRecordFilterDelegate?                 ChargeDetailRecordFilter            = null,
-
-                              Boolean                                           DisablePushData                     = false,
-                              Boolean                                           DisablePushAdminStatus              = false,
-                              Boolean                                           DisablePushStatus                   = false,
-                              Boolean                                           DisablePushEnergyStatus             = false,
-                              Boolean                                           DisableAuthentication               = false,
-                              Boolean                                           DisableSendChargeDetailRecords      = false,
-
-                              Timestamped<EMPRoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
-                              Timestamped<EMPRoamingProviderStatusTypes>?       InitialStatus                       = null,
-                              UInt16                                            MaxAdminStatusScheduleSize          = DefaultMaxAdminStatusScheduleSize,
-                              UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
-
-                              String?                                           DataSource                          = null,
-                              DateTimeOffset?                                   Created                             = null,
-                              DateTimeOffset?                                   LastChange                          = null,
-
-                              JObject?                                          CustomData                          = null,
-                              UserDefinedDictionary?                            InternalData                        = null)
-
-            : base(Id,
-                   RoamingNetwork,
-
-                   Name,
-                   Description,
-
-                   null, // EllipticCurve
-                   null, // PrivateKey
-                   null, // PublicKeyCertificates
-
-                   InitialAdminStatus,
-                   InitialStatus,
-                   MaxAdminStatusScheduleSize,
-                   MaxStatusScheduleSize,
-
-                   DataSource,
-                   Created,
-                   LastChange,
-
-                   CustomData,
-                   InternalData)
-
-        {
-
-            this.CommonAPI                          = EMSPAPI.CommonAPI;
-            this.EMSPAPI                            = EMSPAPI;
-
-            this.EMSPAPI.OnRFIDAuthToken           += async (countryCode, partyId, tokenId, locationReference) => {
+            this.EMSP_HTTPAPI.OnRFIDAuthToken           += async (countryCode, partyId, tokenId, locationReference) => {
 
                                                            var response = await AuthorizeStart(LocalAuthentication:   LocalAuthentication.FromAuthToken(
                                                                                                                           AuthenticationToken.Parse(tokenId.ToString())
@@ -569,7 +480,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                       };
 
-
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
             this.CustomEVSEConverter                = CustomEVSEConverter;
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
@@ -597,11 +507,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
 
-        public event OnAuthorizeStartRequestDelegate  OnAuthorizeStartRequest;
-        public event OnAuthorizeStartResponseDelegate OnAuthorizeStartResponse;
-
-        public event OnAuthorizeStopRequestDelegate   OnAuthorizeStopRequest;
-        public event OnAuthorizeStopResponseDelegate  OnAuthorizeStopResponse;
 
         #endregion
 
@@ -885,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var emspClient = new EMSP.HTTP.EMSP2CPOClient(
 
-                                     EMSPAPI,
+                                     EMSP_HTTPAPI,
                                      remoteParty,
                                      null, // VirtualHostname
                                      null, // Description

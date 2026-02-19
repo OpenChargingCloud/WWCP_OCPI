@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
   //      protected       HTTPAPI?                                             cpoHTTPAPI;
         protected       CommonAPI?                                           cpoCommonAPI;
         protected       OCPIWebAPI?                                          cpoWebAPI;
-        protected       CPO_HTTPAPI?                                              cpoCPOAPI;
+        protected       CPO_HTTPAPI?                                         cpoCPOAPI;
         protected       OCPICSOAdapter?                                      cpoAdapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    cpoAPIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   cpoAPIResponseLogs;
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
    //     protected       HTTPAPI?                                             emsp1HTTPAPI;
         protected       CommonAPI?                                           emsp1CommonAPI;
         protected       OCPIWebAPI?                                          emsp1WebAPI;
-        protected       EMSP_HTTPAPI?                                             emsp1EMSPAPI;
+        protected       EMSP_HTTPAPI?                                        emsp1EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp1Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp1APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp1APIResponseLogs;
@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
    //     protected       HTTPAPI?                                             emsp2HTTPAPI;
         protected       CommonAPI?                                           emsp2CommonAPI;
         protected       OCPIWebAPI?                                          emsp2WebAPI;
-        protected       EMSP_HTTPAPI?                                             emsp2EMSPAPI;
+        protected       EMSP_HTTPAPI?                                        emsp2EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp2Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp2APIResponseLogs;
@@ -377,7 +377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            #region Create cpo/emsp1/emsp2 HTTP Servers
+            #region Create cpo/emsp1/emsp2 HTTP APIs
 
             cpoHTTPAPI            = new HTTPExtAPIX(
                                         HTTPServer:      cpoHTTPServer

@@ -19,6 +19,7 @@
 
 using System.Net.Security;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using Org.BouncyCastle.Crypto.Parameters;
@@ -31,7 +32,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -70,17 +70,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public  const       String         DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
+        public  const   String    DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
 
-        public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
+        public  const   String    DefaultHTTPAPI_LoggingPath   = "default";
 
-        public  const       String         DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
+        public  const   String    DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
 
 
         /// <summary>
         /// The request timeout.
         /// </summary>
-        public readonly     TimeSpan       RequestTimeout               = TimeSpan.FromSeconds(60);
+        public readonly TimeSpan  RequestTimeout               = TimeSpan.FromSeconds(60);
 
         #endregion
 
@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public CPO_HTTPAPI                                       CPOAPI                               { get; }
+        public CPO_HTTPAPI                                       CPO_HTTPAPI                               { get; }
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
@@ -196,7 +196,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
         #endregion
-
 
         #region Constructor(s)
 
@@ -334,9 +333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
-            WireIncomingRequests();
-
-            this.CPOAPI                             = new CPO_HTTPAPI(
+            this.CPO_HTTPAPI                        = new CPO_HTTPAPI(
 
                                                           this.CommonAPI,
                                                           null, // AllowDowngrades
@@ -362,157 +359,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                       );
 
-        }
 
-
-        public OCPICSOAdapter(WWCP.CSORoamingProvider_Id                      Id,
-                              I18NString                                      Name,
-                              I18NString                                      Description,
-                              WWCP.IRoamingNetwork                            RoamingNetwork,
-
-                              CPO_HTTPAPI                                          CPOAPI,
-
-                              GetTariffIds_Delegate?                          GetTariffIds                        = null,
-
-                              WWCPEVSEId_2_EVSEUId_Delegate?                  CustomEVSEUIdConverter              = null,
-                              WWCPEVSEId_2_EVSEId_Delegate?                   CustomEVSEIdConverter               = null,
-                              WWCPEVSE_2_EVSE_Delegate?                       CustomEVSEConverter                 = null,
-                              WWCPEVSEStatusUpdate_2_StatusType_Delegate?     CustomEVSEStatusUpdateConverter     = null,
-                              WWCPChargeDetailRecord_2_CDR_Delegate?          CustomChargeDetailRecordConverter   = null,
-
-                              WWCP.IncludeChargingStationOperatorIdDelegate?  IncludeChargingStationOperatorIds   = null,
-                              WWCP.IncludeChargingStationOperatorDelegate?    IncludeChargingStationOperators     = null,
-                              WWCP.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
-                              WWCP.IncludeChargingPoolDelegate?               IncludeChargingPools                = null,
-                              WWCP.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
-                              WWCP.IncludeChargingStationDelegate?            IncludeChargingStations             = null,
-                              WWCP.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
-                              WWCP.IncludeEVSEDelegate?                       IncludeEVSEs                        = null,
-                              WWCP.ChargeDetailRecordFilterDelegate?          ChargeDetailRecordFilter            = null,
-
-                              TimeSpan?                                       FlushEVSEDataAndStatusEvery         = null,
-                              TimeSpan?                                       FlushEVSEFastStatusEvery            = null,
-                              TimeSpan?                                       FlushChargeDetailRecordsEvery       = null,
-
-                              Boolean                                         DisablePushData                     = false,
-                              Boolean                                         DisablePushAdminStatus              = false,
-                              Boolean                                         DisablePushStatus                   = false,
-                              Boolean                                         DisablePushEnergyStatus             = false,
-                              Boolean                                         DisableAuthentication               = false,
-                              Boolean                                         DisableSendChargeDetailRecords      = false,
-
-                              String                                          EllipticCurve                       = "P-256",
-                              ECPrivateKeyParameters?                         PrivateKey                          = null,
-                              WWCP.PublicKeyCertificates?                     PublicKeyCertificates               = null,
-
-                              Boolean?                                        IsDevelopment                       = null,
-                              IEnumerable<String>?                            DevelopmentServers                  = null,
-                              Boolean?                                        DisableLogging                      = false,
-                              String?                                         LoggingPath                         = DefaultHTTPAPI_LoggingPath,
-                              String?                                         LoggingContext                      = DefaultLoggingContext,
-                              String?                                         LogfileName                         = DefaultHTTPAPI_LogfileName,
-                              LogfileCreatorDelegate?                         LogfileCreator                      = null,
-
-                              String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
-                              String?                                         ClientsLoggingContext               = DefaultLoggingContext,
-                              OCPILogfileCreatorDelegate?                     ClientsLogfileCreator               = null,
-                              DNSClient?                                      DNSClient                           = null)
-
-
-            : base(Id,
-                   RoamingNetwork,
-
-                   Name,
-                   Description,
-
-                   IncludeEVSEIds,
-                   IncludeEVSEs,
-                   IncludeChargingStationIds,
-                   IncludeChargingStations,
-                   IncludeChargingPoolIds,
-                   IncludeChargingPools,
-                   IncludeChargingStationOperatorIds,
-                   IncludeChargingStationOperators,
-                   ChargeDetailRecordFilter,
-
-                   FlushEVSEDataAndStatusEvery,
-                   FlushEVSEFastStatusEvery,
-                   null,
-                   FlushChargeDetailRecordsEvery,
-
-                   DisablePushData,
-                   DisablePushAdminStatus,
-                   DisablePushStatus,
-                   true,
-                   DisablePushEnergyStatus,
-                   DisableAuthentication,
-                   DisableSendChargeDetailRecords,
-
-                   EllipticCurve,
-                   PrivateKey,
-                   PublicKeyCertificates,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LoggingContext,
-                   LogfileName,
-                   LogfileCreator,
-
-                   ClientsLoggingPath,
-                   ClientsLoggingContext,
-                   ClientsLogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
-                   DNSClient)
-
-        {
-
-            this.CPOAPI                             = CPOAPI;
-            this.CommonAPI                          = CPOAPI.CommonAPI;
-
-            this.GetTariffIds                       = GetTariffIds;
-
-            if (this.GetTariffIds is not null) {
-
-                this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
-                                                        cpoPartyId,
-                                                        locationId,
-                                                        evseUId,
-                                                        connectorId,
-                                                        empId) =>
-
-                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-                                      null,
-                                      evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
-                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
-
-            }
-
-            this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
-            this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
-            this.CustomEVSEConverter                = CustomEVSEConverter;
-            this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
-            this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
-
-            this.ClientsLogfileCreator              = ClientsLogfileCreator;
-
-            WireIncomingRequests();
-
-        }
-
-        #endregion
-
-
-        private void WireIncomingRequests()
-        {
+            // WireIncomingRequests
 
             #region OnStartSessionCommand  => RemoteStart
 
-            this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
+            this.CPO_HTTPAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(startSessionCommand.LocationId, out var location))
                     return new CommandResponse(
@@ -604,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region OnStopSessionCommand   => RemoteStop
 
-            this.CPOAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
+            this.CPO_HTTPAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
 
                 var result = await RoamingNetwork.RemoteStop(
                                        WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
@@ -640,6 +492,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
         }
+
+        #endregion
 
 
         #region AddRemoteParty(...)
@@ -2116,7 +1970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 RemoteParty.CPO2EMSPClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
-                                                 CPOAPI,
+                                                 CPO_HTTPAPI,
                                                  RemoteParty,
                                                  null, // VirtualHostname
                                                  null, // Description

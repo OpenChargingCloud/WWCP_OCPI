@@ -177,13 +177,15 @@ namespace cloud.charging.open.protocols.WWCP
                                          LoggingContext,
                                          LogfileName,
                                          LogfileCreator is not null
-                                             ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                                             ? (loggingPath, remotePartyId, context, logfileName)
+                                                    => LogfileCreator       (loggingPath, null, context, logfileName)
                                              : null,
 
                                          ClientsLoggingPath,
                                          ClientsLoggingContext,
                                          ClientsLogfileCreator is not null
-                                             ? (loggingPath, remotePartyId, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                                             ? (loggingPath, remotePartyId, context, logfileName)
+                                                    => ClientsLogfileCreator(loggingPath, null, context, logfileName)
                                              : null,
                                          DNSClient
 
@@ -192,8 +194,10 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_2_1.OCPICSOAdapter;
+                       CreateCSORoamingProvider(
+                           newRoamingProvider,
+                           Configurator
+                       ) as OCPIv2_2_1.OCPICSOAdapter;
 
         }
 
