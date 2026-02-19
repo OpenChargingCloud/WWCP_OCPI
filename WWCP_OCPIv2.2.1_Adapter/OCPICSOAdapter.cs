@@ -346,6 +346,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
+            WireIncomingRequests();
+
             this.CPOAPI                             = new CPO_HTTPAPI(
 
                                                           this.CommonAPI,
@@ -369,7 +371,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           LoggingPath,
                                                           LogfileName,
                                                           LogfileCreator
-                                                          // AutoStart
 
                                                       );
 
@@ -378,26 +379,139 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        //public IEnumerable<Tariff_Id> GetTariffIds(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-        //                                           WWCP.ChargingPool_Id?             ChargingPoolId,
-        //                                           WWCP.ChargingStation_Id?          ChargingStationId,
-        //                                           WWCP.EVSE_Id?                     EVSEId,
-        //                                           WWCP.ChargingConnector_Id?        ChargingConnectorId)
-        //{
+        private void WireIncomingRequests()
+        {
 
-        //    var isDC = EVSEId.HasValue && ChargingConnectorId.HasValue
-        //                   ? RoamingNetwork.GetEVSEById(EVSEId.Value)?.ChargingConnectors.First(chargingConnector => chargingConnector.Id == ChargingConnectorId.Value).IsDC
-        //                   : null;
+            #region OnStartSessionCommand  => RemoteStart
 
-        //    if (isDC == true)
-        //        return new[] { Tariff_Id.Parse("DC") };
+            this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
-        //    if (isDC == false)
-        //        return new[] { Tariff_Id.Parse("AC") };
+                if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, startSessionCommand.LocationId, out var location))
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
-        //    return Array.Empty<Tariff_Id>();
+                if (!startSessionCommand.EVSEUId.HasValue)
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
-        //}
+                if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse))
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
+
+                if (!evse.EVSEId.HasValue)
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
+
+                var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
+
+                if (!wwcpEVSEId.HasValue)
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [
+                                   DisplayText.Create(
+                                       Languages.en,
+                                       "StartSessionCommand rejected!"
+                                   )
+                               ]
+                           );
+
+
+                var providerId  = emspId.ToWWCP();
+
+                var result      = await RoamingNetwork.RemoteStart(
+                                            WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                            null,                                   // ChargingProduct
+                                            null,                                   // ReservationId
+                                            providerId.HasValue                     // OCPI does not have its own charging session identification!
+                                                ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
+                                                : WWCP.ChargingSession_Id.NewRandom(),
+                                            providerId,
+                                            WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
+                                            null,
+                                            WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                        );
+
+
+                if (result.Result == WWCP.RemoteStartResultTypes.Success)
+                {
+
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.ACCEPTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand accepted!") ]
+                           );
+
+                }
+
+                else
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
+
+            };
+
+            #endregion
+
+            #region OnStopSessionCommand   => RemoteStop
+
+            this.CPOAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
+
+                var result = await RoamingNetwork.RemoteStop(
+                                       WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
+                                       WWCP.ReservationHandling.Close,
+                                       emspId.ToWWCP(),
+                                       null,                                   // Remote authentication
+                                       WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                   );
+
+
+                if (result.Result == WWCP.RemoteStopResultTypes.Success)
+                {
+
+                    return new CommandResponse(
+                               stopSessionCommand,
+                               CommandResponseTypes.ACCEPTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StopSessionCommand accepted!") ]
+                           );
+
+                }
+
+                else
+                    return new CommandResponse(
+                               stopSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StopSessionCommand rejected!") ]
+                           );
+
+            };
+
+            #endregion
+
+        }
 
 
         #region AddRemoteParty(...)

@@ -305,32 +305,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
-            this.CPOAPI                             = new CPO_HTTPAPI(
-
-                                                          this.CommonAPI,
-                                                          null, // AllowDowngrades
-
-                                                          null,
-
-                                                          null, // BasePath
-                                                          HTTPPath.Parse($"{Version.String}/cpo"),//CommonAPI.URLPathPrefix + Version.String + "cpo",
-
-                                                          null, // ExternalDNSName
-                                                          null, // HTTPServerName
-                                                          null, // HTTPServiceName
-                                                          null, // APIVersionHash
-                                                          null, // APIVersionHashes
-
-                                                          IsDevelopment,
-                                                          DevelopmentServers,
-                                                          DisableLogging,
-                                                          LoggingContext,
-                                                          LoggingPath,
-                                                          LogfileName,
-                                                          LogfileCreator
-                                                          // AutoStart
-
-                                                      );
 
             this.GetTariffIds                       = GetTariffIds;
 
@@ -361,6 +335,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
             WireIncomingRequests();
+
+            this.CPOAPI                             = new CPO_HTTPAPI(
+
+                                                          this.CommonAPI,
+                                                          null, // AllowDowngrades
+
+                                                          null,
+
+                                                          null, // BasePath
+                                                          HTTPPath.Parse($"{Version.String}/cpo"),//CommonAPI.URLPathPrefix + Version.String + "cpo",
+
+                                                          null, // ExternalDNSName
+                                                          null, // HTTPServerName
+                                                          null, // HTTPServiceName
+                                                          null, // APIVersionHash
+                                                          null, // APIVersionHashes
+
+                                                          IsDevelopment,
+                                                          DevelopmentServers,
+                                                          DisableLogging,
+                                                          LoggingContext,
+                                                          LoggingPath,
+                                                          LogfileName,
+                                                          LogfileCreator
+
+                                                      );
 
         }
 
@@ -514,7 +514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
-                if (!CommonAPI.TryGetLocation(startSessionCommand.LocationId, out var location) || location is null)
+                if (!CommonAPI.TryGetLocation(startSessionCommand.LocationId, out var location))
                     return new CommandResponse(
                                startSessionCommand,
                                CommandResponseTypes.REJECTED,
@@ -530,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
-                if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse) || evse is null)
+                if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse))
                     return new CommandResponse(
                                startSessionCommand,
                                CommandResponseTypes.REJECTED,
