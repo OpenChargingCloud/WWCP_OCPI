@@ -9249,30 +9249,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = [];
 
 
-        public delegate Task               OnTokenAddedDelegate  (Token     Token);
-        public delegate Task               OnTokenChangedDelegate(Token     Token);
-        public delegate Task               OnTokenRemovedDelegate(Token     Token);
+        public delegate Task               OnTokenStatusAddedDelegate  (TokenStatus  TokenStatus);
+        public delegate Task               OnTokenStatusChangedDelegate(TokenStatus  TokenStatus);
+        public delegate Task               OnTokenStatusRemovedDelegate(TokenStatus  TokenStatus);
 
-        public delegate Task<TokenStatus>  OnVerifyTokenDelegate (Token_Id  TokenId);
+        public delegate Task<TokenStatus>  OnVerifyTokenDelegate       (Token_Id     TokenId);
 
 
-        public event OnTokenAddedDelegate?    OnTokenAdded;
-        public event OnTokenChangedDelegate?  OnTokenChanged;
-        public event OnTokenRemovedDelegate?  OnTokenRemoved;
+        public event OnTokenStatusAddedDelegate?    OnTokenStatusAdded;
+        public event OnTokenStatusChangedDelegate?  OnTokenStatusChanged;
+        public event OnTokenStatusRemovedDelegate?  OnTokenStatusRemoved;
 
-        public event OnVerifyTokenDelegate?   OnVerifyToken;
+        public event OnVerifyTokenDelegate?         OnVerifyToken;
 
         #endregion
 
 
         #region AddToken            (Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
 
-        public async Task<AddResult<Token>> AddToken(Token              Token,
-                                                     AllowedType?       Status              = null,
-                                                     Boolean            SkipNotifications   = false,
-                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                     User_Id?           CurrentUserId       = null,
-                                                     CancellationToken  CancellationToken   = default)
+        public async Task<AddResult<TokenStatus>>
+
+            AddToken(Token              Token,
+                     AllowedType?       Status              = null,
+                     Boolean            SkipNotifications   = false,
+                     EventTracking_Id?  EventTrackingId     = null,
+                     User_Id?           CurrentUserId       = null,
+                     CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -9304,24 +9307,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenAdded,
+                              OnTokenStatusAdded,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  Token
+                                  newTokenStatus
                               )
                           );
 
                 }
 
-                return AddResult<Token>.Success(
+                return AddResult<TokenStatus>.Success(
                            EventTrackingId,
-                           Token
+                           newTokenStatus
                        );
 
             }
 
-            return AddResult<Token>.Failed(
+            return AddResult<TokenStatus>.Failed(
                        EventTrackingId,
-                       Token,
+                       newTokenStatus,
                        "TryAdd(Token.Id, newTokenStatus) failed!"
                    );
 
@@ -9331,12 +9334,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddTokenIfNotExists (Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
 
-        public async Task<AddResult<Token>> AddTokenIfNotExists(Token              Token,
-                                                                AllowedType?       Status              = null,
-                                                                Boolean            SkipNotifications   = false,
-                                                                EventTracking_Id?  EventTrackingId     = null,
-                                                                User_Id?           CurrentUserId       = null,
-                                                                CancellationToken  CancellationToken   = default)
+        public async Task<AddResult<TokenStatus>>
+
+            AddTokenIfNotExists(Token              Token,
+                                AllowedType?       Status              = null,
+                                Boolean            SkipNotifications   = false,
+                                EventTracking_Id?  EventTrackingId     = null,
+                                User_Id?           CurrentUserId       = null,
+                                CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -9368,24 +9374,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenAdded,
+                              OnTokenStatusAdded,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  Token
+                                  newTokenStatus
                               )
                           );
 
                 }
 
-                return AddResult<Token>.Success(
+                return AddResult<TokenStatus>.Success(
                            EventTrackingId,
-                           Token
+                           newTokenStatus
                        );
 
             }
 
-            return AddResult<Token>.NoOperation(
+            return AddResult<TokenStatus>.NoOperation(
                        EventTrackingId,
-                       Token
+                       newTokenStatus
                    );
 
         }
@@ -9394,13 +9400,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddOrUpdateToken    (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token              Token,
-                                                                     AllowedType?       Status              = null,
-                                                                     Boolean?           AllowDowngrades     = false,
-                                                                     Boolean            SkipNotifications   = false,
-                                                                     EventTracking_Id?  EventTrackingId     = null,
-                                                                     User_Id?           CurrentUserId       = null,
-                                                                     CancellationToken  CancellationToken   = default)
+        public async Task<AddOrUpdateResult<TokenStatus>>
+
+            AddOrUpdateToken(Token              Token,
+                             AllowedType?       Status              = null,
+                             Boolean?           AllowDowngrades     = false,
+                             Boolean            SkipNotifications   = false,
+                             EventTracking_Id?  EventTrackingId     = null,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -9410,22 +9419,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
             {
 
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
-                {
-
-                    return AddOrUpdateResult<Token>.Failed(
-                               EventTrackingId,
-                               Token,
-                               "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!"
-                           );
-
-                }
-
                 var updatedTokenStatus = new TokenStatus(
                                              Token,
                                              Status ?? existingTokenStatus.Status
                                          );
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
+                {
+
+                    return AddOrUpdateResult<TokenStatus>.Failed(
+                               EventTrackingId,
+                               updatedTokenStatus,
+                               "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!"
+                           );
+
+                }
 
                 tokenStatus[Token.Id] = updatedTokenStatus;
                 Token.CommonAPI = this;
@@ -9447,17 +9456,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenChanged,
+                              OnTokenStatusChanged,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  Token
+                                  updatedTokenStatus
                               )
                           );
 
                 }
 
-                return AddOrUpdateResult<Token>.Updated(
+                return AddOrUpdateResult<TokenStatus>.Updated(
                            EventTrackingId,
-                           Token
+                           updatedTokenStatus
                        );
 
             }
@@ -9493,24 +9502,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenAdded,
+                              OnTokenStatusAdded,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  Token
+                                  newTokenStatus
                               )
                           );
 
                 }
 
-                return AddOrUpdateResult<Token>.Created(
+                return AddOrUpdateResult<TokenStatus>.Created(
                            EventTrackingId,
-                           Token
+                           newTokenStatus
                        );
 
             }
 
-            return AddOrUpdateResult<Token>.Failed(
+            return AddOrUpdateResult<TokenStatus>.Failed(
                        EventTrackingId,
-                       Token,
+                       newTokenStatus,
                        "AddOrUpdateToken(Token.Id, Token) failed!"
                    );
 
@@ -9522,48 +9531,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region UpdateToken         (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<UpdateResult<Token>> UpdateToken(Token              Token,
-                                                           AllowedType?       Status              = null,
-                                                           Boolean?           AllowDowngrades     = false,
-                                                           Boolean            SkipNotifications   = false,
-                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                           User_Id?           CurrentUserId       = null,
-                                                           CancellationToken  CancellationToken   = default)
+        public async Task<UpdateResult<TokenStatus>>
+
+            UpdateToken(Token              Token,
+                        AllowedType?       Status              = null,
+                        Boolean?           AllowDowngrades     = false,
+                        Boolean            SkipNotifications   = false,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
             #region Validate AllowDowngrades
 
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
-                {
-
-                    return UpdateResult<Token>.Failed(
-                               EventTrackingId,
-                               Token,
-                               "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!"
-                           );
-
-                }
-
-            }
-            else
-                return UpdateResult<Token>.Failed(
+            if (!tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+                return UpdateResult<TokenStatus>.Failed(
                            EventTrackingId,
-                           Token,
+                           new TokenStatus(
+                               Token,
+                               Status ?? AllowedType.NOT_ALLOWED
+                           ),
                            $"Unknown token identification '{Token.Id}'!"
+                       );
+
+
+            if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
+
+                return UpdateResult<TokenStatus>.Failed(
+                           EventTrackingId,
+                           new TokenStatus(
+                               Token,
+                               Status ?? existingTokenStatus.Status
+                           ),
+                           "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!"
                        );
 
             #endregion
 
-
             var updatedTokenStatus = new TokenStatus(
                                          Token,
-                                         AllowedType.ALLOWED
+                                         Status ?? existingTokenStatus.Status
                                      );
 
             if (tokenStatus.TryUpdate(Token.Id,
@@ -9590,24 +9601,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenChanged,
+                              OnTokenStatusChanged,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  Token
+                                  updatedTokenStatus
                               )
                           );
 
                 }
 
-                return UpdateResult<Token>.Success(
+                return UpdateResult<TokenStatus>.Success(
                            EventTrackingId,
-                           Token
+                           updatedTokenStatus
                        );
 
             }
 
-            return UpdateResult<Token>.Failed(
+            return UpdateResult<TokenStatus>.Failed(
                        EventTrackingId,
-                       Token,
+                       updatedTokenStatus,
                        "UpdateToken(Token.Id, Token, Token) failed!"
                    );
 
@@ -9617,21 +9628,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region TryPatchToken       (Token, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<PatchResult<Token>> TryPatchToken(Token              Token,
-                                                            JObject            TokenPatch,
-                                                            Boolean?           AllowDowngrades     = false,
-                                                            Boolean            SkipNotifications   = false,
-                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                            User_Id?           CurrentUserId       = null,
-                                                            CancellationToken  CancellationToken   = default)
+        public async Task<PatchResult<TokenStatus>>
+
+            TryPatchToken(Token              Token,
+                          JObject            TokenPatch,
+                          Boolean?           AllowDowngrades     = false,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
             if (TokenPatch is null || !TokenPatch.HasValues)
-                return PatchResult<Token>.Failed(
+                return PatchResult<TokenStatus>.Failed(
                            EventTrackingId,
-                           Token,
+                           new TokenStatus(
+                               Token,
+                               AllowedType.NOT_ALLOWED
+                           ),
                            "The given token patch must not be null or empty!"
                        );
 
@@ -9643,12 +9660,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       AllowDowngrades ?? this.AllowDowngrades ?? false
                                   );
 
-                if (patchResult.IsSuccess &&
-                    patchResult.PatchedData is not null)
+                if (patchResult.IsSuccessAndDataNotNull(out var pachtedToken))
                 {
 
                     var patchedTokenStatus = new TokenStatus(
-                                                 patchResult.PatchedData,
+                                                 pachtedToken,
                                                  existingTokenStatus.Status
                                              );
 
@@ -9671,26 +9687,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         await LogEvent(
-                                  OnTokenChanged,
+                                  OnTokenStatusChanged,
                                   loggingDelegate => loggingDelegate.Invoke(
-                                      patchResult.PatchedData
+                                      patchedTokenStatus
                                   )
                               );
 
                     }
 
+                    return PatchResult<TokenStatus>.Success(
+                               EventTrackingId,
+                               patchedTokenStatus
+                           );
+
                 }
 
-                return patchResult;
+                return PatchResult<TokenStatus>.Failed(
+                           EventTrackingId,
+                           new TokenStatus(
+                               Token,
+                               AllowedType.NOT_ALLOWED
+                           ),
+                           patchResult.ErrorResponse ?? "The given token could not be patched!"
+                       );
 
             }
 
-            else
-                return PatchResult<Token>.Failed(
-                           EventTrackingId,
+
+            return PatchResult<TokenStatus>.Failed(
+                       EventTrackingId,
+                       new TokenStatus(
                            Token,
-                           "The given token does not exist!"
-                       );
+                           AllowedType.NOT_ALLOWED
+                       ),
+                       "The given token does not exist!"
+                   );
 
         }
 
@@ -9704,7 +9735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Token">A token.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public Task<RemoveResult<Token>>
+        public Task<RemoveResult<TokenStatus>>
 
             RemoveToken(Token              Token,
                         Boolean            SkipNotifications   = false,
@@ -9729,7 +9760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="TokenId">A unique identification of a token.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<Token>>
+        public async Task<RemoveResult<TokenStatus>>
 
             RemoveToken(Token_Id           TokenId,
                         Boolean            SkipNotifications   = false,
@@ -9759,22 +9790,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 {
 
                     await LogEvent(
-                              OnTokenRemoved,
+                              OnTokenStatusRemoved,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  existingTokenStatus.Token
+                                  existingTokenStatus
                               )
                           );
 
                 }
 
-                return RemoveResult<Token>.Success(
+                return RemoveResult<TokenStatus>.Success(
                            EventTrackingId,
-                           existingTokenStatus.Token
+                           existingTokenStatus
                        );
 
             }
 
-            return RemoveResult<Token>.Failed(
+            return RemoveResult<TokenStatus>.Failed(
                        EventTrackingId,
                        "RemoveToken(TokenId, ...) failed!"
                    );
@@ -9792,10 +9823,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Boolean            SkipNotifications   = false,
-                                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                                            User_Id?           CurrentUserId       = null,
-                                                                            CancellationToken  CancellationToken   = default)
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
+
+            RemoveAllTokens(Boolean            SkipNotifications   = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -9816,17 +9850,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 foreach (var tokenStatus in existingTokenStatus)
                     await LogEvent(
-                              OnTokenRemoved,
+                              OnTokenStatusRemoved,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  tokenStatus.Token
+                                  tokenStatus
                               )
                           );
 
             }
 
-            return RemoveResult<IEnumerable<Token>>.Success(
+            return RemoveResult<IEnumerable<TokenStatus>>.Success(
                        EventTrackingId,
-                       existingTokenStatus.Select(tokenStatus => tokenStatus.Token)
+                       existingTokenStatus
                    );
 
         }
@@ -9843,7 +9877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>>
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
 
             RemoveAllTokens(Func<Token, Boolean>  IncludeTokens,
                             Boolean               SkipNotifications   = false,
@@ -9854,8 +9888,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
             foreach (var token_status in tokenStatus.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
             {
@@ -9869,7 +9903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    );
 
                 if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
+                    removedTokens.Add(token_status);
                 else
                     failedTokens. Add(result);
 
@@ -9877,12 +9911,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return removedTokens.Count != 0 && failedTokens.Count == 0
 
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(EventTrackingId, removedTokens)
 
                        : removedTokens.Count == 0 && failedTokens.Count == 0
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                            failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(EventTrackingId, [])
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                                  failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -9895,17 +9929,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="IncludeTokenIds">A token identification filter.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
-                                                                            Boolean                  SkipNotifications   = false,
-                                                                            EventTracking_Id?        EventTrackingId     = null,
-                                                                            User_Id?                 CurrentUserId       = null,
-                                                                            CancellationToken        CancellationToken   = default)
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
+
+            RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
+                            Boolean                  SkipNotifications   = false,
+                            EventTracking_Id?        EventTrackingId     = null,
+                            User_Id?                 CurrentUserId       = null,
+                            CancellationToken        CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
             foreach (var token_status in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
                                                      Select (kvp => kvp.Value).
@@ -9921,7 +9958,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    );
 
                 if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
+                    removedTokens.Add(token_status);
                 else
                     failedTokens. Add(result);
 
@@ -9929,12 +9966,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return removedTokens.Count != 0 && failedTokens.Count == 0
 
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(EventTrackingId, removedTokens)
 
                        : removedTokens.Count == 0 && failedTokens.Count == 0
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(EventTrackingId, [])
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                                  failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -9948,18 +9985,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(CountryCode        CountryCode,
-                                                                            Party_Id           PartyId,
-                                                                            Boolean            SkipNotifications   = false,
-                                                                            EventTracking_Id?  EventTrackingId     = null,
-                                                                            User_Id?           CurrentUserId       = null,
-                                                                            CancellationToken  CancellationToken   = default)
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
+
+            RemoveAllTokens(CountryCode        CountryCode,
+                            Party_Id           PartyId,
+                            Boolean            SkipNotifications   = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTokens  = new List<Token>();
-            var failedTokens   = new List<RemoveResult<Token>>();
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
             foreach (var token_status in tokenStatus.Values.Where  (tokenstatus => CountryCode == tokenstatus.Token.CountryCode &&
                                                                                    PartyId     == tokenstatus.Token.PartyId).
@@ -9975,7 +10014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    );
 
                 if (result.IsSuccess)
-                    removedTokens.Add(token_status.Token);
+                    removedTokens.Add(token_status);
                 else
                     failedTokens. Add(result);
 
@@ -9983,12 +10022,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return removedTokens.Count != 0 && failedTokens.Count == 0
 
-                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(EventTrackingId, removedTokens)
 
                        : removedTokens.Count == 0 && failedTokens.Count == 0
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
-                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(EventTrackingId, [])
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
+                                                                                  failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 

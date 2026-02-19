@@ -52,8 +52,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create a new patch result.
         /// </summary>
-        /// <param name="IsSuccess">Whether the operation was successful or not.</param>
-        /// <param name="Data">The data of the operation.</param>
+        /// <param name="IsSuccess">Whether the patch was successful or not.</param>
+        /// <param name="PatchedData">The patched data.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
         private PatchResult(Boolean           IsSuccess,

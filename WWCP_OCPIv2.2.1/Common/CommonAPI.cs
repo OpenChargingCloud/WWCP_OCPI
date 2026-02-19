@@ -11661,32 +11661,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Events
 
-        public delegate Task               OnTokenAddedDelegate  (Token     Token);
-        public delegate Task               OnTokenChangedDelegate(Token     Token);
-        public delegate Task               OnTokenRemovedDelegate(Token     Token);
+        public delegate Task               OnTokenStatusAddedDelegate  (TokenStatus  TokenStatus);
+        public delegate Task               OnTokenStatusChangedDelegate(TokenStatus  TokenStatus);
+        public delegate Task               OnTokenStatusRemovedDelegate(TokenStatus  TokenStatus);
 
-        public delegate Task<TokenStatus>  OnVerifyTokenDelegate (Party_Idv3  PartyId,
-                                                                  Token_Id    TokenId);
+        public delegate Task<TokenStatus>  OnVerifyTokenDelegate       (Party_Idv3   PartyId,
+                                                                        Token_Id     TokenId);
 
-
-        public event OnTokenAddedDelegate?    OnTokenAdded;
-        public event OnTokenChangedDelegate?  OnTokenChanged;
-        public event OnTokenRemovedDelegate?  OnTokenRemoved;
-
-        public event OnVerifyTokenDelegate?   OnVerifyToken;
-
-
-
-
-
-        public delegate Task OnTokenStatusAddedDelegate  (TokenStatus TokenStatus);
 
         public event OnTokenStatusAddedDelegate?    OnTokenStatusAdded;
-
-
-        public delegate Task OnTokenStatusChangedDelegate(TokenStatus TokenStatus);
-
         public event OnTokenStatusChangedDelegate?  OnTokenStatusChanged;
+        public event OnTokenStatusRemovedDelegate?  OnTokenStatusRemoved;
+
+        public event OnVerifyTokenDelegate?   OnVerifyToken;
 
         #endregion
 
@@ -12275,9 +12262,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
                         await LogEvent(
-                                  OnTokenRemoved,
+                                  OnTokenStatusRemoved,
                                   loggingDelegate => loggingDelegate.Invoke(
-                                      existingTokenStatus.Token
+                                      existingTokenStatus
                                   )
                               );
 
@@ -12315,7 +12302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>>
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
 
             RemoveAllTokens(Boolean            SkipNotifications   = false,
                             EventTracking_Id?  EventTrackingId     = null,
@@ -12326,11 +12313,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var tokens = new List<Token>();
+            var tokenStatusList = new List<TokenStatus>();
 
             foreach (var party in parties.Values)
             {
-                tokens.AddRange(party.Tokens.Values.Select(tokenStatus => tokenStatus.Token));
+                tokenStatusList.AddRange(party.Tokens.Values);
                 party.Tokens.Clear();
             }
 
@@ -12344,19 +12331,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (!SkipNotifications)
             {
 
-                foreach (var token in tokens)
+                foreach (var tokenStatus in tokenStatusList)
                     await LogEvent(
-                              OnTokenRemoved,
+                              OnTokenStatusRemoved,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  token
+                                  tokenStatus
                               )
                           );
 
             }
 
-            return RemoveResult<IEnumerable<Token>>.Success(
+            return RemoveResult<IEnumerable<TokenStatus>>.Success(
                        EventTrackingId,
-                       tokens
+                       tokenStatusList
                    );
 
         }

@@ -3347,7 +3347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region GET      ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
@@ -3418,7 +3418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region PUT      ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
@@ -3502,11 +3502,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    );
 
 
-                    if (addOrUpdateResult.IsSuccessAndDataNotNull(out var tokenData))
+                    if (addOrUpdateResult.IsSuccessAndDataNotNull(out var token_Status))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = tokenData.ToJSON(
+                                   Data                 = token_Status.Token.ToJSON(
                                                               false, //IncludeOwnerInformation,
                                                               CustomTokenSerializer
                                                           ),
@@ -3516,8 +3516,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                         : HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                        AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = tokenData.LastUpdated,
-                                       ETag                       = tokenData.ETag
+                                       LastModified               = token_Status.Token.LastUpdated,
+                                       ETag                       = token_Status.Token.ETag
                                    }
                                };
 
@@ -3532,8 +3532,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = addOrUpdateResult.Data?.LastUpdated,
-                                   ETag                       = addOrUpdateResult.Data?.ETag
+                                   LastModified               = addOrUpdateResult.Data.Token.LastUpdated,
+                                   ETag                       = addOrUpdateResult.Data.Token.ETag
                                }
                            };
 
@@ -3541,7 +3541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH   ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+            #region PATCH    ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             CommonAPI.AddOCPIMethod(
 
@@ -3605,11 +3605,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               );
 
 
-                    if (patchedToken.IsSuccessAndDataNotNull(out var tokenData))
+                    if (patchedToken.IsSuccessAndDataNotNull(out var token_Status))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = tokenData.ToJSON(
+                                       Data                 = token_Status.Token.ToJSON(
                                                                   false, //IncludeOwnerInformation,
                                                                   CustomTokenSerializer
                                                               ),
@@ -3617,8 +3617,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = tokenData.LastUpdated,
-                                           ETag                       = tokenData.ETag
+                                           LastModified               = token_Status.Token.LastUpdated,
+                                           ETag                       = token_Status.Token.ETag
                                        }
                                    };
 
@@ -3636,7 +3636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE  ~/tokens/{country_code}/{party_id}/{tokenId}       [NonStandard]
+            #region DELETE   ~/tokens/{country_code}/{party_id}/{tokenId}       [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
@@ -3687,11 +3687,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     var result     = await CommonAPI.RemoveToken(existingTokenStatus.Value.Token);
 
 
-                    if (result.IsSuccessAndDataNotNull(out var tokenData))
+                    if (result.IsSuccessAndDataNotNull(out var token_Status))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = tokenData.ToJSON(
+                                   Data                 = token_Status.Token.ToJSON(
                                                               false, //IncludeOwnerInformation,
                                                               CustomTokenSerializer
                                                           ),
