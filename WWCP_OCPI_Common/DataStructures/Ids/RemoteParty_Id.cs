@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public static EMSP_Id? AsEMSPId(this RemoteParty_Id RemotePartyId)
             => RemotePartyId.Role == Role.EMSP
-                   ? EMSP_Id.Parse($"{RemotePartyId.CountryCode}*{RemotePartyId.PartyId}")
+                   ? EMSP_Id.Parse($"{RemotePartyId.CountryCode}-{RemotePartyId.PartyId}")
                    : null;
 
         /// <summary>
