@@ -426,7 +426,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             providerId,
                                             WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
                                             null,
-                                            WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                            WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
+                                                Id.ToString()
+                                            ),
+                                            this                                    // CSORoamingProvider
                                         );
 
 
@@ -459,11 +462,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CPO_HTTPAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
 
                 var result = await RoamingNetwork.RemoteStop(
-                                       WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
+                                       WWCP.ChargingSession_Id.Parse(
+                                           stopSessionCommand.SessionId.ToString()
+                                       ),
                                        WWCP.ReservationHandling.Close,
                                        emspId.ToWWCP(),
                                        null,                                   // Remote authentication
-                                       WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                       WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
+                                           Id.ToString()
+                                       ),
+                                       this                                    // CSORoamingProvider
                                    );
 
 
@@ -479,13 +487,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                else
-                    return new CommandResponse(
-                               stopSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StopSessionCommand rejected!") ]
-                           );
+                return new CommandResponse(
+                           stopSessionCommand,
+                           CommandResponseTypes.REJECTED,
+                           TimeSpan.FromMinutes(1),
+                           [ DisplayText.Create(Languages.en, "StopSessionCommand rejected!") ]
+                       );
 
             };
 

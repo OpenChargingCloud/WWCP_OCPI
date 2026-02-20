@@ -447,7 +447,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                             null,
                                             WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                 remotePartyId.ToString()
-                                            )
+                                            ),
+                                            this                                    // CSORoamingProvider
                                         );
 
 
@@ -492,7 +493,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            WWCP.ReservationHandling.Close,
                                            providerId,
                                            null,                                   // Remote authentication
-                                           WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                           WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
+                                               remotePartyId.ToString()
+                                           ),
+                                           this                                    // CSORoamingProvider
                                        );
 
                     if (result.Result == WWCP.RemoteStopResultTypes.Success)
@@ -513,11 +517,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 }
 
                 return new CommandResponse(
-                               stopSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!") ]
-                           );
+                           stopSessionCommand,
+                           CommandResponseTypes.REJECTED,
+                           TimeSpan.FromMinutes(1),
+                           [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!") ]
+                       );
 
             };
 
