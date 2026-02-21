@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => CustomChargingPoolIdConverter is not null
                    ? CustomChargingPoolIdConverter(ChargingPoolId)
-                   : Location_Id.TryParse(ChargingPoolId.Suffix);
+                   : Location_Id.TryParse(ChargingPoolId.ToString());
 
 
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)

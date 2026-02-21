@@ -846,8 +846,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             //ToDo: Handle errors!
 
-                        }
+                            if (!result.IsSuccess)
+                            {
 
+                            }
+
+                        }
 
                         return WWCP.AddOrUpdateChargingPoolResult.Enqueued(
                                    ChargingPool,
@@ -1079,6 +1083,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 //ToDo: Process errors!!!
 
+                                if (!result.IsSuccess)
+                                {
+
+                                }
 
                             }
 
@@ -1171,6 +1179,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 var result = await CommonAPI.AddLocation(location);
 
                                 //ToDo: Handle errors!
+
+                                if (!result.IsSuccess)
+                                {
+
+                                }
 
                             }
 
