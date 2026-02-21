@@ -29,6 +29,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
     /// <summary>
+    /// Extension methods for tariff elements.
+    /// </summary>
+    public static class TariffElementExtensions
+    {
+
+        #region HasRestrictions(this TariffElement)
+
+        /// <summary>
+        /// Whether the given charging tariff element has restrictions.
+        /// </summary>
+        /// <param name="TariffElement"></param>
+        public static Boolean HasRestrictions(this TariffElement TariffElement)
+
+            => TariffElement.TariffRestrictions is not null &&
+               TariffElement.TariffRestrictions.HasRestrictions();
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// A charging tariff element.
     /// </summary>
     public readonly struct TariffElement : IEquatable<TariffElement>
@@ -296,6 +318,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     TariffRestrictions?.Clone());
 
         #endregion
+
+
+        public Boolean IsActive(ChargingPeriod ChargingPeriod)
+        {
+
+            return TariffRestrictions?.IsActive(ChargingPeriod) ?? true;
+
+            //return TariffRestrictions.All(restriction => restriction.IsValid(period.StartInstant)) &&
+            //       TariffRestrictions.All(restriction => restriction.IsValid(period.PeriodData));
+
+        }
 
 
         #region Operator overloading

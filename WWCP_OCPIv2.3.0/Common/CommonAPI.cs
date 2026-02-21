@@ -44,6 +44,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
+    public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (CountryCode     CPOCountryCode,
+                                                                    Party_Id        CPOPartyId,
+                                                                    Location_Id?    LocationId       = null,
+                                                                    EVSE_Id?        EVSEId           = null,
+                                                                    Connector_Id?   ConnectorId      = null,
+                                                                    EMSP_Id?        EMSPId           = null);
+
+
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode     CPOCountryCode,
+                                                                    Party_Id        CPOPartyId,
+                                                                    Location_Id?    LocationId       = null,
+                                                                    EVSE_Id?        EVSEId           = null,
+                                                                    Connector_Id?   ConnectorId      = null,
+                                                                    EMSP_Id?        EMSPId           = null);
+
+    public delegate Tariff?                 GetTariff2_Delegate   ( Party_Idv3      PartyId,
+                                                                    Tariff_Id       TariffId,
+                                                                    DateTimeOffset? StartTimestamp   = null,
+                                                                    TimeSpan?       EVSEUId          = null);
 
 
     public class PartyData(Party_Idv3       Id,
@@ -11672,12 +11691,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                       Party_Id       CPOPartyId,
-                                                                       Location_Id?   Location      = null,
-                                                                       EVSE_UId?      EVSEUId       = null,
-                                                                       Connector_Id?  ConnectorId   = null,
-                                                                       EMSP_Id?       EMSPId        = null);
 
         public GetTariffIds2_Delegate?        GetTariffIdsDelegate       { get; set; }
 
@@ -12619,6 +12632,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
+        #region GetTariff   (PartyId, TariffId, Timestamp = null, Tolerance = null)
+
+        public Tariff? GetTariff(Party_Idv3       PartyId,
+                                 Tariff_Id        TariffId,
+                                 DateTimeOffset?  Timestamp   = null,
+                                 TimeSpan?        Tolerance   = null)
+        {
+
+            if (parties.      TryGetValue(PartyId,  out var party) &&
+                party.Tariffs.TryGetValue(TariffId,
+                                          out var tariff,
+                                          Timestamp,
+                                          Tolerance))
+            {
+                return tariff;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
         #region GetTariffs  (IncludeTariff)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>  IncludeTariff)
@@ -12670,19 +12706,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
+        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEId?, ConnectorId?, EMSPId?)
 
         public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
                                                    Party_Id       PartyId,
                                                    Location_Id?   LocationId,
-                                                   EVSE_UId?      EVSEUId,
+                                                   EVSE_Id?       EVSEId,
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
 
             => GetTariffIdsDelegate?.Invoke(CountryCode,
                                             PartyId,
                                             LocationId,
-                                            EVSEUId,
+                                            EVSEId,
                                             ConnectorId,
                                             EMSPId) ?? [];
 

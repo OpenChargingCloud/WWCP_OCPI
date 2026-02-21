@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 // The last time marker is removed, when it is equal to the stop timestamp of the CDR!
                 var chargingPeriods = timeMarkers.Where(timeMarker => timeMarker >= CDR.Start && timeMarker < CDR.Stop).
-                                                  Order().Select(tm => new ChargingPeriod(tm)).ToList();
+                                                  Order().Select(tm => ChargingPeriod.Create(tm)).ToList();
 
                 for (var i=0; i<chargingPeriods.Count; i++)
                 {

@@ -160,12 +160,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// This implementation has many extensions to simplify the calculation
     /// of charging costs in combination with charging tariffs.
     /// </summary>
-    public class ChargingPeriod : IEquatable<ChargingPeriod>
+    public class ChargingPeriod : IEquatable<ChargingPeriod>,
+                                  IComparable<ChargingPeriod>,
+                                  IComparable
     {
 
         #region Properties
 
-        public  UInt32                                       Id                    { get; set; }
+        public  UInt32                 Id                    { get; set; }
 
         /// <summary>
         /// Start timestamp of the charging period.
@@ -173,13 +175,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// the last period ends when the session ends.
         /// </summary>
         [Mandatory]
-        public  DateTimeOffset                               StartTimestamp        { get; }
+        public  DateTimeOffset         StartTimestamp        { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
         /// </summary>
         [Mandatory]
-        public  HashSet<CDRDimension>                        Dimensions            { get; } = [];
+        public  HashSet<CDRDimension>  Dimensions            { get; } = [];
 
 
 
@@ -357,8 +359,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public ChargingPeriod(DateTimeOffset              StartTimestamp,
-                              IEnumerable<CDRDimension>?  Dimensions   = null)
+        private ChargingPeriod(DateTimeOffset              StartTimestamp,
+                               IEnumerable<CDRDimension>?  Dimensions   = null)
         {
 
             this.StartTimestamp  = StartTimestamp;
@@ -383,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.StartTimestamp  = StartTimestamp;
             this.Dimensions      = Dimensions is not null
-                                       ? new HashSet<CDRDimension>(Dimensions)
+                                       ? [.. Dimensions]
                                        : [];
 
             this.Previous        = Previous;
@@ -410,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.StartTimestamp     = StartTimestamp;
             this.endTimestamp       = EndTimestamp;
             this.Dimensions         = Dimensions is not null
-                                          ? new HashSet<CDRDimension>(Dimensions)
+                                          ? [.. Dimensions]
                                           : [];
 
             this.Previous           = Previous;
@@ -422,6 +424,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region (static) Create  (StartTimestamp, Dimensions = null)
+
+        /// <summary>
+        /// A charging period consists of a start timestamp and a
+        /// list of possible values that influence this period.
+        /// </summary>
+        /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
+        /// <param name="Dimensions">An optional list of relevant values for this charging period.</param>
+        public static ChargingPeriod Create(DateTimeOffset              StartTimestamp,
+                                            IEnumerable<CDRDimension>?  Dimensions   = null)
+
+            => new (StartTimestamp,
+                    Dimensions);
+
+        #endregion
 
         #region (static) Parse   (JSON, CustomChargingPeriodParser = null)
 
@@ -733,8 +751,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two charging periods.
         /// </summary>
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
-        public Int32 CompareTo(ChargingPeriod ChargingPeriod)
+        public Int32 CompareTo(ChargingPeriod? ChargingPeriod)
         {
+
+            if (ChargingPeriod is null)
+                throw new ArgumentNullException(nameof(ChargingPeriod), "The given charging period must not be null!");
 
             var c = StartTimestamp.CompareTo(ChargingPeriod.StartTimestamp);
 

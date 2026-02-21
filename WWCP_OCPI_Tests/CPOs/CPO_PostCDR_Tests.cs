@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              Currency.EUR,
 
                                              [
-                                                 new OCPIv2_1_1.ChargingPeriod(
+                                                 OCPIv2_1_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:49Z"),
                                                      [
                                                          OCPIv2_1_1.CDRDimension.Create(
@@ -88,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                          )
                                                      ]
                                                  ),
-                                                 new OCPIv2_1_1.ChargingPeriod(
+                                                 OCPIv2_1_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:50Z"),
                                                      [
                                                          OCPIv2_1_1.CDRDimension.Create(

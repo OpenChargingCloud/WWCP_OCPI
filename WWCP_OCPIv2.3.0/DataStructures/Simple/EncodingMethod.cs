@@ -184,6 +184,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 #pragma warning disable IDE1006 // Naming Styles
 
         /// <summary>
+        /// Unknown.
+        /// </summary>
+        public static EncodingMethod Unknown            { get; }
+            = new ("unknown");
+
+        /// <summary>
         /// Proposed by SAFE.
         /// </summary>
         public static EncodingMethod OCMF               { get; }

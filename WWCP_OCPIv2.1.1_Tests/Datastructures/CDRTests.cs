@@ -75,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Currency.EUR,
 
                                [
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        [
                                            CDRDimension.Create(
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                            )
                                        ]
                                    ),
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        [
                                            CDRDimension.Create(
@@ -651,36 +651,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             ClassicAssert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             ClassicAssert.AreEqual (23, wwcpCDR.ConsumedEnergy!.Value.kWh);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(CustomEVSEUIdConverter:   null,
-                                         CustomEVSEIdConverter:    null,
-                                         GetTariffIdsDelegate:     (cpoCountryCode,
-                                                                    cpoPartyId,
-                                                                    locationId,
-                                                                    evseUId,
-                                                                    connectorId,
-                                                                    emspId) => [ Tariff_Id.Parse("ct1") ],
-                                         EMSPId:                   null,
-                                         TariffGetter:             (tariffId, startTimestamp, c) => new Tariff(
-                                                                                                        CountryCode:     CountryCode.Parse("DE"),
-                                                                                                        PartyId:         Party_Id.   Parse("GEF"),
-                                                                                                        Id:              Tariff_Id.  Parse("ct1"),
-                                                                                                        Currency:        Currency.EUR,
-                                                                                                        TariffElements:  [
-                                                                                                                             new TariffElement(
-                                                                                                                                 PriceComponent.Energy(
-                                                                                                                                     Price:     0.44m,
-                                                                                                                                     StepSize:  1000
-                                                                                                                                 ),
-                                                                                                                                 PriceComponent.ChargingTime(
-                                                                                                                                     Price:     5.04m,
-                                                                                                                                     Duration:  TimeSpan.FromMinutes(1)
-                                                                                                                                 ),
-                                                                                                                                 PriceComponent.FlatRate(
-                                                                                                                                     Price:     0.3m
-                                                                                                                                 )
-                                                                                                                             )
-                                                                                                                         ]
-                                                                                                    ),
+            var ocpiCDR = wwcpCDR.ToOCPI(CustomChargingPoolIdConverter:   null,
+                                         CustomEVSEUIdConverter:          null,
+                                         CustomEVSEIdConverter:           null,
+                                         GetTariffIdsDelegate:            (cpoCountryCode,
+                                                                           cpoPartyId,
+                                                                           locationId,
+                                                                           evseUId,
+                                                                           connectorId,
+                                                                           emspId) => [ Tariff_Id.Parse("ct1") ],
+                                         EMSPId:                          null,
+                                         TariffGetter:                    (tariffId, startTimestamp, c) => new Tariff(
+                                                                                                               CountryCode:     CountryCode.Parse("DE"),
+                                                                                                               PartyId:         Party_Id.   Parse("GEF"),
+                                                                                                               Id:              Tariff_Id.  Parse("ct1"),
+                                                                                                               Currency:        Currency.EUR,
+                                                                                                               TariffElements:  [
+                                                                                                                                    new TariffElement(
+                                                                                                                                        PriceComponent.Energy(
+                                                                                                                                            Price:     0.44m,
+                                                                                                                                            StepSize:  1000
+                                                                                                                                        ),
+                                                                                                                                        PriceComponent.ChargingTime(
+                                                                                                                                            Price:     5.04m,
+                                                                                                                                            Duration:  TimeSpan.FromMinutes(1)
+                                                                                                                                        ),
+                                                                                                                                        PriceComponent.FlatRate(
+                                                                                                                                            Price:     0.3m
+                                                                                                                                        )
+                                                                                                                                    )
+                                                                                                                                ]
+                                                                                                           ),
                                          out var warnings);
             ClassicAssert.AreEqual (0, warnings.Count(), 0, warnings.FirstOrDefault()?.Text.FirstText());
 
@@ -829,7 +830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start1,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                 )
@@ -872,7 +873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start2,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
@@ -915,7 +916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start3,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
@@ -1693,7 +1694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                            ),
                                       Currency:            Currency.EUR,
                                       ChargingPeriods:     [
-                                                               new ChargingPeriod(
+                                                               ChargingPeriod.Create(
                                                                    start1,
                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )
@@ -1816,7 +1817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                            ),
                                       Currency:            Currency.EUR,
                                       ChargingPeriods:     [
-                                                               new ChargingPeriod(
+                                                               ChargingPeriod.Create(
                                                                    chargingStart,
                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )

@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               Currency.EUR,
 
                                               [
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:49Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -88,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           )
                                                       ]
                                                   ),
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:50Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -364,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               Currency.EUR,
 
                                               [
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:49Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -373,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           )
                                                       ]
                                                   ),
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:50Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               Currency.EUR,
 
                                               [
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:49Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -659,7 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           )
                                                       ]
                                                   ),
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:50Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -936,7 +936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               Currency.EUR,
 
                                               [
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:49Z"),
                                                       [
                                                           CDRDimension.Create(
@@ -945,7 +945,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                           )
                                                       ]
                                                   ),
-                                                  new ChargingPeriod(
+                                                  ChargingPeriod.Create(
                                                       DateTime.Parse("2020-04-12T18:21:50Z"),
                                                       [
                                                           CDRDimension.Create(

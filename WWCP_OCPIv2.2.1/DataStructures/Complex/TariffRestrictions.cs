@@ -28,6 +28,17 @@ using org.GraphDefined.Vanaheimr.Illias;
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
+    public static class TariffRestrictionsExtensions
+    {
+
+        public static Boolean HasRestrictions([NotNullWhen(true)] this TariffRestrictions? TariffRestrictions)
+
+            => TariffRestrictions is not null &&
+               TariffRestrictions.HasRestrictions;
+
+    }
+
+
     /// <summary>
     /// Charging tariff restrictions.
     /// </summary>
@@ -153,6 +164,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         [Optional]
         public ReservationRestrictions?  Reservation         { get; }
+
+
+        /// <summary>
+        /// Whether any of the charging tariff restrictions is active.
+        /// </summary>
+        public Boolean                   HasRestrictions
+
+            => StartTime.  HasValue ||
+               EndTime.    HasValue ||
+               StartDate.  HasValue ||
+               EndDate.    HasValue ||
+               MinkWh.     HasValue ||
+               MaxkWh.     HasValue ||
+               MinCurrent. HasValue ||
+               MaxCurrent. HasValue ||
+
+               MinPower.   HasValue ||
+               MaxPower.   HasValue ||
+               MinDuration.HasValue ||
+               MaxDuration.HasValue ||
+               DayOfWeek.  Any()    ||
+               Reservation.HasValue;
 
         #endregion
 
@@ -632,6 +665,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Reservation);
 
         #endregion
+
+
+        public Boolean IsActive(ChargingPeriod ChargingPeriod)
+        {
+
+            if (ChargingPeriod.StartTimestamp < StartDate)
+                return false;
+
+            if (ChargingPeriod.StartTimestamp > EndDate)
+                return false;
+
+
+            var firstChargingPeriod  = ChargingPeriod.First;
+            var duration             = ChargingPeriod.StopTimestamp - firstChargingPeriod.StartTimestamp;
+
+            if (duration                      > MaxDuration)
+                return false;
+
+            // StartTime
+            // EndTime
+            // ---StartDate
+            // ---EndDate
+            // MinkWh
+            // MaxkWh
+            // MinPower
+            // MaxPower
+            // MinDuration
+            // MaxDuration
+            // DayOfWeek
+
+            return true;
+
+        }
 
 
         #region Operator overloading

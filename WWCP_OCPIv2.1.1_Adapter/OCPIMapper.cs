@@ -376,10 +376,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
+        public static Location_Id? ToOCPI(this WWCP.ChargingPool_Id              ChargingPoolId,
+                                          ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter = null)
+
+            => CustomChargingPoolIdConverter is not null
+                   ? CustomChargingPoolIdConverter(ChargingPoolId)
+                   : Location_Id.TryParse(ChargingPoolId.Suffix);
+
 
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool                                                       ChargingPool,
+                                       ChargingPoolId_2_LocationId_Delegate?                                         CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?                                                CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
@@ -388,12 +396,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        ref List<Warning>                                                             Warnings)
         {
 
-            var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                               CustomEVSEIdConverter,
-                                               IncludeEVSEIds,
-                                               IncludeChargingConnectorIds,
-                                               //GetTariffIdsDelegate,
-                                               out var warnings);
+            var location = ChargingPool.ToOCPI(
+                               CustomChargingPoolIdConverter,
+                               CustomEVSEUIdConverter,
+                               CustomEVSEIdConverter,
+                               IncludeEVSEIds,
+                               IncludeChargingConnectorIds,
+                               //GetTariffIdsDelegate,
+                               out var warnings
+                           );
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -407,6 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region ToOCPI(this ChargingPool,  out Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool                                                       ChargingPool,
+                                       ChargingPoolId_2_LocationId_Delegate?                                         CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?                                                CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                        WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
@@ -443,7 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return null;
             }
 
-            var locationId   = Location_Id.TryParse(ChargingPool.Id.ToString());
+            var locationId   = ChargingPool.Id.ToOCPI(CustomChargingPoolIdConverter);
 
             if (!locationId.HasValue)
             {
@@ -582,6 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region ToOCPI(this ChargingPools, ref Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>                                           ChargingPools,
+                                                   ChargingPoolId_2_LocationId_Delegate?                                         CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?                                                CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
@@ -590,12 +603,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    ref List<Warning>                                                             Warnings)
         {
 
-            var locations = ChargingPools.ToOCPI(CustomEVSEUIdConverter,
-                                                 CustomEVSEIdConverter,
-                                                 IncludeEVSEIds,
-                                                 IncludeChargingConnectorIds,
-                                                 //GetTariffIdsDelegate,
-                                                 out var warnings);
+            var locations = ChargingPools.ToOCPI(
+                                CustomChargingPoolIdConverter,
+                                CustomEVSEUIdConverter,
+                                CustomEVSEIdConverter,
+                                IncludeEVSEIds,
+                                IncludeChargingConnectorIds,
+                                //GetTariffIdsDelegate,
+                                out var warnings
+                            );
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -609,6 +625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region ToOCPI(this ChargingPools, out Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>                                           ChargingPools,
+                                                   ChargingPoolId_2_LocationId_Delegate?                                         CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?                                                CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?                                                 CustomEVSEIdConverter,
                                                    WWCP.IncludeEVSEIdDelegate                                                    IncludeEVSEIds,
@@ -626,12 +643,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var chargingPool2 = chargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                            CustomEVSEIdConverter,
-                                                            IncludeEVSEIds,
-                                                            IncludeChargingConnectorIds,
-                                                            //GetTariffIdsDelegate,
-                                                            out var warning);
+                    var chargingPool2 = chargingPool.ToOCPI(
+                                            CustomChargingPoolIdConverter,
+                                            CustomEVSEUIdConverter,
+                                            CustomEVSEIdConverter,
+                                            IncludeEVSEIds,
+                                            IncludeChargingConnectorIds,
+                                            //GetTariffIdsDelegate,
+                                            out var warning
+                                        );
 
                     if (chargingPool2 is not null)
                         locations.Add(chargingPool2);
@@ -1741,6 +1761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
         public static CDR? ToOCPI(this WWCP.ChargeDetailRecord              ChargeDetailRecord,
+                                  ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
@@ -1753,6 +1774,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var warnings  = new List<Warning>();
 
             var cdr       = ChargeDetailRecord.ToOCPI(
+                                CustomChargingPoolIdConverter,
                                 CustomEVSEUIdConverter,
                                 CustomEVSEIdConverter,
                                 GetTariffIdsDelegate,
@@ -1773,6 +1795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
         public static CDR? ToOCPI(this WWCP.ChargeDetailRecord              ChargeDetailRecord,
+                                  ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
@@ -1880,6 +1903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 // The location where the charging session took place,
                 // including only the relevant EVSE, connector and tariffId.
                 var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
                                            CustomEVSEUIdConverter,
                                            CustomEVSEIdConverter,
                                            evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
@@ -1938,12 +1962,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // !!! ToDo: Request the charging tariff ids from back at the session start time! !!!
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                var tariffIds        = GetTariffIdsDelegate?.Invoke(countryCode,
-                                                                    partyId,
-                                                                    filteredLocation.Id,
-                                                                    filteredLocation.EVSEs.First().EVSEId,
-                                                                    filteredLocation.EVSEs.First().Connectors.First().Id,
-                                                                    EMSPId);
+                var tariffIds        = GetTariffIdsDelegate?.Invoke(
+                                           countryCode,
+                                           partyId,
+                                           filteredLocation.Id,
+                                           filteredLocation.EVSEs.First().EVSEId,
+                                           filteredLocation.EVSEs.First().Connectors.First().Id,
+                                           EMSPId
+                                       );
 
                 if (tariffIds is null || !tariffIds.Any())
                 {
@@ -1984,7 +2010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Location:                filteredLocation,
                                    Currency:                Currency.EUR,
                                    ChargingPeriods:         [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     ChargeDetailRecord.SessionTime.StartTime,
                                                                     [
                                                                         CDRDimension.ENERGY(WattHour.Zero)
@@ -2136,31 +2162,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new CDR(
 
-                           CountryCode:             countryCode,
-                           PartyId:                 partyId,
-                           Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
-                           Start:                   ChargeDetailRecord.SessionTime.StartTime,
-                           Stop:                    ChargeDetailRecord.SessionTime.EndTime.Value,
-                           AuthId:                  authId.    Value,
-                           AuthMethod:              authMethod.Value,
-                           Location:                filteredLocation,            //ToDo: Might still have not required connectors!
-                                                                                 //      Might have our EnergyMeter vendor extension!
-                           Currency:                newCDR.Currency,
-                           ChargingPeriods:         newCDR.ChargingPeriods,
-                           TotalCost:               newCDR.TotalCost,
-                           TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
-                           TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
+                           CountryCode:            countryCode,
+                           PartyId:                partyId,
+                           Id:                     CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
+                           Start:                  ChargeDetailRecord.SessionTime.StartTime,
+                           Stop:                   ChargeDetailRecord.SessionTime.EndTime.Value,
+                           AuthId:                 authId.    Value,
+                           AuthMethod:             authMethod.Value,
+                           Location:               filteredLocation,            //ToDo: Might still have not required connectors!
+                                                                                //      Might have our EnergyMeter vendor extension!
+                           Currency:               newCDR.Currency,
+                           ChargingPeriods:        newCDR.ChargingPeriods,
+                           TotalCost:              newCDR.TotalCost,
+                           TotalEnergy:            ChargeDetailRecord.ConsumedEnergy.      Value,
+                           TotalTime:              ChargeDetailRecord.SessionTime.Duration.Value,
 
-                           EnergyMeterId:           ChargeDetailRecord.EnergyMeterId.ToOCPI(),
-                           EnergyMeter:             null,                        // Our vendor extension!
+                           EnergyMeterId:          ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeter:            null,                        // Our vendor extension!
                            TransparencySoftware:   null,                        // Our vendor extension!
-                           Tariffs:                 tariffs,
-                           SignedData:              signedData,                  // Our backport from OCPI v2.2.1!
-                           TotalParkingTime:        null,
-                           Remark:                  null,
+                           Tariffs:                tariffs,
+                           SignedData:             signedData,                  // Our backport from OCPI v2.2.1!
+                           TotalParkingTime:       null,
+                           Remark:                 null,
 
-                           Created:                 ChargeDetailRecord.Created,  // Our vendor extension!
-                           LastUpdated:             ChargeDetailRecord.LastChangeDate
+                           Created:                ChargeDetailRecord.Created,  // Our vendor extension!
+                           LastUpdated:            ChargeDetailRecord.LastChangeDate
 
                        );
 
