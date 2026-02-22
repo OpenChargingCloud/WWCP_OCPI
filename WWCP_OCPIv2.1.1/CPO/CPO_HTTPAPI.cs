@@ -3594,22 +3594,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                     //ToDo: What exactly to do with this information?
-                    var tokenType     = request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
+                    var tokenType      = request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
 
 
                     //ToDo: Validation-Checks for PATCHes (E-Tag, Timestamp, ...)
-                    var patchedToken  = await CommonAPI.TryPatchToken(
-                                                  existingTokenStatus.Token,
-                                                  tokenPatch,
-                                                  AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
-                                              );
+                    var patchedResult  = await CommonAPI.TryPatchToken(
+                                                   existingTokenStatus.Token.Id,
+                                                   tokenPatch,
+                                                   AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
+                                               );
 
 
-                    if (patchedToken.IsSuccessAndDataNotNull(out var token_Status))
+                    if (patchedResult.IsSuccessAndDataNotNull(out var patchedToken))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
                                        StatusMessage        = "Hello world!",
-                                       Data                 = token_Status.Token.ToJSON(
+                                       Data                 = patchedToken.ToJSON(
                                                                   false, //IncludeOwnerInformation,
                                                                   CustomTokenSerializer
                                                               ),
@@ -3617,14 +3617,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = token_Status.Token.LastUpdated,
-                                           ETag                       = token_Status.Token.ETag
+                                           LastModified               = patchedToken.LastUpdated,
+                                           ETag                       = patchedToken.ETag
                                        }
                                    };
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
-                                   StatusMessage        = patchedToken.ErrorResponse,
+                                   StatusMessage        = patchedResult.ErrorResponse,
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],

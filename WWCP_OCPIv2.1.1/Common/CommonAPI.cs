@@ -6575,7 +6575,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Locations
 
+        #region Locations
+
         #region Data
+
+        // Note: Charging locations/EVSEs are expected to be always in memory!
 
         private readonly ConcurrentDictionary<Location_Id, Location> locations = [];
 
@@ -6583,26 +6587,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public delegate Task OnLocationAddedDelegate    (Location        Location);
         public delegate Task OnLocationChangedDelegate  (Location        Location);
         public delegate Task OnLocationRemovedDelegate  (Location        Location);
-        public delegate Task OnEVSEAddedDelegate        (EVSE            EVSE);
-        public delegate Task OnEVSEChangedDelegate      (EVSE            EVSE);
-        public delegate Task OnEVSEStatusChangedDelegate(DateTimeOffset  Timestamp, EVSE EVSE, StatusType NewEVSEStatus, StatusType? OldEVSEStatus = null);
-        public delegate Task OnEVSERemovedDelegate      (EVSE            EVSE);
 
         public event OnLocationAddedDelegate?      OnLocationAdded;
         public event OnLocationChangedDelegate?    OnLocationChanged;
         public event OnLocationRemovedDelegate?    OnLocationRemoved;
-        public event OnEVSEAddedDelegate?          OnEVSEAdded;
-        public event OnEVSEChangedDelegate?        OnEVSEChanged;
-        public event OnEVSEStatusChangedDelegate?  OnEVSEStatusChanged;
-        public event OnEVSERemovedDelegate?        OnEVSERemoved;
 
         #endregion
 
 
-        #region Locations
-
         #region AddLocation            (Location, ...)
 
+        /// <summary>
+        /// Add the given charging location.
+        /// </summary>
+        /// <param name="Location">The charging location to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<Location>>
 
             AddLocation(Location           Location,
@@ -6687,6 +6689,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddLocationIfNotExists (Location, ...)
 
+        /// <summary>
+        /// Add the given charging location if it does not already exist.
+        /// </summary>
+        /// <param name="Location">The charging location to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<Location>>
 
             AddLocationIfNotExists(Location           Location,
@@ -6771,6 +6781,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddOrUpdateLocation    (Location,                  AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Add or update the given charging location.
+        /// </summary>
+        /// <param name="Location">The charging location to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddOrUpdateResult<Location>>
 
             AddOrUpdateLocation(Location           Location,
@@ -6988,6 +7007,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region UpdateLocation         (Location,                  AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Update the given charging location.
+        /// </summary>
+        /// <param name="Location">The charging location to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<UpdateResult<Location>>
 
             UpdateLocation(Location           Location,
@@ -7181,13 +7209,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region TryPatchLocation       (LocationId, LocationPatch, AllowDowngrades = false, ...)
 
-        public async Task<PatchResult<Location>> TryPatchLocation(Location_Id        LocationId,
-                                                                  JObject            LocationPatch,
-                                                                  Boolean?           AllowDowngrades     = false,
-                                                                  Boolean            SkipNotifications   = false,
-                                                                  EventTracking_Id?  EventTrackingId     = null,
-                                                                  User_Id?           CurrentUserId       = null,
-                                                                  CancellationToken  CancellationToken   = default)
+        /// <summary>
+        /// Try to patch the given charging location with the given JSON patch document.
+        /// </summary>
+        /// <param name="LocationId">The identification of the charging location to patch.</param>
+        /// <param name="LocationPatch">The JSON patch document to apply to the charging tariff.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<PatchResult<Location>>
+
+            TryPatchLocation(Location_Id        LocationId,
+                             JObject            LocationPatch,
+                             Boolean?           AllowDowngrades     = false,
+                             Boolean            SkipNotifications   = false,
+                             EventTracking_Id?  EventTrackingId     = null,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
         {
 
@@ -7202,12 +7242,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       EventTrackingId
                                   );
 
-                if (patchResult.IsSuccess &&
-                    patchResult.PatchedData is not null)
+                if (patchResult.IsSuccessAndDataNotNull(out var patchedLocation))
                 {
 
                     var updateLocationResult = await UpdateLocation(
-                                                         patchResult.PatchedData,
+                                                         patchedLocation,
                                                          AllowDowngrades,
                                                          SkipNotifications,
                                                          EventTrackingId,
@@ -7219,7 +7258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         return PatchResult<Location>.Failed(
                                    EventTrackingId,
                                    existingLocation,
-                                   "Could not update the location: " + updateLocationResult.ErrorResponse
+                                   "Could not patch the location: " + updateLocationResult.ErrorResponse
                                );
 
                 }
@@ -7238,18 +7277,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region RemoveLocation         (Location,             SkipNotifications = false)
+        #region RemoveLocation         (Location,   ...)
 
         /// <summary>
         /// Remove the given charging location.
         /// </summary>
         /// <param name="Location">A charging location.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public Task<RemoveResult<Location>> RemoveLocation(Location           Location,
-                                                           Boolean            SkipNotifications   = false,
-                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                           User_Id?           CurrentUserId       = null,
-                                                           CancellationToken  CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public Task<RemoveResult<Location>>
+
+            RemoveLocation(Location           Location,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
 
             => RemoveLocation(
                    Location.Id,
@@ -7261,18 +7305,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveLocation         (LocationId,           SkipNotifications = false)
+        #region RemoveLocation         (LocationId, ...)
 
         /// <summary>
         /// Remove the given charging location.
         /// </summary>
         /// <param name="LocationId">An unique charging location identification.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<Location>> RemoveLocation(Location_Id        LocationId,
-                                                                 Boolean            SkipNotifications   = false,
-                                                                 EventTracking_Id?  EventTrackingId     = null,
-                                                                 User_Id?           CurrentUserId       = null,
-                                                                 CancellationToken  CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<Location>>
+
+            RemoveLocation(Location_Id        LocationId,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -7344,16 +7394,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveAllLocations     (                      SkipNotifications = false)
+        #region RemoveAllLocations     (...)
 
         /// <summary>
         /// Remove all charging locations.
         /// </summary>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Boolean            SkipNotifications   = false,
-                                                                                  EventTracking_Id?  EventTrackingId     = null,
-                                                                                  User_Id?           CurrentUserId       = null,
-                                                                                  CancellationToken  CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>>
+
+            RemoveAllLocations(Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -7380,14 +7436,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               )
                           );
 
-                foreach (var evse in existingLocations.SelectMany(location => location.EVSEs))
-                    await LogEvent(
-                              OnEVSERemoved,
-                              loggingDelegate => loggingDelegate.Invoke(
-                                  evse
-                              )
-                          );
-
             }
 
             return RemoveResult<IEnumerable<Location>>.Success(
@@ -7399,26 +7447,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region RemoveAllLocations     (IncludeLocations,     SkipNotifications = false)
+        #region RemoveAllLocations     (IncludeLocations,   ...)
 
         /// <summary>
         /// Remove all matching charging locations.
         /// </summary>
-        /// <param name="IncludeLocations">A charging location filter.</param>
+        /// <param name="IncludeLocations">A filter delegate to include charging locations for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location, Boolean>  IncludeLocations,
-                                                                                  Boolean                  SkipNotifications   = false,
-                                                                                  EventTracking_Id?        EventTrackingId     = null,
-                                                                                  User_Id?                 CurrentUserId       = null,
-                                                                                  CancellationToken        CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>>
+
+            RemoveAllLocations(Func<Location, Boolean>  IncludeLocations,
+                               Boolean                  SkipNotifications   = false,
+                               EventTracking_Id?        EventTrackingId     = null,
+                               User_Id?                 CurrentUserId       = null,
+                               CancellationToken        CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedLocations  = new List<Location>();
-            var failedLocations   = new List<RemoveResult<Location>>();
+            var matchingLocations  = new List<Location>();
+            var removedLocations   = new List<Location>();
+            var failedLocations    = new List<RemoveResult<Location>>();
 
-            foreach (var location in locations.Values.Where(IncludeLocations).ToArray())
+            foreach (var location in locations.Values)
+            {
+                if (IncludeLocations(location))
+                    matchingLocations.Add(location);
+            }
+
+            foreach (var location in matchingLocations)
             {
 
                 var result = await RemoveLocation(
@@ -7438,39 +7498,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return removedLocations.Count != 0 && failedLocations.Count == 0
 
-                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
+                       ? RemoveResult<IEnumerable<Location>>.Success(
+                             EventTrackingId,
+                             removedLocations
+                         )
 
                        : removedLocations.Count == 0 && failedLocations.Count == 0
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
-                                                                               failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
+
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<Location>>.Failed(
+                                   EventTrackingId,
+                                   failedLocations.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (location      => location is not null).
+                                       Cast<Location>(),
+                                   failedLocations.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
         #endregion
 
-        #region RemoveAllLocations     (IncludeLocationIds,   SkipNotifications = false)
+        #region RemoveAllLocations     (IncludeLocationIds, ...)
 
         /// <summary>
         /// Remove all matching charging locations.
         /// </summary>
-        /// <param name="IncludeLocationIds">A charging location identification filter.</param>
+        /// <param name="IncludeLocationIds">A filter delegate to include charging locations for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location_Id, Boolean>  IncludeLocationIds,
-                                                                                  Boolean                     SkipNotifications   = false,
-                                                                                  EventTracking_Id?           EventTrackingId     = null,
-                                                                                  User_Id?                    CurrentUserId       = null,
-                                                                                  CancellationToken           CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>>
+
+            RemoveAllLocations(Func<Location_Id, Boolean>  IncludeLocationIds,
+                               Boolean                     SkipNotifications   = false,
+                               EventTracking_Id?           EventTrackingId     = null,
+                               User_Id?                    CurrentUserId       = null,
+                               CancellationToken           CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedLocations  = new List<Location>();
-            var failedLocations   = new List<RemoveResult<Location>>();
+            var matchingLocations  = new List<Location>();
+            var removedLocations   = new List<Location>();
+            var failedLocations    = new List<RemoveResult<Location>>();
 
-            foreach (var location in locations.Where  (kvp => IncludeLocationIds(kvp.Key)).
-                                               Select (kvp => kvp.Value).
-                                               ToArray())
+            foreach (var location in locations.Values)
+            {
+                if (IncludeLocationIds(location.Id))
+                    matchingLocations.Add(location);
+            }
+
+            foreach (var location in matchingLocations)
             {
 
                 var result = await RemoveLocation(
@@ -7490,18 +7576,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return removedLocations.Count != 0 && failedLocations.Count == 0
 
-                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
+                       ? RemoveResult<IEnumerable<Location>>.Success(
+                             EventTrackingId,
+                             removedLocations
+                         )
 
                        : removedLocations.Count == 0 && failedLocations.Count == 0
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
-                                                                               failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
+
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<Location>>.Failed(
+                                   EventTrackingId,
+                                   failedLocations.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (location      => location is not null).
+                                       Cast<Location>(),
+                                   failedLocations.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
         #endregion
 
-        #region RemoveAllLocations     (CountryCode, PartyId, SkipNotifications = false)
+        #region RemoveAllLocations     (CountryCode, PartyId, ...)
 
         /// <summary>
         /// Remove all charging locations owned by the given party.
@@ -7509,22 +7610,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(CountryCode        CountryCode,
-                                                                                  Party_Id           PartyId,
-                                                                                  Boolean            SkipNotifications   = false,
-                                                                                  EventTracking_Id?  EventTrackingId     = null,
-                                                                                  User_Id?           CurrentUserId       = null,
-                                                                                  CancellationToken  CancellationToken   = default)
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>>
+
+            RemoveAllLocations(CountryCode        CountryCode,
+                               Party_Id           PartyId,
+                               Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedLocations  = new List<Location>();
-            var failedLocations   = new List<RemoveResult<Location>>();
+            var matchingLocations  = new List<Location>();
+            var removedLocations   = new List<Location>();
+            var failedLocations    = new List<RemoveResult<Location>>();
 
-            foreach (var location in locations.Values.Where  (location => CountryCode == location.CountryCode &&
-                                                                          PartyId     == location.PartyId).
-                                                      ToArray())
+            foreach (var location in locations.Values)
+            {
+                if (location.CountryCode == CountryCode && location.PartyId == PartyId)
+                    matchingLocations.Add(location);
+            }
+
+            foreach (var location in matchingLocations)
             {
 
                 var result = await RemoveLocation(
@@ -7543,12 +7654,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             return removedLocations.Count != 0 && failedLocations.Count == 0
-                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
+
+                       ? RemoveResult<IEnumerable<Location>>.Success(
+                             EventTrackingId,
+                             removedLocations
+                         )
 
                        : removedLocations.Count == 0 && failedLocations.Count == 0
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, [])
-                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
-                                                                               failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
+
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<Location>>.Failed(
+                                   EventTrackingId,
+                                   failedLocations.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (location      => location is not null).
+                                       Cast<Location>(),
+                                   failedLocations.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -7654,6 +7781,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
         #region EVSEs
+
+        #region Data
+
+        public delegate Task OnEVSEAddedDelegate  (EVSE  EVSE);
+        public delegate Task OnEVSEChangedDelegate(EVSE  EVSE);
+        public delegate Task OnEVSERemovedDelegate(EVSE  EVSE);
+
+        public event OnEVSEAddedDelegate?    OnEVSEAdded;
+        public event OnEVSEChangedDelegate?  OnEVSEChanged;
+        public event OnEVSERemovedDelegate?  OnEVSERemoved;
+
+
+        public delegate Task OnEVSEStatusChangedDelegate(DateTimeOffset Timestamp, EVSE EVSE, StatusType NewEVSEStatus, StatusType? OldEVSEStatus = null);
+
+        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
+
+        #endregion
+
 
         #region AddEVSE                (Location, EVSE,                                                     SkipNotifications = false)
 
@@ -8854,12 +8999,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       EventTrackingId
                                   );
 
-                if (patchResult.IsSuccess &&
-                    patchResult.PatchedData is not null)
+                if (patchResult.IsSuccessAndDataNotNull(out var patchedTariff))
                 {
 
                     var updateTariffResult = await UpdateTariff(
-                                                       patchResult.PatchedData,
+                                                       patchedTariff,
                                                        AllowDowngrades,
                                                        SkipNotifications,
                                                        EventTrackingId,
@@ -8871,7 +9015,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         return PatchResult<Tariff>.Failed(
                                    EventTrackingId,
                                    existingTariff,
-                                   "Could not update the tariff: " + updateTariffResult.ErrorResponse
+                                   "Could not patch the tariff: " + updateTariffResult.ErrorResponse
                                );
 
                 }
@@ -9873,11 +10017,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryPatchToken       (Token, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
+        #region TryPatchToken       (TokenId, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<PatchResult<TokenStatus>>
+        public async Task<PatchResult<Token>>
 
-            TryPatchToken(Token              Token,
+            TryPatchToken(Token_Id           TokenId,
                           JObject            TokenPatch,
                           Boolean?           AllowDowngrades     = false,
                           Boolean            SkipNotifications   = false,
@@ -9889,85 +10033,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (TokenPatch is null || !TokenPatch.HasValues)
-                return PatchResult<TokenStatus>.Failed(
-                           EventTrackingId,
-                           new TokenStatus(
-                               Token,
-                               AllowedType.NOT_ALLOWED
-                           ),
-                           "The given token patch must not be null or empty!"
-                       );
-
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            if (tokenStatus.TryGetValue(TokenId, out var existingTokenStatus))
             {
 
                 var patchResult = existingTokenStatus.Token.TryPatch(
                                       TokenPatch,
-                                      AllowDowngrades ?? this.AllowDowngrades ?? false
+                                      AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                      EventTrackingId
                                   );
 
-                if (patchResult.IsSuccessAndDataNotNull(out var pachtedToken))
+                if (patchResult.IsSuccessAndDataNotNull(out var patchedToken))
                 {
 
-                    var patchedTokenStatus = new TokenStatus(
-                                                 pachtedToken,
-                                                 existingTokenStatus.Status
-                                             );
+                    var updateTokenResult = await UpdateToken(
+                                                      patchedToken,
+                                                      existingTokenStatus.Status,
+                                                      AllowDowngrades,
+                                                      SkipNotifications,
+                                                      EventTrackingId,
+                                                      CurrentUserId,
+                                                      CancellationToken
+                                                  );
 
-                    tokenStatus[Token.Id] = patchedTokenStatus;
-
-                    await LogAsset(
-                              CommonHTTPAPI.updateTokenStatus,
-                              patchedTokenStatus.ToJSON(
-                                  CustomTokenStatusSerializer,
-                                  true,
-                                  CustomTokenSerializer,
-                                  CustomLocationReferenceSerializer
-                              ),
-                              EventTrackingId,
-                              CurrentUserId,
-                              CancellationToken
-                          );
-
-                    if (!SkipNotifications)
-                    {
-
-                        await LogEvent(
-                                  OnTokenStatusChanged,
-                                  loggingDelegate => loggingDelegate.Invoke(
-                                      patchedTokenStatus
-                                  )
-                              );
-
-                    }
-
-                    return PatchResult<TokenStatus>.Success(
-                               EventTrackingId,
-                               patchedTokenStatus
-                           );
+                    if (updateTokenResult.IsFailed)
+                        return PatchResult<Token>.Failed(
+                                    EventTrackingId,
+                                    existingTokenStatus.Token,
+                                    "Could not patch the token: " + updateTokenResult.ErrorResponse
+                                );
 
                 }
 
-                return PatchResult<TokenStatus>.Failed(
-                           EventTrackingId,
-                           new TokenStatus(
-                               Token,
-                               AllowedType.NOT_ALLOWED
-                           ),
-                           patchResult.ErrorResponse ?? "The given token could not be patched!"
-                       );
+                return patchResult;
 
             }
 
-
-            return PatchResult<TokenStatus>.Failed(
+            return PatchResult<Token>.Failed(
                        EventTrackingId,
-                       new TokenStatus(
-                           Token,
-                           AllowedType.NOT_ALLOWED
-                       ),
-                       "The given token does not exist!"
+                       $"The given token '{TokenId}' is unknown!"
                    );
 
         }
@@ -12032,65 +12135,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (chargeDetailRecords.TryGetValue(CDRId, out var existingCDR))
             {
 
-                var patchResult = existingCDR.TryPatch(CDRPatch,
-                                                       AllowDowngrades ?? this.AllowDowngrades ?? false,
-                                                       EventTrackingId);
+                var patchResult = existingCDR.TryPatch(
+                                      CDRPatch,
+                                      AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                      EventTrackingId
+                                  );
 
                 if (patchResult.IsSuccessAndDataNotNull(out var patchedCDR))
                 {
 
-                    chargeDetailRecords[CDRId] = patchedCDR;
+                    var updateCDRResult = await UpdateCDR(
+                                                    patchedCDR,
+                                                    AllowDowngrades,
+                                                    SkipNotifications,
+                                                    EventTrackingId,
+                                                    CurrentUserId,
+                                                    CancellationToken
+                                                );
 
-                    await LogAsset(
-                              CommonHTTPAPI.updateChargeDetailRecord,
-                              patchedCDR.ToJSON(
-                                  true,
-                                  true,
-                                  true,
-                                  null,
-                                  CustomCDRSerializer,
-                                  CustomLocationSerializer,
-                                  CustomAdditionalGeoLocationSerializer,
-                                  CustomEVSESerializer,
-                                  CustomStatusScheduleSerializer,
-                                  CustomConnectorSerializer,
-                                  CustomLocationEnergyMeterSerializer,
-                                  CustomEVSEEnergyMeterSerializer,
-                                  CustomTransparencySoftwareStatusSerializer,
-                                  CustomTransparencySoftwareSerializer,
-                                  CustomDisplayTextSerializer,
-                                  CustomBusinessDetailsSerializer,
-                                  CustomHoursSerializer,
-                                  CustomImageSerializer,
-                                  CustomEnergyMixSerializer,
-                                  CustomEnergySourceSerializer,
-                                  CustomEnvironmentalImpactSerializer,
-                                  CustomTariffSerializer,
-                                  CustomTariffElementSerializer,
-                                  CustomPriceComponentSerializer,
-                                  CustomTariffRestrictionsSerializer,
-                                  CustomChargingPeriodSerializer,
-                                  CustomCDRDimensionSerializer,
-                                  CustomCDRCostDetailsSerializer,
-                                  CustomSignedDataSerializer,
-                                  CustomSignedValueSerializer
-                              ),
-                              EventTrackingId,
-                              CurrentUserId,
-                              CancellationToken
-                          );
-
-                    if (!SkipNotifications)
-                    {
-
-                        await LogEvent(
-                                  OnChargeDetailRecordChanged,
-                                  loggingDelegate => loggingDelegate.Invoke(
-                                      patchedCDR
-                                  )
-                              );
-
-                    }
+                    if (updateCDRResult.IsFailed)
+                        return PatchResult<CDR>.Failed(
+                                   EventTrackingId,
+                                   existingCDR,
+                                   "Could not patch the charge detail record: " + updateCDRResult.ErrorResponse
+                               );
 
                 }
 
@@ -12658,8 +12726,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        public Task LogException(Exception e)
+        public virtual Task LogException(Exception e)
         {
+            DebugX.LogException(e, $"OCPI {Version.String}.{nameof(CommonAPI)}");
             return Task.CompletedTask;
         }
 
