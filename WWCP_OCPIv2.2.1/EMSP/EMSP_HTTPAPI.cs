@@ -2895,10 +2895,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         }
 
 
-        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
-                                                                        Party_Id            From_PartyId,
-                                                                        CountryCode         To_CountryCode,
-                                                                        Party_Id            To_PartyId,
+        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(Party_Idv3          From,
+                                                                        Party_Idv3          To,
                                                                         Token_Id            TokenId,
                                                                         TokenType?          RequestedTokenType,
                                                                         LocationReference?  LocationReference);
@@ -7702,10 +7700,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
 
                             var result = await onRFIDAuthTokenLocal(
-                                                   request.From?.CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                   request.From?.PartyId     ?? CommonAPI.DefaultPartyId.PartyId,
-                                                   request.To?.  CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
-                                                   request.To?.  PartyId     ?? CommonAPI.DefaultPartyId.PartyId,
+                                                   Party_Idv3.From(
+                                                       request.From?.CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                       request.From?.PartyId     ?? CommonAPI.DefaultPartyId.PartyId
+                                                   ),
+                                                   Party_Idv3.From(
+                                                       request.To?.  CountryCode ?? CommonAPI.DefaultPartyId.CountryCode,
+                                                       request.To?.  PartyId     ?? CommonAPI.DefaultPartyId.PartyId
+                                                   ),
                                                    tokenId.Value,
                                                    requestedTokenType,
                                                    locationReference
