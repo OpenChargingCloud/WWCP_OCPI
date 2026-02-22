@@ -1666,10 +1666,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 #endregion
 
 
-                emsp1EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
-                                                       From_PartyId,
-                                                       To_CountryCode,
-                                                       To_PartyId,
+                emsp1EMSPAPI.OnRFIDAuthToken += async (from,
+                                                       to,
                                                        tokenId,
                                                        tokenType,
                                                        locationReference) => {
@@ -1679,8 +1677,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                ? new AuthorizationInfo(
                                      Allowed:                  AllowedType.ALLOWED,
                                      Token:                    new Token(
-                                                                   CountryCode:      To_CountryCode,
-                                                                   PartyId:          To_PartyId,
+                                                                   CountryCode:      to.CountryCode,
+                                                                   PartyId:          to.PartyId,
                                                                    Id:               tokenId,
                                                                    Type:             TokenType.RFID,
                                                                    ContractId:       Contract_Id.Parse("DE-GDF-C12345678-X"),
@@ -1704,8 +1702,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                : new AuthorizationInfo(
                                      Allowed:                  AllowedType.NOT_ALLOWED,
                                      Token:                    new Token(
-                                                                   CountryCode:      To_CountryCode,
-                                                                   PartyId:          To_PartyId,
+                                                                   CountryCode:      to.CountryCode,
+                                                                   PartyId:          to.PartyId,
                                                                    Id:               tokenId,
                                                                    Type:             TokenType.RFID,
                                                                    ContractId:       Contract_Id.Parse("DE-GDF-C12345678-X"),
@@ -1728,10 +1726,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 };
 
-                emsp2EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
-                                                       From_PartyId,
-                                                       To_CountryCode,
-                                                       To_PartyId,
+                emsp2EMSPAPI.OnRFIDAuthToken += async (from,
+                                                       to,
                                                        tokenId,
                                                        tokenType,
                                                        locationReference) => {
@@ -1741,8 +1737,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                ? new AuthorizationInfo(
                                      Allowed:                  AllowedType.ALLOWED,
                                      Token:                    new Token(
-                                                                   CountryCode:      To_CountryCode,
-                                                                   PartyId:          To_PartyId,
+                                                                   CountryCode:      to.CountryCode,
+                                                                   PartyId:          to.PartyId,
                                                                    Id:               tokenId,
                                                                    Type:             TokenType.RFID,
                                                                    ContractId:       Contract_Id.Parse("DE-GDF-C56781234-X"),
@@ -1766,8 +1762,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                : new AuthorizationInfo(
                                      Allowed:                  AllowedType.NOT_ALLOWED,
                                      Token:                    new Token(
-                                                                   CountryCode:      To_CountryCode,
-                                                                   PartyId:          To_PartyId,
+                                                                   CountryCode:      to.CountryCode,
+                                                                   PartyId:          to.PartyId,
                                                                    Id:               tokenId,
                                                                    Type:             TokenType.RFID,
                                                                    ContractId:       Contract_Id.Parse("DE-GDF-C56781234-X"),
