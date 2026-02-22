@@ -58,6 +58,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                    Connector_Id?    ConnectorId      = null,
                                                                    EMSP_Id?         EMSPId           = null);
 
+    public delegate Tariff?                 GetTariff2_Delegate   (Party_Idv3       CPOPartyId,
+                                                                   Tariff_Id        TariffId,
+                                                                   DateTimeOffset?  StartTimestamp   = null,
+                                                                   TimeSpan?        Tolerance        = null);
+
 
     /// <summary>
     /// Extension methods for the Common HTTP API.
@@ -9012,7 +9017,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Location.CountryCode,
+                                    Location.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(Location.Id, Location))
@@ -9088,7 +9098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<Location>.Failed(
                        EventTrackingId,
                        Location,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{partyId}' of the location is unknown!"
                    );
 
         }
@@ -9109,7 +9119,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Location.CountryCode,
+                                    Location.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(Location.Id, Location))
@@ -9185,7 +9200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<Location>.Failed(
                        EventTrackingId,
                        Location,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{partyId}' of the location is unknown!"
                    );
 
         }
@@ -9207,7 +9222,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Location.CountryCode,
+                                    Location.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 #region Update an existing location
@@ -9416,7 +9436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddOrUpdateResult<Location>.Failed(
                        EventTrackingId,
                        Location,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{partyId}' of the location is unknown!"
                    );
 
         }
@@ -9438,7 +9458,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Location.CountryCode,
+                                    Location.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (!party.Locations.TryGetValue(Location.Id, out var existingLocation))
@@ -9622,7 +9647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return UpdateResult<Location>.Failed(
                        EventTrackingId,
                        Location,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{partyId}' of the location is unknown!"
                    );
 
         }
@@ -9713,7 +9738,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Location.CountryCode,
+                                    Location.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Locations.TryRemove(Location.Id, out var location))
@@ -9765,7 +9795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return RemoveResult<Location>.Failed(
                        EventTrackingId,
                        Location,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{partyId}' of the location is unknown!"
                    );
 
         }
@@ -9842,7 +9872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             return RemoveResult<Location>.Failed(
                        EventTrackingId,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{PartyId}' of the location is unknown!"
                    );
 
         }
@@ -10077,7 +10107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             return RemoveResult<IEnumerable<Location>>.Failed(
                        EventTrackingId,
-                       "The party identification of the location is unknown!"
+                       $"The party identification '{PartyId}' of the location is unknown!"
                    );
 
         }
@@ -10679,6 +10709,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddTariff            (Tariff, ...)
 
+        /// <summary>
+        /// Add the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<Tariff>>
 
             AddTariff(Tariff             Tariff,
@@ -10691,7 +10729,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+            var partyId       = Party_Idv3.From(
+                                    Tariff.CountryCode,
+                                    Tariff.PartyId
+                                );
 
             if (parties.TryGetValue(partyId, out var party))
             {
@@ -10760,6 +10801,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddTariffIfNotExists (Tariff, ...)
 
+        /// <summary>
+        /// Add the given charging tariff if it does not already exist.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<Tariff>>
 
             AddTariffIfNotExists(Tariff             Tariff,
@@ -10772,7 +10821,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+            var partyId       = Party_Idv3.From(
+                                    Tariff.CountryCode,
+                                    Tariff.PartyId
+                                );
 
             if (parties.TryGetValue(partyId, out var party))
             {
@@ -10841,6 +10893,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddOrUpdateTariff    (Tariff,                         AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Add or update the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddOrUpdateResult<Tariff>>
 
             AddOrUpdateTariff(Tariff             Tariff,
@@ -10854,7 +10915,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+            var partyId       = Party_Idv3.From(
+                                    Tariff.CountryCode,
+                                    Tariff.PartyId
+                                );
 
             if (parties.TryGetValue(partyId, out var party))
             {
@@ -11002,6 +11066,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region UpdateTariff         (Tariff,                         AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Update the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<UpdateResult<Tariff>>
 
             UpdateTariff(Tariff             Tariff,
@@ -11015,7 +11088,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
+            var partyId       = Party_Idv3.From(
+                                    Tariff.CountryCode,
+                                    Tariff.PartyId
+                                );
 
             if (parties.TryGetValue(partyId, out var party))
             {
@@ -11110,6 +11186,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region TryPatchTariff       (PartyId, TariffId, TariffPatch, AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Try to patch the given charging tariff with the given JSON patch document.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party owning the token.</param>
+        /// <param name="TariffId">The identification of the charging tariff to patch.</param>
+        /// <param name="TariffPatch">The JSON patch document to apply to the charging tariff.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<Tariff>>
 
             TryPatchTariff(Party_Idv3         PartyId,
@@ -11620,7 +11707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region TariffExist          (TariffId,                      Timestamp = null, Tolerance = null)
+        #region TariffExist          (PartyId, TariffId,             Timestamp = null, Tolerance = null)
 
         public Boolean TariffExists(Party_Idv3       PartyId,
                                     Tariff_Id        TariffId,
@@ -11654,6 +11741,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             return false;
+
+        }
+
+        #endregion
+
+        #region GetTariff            (PartyId, TariffId,             Timestamp = null, Tolerance = null)
+
+        public Tariff? GetTariff(Party_Idv3       PartyId,
+                                 Tariff_Id        TariffId,
+                                 DateTimeOffset?  Timestamp   = null,
+                                 TimeSpan?        Tolerance   = null)
+        {
+
+            if (TryGetTariff(PartyId,
+                             TariffId,
+                             out var tariff,
+                             Timestamp,
+                             Tolerance))
+            {
+                return tariff;
+            }
+
+            return null;
 
         }
 
@@ -11766,11 +11876,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
 
-            => GetTariffIdsDelegate?.Invoke(PartyId,
-                                            LocationId,
-                                            EVSEId,
-                                            ConnectorId,
-                                            EMSPId) ?? [];
+            => GetTariffIdsDelegate?.Invoke(
+                   PartyId,
+                   LocationId,
+                   EVSEId,
+                   ConnectorId,
+                   EMSPId
+               ) ?? [];
 
         #endregion
 
@@ -11822,9 +11934,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
             Status          ??= AllowedType.ALLOWED;
-            var tokenStatus   = new TokenStatus(Token, Status.Value);
 
-            if (parties.TryGetValue(Party_Idv3.From(Token.CountryCode, Token.PartyId), out var party))
+            var tokenStatus   = new TokenStatus(
+                                    Token,
+                                    Status.Value
+                                );
+
+            var partyId       = Party_Idv3.From(
+                                    Token.CountryCode,
+                                    Token.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Tokens.TryAdd(Token.Id, tokenStatus))
@@ -11879,7 +12000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<TokenStatus>.Failed(
                        EventTrackingId,
                        tokenStatus,
-                       "The party identification of the token status is unknown!"
+                       $"The party identification '{partyId}' of the token status is unknown!"
                    );
 
         }
@@ -11910,9 +12031,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
             Status          ??= AllowedType.ALLOWED;
-            var tokenStatus   = new TokenStatus(Token, Status.Value);
 
-            if (parties.TryGetValue(Party_Idv3.From(Token.CountryCode, Token.PartyId), out var party))
+            var tokenStatus   = new TokenStatus(
+                                    Token,
+                                    Status.Value
+                                );
+
+            var partyId       = Party_Idv3.From(
+                                    Token.CountryCode,
+                                    Token.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Tokens.TryAdd(Token.Id, tokenStatus))
@@ -11967,7 +12097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<TokenStatus>.Failed(
                        EventTrackingId,
                        tokenStatus,
-                       "The party identification of the token status is unknown!"
+                       $"The party identification '{partyId}' of the token status is unknown!"
                    );
 
         }
@@ -11999,9 +12129,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             EventTrackingId ??= EventTracking_Id.New;
+
             TokenStatus? tokenStatus = null;
 
-            if (parties.TryGetValue(Party_Idv3.From(Token.CountryCode, Token.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Token.CountryCode,
+                                    Token.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 #region Update an existing token status
@@ -12142,7 +12278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddOrUpdateResult<TokenStatus>.Failed(
                        EventTrackingId,
                        tokenStatus,
-                       "The party identification of the token status is unknown!"
+                       $"The party identification '{partyId}' of the token status is unknown!"
                    );
 
         }
@@ -12175,7 +12311,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Token.CountryCode, Token.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Token.CountryCode,
+                                    Token.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (!party.Tokens.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -12259,7 +12400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             return UpdateResult<TokenStatus>.Failed(
                        EventTrackingId,
-                       "The party identification of the token is unknown!"
+                       $"The party identification '{partyId}' of the token is unknown!"
                    );
 
         }
@@ -12783,6 +12924,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #region GetTokenStatus      (PartyId, TokenId)
+
+        public TokenStatus? GetTokenStatus(Party_Idv3  PartyId,
+                                           Token_Id    TokenId)
+        {
+
+            if (TryGetTokenStatus(PartyId,
+                                  TokenId,
+                                  out var tokenStatus))
+            {
+                return tokenStatus;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
         #region TryGetTokenStatus   (PartyId, TokenId, out TokenStatus)
 
         public Boolean TryGetTokenStatus(Party_Idv3                            PartyId,
@@ -12926,7 +13086,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Session.CountryCode, Session.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Session.CountryCode,
+                                    Session.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(Session.Id, Session))
@@ -12982,7 +13147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<Session>.Failed(
                        EventTrackingId,
                        Session,
-                       "The party identification of the session is unknown!"
+                       $"The party identification '{partyId}' of the session is unknown!"
                    );
 
         }
@@ -13011,7 +13176,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Session.CountryCode, Session.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Session.CountryCode,
+                                    Session.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(Session.Id, Session))
@@ -13067,7 +13237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<Session>.Failed(
                        EventTrackingId,
                        Session,
-                       "The party identification of the session is unknown!"
+                       $"The party identification '{partyId}' of the session is unknown!"
                    );
 
         }
@@ -13098,7 +13268,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Session.CountryCode, Session.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Session.CountryCode,
+                                    Session.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 #region Update an existing session
@@ -13235,7 +13410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddOrUpdateResult<Session>.Failed(
                        EventTrackingId,
                        Session,
-                       "The party identification of the session is unknown!"
+                       $"The party identification '{partyId}' of the session is unknown!"
                    );
 
         }
@@ -13266,7 +13441,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(Session.CountryCode, Session.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    Session.CountryCode,
+                                    Session.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (!party.Sessions.TryGetValue(Session.Id, out var existingSession))
@@ -13347,7 +13527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return UpdateResult<Session>.Failed(
                        EventTrackingId,
                        Session,
-                       "The party identification of the session is unknown!"
+                       $"The party identification '{partyId}' of the session is unknown!"
                    );
 
         }
@@ -13891,6 +14071,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #region GetSession            (PartyId, SessionId)
+
+        public Session? GetSession(Party_Idv3  PartyId,
+                                   Session_Id  SessionId)
+        {
+
+            if (TryGetSession(PartyId,
+                              SessionId,
+                              out var cdr))
+            {
+                return cdr;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
         #region TryGetSession         (PartyId, SessionId, out Session)
 
         public Boolean TryGetSession(Party_Idv3                        PartyId,
@@ -14029,7 +14228,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(CDR.CountryCode, CDR.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    CDR.CountryCode,
+                                    CDR.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(CDR.Id, CDR))
@@ -14098,7 +14302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       $"The party identification of the charge detail record is unknown!"
+                       $"The party identification '{partyId}' of the charge detail record is unknown!"
                    );
 
         }
@@ -14127,7 +14331,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(CDR.CountryCode, CDR.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    CDR.CountryCode,
+                                    CDR.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(CDR.Id, CDR))
@@ -14196,7 +14405,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       $"The party identification of the charge detail record is unknown!"
+                       $"The party identification '{partyId}' of the charge detail record is unknown!"
                    );
 
         }
@@ -14227,7 +14436,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(CDR.CountryCode, CDR.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    CDR.CountryCode,
+                                    CDR.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 #region Update an existing charge detail record
@@ -14390,7 +14604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return AddOrUpdateResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       $"The party identification of the charge detail record is unknown!"
+                       $"The party identification '{partyId}' of the charge detail record is unknown!"
                    );
 
         }
@@ -14421,7 +14635,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(Party_Idv3.From(CDR.CountryCode, CDR.PartyId), out var party))
+            var partyId       = Party_Idv3.From(
+                                    CDR.CountryCode,
+                                    CDR.PartyId
+                                );
+
+            if (parties.TryGetValue(partyId, out var party))
             {
 
                 if (!party.CDRs.TryGetValue(CDR.Id, out var existingCDR))
@@ -14515,7 +14734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return UpdateResult<CDR>.Failed(
                        EventTrackingId,
                        CDR,
-                       $"The party identification of the charge detail record is unknown!"
+                       $"The party identification '{partyId}' of the charge detail record is unknown!"
                    );
 
         }
@@ -15100,6 +15319,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             return false;
+
+        }
+
+        #endregion
+
+        #region GetCDR            (PartyId, CDRId)
+
+        public CDR? GetCDR(Party_Idv3  PartyId,
+                           CDR_Id      CDRId)
+        {
+
+            if (TryGetCDR(PartyId,
+                          CDRId,
+                          out var cdr))
+            {
+                return cdr;
+            }
+
+            return null;
 
         }
 

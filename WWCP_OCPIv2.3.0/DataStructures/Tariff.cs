@@ -965,6 +965,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
+        public Boolean IsActive(ChargingPeriod ChargingPeriod)
+
+            => TariffElements.Any(tariffElement => tariffElement.IsActive(ChargingPeriod));
+
+
         #region Operator overloading
 
         #region Operator == (Tariff1, Tariff2)

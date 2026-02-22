@@ -376,7 +376,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
-
         public static Location_Id? ToOCPI(this WWCP.ChargingPool_Id              ChargingPoolId,
                                           ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter = null)
 
@@ -1963,12 +1962,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 // !!! ToDo: Request the charging tariff ids from back at the session start time! !!!
                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                var tariffIds        = GetTariffIdsDelegate?.Invoke(countryCode,
-                                                                    partyId,
-                                                                    filteredLocation.Id,
-                                                                    filteredLocation.EVSEs.First().EVSEId,
-                                                                    filteredLocation.EVSEs.First().Connectors.First().Id,
-                                                                    EMSPId);
+                var tariffIds        = GetTariffIdsDelegate?.Invoke(
+                                           countryCode,
+                                           partyId,
+                                           filteredLocation.Id,
+                                           filteredLocation.EVSEs.First().EVSEId,
+                                           filteredLocation.EVSEs.First().Connectors.First().Id,
+                                           EMSPId
+                                       );
 
                 if (tariffIds is null || !tariffIds.Any())
                 {
@@ -2009,7 +2010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Location:                filteredLocation,
                                    Currency:                Currency.EUR,
                                    ChargingPeriods:         [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     ChargeDetailRecord.SessionTime.StartTime,
                                                                     [
                                                                         CDRDimension.ENERGY(WattHour.Zero)
@@ -2161,31 +2162,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new CDR(
 
-                           CountryCode:             countryCode,
-                           PartyId:                 partyId,
-                           Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
-                           Start:                   ChargeDetailRecord.SessionTime.StartTime,
-                           Stop:                    ChargeDetailRecord.SessionTime.EndTime.Value,
-                           AuthId:                  authId.    Value,
-                           AuthMethod:              authMethod.Value,
-                           Location:                filteredLocation,            //ToDo: Might still have not required connectors!
-                                                                                 //      Might have our EnergyMeter vendor extension!
-                           Currency:                newCDR.Currency,
-                           ChargingPeriods:         newCDR.ChargingPeriods,
-                           TotalCost:               newCDR.TotalCost,
-                           TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
-                           TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
+                           CountryCode:            countryCode,
+                           PartyId:                partyId,
+                           Id:                     CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
+                           Start:                  ChargeDetailRecord.SessionTime.StartTime,
+                           Stop:                   ChargeDetailRecord.SessionTime.EndTime.Value,
+                           AuthId:                 authId.    Value,
+                           AuthMethod:             authMethod.Value,
+                           Location:               filteredLocation,            //ToDo: Might still have not required connectors!
+                                                                                //      Might have our EnergyMeter vendor extension!
+                           Currency:               newCDR.Currency,
+                           ChargingPeriods:        newCDR.ChargingPeriods,
+                           TotalCost:              newCDR.TotalCost,
+                           TotalEnergy:            ChargeDetailRecord.ConsumedEnergy.      Value,
+                           TotalTime:              ChargeDetailRecord.SessionTime.Duration.Value,
 
-                           EnergyMeterId:           ChargeDetailRecord.EnergyMeterId.ToOCPI(),
-                           EnergyMeter:             null,                        // Our vendor extension!
+                           EnergyMeterId:          ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeter:            null,                        // Our vendor extension!
                            TransparencySoftware:   null,                        // Our vendor extension!
-                           Tariffs:                 tariffs,
-                           SignedData:              signedData,                  // Our backport from OCPI v2.2.1!
-                           TotalParkingTime:        null,
-                           Remark:                  null,
+                           Tariffs:                tariffs,
+                           SignedData:             signedData,                  // Our backport from OCPI v2.2.1!
+                           TotalParkingTime:       null,
+                           Remark:                 null,
 
-                           Created:                 ChargeDetailRecord.Created,  // Our vendor extension!
-                           LastUpdated:             ChargeDetailRecord.LastChangeDate
+                           Created:                ChargeDetailRecord.Created,  // Our vendor extension!
+                           LastUpdated:            ChargeDetailRecord.LastChangeDate
 
                        );
 

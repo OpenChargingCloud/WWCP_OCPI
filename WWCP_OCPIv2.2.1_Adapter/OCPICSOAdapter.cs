@@ -17,8 +17,11 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Net.Security;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 using Org.BouncyCastle.Crypto.Parameters;
@@ -28,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 
@@ -78,9 +82,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Properties
 
-        public IId AuthId => Id;
+        public IId AuthId
+            => Id;
 
-        IId WWCP.ISendChargeDetailRecords.SendChargeDetailRecordsId => Id;
+        IId WWCP.ISendChargeDetailRecords.SendChargeDetailRecordsId
+            => Id;
 
         public CommonAPI                                    CommonAPI                            { get; }
 
@@ -95,6 +101,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
         public WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter    { get; }
+
+
+        public Func<WWCP.ChargeDetailRecord, CDR, CDR?>?    CustomCDRMapper                      { get; set; }
 
         public new OCPILogfileCreatorDelegate?              ClientsLogfileCreator                { get; }
 
@@ -445,7 +454,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             null,
                                             WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                 remotePartyId.ToString()
-                                            )
+                                            ),
+                                            this                                    // CSORoamingProvider
                                         );
 
 
@@ -490,7 +500,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            WWCP.ReservationHandling.Close,
                                            providerId,
                                            null,                                   // Remote authentication
-                                           WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                           WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
+                                               remotePartyId.ToString()//Id.ToString()
+                                           ),
+                                           this                                    // CSORoamingProvider
                                        );
 
                     if (result.Result == WWCP.RemoteStopResultTypes.Success)
@@ -511,11 +524,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
 
                 return new CommandResponse(
-                               stopSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!") ]
-                           );
+                           stopSessionCommand,
+                           CommandResponseTypes.REJECTED,
+                           TimeSpan.FromMinutes(1),
+                           [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!") ]
+                       );
 
             };
 
@@ -1824,6 +1837,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
+
+        private Boolean SetupCPO2EMSPClient(RemoteParty                                            RemoteParty,
+                                            [NotNullWhen(true)] out CPO.HTTP.CPO2EMSP_HTTPClient?  CPO2EMSPClient)
+        {
+
+            var remotePartyLoggingPath = Path.Combine(
+                                             ClientsLoggingPath,
+                                             RemoteParty.Id.ToString()
+                                         ) +
+                                         Path.DirectorySeparatorChar;
+
+            if (!Directory.Exists(remotePartyLoggingPath))
+                Directory.CreateDirectory(remotePartyLoggingPath);
+
+
+            if (RemoteParty.CPO2EMSPClient is null)
+            {
+
+                RemoteParty.CPO2EMSPClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
+
+                                                 CPO_HTTPAPI,
+                                                 RemoteParty,
+                                                 null, // VirtualHostname
+                                                 null, // Description
+                                                 null, // HTTPLogger
+
+                                                 DisableLogging,
+                                                 remotePartyLoggingPath,
+                                                 ClientsLoggingContext,
+                                                 ClientsLogfileCreator,
+                                                 DNSClient
+
+                                             );
+
+                //ToDo: Make client debugging more flexible!
+                RemoteParty.CPO2EMSPClient.HTTPLogger.Debug("all", LogTargets.Disc);
+
+            }
+
+            CPO2EMSPClient = RemoteParty.CPO2EMSPClient;
+
+            return RemoteParty.CPO2EMSPClient is not null;
+
+        }
+
+
+
         #region AuthorizeStart(LocalAuthentication, ...)
 
         /// <summary>
@@ -2335,7 +2395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ChargeDetailRecords">An enumeration of charge detail records.</param>
         /// <param name="TransmissionType">Whether to send the CDR directly or enqueue it for a while.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -2344,7 +2404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             WWCP.ISendChargeDetailRecords.SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
                                                                   WWCP.TransmissionTypes                TransmissionType,
 
-                                                                  DateTimeOffset?                       Timestamp,
+                                                                  DateTimeOffset?                       RequestTimestamp,
                                                                   EventTracking_Id?                     EventTrackingId,
                                                                   TimeSpan?                             RequestTimeout,
                                                                   CancellationToken                     CancellationToken)
@@ -2353,7 +2413,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Initial checks
 
-            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             EventTrackingId ??= EventTracking_Id.New;
             RequestTimeout  ??= this.RequestTimeout;
 
@@ -2373,7 +2432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 else
                     filteredCDRs.Add(
                         WWCP.SendCDRResult.Filtered(
-                            org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                            Timestamp.Now,
                             Id,
                             cdr,
                             Warnings: Warnings.Create("This charge detail record was filtered!")
@@ -2386,79 +2445,274 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Send OnSendCDRsRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
 
-            try
-            {
+            RequestTimestamp ??= startTime;
 
-                OnSendCDRsRequest?.Invoke(startTime,
-                                          Timestamp.Value,
-                                          this,
-                                          Id.ToString(),
-                                          EventTrackingId,
-                                          RoamingNetwork.Id,
-                                          ChargeDetailRecords,
-                                          RequestTimeout);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnSendCDRsRequest));
-            }
+            await LogEvent(
+                      OnSendCDRsRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          ChargeDetailRecords,
+                          RequestTimeout
+                      )
+                  );
 
             #endregion
 
 
             #region if disabled => 'AdminDown'...
 
-            DateTimeOffset        endtime;
-            TimeSpan              runtime;
             WWCP.SendCDRsResult?  sendCDRsResult   = null;
 
             if (DisableSendChargeDetailRecords)
-            {
-
-                endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-                runtime         = endtime - startTime;
                 sendCDRsResult  = WWCP.SendCDRsResult.AdminDown(
-                                      org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                      Timestamp.Now,
                                       Id,
                                       this,
                                       ChargeDetailRecords,
                                       I18NString.Create("Sending charge detail records is disabled!"),
-                                      Runtime: runtime
+                                      Runtime: stopwatch.Elapsed
                                   );
-
-            }
 
             #endregion
 
             #region ..., or when there are no charge detail records...
 
             else if (!ChargeDetailRecords.Any())
-            {
-
-                endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-                runtime         = endtime - startTime;
                 sendCDRsResult  = WWCP.SendCDRsResult.NoOperation(
-                                      org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                      Timestamp.Now,
                                       Id,
                                       this,
                                       ChargeDetailRecords,
-                                      Runtime: runtime
+                                      null,
+                                      null,
+                                      stopwatch.Elapsed
                                   );
-
-            }
 
             #endregion
 
+            else
+            {
 
-            return WWCP.SendCDRsResult.NoOperation(
-                       org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                       Id,
-                       this,
-                       ChargeDetailRecords
-                   );
+                var warnings        = new List<Warning>();
+                var sendCDRResults  = new List<WWCP.SendCDRResult>();
+
+                // Might be CDRs of different providers!
+                foreach (var chargeDetailRecord in ChargeDetailRecords)
+                {
+
+                    #region Setup remote party
+
+                    if (!chargeDetailRecord.ProviderIdStart.HasValue)
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.UnknownProviderIdStart(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"The ProviderIdStart of the charge detail record is not set!")
+                            )
+                        );
+                        continue;
+                    }
+
+                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                    var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
+                    if (remoteParty is null)
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Unknown remote party '{emspId}'!")
+                            )
+                        );
+                        continue;
+                    }
+
+                    var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                    if (remoteAccessInfo is null)
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Unknown remote access info for '{emspId}'!")
+                            )
+                        );
+                        break;
+                    }
+
+                    if (!SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Could not create a CPO client for '{remoteParty.Id})'!")
+                            )
+                        );
+                        break;
+                    }
+
+                    #endregion
+
+                    #region Convert and send charge detail record
+
+                    var cdr = chargeDetailRecord.ToOCPI(
+                                  CustomChargingPoolIdConverter,
+                                  CustomEVSEUIdConverter,
+                                  CustomEVSEIdConverter,
+                                  CommonAPI.GetTariffIds,
+                                  EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                  CommonAPI.GetTariff,
+                                  ref warnings
+                              );
+
+                    if (cdr is not null && CustomCDRMapper is not null)
+                        cdr = CustomCDRMapper(chargeDetailRecord, cdr);
+
+                    if (cdr is null)
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Converting the charge detail record to OCPI {Version.String} failed!"),
+                                warnings,
+                                stopwatch.Elapsed
+                            )
+                        );
+                        continue;
+                    }
+
+                    #endregion
+
+
+                    var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(
+                                                       CDR:                cdr,
+                                                       AllowDowngrades:    false,
+                                                       SkipNotifications:  false,
+                                                       EventTrackingId:    EventTrackingId,
+                                                       CancellationToken:  CancellationToken
+                                                   );
+
+                    var response           = await cpo2EMSPClient.PostCDR(
+                                                       CDR:                cdr,
+                                                  //     EMSPId:             emspId,
+                                                       CancellationToken:  CancellationToken
+                                                   );
+
+                    #region Response handling
+
+                    if (response is not null)
+                    {
+
+                        if (response.StatusCode == 1000)
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Success(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    null,
+                                    warnings,
+                                    response.HTTPLocation,
+                                    stopwatch.Elapsed
+                                )
+                            );
+
+                        else
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Error(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    I18NString.Create($"Sending the charge detail record failed: {response.StatusMessage} ({response.StatusCode})!"),
+                                    warnings,
+                                    stopwatch.Elapsed
+                                )
+                            );
+
+                    }
+                    else
+                    {
+
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create("Sending the charge detail record failed!"),
+                                warnings,
+                                stopwatch.Elapsed
+                            )
+                        );
+
+                    }
+
+                    #endregion
+
+                }
+
+                sendCDRsResult = WWCP.SendCDRResultTypesExtensions.Combine(
+                                     sendCDRResults,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+            }
+
+
+            sendCDRsResult ??= WWCP.SendCDRsResult.Error(
+                                   Timestamp.Now,
+                                   Id,
+                                   this,
+                                   ChargeDetailRecords,
+                                   I18NString.Create("Unknown error!"),
+                                   null,
+                                   stopwatch.Elapsed
+                               );
+
+
+            await RoamingNetwork.ReceiveSendChargeDetailRecordResults(sendCDRsResult);
+
+
+            #region Send OnSendCDRsRequest event
+
+            var endtime = Timestamp.Now;
+            stopwatch.Stop();
+
+            await LogEvent(
+                      OnSendCDRsResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          startTime,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          ChargeDetailRecords,
+                          RequestTimeout,
+                          sendCDRsResult,
+                          stopwatch.Elapsed
+                      )
+                  );
+
+            #endregion
+
+            return sendCDRsResult;
 
         }
 
@@ -2496,6 +2750,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
             
         }
+
+        #endregion
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OICPCommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(OCPICSOAdapter),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OICPCommand
+               );
 
         #endregion
 

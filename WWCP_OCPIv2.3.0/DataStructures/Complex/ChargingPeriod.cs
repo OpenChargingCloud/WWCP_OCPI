@@ -30,18 +30,144 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
+    public enum MeteringValueSource
+    {
+        Measured,
+        Imputed
+    }
+
+    public readonly struct MeteringValue(DateTimeOffset       Timestamp,
+                                         WattHour             WattHours,
+                                         MeteringValueSource  Source = MeteringValueSource.Measured) : IEquatable<MeteringValue>
+    {
+
+        public DateTimeOffset       Timestamp    { get; }  = Timestamp;
+        public WattHour             WattHours    { get; }  = WattHours;
+        public MeteringValueSource  Source       { get; }  = Source;
+
+
+        public static MeteringValue Measured(DateTimeOffset Timestamp, WattHour WattHours)
+            => new (Timestamp, WattHours, MeteringValueSource.Measured);
+
+        public static MeteringValue Imputed (DateTimeOffset Timestamp, WattHour WattHours)
+            => new (Timestamp, WattHours, MeteringValueSource.Imputed);
+
+
+        #region Operator overloading
+
+        #region Operator == (MeteringValue1, MeteringValue2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="MeteringValue1">A metering value.</param>
+        /// <param name="MeteringValue2">Another metering value.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (MeteringValue MeteringValue1,
+                                           MeteringValue MeteringValue2)
+
+            => MeteringValue1.Equals(MeteringValue2);
+
+        #endregion
+
+        #region Operator != (MeteringValue1, MeteringValue2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="MeteringValue1">A metering value.</param>
+        /// <param name="MeteringValue2">Another metering value.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (MeteringValue MeteringValue1,
+                                           MeteringValue MeteringValue2)
+
+            => !MeteringValue1.Equals(MeteringValue2);
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<MeteringValue> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two metering valuess for equality.
+        /// </summary>
+        /// <param name="Object">A metering value to compare with.</param>
+        public override Boolean Equals(Object? Object)
+
+            => Object is MeteringValue chargingPeriod &&
+                   Equals(chargingPeriod);
+
+        #endregion
+
+        #region Equals(MeteringValue)
+
+        /// <summary>
+        /// Compares two metering valuess for equality.
+        /// </summary>
+        /// <param name="ChargingPeriod">A metering value to compare with.</param>
+        public Boolean Equals(MeteringValue MeteringValue)
+
+            => Timestamp.ToISO8601().Equals(MeteringValue.Timestamp.ToISO8601()) &&
+               WattHours.            Equals(MeteringValue.WattHours)             &&
+               Source.               Equals(MeteringValue.Source);
+
+        #endregion
+
+        #endregion
+
+        #region (override) GetHashCode()
+
+        /// <summary>
+        /// Return the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code of this object.</returns>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return Timestamp.GetHashCode() * 5 ^
+                       WattHours.GetHashCode() * 3 ^
+                       Source.   GetHashCode();
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => Source == MeteringValueSource.Measured
+                   ? $"{Timestamp} => {WattHours.kWh} kWh (measured)"
+                   : $"{Timestamp} => {WattHours.kWh} kWh (imputed)";
+
+        #endregion
+
+    }
+
+
     /// <summary>
     /// A charging period consists of a start timestamp and a list of
     /// possible values that influence this period, for example:
     /// Amount of energy charged this period, maximum current during
     /// this period etc.
     /// </summary>
-    public readonly struct ChargingPeriod : IEquatable<ChargingPeriod>,
-                                            IComparable<ChargingPeriod>,
-                                            IComparable
+    public class ChargingPeriod : IEquatable<ChargingPeriod>,
+                                  IComparable<ChargingPeriod>,
+                                  IComparable
     {
 
         #region Properties
+
+        public  UInt32                    Id                 { get; set; }
 
         /// <summary>
         /// Start timestamp of the charging period.
@@ -55,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// List of relevant values for this charging period.
         /// </summary>
         [Mandatory]
-        public IEnumerable<CDRDimension>  Dimensions         { get; }
+        public HashSet<CDRDimension>      Dimensions         { get; }
 
         /// <summary>
         /// Unique identifier of the tariff that is relevant for this charging period.
@@ -63,6 +189,172 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         [Optional]
         public Tariff_Id?                 TariffId           { get;}
+
+
+
+        #region Our extensions!!!
+
+        /// <summary>
+        /// The final stop timestamp when this charging period and
+        /// with it the entire charging session ends.
+        /// Thus there is no 'next' charging period having a start
+        /// timestamp.
+        /// </summary>
+        private  DateTimeOffset?                             endTimestamp;
+
+        public DateTimeOffset? SetEndTimestamp(DateTimeOffset? Timestamp)
+        {
+            endTimestamp = Timestamp;
+            return endTimestamp;
+        }
+
+        /// <summary>
+        /// Stop timestamp of the charging period.
+        /// This period ends when a next period starts,
+        /// the last period ends when the session ends.
+        /// </summary>
+        [Optional]
+        public  DateTimeOffset?                              StopTimestamp
+            => Next is not null
+                   ? Next.StartTimestamp
+                   : endTimestamp;
+
+
+
+        public  Decimal   FlatPrice         { get; set; }
+
+
+
+        public  WattHour  Energy            { get; set; }
+        public  Decimal   EnergyPrice       { get; set; }
+        public  UInt32    EnergyStepSize    { get; set; }
+
+
+
+        public  TimeSpan  Duration
+             => StopTimestamp.HasValue
+                    ? StopTimestamp.Value - StartTimestamp
+                    : Timestamp.Now       - StartTimestamp;
+
+        public  Decimal   TimePrice         { get; set; }
+        public  UInt32    TimeStepSize      { get; set; }
+
+        public  TimeSpan                                     TotalDuration
+            => TimeSpan.FromSeconds(GetThisAndAllPrevious.Sum(chargingPeriods => chargingPeriods.Duration.TotalSeconds));
+
+
+
+
+        public  Watt       PowerAverage        { get; set; }
+
+
+
+
+        public  Dictionary<TariffDimension, PriceComponent>  PriceComponents       { get; } = [];
+
+
+
+
+
+        public  MeteringValue?                               StartMeteringValue    { get; set; }
+
+
+        private MeteringValue?                               stopMeteringValue;
+        public  MeteringValue?                               StopMeteringValue {
+
+            get
+            {
+
+                if (next is not null)
+                    return next.StartMeteringValue;
+
+                return stopMeteringValue;
+
+            }
+
+            set
+            {
+                stopMeteringValue = value;
+            }
+
+        }
+
+
+
+        public  ChargingPeriod                               First
+        {
+            get
+            {
+
+                var current = this;
+
+                while (current.Previous is not null)
+                    current = current.Previous;
+
+                return current;
+
+            }
+        }
+        public  ChargingPeriod?                              Previous              { get; set; }
+
+        private ChargingPeriod? next;
+        public ChargingPeriod?                               Next {
+
+            get
+            {
+                return next;
+            }
+
+            set
+            {
+                next          = value;
+                endTimestamp  = null;
+            }
+
+        }
+
+        public  IEnumerable<ChargingPeriod>                  GetAllPrevious
+        {
+            get
+            {
+
+                var allPrevious = new List<ChargingPeriod>();
+
+                var current = this;
+
+                while (current.Previous is not null)
+                {
+                    allPrevious.Add(current.Previous);
+                    current = current.Previous;
+                }
+
+                return allPrevious;
+
+            }
+        }
+
+        public  IEnumerable<ChargingPeriod>                  GetThisAndAllPrevious
+        {
+            get
+            {
+
+                var allPrevious = new List<ChargingPeriod>() { this };
+
+                var current = this;
+
+                while (current.Previous is not null)
+                {
+                    allPrevious.Add(current.Previous);
+                    current = current.Previous;
+                }
+
+                return allPrevious;
+
+            }
+        }
+
+        #endregion
+
 
         #endregion
 
@@ -84,15 +376,73 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
 
             this.StartTimestamp  = StartTimestamp;
-            this.Dimensions      = Dimensions?.Distinct() ?? [];
+            this.Dimensions      = Dimensions is not null
+                                       ? [.. Dimensions]
+                                       : [];
             this.TariffId        = TariffId;
+
+        }
+
+
+        /// <summary>
+        /// A charging period consists of a start timestamp and a
+        /// list of possible values that influence this period.
+        /// </summary>
+        /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
+        /// <param name="Dimensions">List of relevant values for this charging period.</param>
+        public ChargingPeriod(DateTimeOffset              StartTimestamp,
+                              ChargingPeriod              Previous,
+                              ChargingPeriod              Next,
+                              IEnumerable<CDRDimension>?  Dimensions   = null,
+                              Tariff_Id?                  TariffId     = null)
+        {
+
+            this.StartTimestamp  = StartTimestamp;
+            this.Dimensions      = Dimensions is not null
+                                       ? [.. Dimensions]
+                                       : [];
+            this.TariffId        = TariffId;
+
+            this.Previous        = Previous;
+            this.next            = Next;
+
+            Previous.next        = this;
+            next.Previous        = this;
+
+        }
+
+
+        /// <summary>
+        /// A charging period consists of a start timestamp and a
+        /// list of possible values that influence this period.
+        /// </summary>
+        /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
+        /// <param name="Dimensions">List of relevant values for this charging period.</param>
+        public ChargingPeriod(DateTimeOffset              StartTimestamp,
+                              DateTimeOffset              EndTimestamp,
+                              ChargingPeriod              Previous,
+                              IEnumerable<CDRDimension>?  Dimensions   = null,
+                              Tariff_Id?                  TariffId     = null)
+        {
+
+            this.StartTimestamp     = StartTimestamp;
+            this.endTimestamp       = EndTimestamp;
+            this.Dimensions         = Dimensions is not null
+                                          ? [.. Dimensions]
+                                          : [];
+            this.TariffId           = TariffId;
+
+            this.Previous           = Previous;
+            this.next               = Next;
+
+            Previous.next           = this;
 
         }
 
         #endregion
 
 
-        #region (static) Create  (StartTimestamp, Dimensions, TariffId = null)
+        #region (static) Create  (StartTimestamp, Dimensions = null, TariffId = null)
 
         /// <summary>
         /// A charging period consists of a start timestamp and a
@@ -101,12 +451,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
         /// <param name="TariffId">Unique identifier of the tariff that is relevant for this charging period.</param>
-        public static ChargingPeriod Create(DateTimeOffset             StartTimestamp,
-                                            IEnumerable<CDRDimension>  Dimensions,
-                                            Tariff_Id?                 TariffId   = null)
+        public static ChargingPeriod Create(DateTimeOffset              StartTimestamp,
+                                            IEnumerable<CDRDimension>?  Dimensions   = null,
+                                            Tariff_Id?                  TariffId     = null)
 
             => new (StartTimestamp,
-                    Dimensions,
+                    Dimensions ?? [],
                     TariffId);
 
         #endregion
@@ -434,8 +784,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// Compares two charging periods.
         /// </summary>
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
-        public Int32 CompareTo(ChargingPeriod ChargingPeriod)
+        public Int32 CompareTo(ChargingPeriod? ChargingPeriod)
         {
+
+            if (ChargingPeriod is null)
+                throw new ArgumentNullException(nameof(ChargingPeriod), "The given charging period must not be null!");
 
             var c = StartTimestamp.CompareTo(ChargingPeriod.StartTimestamp);
 
@@ -471,9 +824,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// Compares two charging periods for equality.
         /// </summary>
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
-        public Boolean Equals(ChargingPeriod ChargingPeriod)
+        public Boolean Equals(ChargingPeriod? ChargingPeriod)
 
-            => StartTimestamp.ToISO8601().Equals(ChargingPeriod.StartTimestamp.ToISO8601()) &&
+            => ChargingPeriod is not null &&
+               StartTimestamp.ToISO8601().Equals(ChargingPeriod.StartTimestamp.ToISO8601()) &&
 
             ((!TariffId.HasValue && !ChargingPeriod.TariffId.HasValue) ||
               (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value))) &&

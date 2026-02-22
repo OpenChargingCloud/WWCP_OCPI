@@ -4817,7 +4817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     // (E-Tag, Timestamp, ...)
 
                     var patchedTariff = await CommonAPI.TryPatchTariff(
-                                                  existingTariff,
+                                                  existingTariff.Id,
                                                   tariffPatch
                                               );
 
@@ -6531,7 +6531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Check existing token
 
-                        if (!CommonAPI.TryGetToken(tokenId.Value, out var _tokenStatus) ||
+                        if (!CommonAPI.TryGetTokenStatus(tokenId.Value, out var _tokenStatus) ||
                             (_tokenStatus.Token.Type != requestedTokenType))
                         {
 

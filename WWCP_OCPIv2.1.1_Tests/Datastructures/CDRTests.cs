@@ -75,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Currency.EUR,
 
                                [
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        [
                                            CDRDimension.Create(
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                            )
                                        ]
                                    ),
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        [
                                            CDRDimension.Create(
@@ -835,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start1,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                 )
@@ -878,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start2,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
@@ -921,7 +921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                             ),
                                        Currency:            Currency.EUR,
                                        ChargingPeriods:     [
-                                                                new ChargingPeriod(
+                                                                ChargingPeriod.Create(
                                                                     start3,
                                                                     [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
                                                                 )
@@ -1699,7 +1699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                            ),
                                       Currency:            Currency.EUR,
                                       ChargingPeriods:     [
-                                                               new ChargingPeriod(
+                                                               ChargingPeriod.Create(
                                                                    start1,
                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )
@@ -1822,7 +1822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                            ),
                                       Currency:            Currency.EUR,
                                       ChargingPeriods:     [
-                                                               new ChargingPeriod(
+                                                               ChargingPeriod.Create(
                                                                    chargingStart,
                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
                                                                )

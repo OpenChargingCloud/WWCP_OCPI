@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     public delegate Tariff?                 GetTariff2_Delegate   (Tariff_Id        TariffId,
                                                                    DateTimeOffset?  StartTimestamp   = null,
-                                                                   TimeSpan?        EVSEUId          = null);
+                                                                   TimeSpan?        Tolerance        = null);
 
 
     /// <summary>
@@ -1287,7 +1287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TokenId = tokenId;
 
 
-            if (!CommonAPI.TryGetToken(TokenId.Value, out var tokenStatus))
+            if (!CommonAPI.TryGetTokenStatus(TokenId.Value, out var tokenStatus))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1422,7 +1422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TokenId = tokenId;
 
 
-            if (CommonAPI.TryGetToken(TokenId.Value, out var tokenStatus))
+            if (CommonAPI.TryGetTokenStatus(TokenId.Value, out var tokenStatus))
                 TokenStatus = tokenStatus;
 
             return true;
@@ -8435,14 +8435,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public event OnTariffSlowStorageLookupDelegate? OnTariffSlowStorageLookup;
 
 
+        #region AddTariff            (Tariff, ...)
 
-        #region AddTariff            (Tariff,                                       SkipNotifications = false, ...)
+        /// <summary>
+        /// Add the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<AddResult<Tariff>>
 
-        public async Task<AddResult<Tariff>> AddTariff(Tariff             Tariff,
-                                                       Boolean            SkipNotifications   = false,
-                                                       EventTracking_Id?  EventTrackingId     = null,
-                                                       User_Id?           CurrentUserId       = null,
-                                                       CancellationToken  CancellationToken   = default)
+            AddTariff(Tariff             Tariff,
+                      Boolean            SkipNotifications   = false,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      User_Id?           CurrentUserId       = null,
+                      CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8498,15 +8508,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddTariffIfNotExists (Tariff,                                       SkipNotifications = false, ...)
+        #region AddTariffIfNotExists (Tariff, ...)
 
-        public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff             Tariff,
-                                                                  Boolean            SkipNotifications   = false,
-                                                                  EventTracking_Id?  EventTrackingId     = null,
-                                                                  User_Id?           CurrentUserId       = null,
-                                                                  CancellationToken  CancellationToken   = default)
+        /// <summary>
+        /// Add the given charging tariff if it does not already exist.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<AddResult<Tariff>>
+
+            AddTariffIfNotExists(Tariff             Tariff,
+                                 Boolean            SkipNotifications   = false,
+                                 EventTracking_Id?  EventTrackingId     = null,
+                                 User_Id?           CurrentUserId       = null,
+                                 CancellationToken  CancellationToken   = default)
+
         {
-
 
             EventTrackingId ??= EventTracking_Id.New;
 
@@ -8560,14 +8580,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddOrUpdateTariff    (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
+        #region AddOrUpdateTariff    (Tariff,                AllowDowngrades = false, ...)
 
-        public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff             Tariff,
-                                                                       Boolean?           AllowDowngrades     = false,
-                                                                       Boolean            SkipNotifications   = false,
-                                                                       EventTracking_Id?  EventTrackingId     = null,
-                                                                       User_Id?           CurrentUserId       = null,
-                                                                       CancellationToken  CancellationToken   = default)
+        /// <summary>
+        /// Add or update the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<AddOrUpdateResult<Tariff>>
+
+            AddOrUpdateTariff(Tariff             Tariff,
+                              Boolean?           AllowDowngrades     = false,
+                              Boolean            SkipNotifications   = false,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null,
+                              CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8685,14 +8717,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateTariff         (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
+        #region UpdateTariff         (Tariff,                AllowDowngrades = false, SkipNotifications = false, ...)
 
-        public async Task<UpdateResult<Tariff>> UpdateTariff(Tariff             Tariff,
-                                                             Boolean?           AllowDowngrades     = false,
-                                                             Boolean            SkipNotifications   = false,
-                                                             EventTracking_Id?  EventTrackingId     = null,
-                                                             User_Id?           CurrentUserId       = null,
-                                                             CancellationToken  CancellationToken   = default)
+        /// <summary>
+        /// Update the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">The charging tariff to add or update.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<UpdateResult<Tariff>>
+
+            UpdateTariff(Tariff             Tariff,
+                         Boolean?           AllowDowngrades     = false,
+                         Boolean            SkipNotifications   = false,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         User_Id?           CurrentUserId       = null,
+                         CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8769,15 +8813,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryPatchTariff       (Tariff, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
+        #region TryPatchTariff       (TariffId, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
 
-        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff             Tariff,
-                                                              JObject            TariffPatch,
-                                                              Boolean?           AllowDowngrades     = false,
-                                                              Boolean            SkipNotifications   = false,
-                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                              User_Id?           CurrentUserId       = null,
-                                                              CancellationToken  CancellationToken   = default)
+        /// <summary>
+        /// Try to patch the given charging tariff with the given JSON patch document.
+        /// </summary>
+        /// <param name="TariffId">The identification of the charging tariff to patch.</param>
+        /// <param name="TariffPatch">The JSON patch document to apply to the charging tariff.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<PatchResult<Tariff>>
+
+            TryPatchTariff(Tariff_Id          TariffId,
+                           JObject            TariffPatch,
+                           Boolean?           AllowDowngrades     = false,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8785,52 +8842,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (!TariffPatch.HasValues)
                 return PatchResult<Tariff>.Failed(
                            EventTrackingId,
-                           Tariff,
                            "The given charging tariff patch must not be null or empty!"
                        );
 
-            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
+            if (tariffs.TryGetValue(TariffId, out var existingTariff, Timestamp.Now))
             {
 
                 var patchResult = existingTariff.TryPatch(
                                       TariffPatch,
-                                      AllowDowngrades ?? this.AllowDowngrades ?? false
+                                      AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                      EventTrackingId
                                   );
 
                 if (patchResult.IsSuccess &&
                     patchResult.PatchedData is not null)
                 {
 
-                    tariffs.TryUpdate(Tariff.Id, Tariff, patchResult.PatchedData);
+                    var updateTariffResult = await UpdateTariff(
+                                                       patchResult.PatchedData,
+                                                       AllowDowngrades,
+                                                       SkipNotifications,
+                                                       EventTrackingId,
+                                                       CurrentUserId,
+                                                       CancellationToken
+                                                   );
 
-                    await LogAsset(
-                              CommonHTTPAPI.updateTariff,
-                              Tariff.ToJSON(true,
-                                            true,
-                                            CustomTariffSerializer,
-                                            CustomDisplayTextSerializer,
-                                            CustomTariffElementSerializer,
-                                            CustomPriceComponentSerializer,
-                                            CustomTariffRestrictionsSerializer,
-                                            CustomEnergyMixSerializer,
-                                            CustomEnergySourceSerializer,
-                                            CustomEnvironmentalImpactSerializer),
-                              EventTrackingId,
-                              CurrentUserId,
-                              CancellationToken
-                          );
-
-                    if (!SkipNotifications)
-                    {
-
-                        await LogEvent(
-                                  OnTariffChanged,
-                                  loggingDelegate => loggingDelegate.Invoke(
-                                      patchResult.PatchedData
-                                  )
-                              );
-
-                    }
+                    if (updateTariffResult.IsFailed)
+                        return PatchResult<Tariff>.Failed(
+                                   EventTrackingId,
+                                   existingTariff,
+                                   "Could not update the tariff: " + updateTariffResult.ErrorResponse
+                               );
 
                 }
 
@@ -8838,12 +8880,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
 
-            else
-                return PatchResult<Tariff>.Failed(
-                           EventTrackingId,
-                           Tariff,
-                           "The given charging tariff does not exist!"
-                       );
+            return PatchResult<Tariff>.Failed(
+                       EventTrackingId,
+                       $"The given tariff '{TariffId}' is unknown!"
+                   );
 
         }
 
@@ -9296,6 +9336,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region GetTariff            (TariffId,             Timestamp = null, Tolerance = null)
+
+        public Tariff? GetTariff(Tariff_Id        TariffId,
+                                 DateTimeOffset?  Timestamp   = null,
+                                 TimeSpan?        Tolerance   = null)
+        {
+
+            if (tariffs.TryGetValue(TariffId,
+                                    out var tariff,
+                                    Timestamp,
+                                    Tolerance))
+            {
+                return tariff;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
         #region TryGetTariff         (TariffId, out Tariff, Timestamp = null, Tolerance = null)
 
         public Boolean TryGetTariff(Tariff_Id                        TariffId,
@@ -9342,27 +9403,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region GetTariff            (TariffId,             Timestamp = null, Tolerance = null)
-
-        public Tariff? GetTariff(Tariff_Id        TariffId,
-                                 DateTimeOffset?  Timestamp   = null,
-                                 TimeSpan?        Tolerance   = null)
-        {
-
-            if (tariffs.TryGetValue(TariffId,
-                                    out var tariff,
-                                    Timestamp,
-                                    Tolerance))
-            {
-                return tariff;
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
         #region GetTariffs           (IncludeTariff = null, Timestamp = null, Tolerance = null)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>?  IncludeTariff   = null,
@@ -9389,24 +9429,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region GetTariffIds         (CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
+        #region GetTariffIds         (CountryCode?, PartyId?, LocationId?, EVSEId?, ConnectorId?, EMSPId?)
 
         public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
                                                    Party_Id       PartyId,
                                                    Location_Id?   LocationId,
-                                                   EVSE_Id?       EVSEUId,
+                                                   EVSE_Id?       EVSEId,
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
-        {
 
-            return GetTariffIdsDelegate?.Invoke(CountryCode,
-                                                PartyId,
-                                                LocationId,
-                                                EVSEUId,
-                                                ConnectorId,
-                                                EMSPId) ?? [];
-
-        }
+            => GetTariffIdsDelegate?.Invoke(
+                    CountryCode,
+                    PartyId,
+                    LocationId,
+                    EVSEId,
+                    ConnectorId,
+                    EMSPId
+               ) ?? [];
 
         #endregion
 
@@ -10344,10 +10383,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryGetToken         (TokenId, out TokenStatus)
+        #region GetTokenStatus      (TokenId)
 
-        public Boolean TryGetToken(Token_Id                              TokenId,
-                                   [NotNullWhen(true)] out TokenStatus?  TokenStatus)
+        public TokenStatus? GetTokenStatus(Token_Id    TokenId)
+        {
+
+            if (TryGetTokenStatus(TokenId,
+                                  out var tokenStatus))
+            {
+                return tokenStatus;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryGetTokenStatus   (TokenId, out TokenStatus)
+
+        public Boolean TryGetTokenStatus(Token_Id                              TokenId,
+                                         [NotNullWhen(true)] out TokenStatus?  TokenStatus)
         {
 
             if (tokenStatus.TryGetValue(TokenId, out TokenStatus))
@@ -11381,6 +11437,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             return false;
+
+        }
+
+        #endregion
+
+        #region GetSession            (SessionId)
+
+        public Session? GetSession(Session_Id SessionId)
+        {
+
+            if (TryGetSession(SessionId,
+                              out var cdr))
+            {
+                return cdr;
+            }
+
+            return null;
 
         }
 
@@ -12473,6 +12546,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             return false;
+
+        }
+
+        #endregion
+
+        #region GetCDR            (CDRId)
+
+        public CDR? GetCDR(CDR_Id CDRId)
+        {
+
+            if (TryGetCDR(CDRId,
+                          out var cdr))
+            {
+                return cdr;
+            }
+
+            return null;
 
         }
 
