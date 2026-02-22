@@ -4052,11 +4052,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     var result = await CommonAPI.RemoveToken(existingTokenStatus.Token);
 
-                    if (result.IsSuccessAndDataNotNull(out var data))
+                    if (result.IsSuccessAndDataNotNull(out var tokenStatus))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = data.ToJSON(
+                                   Data                 = tokenStatus.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
                                                           ),

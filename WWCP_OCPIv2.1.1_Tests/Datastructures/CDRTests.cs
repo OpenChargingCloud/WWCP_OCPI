@@ -651,37 +651,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             ClassicAssert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             ClassicAssert.AreEqual (23, wwcpCDR.ConsumedEnergy!.Value.kWh);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(CustomEVSEUIdConverter:   null,
-                                         CustomEVSEIdConverter:    null,
-                                         GetTariffIdsDelegate:     (cpoCountryCode,
-                                                                    cpoPartyId,
-                                                                    locationId,
-                                                                    evseUId,
-                                                                    connectorId,
-                                                                    emspId) => [ Tariff_Id.Parse("ct1") ],
-                                         EMSPId:                   null,
-                                         TariffGetter:             (tariffId, startTimestamp, c) => new Tariff(
-                                                                                                        CountryCode:     CountryCode.Parse("DE"),
-                                                                                                        PartyId:         Party_Id.   Parse("GEF"),
-                                                                                                        Id:              Tariff_Id.  Parse("ct1"),
-                                                                                                        Currency:        Currency.EUR,
-                                                                                                        TariffElements:  [
-                                                                                                                             new TariffElement(
-                                                                                                                                 PriceComponent.Energy(
-                                                                                                                                     Price:     0.44m,
-                                                                                                                                     StepSize:  1000
-                                                                                                                                 ),
-                                                                                                                                 PriceComponent.ChargingTime(
-                                                                                                                                     Price:     5.04m,
-                                                                                                                                     Duration:  TimeSpan.FromMinutes(1)
-                                                                                                                                 ),
-                                                                                                                                 PriceComponent.FlatRate(
-                                                                                                                                     Price:     0.3m
-                                                                                                                                 )
-                                                                                                                             )
-                                                                                                                         ]
-                                                                                                    ),
-                                         out var warnings);
+            var ocpiCDR = wwcpCDR.ToOCPI(
+                              CustomChargingPoolIdConverter:   null,
+                              CustomEVSEUIdConverter:          null,
+                              CustomEVSEIdConverter:           null,
+                              GetTariffIdsDelegate:            (cpoCountryCode,
+                                                                cpoPartyId,
+                                                                locationId,
+                                                                evseUId,
+                                                                connectorId,
+                                                                emspId) => [ Tariff_Id.Parse("ct1") ],
+                              EMSPId:                          null,
+                              TariffGetter:                    (tariffId,
+                                                                startTimestamp,
+                                                                tolerance) => new Tariff(
+                                                                                  CountryCode:     CountryCode.Parse("DE"),
+                                                                                  PartyId:         Party_Id.   Parse("GEF"),
+                                                                                  Id:              Tariff_Id.  Parse("ct1"),
+                                                                                  Currency:        Currency.EUR,
+                                                                                  TariffElements:  [
+                                                                                                       new TariffElement(
+                                                                                                           PriceComponent.Energy(
+                                                                                                               Price:     0.44m,
+                                                                                                               StepSize:  1000
+                                                                                                           ),
+                                                                                                           PriceComponent.ChargingTime(
+                                                                                                               Price:     5.04m,
+                                                                                                               Duration:  TimeSpan.FromMinutes(1)
+                                                                                                           ),
+                                                                                                           PriceComponent.FlatRate(
+                                                                                                               Price:     0.3m
+                                                                                                           )
+                                                                                                       )
+                                                                                                   ]
+                                                                              ),
+                              out var warnings
+                          );
+
             ClassicAssert.AreEqual (0, warnings.Count(), 0, warnings.FirstOrDefault()?.Text.FirstText());
 
             ClassicAssert.IsNotNull(ocpiCDR);

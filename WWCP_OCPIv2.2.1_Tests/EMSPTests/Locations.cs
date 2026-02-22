@@ -651,19 +651,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 cpoCommonAPI    is not null)
             {
 
-                cpoCommonAPI.GetTariffIdsDelegate += (CPOCountryCode,
-                                                             CPOPartyId,
-                                                             Location,
-                                                             EVSEUId,
-                                                             ConnectorId,
-                                                             EMPId) => {
+                cpoCommonAPI.GetTariffIdsDelegate += (CPOPartyId,
+                                                      Location,
+                                                      EVSEUId,
+                                                      ConnectorId,
+                                                      EMPId) => {
 
                     if (EMPId.ToString() == "DE-GDF")
-                        return new[] { Tariff_Id.Parse("AC1") };
+                        return [ Tariff_Id.Parse("AC1") ];
 
                     // Will be called during a lot of internal calculations!
                     else
-                        return Array.Empty<Tariff_Id>();
+                        return [];
 
                 };
 

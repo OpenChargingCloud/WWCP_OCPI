@@ -44,31 +44,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Id       CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
 
-    public class PartyData(Party_Idv3       Id,
-                           Role             Role,
-                           BusinessDetails  BusinessDetails,
-                           Boolean?         AllowDowngrades   = null)
-    {
+    public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   EMSP_Id?         EMSPId           = null);
 
-        public Party_Idv3                                      Id                 { get; } = Id;
-        public Role                                            Role               { get; } = Role;
-        public BusinessDetails                                 BusinessDetails    { get; } = BusinessDetails;
-        public Boolean                                         AllowDowngrades    { get; } = AllowDowngrades ?? false;
 
-        public ConcurrentDictionary<Location_Id, Location>     Locations          { get; } = [];
-        public TimeRangeDictionary <Tariff_Id,   Tariff>       Tariffs            { get; } = [];
-        public ConcurrentDictionary<Session_Id,  Session>      Sessions           { get; } = [];
-        public ConcurrentDictionary<Token_Id,    TokenStatus>  Tokens             { get; } = [];
-        public ConcurrentDictionary<CDR_Id,      CDR>          CDRs               { get; } = [];
-
-    }
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   EMSP_Id?         EMSPId           = null);
 
 
     /// <summary>
@@ -1761,7 +1749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ParseSessionId                      (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,                out OCPIResponseBuilder)
+        #region ParseSessionId                       (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,                out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1964,7 +1952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ParseOptionalSession                (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,  out Session,  out OCPIResponseBuilder)
+        #region ParseOptionalSession                 (this Request, CommonAPI, out CountryCode, out PartyId, out SessionId,  out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -10665,19 +10653,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Events
 
-        public delegate Task OnTariffAddedDelegate(Tariff Tariff);
+        public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
+        public delegate Task OnTariffChangedDelegate(Tariff               Tariff);
+        public delegate Task OnTariffRemovedDelegate(IEnumerable<Tariff>  Tariff);
 
         public event OnTariffAddedDelegate?    OnTariffAdded;
-
-
-        public delegate Task OnTariffChangedDelegate(Tariff Tariff);
-
         public event OnTariffChangedDelegate?  OnTariffChanged;
+        public event OnTariffRemovedDelegate?  OnTariffRemoved;
 
         #endregion
 
 
-        public GetTariffIds2_Delegate?        GetTariffIdsDelegate       { get; set; }
+        public GetTariffs2_Delegate?    GetTariffsDelegate      { get; set; }
+
+        public GetTariffIds2_Delegate?  GetTariffIdsDelegate    { get; set; }
+
+
+        public delegate Task<Tariff> OnTariffSlowStorageLookupDelegate(Party_Idv3       PartyId,
+                                                                       Tariff_Id        TariffId,
+                                                                       DateTimeOffset?  Timestamp,
+                                                                       TimeSpan?        Tolerance);
+
+        public event OnTariffSlowStorageLookupDelegate? OnTariffSlowStorageLookup;
 
 
         #region AddTariff            (Tariff, ...)
@@ -11190,7 +11187,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="Tariff">A charging tariff.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public Task<RemoveResult<IEnumerable<Tariff>>>
 
             RemoveTariff(Tariff             Tariff,
                          Boolean            SkipNotifications   = false,
@@ -11198,64 +11198,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          User_Id?           CurrentUserId       = null,
                          CancellationToken  CancellationToken   = default)
 
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var partyId = Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId);
-
-            if (parties.TryGetValue(partyId, out var party))
-            {
-
-                if (party.Tariffs.TryRemove(Tariff.Id, out var tariffVersions))
-                {
-
-                    await LogAsset(
-                              CommonHTTPAPI.removeTariff,
-                              new JArray(
-                                  tariffVersions.Select(tariff =>
-                                      tariff.ToJSON(
-                                          true,
-                                          true,
-                                          CustomTariffSerializer,
-                                          CustomDisplayTextSerializer,
-                                          CustomPriceSerializer,
-                                          CustomTariffElementSerializer,
-                                          CustomPriceComponentSerializer,
-                                          CustomTariffRestrictionsSerializer,
-                                          CustomEnergyMixSerializer,
-                                          CustomEnergySourceSerializer,
-                                          CustomEnvironmentalImpactSerializer
-                                      )
-                                  )
-                              ),
-                              EventTrackingId,
-                              CurrentUserId,
-                              CancellationToken
-                          );
-
-                    return RemoveResult<IEnumerable<Tariff>>.Success(
-                               EventTrackingId,
-                               tariffVersions
-                           );
-
-                }
-
-                return RemoveResult<IEnumerable<Tariff>>.Failed(
-                           EventTrackingId,
-                           [ Tariff ],
-                           "The session identification of the tariff is unknown!"
-                       );
-
-            }
-
-            return RemoveResult<IEnumerable<Tariff>>.Failed(
+                => RemoveTariff(
+                       Party_Idv3.From(
+                           Tariff.CountryCode,
+                           Tariff.PartyId
+                       ),
+                       Tariff.Id,
+                       SkipNotifications,
                        EventTrackingId,
-                       [ Tariff ],
-                       $"The party identification '{partyId}' of the tariff is unknown!"
+                       CurrentUserId,
+                       CancellationToken
                    );
-
-        }
 
         #endregion
 
@@ -11264,8 +11217,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Remove the given charging tariff.
         /// </summary>
+        /// <param name="PartyId">The identification of the party owning the charging tariff.</param>
         /// <param name="TariffId">An unique charging tariff identification.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>>
 
             RemoveTariff(Party_Idv3         PartyId,
@@ -11309,6 +11266,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CancellationToken
                           );
 
+                    if (!SkipNotifications)
+                    {
+
+                        await LogEvent(
+                                  OnTariffRemoved,
+                                  loggingDelegate => loggingDelegate.Invoke(
+                                      tariffVersions
+                                  )
+                              );
+
+                    }
+
                     return RemoveResult<IEnumerable<Tariff>>.Success(
                                EventTrackingId,
                                tariffVersions
@@ -11318,95 +11287,159 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 return RemoveResult<IEnumerable<Tariff>>.Failed(
                            EventTrackingId,
-                           "The tariff identification of the tariff is unknown!"
+                           $"The tariff '{PartyId}/{TariffId}' is unknown!"
                        );
 
             }
 
             return RemoveResult<IEnumerable<Tariff>>.Failed(
                        EventTrackingId,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{PartyId}' of the token is unknown!"
                    );
 
         }
 
         #endregion
 
-        #region RemoveAllTariffs     (IncludeTariffs = null, ...)
+        #region RemoveAllTariffs     (...)
 
         /// <summary>
-        /// Remove all matching charging tariffs.
+        /// Remove all charging tariffs.
         /// </summary>
-        /// <param name="IncludeTariffs">A charging tariff filter.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>>
 
-            RemoveAllTariffs(Func<Tariff, Boolean>?  IncludeTariffs      = null,
-                             Boolean                 SkipNotifications   = false,
-                             EventTracking_Id?       EventTrackingId     = null,
-                             User_Id?                CurrentUserId       = null,
-                             CancellationToken       CancellationToken   = default)
+            RemoveAllTariffs(Boolean            SkipNotifications   = false,
+                             EventTracking_Id?  EventTrackingId     = null,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
 
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTariffs = new List<Tariff>();
+            var tariffVersionList = new List<IEnumerable<Tariff>>();
 
-            if (IncludeTariffs is null)
+            foreach (var party in parties.Values)
             {
-                foreach (var party in parties.Values)
-                {
-                    removedTariffs.AddRange(party.Tariffs.Values());
-                    party.Tariffs.Clear();
-                }
-            }
-
-            else
-            {
-
-                foreach (var party in parties.Values)
-                {
-                    foreach (var tariff in party.Tariffs.Values())
-                    {
-                        if (IncludeTariffs(tariff))
-                            removedTariffs.Add(tariff);
-                    }
-                }
-
-                foreach (var tariff in removedTariffs)
-                    parties[Party_Idv3.From(tariff.CountryCode, tariff.PartyId)].Tariffs.TryRemove(tariff.Id, out _);
-
+                tariffVersionList.Add(party.Tariffs.Values());
+                party.Tariffs.Clear();
             }
 
             await LogAsset(
                       CommonHTTPAPI.removeAllTariffs,
-                      new JArray(
-                          removedTariffs.Select(
-                              tariff => tariff.ToJSON(
-                                            true,
-                                            true,
-                                            CustomTariffSerializer,
-                                            CustomDisplayTextSerializer,
-                                            CustomPriceSerializer,
-                                            CustomTariffElementSerializer,
-                                            CustomPriceComponentSerializer,
-                                            CustomTariffRestrictionsSerializer,
-                                            CustomEnergyMixSerializer,
-                                            CustomEnergySourceSerializer,
-                                            CustomEnvironmentalImpactSerializer
-                                        )
-                              )
-                      ),
                       EventTrackingId,
                       CurrentUserId,
                       CancellationToken
                   );
 
+            if (!SkipNotifications)
+            {
+
+                foreach (var tariffVersion in tariffVersionList)
+                    await LogEvent(
+                              OnTariffRemoved,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  tariffVersion
+                              )
+                          );
+
+            }
+
             return RemoveResult<IEnumerable<Tariff>>.Success(
                        EventTrackingId,
-                       removedTariffs
+                       tariffVersionList.SelectMany(tariff => tariff)
                    );
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (IncludeTariffs,   ...)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffs">A filter delegate to include charging tariffs for removal.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>>
+
+            RemoveAllTariffs(Func<Tariff, Boolean>  IncludeTariffs,
+                             Boolean                SkipNotifications   = false,
+                             EventTracking_Id?      EventTrackingId     = null,
+                             User_Id?               CurrentUserId       = null,
+                             CancellationToken      CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var matchingTariffs  = new List<Tariff>();
+            var removedTariffs   = new List<Tariff>();
+            var failedTariffs    = new List<RemoveResult<Tariff>>();
+
+            foreach (var party in parties.Values)
+            {
+                foreach (var tariff in party.Tariffs.Values())
+                {
+                    if (IncludeTariffs(tariff))
+                        matchingTariffs.Add(tariff);
+                }
+            }
+
+            foreach (var tariff in matchingTariffs)
+            {
+
+                var result = await RemoveTariff(
+                                       tariff,
+                                       SkipNotifications,
+                                       EventTrackingId,
+                                       CurrentUserId,
+                                       CancellationToken
+                                   );
+
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(
+                        RemoveResult<Tariff>.Failed(
+                            EventTrackingId,
+                            tariff,
+                            result.ErrorResponse ?? "Unknown error while removing the charging tariff!"
+                        )
+                    );
+
+            }
+
+            return removedTariffs.Count != 0 && failedTariffs.Count == 0
+
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(
+                             EventTrackingId,
+                             removedTariffs
+                         )
+
+                       : removedTariffs.Count == 0 && failedTariffs.Count == 0
+
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<Tariff>>.Failed(
+                                   EventTrackingId,
+                                   failedTariffs.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (tariff       => tariff is not null).
+                                       Cast<Tariff>(),
+                                   failedTariffs.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -11415,64 +11448,84 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region RemoveAllTariffs     (IncludeTariffIds, ...)
 
         /// <summary>
-        /// Remove all matching tariffs.
+        /// Remove all matching charging tariffs.
         /// </summary>
-        /// <param name="IncludeTariffIds">The tariff identification filter.</param>
+        /// <param name="IncludeTariffIds">A filter delegate to include charging tariffs for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>>
 
-            RemoveAllTariffs(Func<Tariff_Id, Boolean>  IncludeTariffIds,
-                             Boolean                   SkipNotifications   = false,
-                             EventTracking_Id?         EventTrackingId     = null,
-                             User_Id?                  CurrentUserId       = null,
-                             CancellationToken         CancellationToken   = default)
+            RemoveAllTariffs(Func<Party_Idv3, Tariff_Id, Boolean>  IncludeTariffIds,
+                             Boolean                               SkipNotifications   = false,
+                             EventTracking_Id?                     EventTrackingId     = null,
+                             User_Id?                              CurrentUserId       = null,
+                             CancellationToken                     CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTariffs = new List<Tariff>();
+            var matchingTariffs  = new List<Tariff>();
+            var removedTariffs   = new List<Tariff>();
+            var failedTariffs    = new List<RemoveResult<Tariff>>();
 
             foreach (var party in parties.Values)
             {
                 foreach (var tariff in party.Tariffs.Values())
                 {
-                    if (IncludeTariffIds(tariff.Id))
-                        removedTariffs.Add(tariff);
+                    if (IncludeTariffIds(party.Id, tariff.Id))
+                        matchingTariffs.Add(tariff);
                 }
             }
 
-            foreach (var tariff in removedTariffs)
-                parties[Party_Idv3.From(tariff.CountryCode, tariff.PartyId)].Tariffs.TryRemove(tariff.Id, out _);
+            foreach (var tariff in matchingTariffs)
+            {
 
+                var result = await RemoveTariff(
+                                       tariff,
+                                       SkipNotifications,
+                                       EventTrackingId,
+                                       CurrentUserId,
+                                       CancellationToken
+                                   );
 
-            await LogAsset(
-                      CommonHTTPAPI.removeAllTariffs,
-                      new JArray(
-                          removedTariffs.Select(
-                              tariff => tariff.ToJSON(
-                                            true,
-                                            true,
-                                            CustomTariffSerializer,
-                                            CustomDisplayTextSerializer,
-                                            CustomPriceSerializer,
-                                            CustomTariffElementSerializer,
-                                            CustomPriceComponentSerializer,
-                                            CustomTariffRestrictionsSerializer,
-                                            CustomEnergyMixSerializer,
-                                            CustomEnergySourceSerializer,
-                                            CustomEnvironmentalImpactSerializer
-                                        )
-                              )
-                      ),
-                      EventTrackingId,
-                      CurrentUserId,
-                      CancellationToken
-                  );
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(
+                        RemoveResult<Tariff>.Failed(
+                            EventTrackingId,
+                            tariff,
+                            result.ErrorResponse ?? "Unknown error while removing the charging tariff!"
+                        )
+                    );
 
-            return RemoveResult<IEnumerable<Tariff>>.Success(
-                       EventTrackingId,
-                       removedTariffs
-                   );
+            }
+
+            return removedTariffs.Count != 0 && failedTariffs.Count == 0
+
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(
+                             EventTrackingId,
+                             removedTariffs
+                         )
+
+                       : removedTariffs.Count == 0 && failedTariffs.Count == 0
+
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<Tariff>>.Failed(
+                                   EventTrackingId,
+                                   failedTariffs.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (tariff       => tariff is not null).
+                                       Cast<Tariff>(),
+                                   failedTariffs.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -11485,6 +11538,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="PartyId">The identification of the party.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>>
 
             RemoveAllTariffs(Party_Idv3         PartyId,
@@ -11500,43 +11556,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (parties.TryGetValue(PartyId, out var party))
             {
 
-                var removedTariffs = party.Tariffs.Values().ToArray();
-                party.Tariffs.Clear();
+                var matchingTariffs  = party.Tariffs.Values();
+                var removedTariffs   = new List<Tariff>();
+                var failedTariffs    = new List<RemoveResult<Tariff>>();
 
-                await LogAsset(
-                          CommonHTTPAPI.removeAllSessions,
-                          new JArray(
-                              removedTariffs.Select(
-                                  tariff => tariff.ToJSON(
-                                                 true,
-                                                 true,
-                                                 CustomTariffSerializer,
-                                                 CustomDisplayTextSerializer,
-                                                 CustomPriceSerializer,
-                                                 CustomTariffElementSerializer,
-                                                 CustomPriceComponentSerializer,
-                                                 CustomTariffRestrictionsSerializer,
-                                                 CustomEnergyMixSerializer,
-                                                 CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer
-                                             )
-                                  )
-                          ),
-                          EventTrackingId,
-                          CurrentUserId,
-                          CancellationToken
-                      );
+                foreach (var tariff in matchingTariffs)
+                {
 
-                return RemoveResult<IEnumerable<Tariff>>.Success(
-                           EventTrackingId,
-                           removedTariffs
-                       );
+                    var result = await RemoveTariff(
+                                           tariff,
+                                           SkipNotifications,
+                                           EventTrackingId,
+                                           CurrentUserId,
+                                           CancellationToken
+                                       );
+
+                    if (result.IsSuccess)
+                        removedTariffs.Add(tariff);
+                    else
+                        failedTariffs. Add(
+                            RemoveResult<Tariff>.Failed(
+                                EventTrackingId,
+                                tariff,
+                                result.ErrorResponse ?? "Unknown error while removing the charging tariff!"
+                            )
+                        );
+
+                }
+
+                return removedTariffs.Count != 0 && failedTariffs.Count == 0
+
+                           ? RemoveResult<IEnumerable<Tariff>>.Success(
+                                 EventTrackingId,
+                                 removedTariffs
+                             )
+
+                           : removedTariffs.Count == 0 && failedTariffs.Count == 0
+
+                                 ? RemoveResult<IEnumerable<Tariff>>.NoOperation(
+                                       EventTrackingId,
+                                       []
+                                   )
+
+                                 : RemoveResult<IEnumerable<Tariff>>.Failed(
+                                       EventTrackingId,
+                                       failedTariffs.
+                                           Select(removeResult => removeResult.Data).
+                                           Where (tariff      => tariff is not null).
+                                           Cast<Tariff>(),
+                                       failedTariffs.Select(removeResult => removeResult.ErrorResponse).
+                                           AggregateWith(", ")
+                                   );
 
             }
 
             return RemoveResult<IEnumerable<Tariff>>.Failed(
                        EventTrackingId,
-                       "The party identification of the tariff is unknown!"
+                       $"The party identification '{PartyId}' is unknown!"
                    );
 
         }
@@ -11544,14 +11620,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region TariffExists(PartyId, TariffId)
+        #region TariffExist          (TariffId,                      Timestamp = null, Tolerance = null)
 
-        public Boolean TariffExists(Party_Idv3  PartyId,
-                                    Tariff_Id   TariffId)
+        public Boolean TariffExists(Party_Idv3       PartyId,
+                                    Tariff_Id        TariffId,
+                                    DateTimeOffset?  Timestamp   = null,
+                                    TimeSpan?        Tolerance   = null)
         {
 
             if (parties.TryGetValue(PartyId, out var party))
                 return party.Tariffs.ContainsKey(TariffId);
+
+            var onTariffSlowStorageLookup = OnTariffSlowStorageLookup;
+            if (onTariffSlowStorageLookup is not null)
+            {
+                try
+                {
+
+                    return onTariffSlowStorageLookup(
+                               PartyId,
+                               TariffId,
+                               Timestamp,
+                               Tolerance
+                           ).Result is not null;
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TariffExists), " ", nameof(OnTariffSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
 
             return false;
 
@@ -11559,11 +11659,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region TryGetTariff(PartyId, TariffId, out Tariff)
+        #region TryGetTariff         (PartyId, TariffId, out Tariff, Timestamp = null, Tolerance = null)
 
         public Boolean TryGetTariff(Party_Idv3                       PartyId,
                                     Tariff_Id                        TariffId,
-                                    [NotNullWhen(true)] out Tariff?  Tariff)
+                                    [NotNullWhen(true)] out Tariff?  Tariff,
+                                    DateTimeOffset?                  Timestamp   = null,
+                                    TimeSpan?                        Tolerance   = null)
         {
 
             if (parties.      TryGetValue(PartyId,  out var party) &&
@@ -11573,6 +11675,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return true;
             }
 
+            var onTariffLookup = OnTariffSlowStorageLookup;
+            if (onTariffLookup is not null)
+            {
+                try
+                {
+
+                    Tariff = onTariffLookup(
+                                 PartyId,
+                                 TariffId,
+                                 Timestamp,
+                                 Tolerance
+                             ).Result;
+
+                    return Tariff is not null;
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetTariff), " ", nameof(OnTariffSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
             Tariff = null;
             return false;
 
@@ -11580,7 +11706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetTariffs  (IncludeTariff)
+        #region GetTariffs           (IncludeTariff)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>  IncludeTariff)
         {
@@ -11602,7 +11728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetTariffs  (PartyId = null)
+        #region GetTariffs           (PartyId = null)
 
         public IEnumerable<Tariff> GetTariffs(Party_Idv3? PartyId = null)
         {
@@ -11631,19 +11757,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
 
-        public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
-                                                   Party_Id       PartyId,
+        #region GetTariffIds         (PartyId?, LocationId?, EVSEId?, ConnectorId?, EMSPId?)
+
+        public IEnumerable<Tariff_Id> GetTariffIds(Party_Idv3     PartyId,
                                                    Location_Id?   LocationId,
-                                                   EVSE_UId?      EVSEUId,
+                                                   EVSE_Id?       EVSEId,
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
 
-            => GetTariffIdsDelegate?.Invoke(CountryCode,
-                                            PartyId,
+            => GetTariffIdsDelegate?.Invoke(PartyId,
                                             LocationId,
-                                            EVSEUId,
+                                            EVSEId,
                                             ConnectorId,
                                             EMSPId) ?? [];
 
@@ -11659,21 +11784,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public delegate Task               OnTokenStatusChangedDelegate(TokenStatus  TokenStatus);
         public delegate Task               OnTokenStatusRemovedDelegate(TokenStatus  TokenStatus);
 
-        public delegate Task<TokenStatus>  OnVerifyTokenDelegate       (Party_Idv3   PartyId,
-                                                                        Token_Id     TokenId);
-
 
         public event OnTokenStatusAddedDelegate?    OnTokenStatusAdded;
         public event OnTokenStatusChangedDelegate?  OnTokenStatusChanged;
         public event OnTokenStatusRemovedDelegate?  OnTokenStatusRemoved;
 
-        public event OnVerifyTokenDelegate?   OnVerifyToken;
-
         #endregion
+
+
+        public delegate Task<TokenStatus> OnTokenSlowStorageLookupDelegate(Party_Idv3  PartyId,
+                                                                           Token_Id    TokenId);
+
+        public event OnTokenSlowStorageLookupDelegate? OnTokenSlowStorageLookup;
 
 
         #region AddToken            (Token, Status = AllowedType.ALLOWED, ...)
 
+        /// <summary>
+        /// Add the given token.
+        /// </summary>
+        /// <param name="Token">The token to add.</param>
+        /// <param name="Status">The optional status of the token.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<TokenStatus>>
 
             AddToken(Token              Token,
@@ -11753,6 +11888,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddTokenIfNotExists (Token, Status = AllowedType.ALLOWED, ...)
 
+        /// <summary>
+        /// Add the given token if it does not already exist.
+        /// </summary>
+        /// <param name="Token">The token to add.</param>
+        /// <param name="Status">The optional status of the token.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddResult<TokenStatus>>
 
             AddTokenIfNotExists(Token              Token,
@@ -11832,6 +11976,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddOrUpdateToken    (Token, Status = AllowedType.ALLOWED, AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Add or update the given token.
+        /// </summary>
+        /// <param name="Token">The token to add or update.</param>
+        /// <param name="Status">The optional status of the token.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<AddOrUpdateResult<TokenStatus>>
 
             AddOrUpdateToken(Token              Token,
@@ -11997,6 +12151,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region UpdateToken         (Token, Status = AllowedType.ALLOWED, AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Update the given token.
+        /// </summary>
+        /// <param name="Token">The token to add or update.</param>
+        /// <param name="Status">The optional status of the token.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<UpdateResult<TokenStatus>>
 
             UpdateToken(Token              Token,
@@ -12104,6 +12268,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region TryPatchToken       (PartyId, TokenId, TokenPatch,        AllowDowngrades = false, ...)
 
+        /// <summary>
+        /// Try to patch the given token with the given JSON patch document.
+        /// </summary>
+        /// <param name="PartyId">The identification of the party owning the token.</param>
+        /// <param name="TokenId">The identification of the token to patch.</param>
+        /// <param name="TokenPatch">The JSON patch document to apply to the token.</param>
+        /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<Token>>
 
             TryPatchToken(Party_Idv3         PartyId,
@@ -12185,7 +12360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public Task<RemoveResult<Token>>
+        public Task<RemoveResult<TokenStatus>>
 
             RemoveToken(Token              Token,
                         Boolean            SkipNotifications   = false,
@@ -12218,7 +12393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<Token>>
+        public async Task<RemoveResult<TokenStatus>>
 
             RemoveToken(Party_Idv3         PartyId,
                         Token_Id           TokenId,
@@ -12264,21 +12439,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     }
 
-                    return RemoveResult<Token>.Success(
+                    return RemoveResult<TokenStatus>.Success(
                                EventTrackingId,
-                               existingTokenStatus.Token
+                               existingTokenStatus
                            );
 
                 }
 
-                return RemoveResult<Token>.Failed(
+                return RemoveResult<TokenStatus>.Failed(
                            EventTrackingId,
                            $"The token '{PartyId}/{TokenId}' is unknown!"
                        );
 
             }
 
-            return RemoveResult<Token>.Failed(
+            return RemoveResult<TokenStatus>.Failed(
                        EventTrackingId,
                        $"The party identification '{PartyId}' of the token is unknown!"
                    );
@@ -12344,7 +12519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region RemoveAllTokens     (IncludeTokens, ...)
+        #region RemoveAllTokens     (IncludeTokens,   ...)
 
         /// <summary>
         /// Remove all matching tokens.
@@ -12354,69 +12529,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>>
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
 
-            RemoveAllTokens(Func<Token, Boolean>?  IncludeTokens       = null,
-                            Boolean                SkipNotifications   = false,
-                            EventTracking_Id?      EventTrackingId     = null,
-                            User_Id?               CurrentUserId       = null,
-                            CancellationToken      CancellationToken   = default)
-
+            RemoveAllTokens(Func<Token, Boolean>  IncludeTokens,
+                            Boolean               SkipNotifications   = false,
+                            EventTracking_Id?     EventTrackingId     = null,
+                            User_Id?              CurrentUserId       = null,
+                            CancellationToken     CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTokens = new List<Token>();
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
-            if (IncludeTokens is null)
+            foreach (var party in parties.Values)
             {
-                foreach (var party in parties.Values)
+                foreach (var token_status in party.Tokens.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
                 {
-                    removedTokens.AddRange(party.Tokens.Values.Select(tokenStatus => tokenStatus.Token));
-                    party.Tokens.Clear();
+
+                    var result = await RemoveToken(
+                                           token_status.Token,
+                                           SkipNotifications,
+                                           EventTrackingId,
+                                           CurrentUserId,
+                                           CancellationToken
+                                       );
+
+                    if (result.IsSuccess)
+                        removedTokens.Add(token_status);
+                    else
+                        failedTokens. Add(result);
+
                 }
             }
 
-            else
-            {
+            return removedTokens.Count != 0 && failedTokens.Count == 0
 
-                foreach (var party in parties.Values)
-                {
-                    foreach (var token in party.Tokens.Values.Select(tokenStatus => tokenStatus.Token))
-                    {
-                        if (IncludeTokens(token))
-                            removedTokens.Add(token);
-                    }
-                }
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(
+                             EventTrackingId,
+                             removedTokens
+                         )
 
-                foreach (var token in removedTokens)
-                    parties[Party_Idv3.From(token.CountryCode, token.PartyId)].Tokens.TryRemove(token.Id, out _);
+                       : removedTokens.Count == 0 && failedTokens.Count == 0
 
-            }
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
 
-            await LogAsset(
-                      CommonHTTPAPI.removeAllSessions,
-                      new JArray(
-                          removedTokens.Select(
-                              token => token.ToJSON(
-                                           //true,
-                                           //true,
-                                           //true,
-                                           //true,
-                                           CustomTokenSerializer,
-                                           CustomEnergyContractSerializer
-                                       )
-                              )
-                      ),
-                      EventTrackingId,
-                      CurrentUserId,
-                      CancellationToken
-                  );
-
-            return RemoveResult<IEnumerable<Token>>.Success(
-                       EventTrackingId,
-                       removedTokens
-                   );
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed(
+                                   EventTrackingId,
+                                   failedTokens.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (tokenStatus  => tokenStatus is not null).
+                                       Cast<TokenStatus>(),
+                                   failedTokens.Select(token => token.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -12427,58 +12597,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Remove all matching tokens.
         /// </summary>
-        /// <param name="IncludeTokenIds">The token identification filter.</param>
+        /// <param name="IncludeTokenIds">A filter delegate to include certain token identifications for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
 
-            RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
-                            Boolean                  SkipNotifications   = false,
-                            EventTracking_Id?        EventTrackingId     = null,
-                            User_Id?                 CurrentUserId       = null,
-                            CancellationToken        CancellationToken   = default)
+            RemoveAllTokens(Func<Party_Idv3, Token_Id, Boolean>  IncludeTokenIds,
+                            Boolean                              SkipNotifications   = false,
+                            EventTracking_Id?                    EventTrackingId     = null,
+                            User_Id?                             CurrentUserId       = null,
+                            CancellationToken                    CancellationToken   = default)
 
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var removedTokens = new List<Token>();
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
             foreach (var party in parties.Values)
             {
-                foreach (var token in party.Tokens.Values.Select(tokenStatus => tokenStatus.Token))
+                foreach (var token_status in party.Tokens.Values.Where(tokenstatus => IncludeTokenIds(
+                                                                                          Party_Idv3.From(
+                                                                                              tokenstatus.Token.CountryCode,
+                                                                                              tokenstatus.Token.PartyId
+                                                                                          ),
+                                                                                          tokenstatus.Token.Id
+                                                                                      )).ToArray())
                 {
-                    if (IncludeTokenIds(token.Id))
-                        removedTokens.Add(token);
+
+                    var result = await RemoveToken(
+                                           token_status.Token,
+                                           SkipNotifications,
+                                           EventTrackingId,
+                                           CurrentUserId,
+                                           CancellationToken
+                                       );
+
+                    if (result.IsSuccess)
+                        removedTokens.Add(token_status);
+                    else
+                        failedTokens. Add(result);
+
                 }
             }
 
-            foreach (var token in removedTokens)
-                parties[Party_Idv3.From(token.CountryCode, token.PartyId)].Tokens.TryRemove(token.Id, out _);
+            return removedTokens.Count != 0 && failedTokens.Count == 0
 
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(
+                             EventTrackingId,
+                             removedTokens
+                         )
 
-            await LogAsset(
-                      CommonHTTPAPI.removeAllTokens,
-                      new JArray(
-                          removedTokens.Select(
-                              token => token.ToJSON(
-                                           //true,
-                                           //true,
-                                           //true,
-                                           //true,
-                                           CustomTokenSerializer,
-                                           CustomEnergyContractSerializer
-                                       )
-                              )
-                      ),
-                      EventTrackingId,
-                      CurrentUserId,
-                      CancellationToken
-                  );
+                       : removedTokens.Count == 0 && failedTokens.Count == 0
 
-            return RemoveResult<IEnumerable<Token>>.Success(
-                       EventTrackingId,
-                       removedTokens
-                   );
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed(
+                                   EventTrackingId,
+                                   failedTokens.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (tokenStatus  => tokenStatus is not null).
+                                       Cast<TokenStatus>(),
+                                   failedTokens.Select(token => token.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -12490,9 +12678,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Remove all tokens owned by the given party.
         /// </summary>
         /// <param name="PartyId">The identification of the party.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<IEnumerable<TokenStatus>>>
 
             RemoveAllTokens(Party_Idv3         PartyId,
+                            Boolean            SkipNotifications   = false,
                             EventTracking_Id?  EventTrackingId     = null,
                             User_Id?           CurrentUserId       = null,
                             CancellationToken  CancellationToken   = default)
@@ -12501,38 +12694,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            var removedTokens  = new List<TokenStatus>();
+            var failedTokens   = new List<RemoveResult<TokenStatus>>();
+
+            foreach (var party in parties.Values)
             {
+                foreach (var token_status in party.Tokens.Values.Where(tokenstatus => tokenstatus.Token.CountryCode == PartyId.CountryCode &&
+                                                                                      tokenstatus.Token.PartyId     == PartyId.PartyId).ToArray())
+                {
 
-                var removedTokens = party.Tokens.Values.Select(tokenStatus => tokenStatus.Token).ToArray();
-                party.Tokens.Clear();
+                    var result = await RemoveToken(
+                                           token_status.Token,
+                                           SkipNotifications,
+                                           EventTrackingId,
+                                           CurrentUserId,
+                                           CancellationToken
+                                       );
 
-                await LogAsset(
-                      CommonHTTPAPI.removeAllTokens,
-                      new JArray(
-                          removedTokens.Select(
-                              token => token.ToJSON(
-                                           CustomTokenSerializer,
-                                           CustomEnergyContractSerializer
-                                       )
-                              )
-                      ),
-                      EventTrackingId,
-                      CurrentUserId,
-                      CancellationToken
-                  );
+                    if (result.IsSuccess)
+                        removedTokens.Add(token_status);
+                    else
+                        failedTokens. Add(result);
 
-                return RemoveResult<IEnumerable<Token>>.Success(
-                           EventTrackingId,
-                           removedTokens
-                       );
-
+                }
             }
 
-            return RemoveResult<IEnumerable<Token>>.Failed(
-                       EventTrackingId,
-                       "The party identification of the token is unknown!"
-                   );
+            return removedTokens.Count != 0 && failedTokens.Count == 0
+
+                       ? RemoveResult<IEnumerable<TokenStatus>>.Success(
+                             EventTrackingId,
+                             removedTokens
+                         )
+
+                       : removedTokens.Count == 0 && failedTokens.Count == 0
+
+                             ? RemoveResult<IEnumerable<TokenStatus>>.NoOperation(
+                                   EventTrackingId,
+                                   []
+                               )
+
+                             : RemoveResult<IEnumerable<TokenStatus>>.Failed(
+                                   EventTrackingId,
+                                   failedTokens.
+                                       Select(removeResult => removeResult.Data).
+                                       Where (tokenStatus  => tokenStatus is not null).
+                                       Cast<TokenStatus>(),
+                                   failedTokens.Select(token => token.ErrorResponse).
+                                       AggregateWith(", ")
+                               );
 
         }
 
@@ -12548,27 +12757,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (parties.TryGetValue(PartyId, out var party))
                 return party.Tokens.ContainsKey(TokenId);
 
-            return false;
-
-        }
-
-        #endregion
-
-        #region TryGetToken         (PartyId, TokenId, out Token)
-
-        public Boolean TryGetToken(Party_Idv3                      PartyId,
-                                   Token_Id                        TokenId,
-                                   [NotNullWhen(true)] out Token?  Token)
-        {
-
-            if (parties.     TryGetValue(PartyId, out var party) &&
-                party.Tokens.TryGetValue(TokenId, out var tokenStatus))
+            var onTokenSlowStorageLookup = OnTokenSlowStorageLookup;
+            if (onTokenSlowStorageLookup is not null)
             {
-                Token = tokenStatus.Token;
-                return true;
+                try
+                {
+
+                    return onTokenSlowStorageLookup(
+                               PartyId,
+                               TokenId
+                           ).Result is not null;
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TokenExists), " ", nameof(OnTokenSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
             }
 
-            Token = null;
             return false;
 
         }
@@ -12588,14 +12796,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return true;
             }
 
-            var VerifyTokenLocal = OnVerifyToken;
-            if (VerifyTokenLocal is not null)
+            var onTokenSlowStorageLookup = OnTokenSlowStorageLookup;
+            if (onTokenSlowStorageLookup is not null)
             {
 
                 try
                 {
 
-                    var tokenStatus = VerifyTokenLocal(
+                    var tokenStatus = onTokenSlowStorageLookup(
                                           PartyId,
                                           TokenId
                                       ).Result;
@@ -12608,7 +12816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 } catch (Exception e)
                 {
-                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetToken), " ", nameof(VerifyTokenLocal), ": ",
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetTokenStatus), " ", nameof(OnTokenSlowStorageLookup), ": ",
                                 Environment.NewLine, e.Message,
                                 Environment.NewLine, e.StackTrace ?? "");
                 }
@@ -12622,74 +12830,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetTokens           (IncludeToken)
-
-        public IEnumerable<Token> GetTokens(Func<Token, Boolean> IncludeToken)
-        {
-
-            var tokens = new List<Token>();
-
-            foreach (var party in parties.Values)
-            {
-                foreach (var tokenStatus in party.Tokens.Values)
-                {
-                    if (IncludeToken(tokenStatus.Token))
-                        tokens.Add(tokenStatus.Token);
-                }
-            }
-
-            return tokens;
-
-        }
-
-        #endregion
-
         #region GetTokenStatus      (IncludeTokenStatus)
 
         public IEnumerable<TokenStatus> GetTokenStatus(Func<TokenStatus, Boolean> IncludeTokenStatus)
         {
 
-            var tokens = new List<TokenStatus>();
+            var matchingTokenStatus = new List<TokenStatus>();
 
             foreach (var party in parties.Values)
             {
                 foreach (var tokenStatus in party.Tokens.Values)
                 {
                     if (IncludeTokenStatus(tokenStatus))
-                        tokens.Add(tokenStatus);
+                        matchingTokenStatus.Add(tokenStatus);
                 }
             }
 
-            return tokens;
-
-        }
-
-        #endregion
-
-        #region GetTokens           (PartyId = null)
-
-        public IEnumerable<Token> GetTokens(Party_Idv3? PartyId = null)
-        {
-
-            if (PartyId.HasValue)
-            {
-                if (parties.TryGetValue(PartyId.Value, out var party))
-                    return party.Tokens.Values.Select(tokenStatus => tokenStatus.Token);
-            }
-
-            else
-            {
-
-                var tokens = new List<Token>();
-
-                foreach (var party in parties.Values)
-                    tokens.AddRange(party.Tokens.Values.Select(tokenStatus => tokenStatus.Token));
-
-                return tokens;
-
-            }
-
-            return [];
+            return matchingTokenStatus;
 
         }
 
@@ -13202,6 +13359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Try to patch the given charging session with the given JSON patch document.
         /// </summary>
+        /// <param name="PartyId">The identification of the party owning the charging session.</param>
         /// <param name="SessionId">The identification of the session to patch.</param>
         /// <param name="SessionPatch">The JSON patch document to apply to the session.</param>
         /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
@@ -13453,9 +13611,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region RemoveAllSessions     (IncludeSessions, ...)
 
         /// <summary>
-        /// Remove all matching sessions.
+        /// Remove all matching charging sessions.
         /// </summary>
-        /// <param name="IncludeSessions">A filter delegate to include sessions for removal.</param>
+        /// <param name="IncludeSessions">A filter delegate to include charging sessions for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
@@ -13520,9 +13678,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              : RemoveResult<IEnumerable<Session>>.Failed(
                                    EventTrackingId,
                                    failedSessions.
-                                       Where (removeResult => removeResult.Data is not null).
-                                       Select(removeResult => removeResult.Data!),
-                                   failedSessions.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                       Select(removeResult => removeResult.Data).
+                                       Where (session      => session is not null).
+                                       Cast<Session>(),
+                                   failedSessions.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
                                );
 
         }
@@ -13532,9 +13692,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region RemoveAllSessions     (IncludeSessionIds, ...)
 
         /// <summary>
-        /// Remove all matching sessions.
+        /// Remove all matching charging sessions.
         /// </summary>
-        /// <param name="IncludeSessionIds">A filter delegate to include sessions for removal.</param>
+        /// <param name="IncludeSessionIds">A filter delegate to include charging sessions for removal.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
@@ -13599,9 +13759,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              : RemoveResult<IEnumerable<Session>>.Failed(
                                    EventTrackingId,
                                    failedSessions.
-                                       Where (removeResult => removeResult.Data is not null).
-                                       Select(removeResult => removeResult.Data!),
-                                   failedSessions.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                       Select(removeResult => removeResult.Data).
+                                       Where (session      => session is not null).
+                                       Cast<Session>(),
+                                   failedSessions.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
                                );
 
         }
@@ -13611,7 +13773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region RemoveAllSessions     (PartyId, ...)
 
         /// <summary>
-        /// Remove all sessions owned by the given party.
+        /// Remove all charging sessions owned by the given party.
         /// </summary>
         /// <param name="PartyId">The identification of the party.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
@@ -13672,9 +13834,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  : RemoveResult<IEnumerable<Session>>.Failed(
                                        EventTrackingId,
                                        failedSessions.
-                                           Where (removeResult => removeResult.Data is not null).
-                                           Select(removeResult => removeResult.Data!),
-                                       failedSessions.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                           Select(removeResult => removeResult.Data).
+                                           Where (session      => session is not null).
+                                           Cast<Session>(),
+                                       failedSessions.Select(removeResult => removeResult.ErrorResponse).
+                                           AggregateWith(", ")
                                    );
 
             }
@@ -13695,8 +13859,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      Session_Id  SessionId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party))
-                return party.Sessions.ContainsKey(SessionId);
+            if (parties.TryGetValue(PartyId, out var party) &&
+                party.Sessions.ContainsKey(SessionId))
+            {
+                return true;
+            }
+
+            var onSessionSlowStorageLookup = OnSessionSlowStorageLookup;
+            if (onSessionSlowStorageLookup is not null)
+            {
+                try
+                {
+
+                    return onSessionSlowStorageLookup(
+                               PartyId,
+                               SessionId
+                           ).Result is not null;
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(SessionExists), " ", nameof(OnSessionSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
 
             return false;
 
@@ -13717,22 +13904,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return true;
             }
 
-            var OnSessionSlowStorageLookupLocal = OnSessionSlowStorageLookup;
-            if (OnSessionSlowStorageLookupLocal is not null)
+            var onSessionSlowStorageLookup = OnSessionSlowStorageLookup;
+            if (onSessionSlowStorageLookup is not null)
             {
                 try
                 {
 
-                    var session = OnSessionSlowStorageLookupLocal(
-                                      PartyId,
-                                      SessionId
-                                  ).Result;
+                    Session = onSessionSlowStorageLookup(
+                                  PartyId,
+                                  SessionId
+                              ).Result;
 
-                    if (session is not null)
-                    {
-                        Session = session;
-                        return true;
-                    }
+                    return Session is not null;
 
                 }
                 catch (Exception e)
@@ -14709,9 +14892,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              : RemoveResult<IEnumerable<CDR>>.Failed(
                                    EventTrackingId,
                                    failedCDRs.
-                                       Where (removeResult => removeResult.Data is not null).
-                                       Select(removeResult => removeResult.Data!),
-                                   failedCDRs.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                       Select(removeResult => removeResult.Data).
+                                       Where (cdr          => cdr is not null).
+                                       Cast<CDR>(),
+                                   failedCDRs.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
                                );
 
         }
@@ -14788,9 +14973,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              : RemoveResult<IEnumerable<CDR>>.Failed(
                                    EventTrackingId,
                                    failedCDRs.
-                                       Where (removeResult => removeResult.Data is not null).
-                                       Select(removeResult => removeResult.Data!),
-                                   failedCDRs.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                       Select(removeResult => removeResult.Data).
+                                       Where (cdr          => cdr is not null).
+                                       Cast<CDR>(),
+                                   failedCDRs.Select(removeResult => removeResult.ErrorResponse).
+                                       AggregateWith(", ")
                                );
 
         }
@@ -14861,9 +15048,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  : RemoveResult<IEnumerable<CDR>>.Failed(
                                        EventTrackingId,
                                        failedCDRs.
-                                           Where (removeResult => removeResult.Data is not null).
-                                           Select(removeResult => removeResult.Data!),
-                                       failedCDRs.Select(removeResult => removeResult.ErrorResponse).AggregateWith(", ")
+                                           Select(removeResult => removeResult.Data).
+                                           Where (cdr          => cdr is not null).
+                                           Cast<CDR>(),
+                                       failedCDRs.Select(removeResult => removeResult.ErrorResponse).
+                                           AggregateWith(", ")
                                    );
 
             }
@@ -14884,8 +15073,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  CDR_Id      CDRId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party))
-                return party.CDRs.ContainsKey(CDRId);
+            if (parties.TryGetValue(PartyId, out var party) &&
+                party.CDRs.ContainsKey(CDRId))
+            {
+                return true;
+            }
+
+            var onChargeDetailRecordSlowStorageLookup = OnChargeDetailRecordSlowStorageLookup;
+            if (onChargeDetailRecordSlowStorageLookup is not null)
+            {
+                try
+                {
+
+                    return onChargeDetailRecordSlowStorageLookup(
+                               PartyId,
+                               CDRId
+                           ).Result is not null;
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(CDRExists), " ", nameof(OnChargeDetailRecordSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
 
             return false;
 
@@ -14906,22 +15118,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return true;
             }
 
-            var OnChargeDetailRecordLookupLocal = OnChargeDetailRecordSlowStorageLookup;
-            if (OnChargeDetailRecordLookupLocal is not null)
+            var onChargeDetailRecordLookup = OnChargeDetailRecordSlowStorageLookup;
+            if (onChargeDetailRecordLookup is not null)
             {
                 try
                 {
 
-                    var cdr = OnChargeDetailRecordLookupLocal(
-                                  PartyId,
-                                  CDRId
-                              ).Result;
+                    CDR = onChargeDetailRecordLookup(
+                              PartyId,
+                              CDRId
+                          ).Result;
 
-                    if (cdr is not null)
-                    {
-                        CDR = cdr;
-                        return true;
-                    }
+                    return CDR is not null;
 
                 }
                 catch (Exception e)

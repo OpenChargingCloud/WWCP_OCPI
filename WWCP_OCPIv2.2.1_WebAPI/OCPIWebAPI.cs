@@ -814,7 +814,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                        ? @"attachment; filename = ""tokens.json"""
                                                                        : null,
                                       ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                      Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
+                                      Content                    = new JArray(
+                                                                       CommonAPI.GetTokenStatus().Select(tokenStatus => tokenStatus.Token.ToJSON())
+                                                                   ).ToUTF8Bytes(),
                                       Vary                       = "Accept",
                                       Connection                 = ConnectionType.KeepAlive
                                   }.AsImmutable

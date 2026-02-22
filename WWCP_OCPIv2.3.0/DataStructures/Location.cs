@@ -36,14 +36,6 @@ using cloud.charging.open.protocols.OCPIv2_3_0;
 namespace cloud.charging.open.protocols.OCPIv2_3_0
 {
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Id       CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
-
-
     /// <summary>
     /// The location is a group of EVSEs at more or less the same geographical location
     /// and operated by the same charge point operator.
@@ -1546,16 +1538,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
+        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_Id?       EVSEId        = null,
                                                      Connector_Id?  ConnectorId   = null,
                                                      EMSP_Id?       EMSPId        = null)
 
-            => CommonAPI?.GetTariffIds(CountryCode,
-                                       PartyId,
-                                       Id,
-                                       EVSEUId,
-                                       ConnectorId,
-                                       EMSPId) ?? [];
+            => CommonAPI?.GetTariffIds(
+                   Party_Idv3.From(
+                       CountryCode,
+                       PartyId
+                   ),
+                   Id,
+                   EVSEId,
+                   ConnectorId,
+                   EMSPId
+               ) ?? [];
 
 
         #region EVSEExists(EVSEUId)

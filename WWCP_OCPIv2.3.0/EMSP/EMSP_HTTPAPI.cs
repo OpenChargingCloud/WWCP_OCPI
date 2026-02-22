@@ -7437,13 +7437,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     #endregion
 
 
-                    var filters         = request.GetDateAndPaginationFilters();
+                    var filters              = request.GetDateAndPaginationFilters();
 
-                    var allTokens       = CommonAPI.GetTokens().ToArray();
+                    var allTokenStatus       = CommonAPI.GetTokenStatus().ToArray();
 
-                    var filteredTokens  = allTokens.Where(token => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
-                                                    Where(token => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
-                                                    ToArray();
+                    var filteredTokenStatus  = allTokenStatus.Where(tokenStatus => !filters.From.HasValue || tokenStatus.Token.LastUpdated >  filters.From.Value).
+                                                              Where(tokenStatus => !filters.To.  HasValue || tokenStatus.Token.LastUpdated <= filters.To.  Value).
+                                                              ToArray();
 
 
                     return Task.FromResult(
@@ -7451,14 +7451,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
                                Data                 = new JArray(
-                                                          filteredTokens.SkipTakeFilter(
-                                                              filters.Offset,
-                                                              filters.Limit
-                                                          ).
-                                                          Select(token => token.ToJSON(
-                                                                              CustomTokenSerializer,
-                                                                              CustomEnergyContractSerializer
-                                                                          ))
+                                                          filteredTokenStatus.SkipTakeFilter(filters.Offset,
+                                                                                             filters.Limit).
+                                                                              Select        (tokenStatus => tokenStatus.Token.ToJSON(
+                                                                                                                CustomTokenSerializer,
+                                                                                                                CustomEnergyContractSerializer
+                                                                                                            ))
                                                       ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
@@ -7466,7 +7464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    AccessControlAllowHeaders  = [ "Authorization" ]
                                    //LastModified               = ?
                                }.
-                               Set("X-Total-Count", allTokens.Length)
+                               Set("X-Total-Count", allTokenStatus.Length)
                                // X-Limit               The maximum number of objects that the server WILL return.
                                // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                         });

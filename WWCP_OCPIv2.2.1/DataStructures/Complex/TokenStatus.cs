@@ -78,7 +78,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Status             = Status;
             this.LocationReference  = LocationReference;
 
-
             unchecked
             {
 
@@ -93,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomTokenStatusParser = null)
+        #region (static) Parse    (JSON, CustomTokenStatusParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a token status.
@@ -119,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out TokenStatus, out ErrorResponse, CustomTokenStatusParser = null)
+        #region (static) TryParse (JSON, out TokenStatus, out ErrorResponse, CustomTokenStatusParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -489,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    $"{Token.Id} ({Status})",
 
                    LocationReference.HasValue
-                       ? " at " + LocationReference.Value
+                       ? $" at {LocationReference.Value}"
                        : ""
 
                );

@@ -6329,7 +6329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var filters         = request.GetDateAndPaginationFilters();
 
-                    var allTokens       = CommonAPI.GetTokens().
+                    var allTokens       = CommonAPI.GetTokenStatus(tokenStatus => true).
                                                     Select(tokenStatus => tokenStatus.Token).
                                                     ToArray();
 

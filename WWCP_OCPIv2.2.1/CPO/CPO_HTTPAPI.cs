@@ -3673,11 +3673,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var result     = await CommonAPI.RemoveToken(existingTokenStatus.Token);
 
-                    if (result.IsSuccessAndDataNotNull(out var tokenData))
+                    if (result.IsSuccessAndDataNotNull(out var tokenStatus))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = tokenData.ToJSON(
+                                   Data                 = tokenStatus.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
                                                           ),
@@ -3693,8 +3693,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
                                    StatusMessage        = "Hello world!",
-                                   Data                 = existingTokenStatus.Token.ToJSON(CustomTokenSerializer,
-                                                                                           CustomEnergyContractSerializer),
+                                   Data                 = existingTokenStatus.Token.ToJSON(
+                                                              CustomTokenSerializer,
+                                                              CustomEnergyContractSerializer
+                                                          ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],

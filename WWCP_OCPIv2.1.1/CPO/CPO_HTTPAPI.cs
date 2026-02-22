@@ -3184,7 +3184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var filters              = request.GetDateAndPaginationFilters();
 
-                    var allTokens            = CommonAPI.GetTokens(CommonAPI.OurCountryCode,  //countryCode.Value,
+                    var allTokens            = CommonAPI.GetTokenStatus(CommonAPI.OurCountryCode,  //countryCode.Value,
                                                                    CommonAPI.OurPartyId       //partyId.    Value
                                                                   ).
                                                          ToArray();
@@ -3401,7 +3401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
                                StatusMessage        = "Hello world!",
-                               Data                 = tokenStatus.Value.Token.ToJSON(
+                               Data                 = tokenStatus.Token.ToJSON(
                                                           false, //IncludeOwnerInformation,
                                                           CustomTokenSerializer
                                                       ),
@@ -3409,8 +3409,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
                                    AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = tokenStatus.Value.Token.LastUpdated,
-                                   ETag                       = tokenStatus.Value.Token.ETag
+                                   LastModified               = tokenStatus.Token.LastUpdated,
+                                   ETag                       = tokenStatus.Token.ETag
                                }
                         });
 
@@ -3599,7 +3599,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     //ToDo: Validation-Checks for PATCHes (E-Tag, Timestamp, ...)
                     var patchedToken  = await CommonAPI.TryPatchToken(
-                                                  existingTokenStatus.Value.Token,
+                                                  existingTokenStatus.Token,
                                                   tokenPatch,
                                                   AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
                                               );
@@ -3684,7 +3684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     //ToDo: What exactly to do with this information?
                     var tokenType  = request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
-                    var result     = await CommonAPI.RemoveToken(existingTokenStatus.Value.Token);
+                    var result     = await CommonAPI.RemoveToken(existingTokenStatus.Token);
 
 
                     if (result.IsSuccessAndDataNotNull(out var token_Status))
@@ -3706,7 +3706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
                                StatusMessage        = "Hello world!",
-                               Data                 = existingTokenStatus.Value.Token.ToJSON(
+                               Data                 = existingTokenStatus.Token.ToJSON(
                                                           false, //IncludeOwnerInformation,
                                                           CustomTokenSerializer
                                                       ),

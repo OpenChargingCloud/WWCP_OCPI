@@ -93,10 +93,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CommonAPI                                    CommonAPI                            { get; }
 
-        public CPO_HTTPAPI                                       CPO_HTTPAPI                               { get; }
+        public CPO_HTTPAPI                                  CPO_HTTPAPI                          { get; }
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
+        public ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter        { get; }
         public WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter               { get; }
         public WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter                { get; }
         public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
@@ -698,6 +699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         var location = ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
                                            CustomEVSEUIdConverter,
                                            CustomEVSEIdConverter,
                                            evseId      => true,
@@ -810,6 +812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                         var location = ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
                                            CustomEVSEUIdConverter,
                                            CustomEVSEIdConverter,
                                            evseId      => true,
@@ -923,12 +926,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           evseId      => true,
-                                                           connectorId => true,
-                                                           //null,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => true,
+                                           connectorId => true,
+                                           //null,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
@@ -1043,12 +1049,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            (IncludeChargingPools is not null && IncludeChargingPools(chargingPool)))
                         {
 
-                            var location = chargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                               CustomEVSEIdConverter,
-                                                               evseId      => true,
-                                                               connectorId => true,
-                                                               //null,
-                                                               out warnings);
+                            var location = chargingPool.ToOCPI(
+                                               CustomChargingPoolIdConverter,
+                                               CustomEVSEUIdConverter,
+                                               CustomEVSEIdConverter,
+                                               evseId      => true,
+                                               connectorId => true,
+                                               //null,
+                                               out warnings
+                                           );
 
                             if (location is not null)
                             {
@@ -1134,17 +1143,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         {
 
 
-                            var location = chargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                               CustomEVSEIdConverter,
-                                                               evseId      => true,
-                                                               connectorId => true,
-                                                               //null,
-                                                               out warnings);
+                            var location = chargingPool.ToOCPI(
+                                               CustomChargingPoolIdConverter,
+                                               CustomEVSEUIdConverter,
+                                               CustomEVSEIdConverter,
+                                               evseId      => true,
+                                               connectorId => true,
+                                               //null,
+                                               out warnings
+                                           );
 
                             if (location is not null)
                             {
 
-                                var result = await CommonAPI.AddLocation(location);
+                                var result = await CommonAPI.AddLocation(
+                                                       location,
+                                                       CancellationToken: CancellationToken
+                                                   );
 
                                 //ToDo: Handle errors!
 
@@ -2848,6 +2863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     #region Convert and send charge detail record
 
                     var cdr = chargeDetailRecord.ToOCPI(
+                                    CustomChargingPoolIdConverter,
                                     CustomEVSEUIdConverter,
                                     CustomEVSEIdConverter,
                                     CommonAPI.GetTariffIds,

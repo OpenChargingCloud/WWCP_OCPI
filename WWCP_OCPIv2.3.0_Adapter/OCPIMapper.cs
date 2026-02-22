@@ -464,12 +464,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                        ref List<Warning>                        Warnings)
         {
 
-            var location = ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
-                                               CustomEVSEUIdConverter,
-                                               CustomEVSEIdConverter,
-                                               IncludeEVSEIds,
-                                               IncludeChargingConnectorIds,
-                                               out var warnings);
+            var location = ChargingPool.ToOCPI(
+                               CustomChargingPoolIdConverter,
+                               CustomEVSEUIdConverter,
+                               CustomEVSEIdConverter,
+                               IncludeEVSEIds,
+                               IncludeChargingConnectorIds,
+                               out var warnings
+                           );
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -1369,12 +1371,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return null;
                 }
 
-                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
-                                                                              CustomEVSEUIdConverter,
-                                                                              CustomEVSEIdConverter,
-                                                                              evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
-                                                                              connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
-                                                                              ref Warnings);
+                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
+                                           connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
+                                           ref Warnings
+                                       );
 
                 if (filteredLocation is null)
                 {

@@ -306,8 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             if (this.GetTariffIds is not null) {
 
-                this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
-                                                        cpoPartyId,
+                this.CommonAPI.GetTariffIdsDelegate += (cpoPartyId,
                                                         locationId,
                                                         evseUId,
                                                         connectorId,
@@ -316,14 +315,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     if (locationId. HasValue &&
                         evseUId.    HasValue &&
                         connectorId.HasValue &&
-                        CommonAPI.TryGetLocation(Party_Idv3.From(cpoCountryCode, cpoPartyId), locationId.Value, out var location) &&
+                        CommonAPI.TryGetLocation(cpoPartyId, locationId.Value, out var location) &&
                         location. TryGetEVSE    (evseUId.Value, out var evse) &&
                         evse.EVSEId.HasValue)
                     {
 
                         return this.GetTariffIds(
-                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                   WWCP.ChargingPool_Id.           Parse($"{cpoCountryCode}*{cpoPartyId}*P{locationId.Value}"),
+                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
+                                   WWCP.ChargingPool_Id.           Parse($"{cpoPartyId}*P{locationId.Value}"),
                                    null,
                                    WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
                                    WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
