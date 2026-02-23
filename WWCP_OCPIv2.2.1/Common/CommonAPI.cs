@@ -3668,51 +3668,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<VersionInformation>?            CustomVersionInformationSerializer            { get; set; }
-        public CustomJObjectSerializerDelegate<VersionDetail>?                 CustomVersionDetailSerializer                 { get; set; }
-        public CustomJObjectSerializerDelegate<VersionEndpoint>?               CustomVersionEndpointSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<VersionInformation>?               CustomVersionInformationSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<VersionDetail>?                    CustomVersionDetailSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?                  CustomVersionEndpointSerializer                    { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Location>?                      CustomLocationSerializer                      { get; set; }
-        public CustomJObjectSerializerDelegate<PublishToken>?                  CustomPublishTokenSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?         CustomAdditionalGeoLocationSerializer         { get; set; }
-        public CustomJObjectSerializerDelegate<EVSE>?                          CustomEVSESerializer                          { get; set; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?                CustomStatusScheduleSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<Connector>?                     CustomConnectorSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?         CustomLocationEnergyMeterSerializer           { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer    { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer          { get; set; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<Credentials>?                   CustomCredentialsSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<CredentialsRole>?               CustomCredentialsRoleSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?               CustomBusinessDetailsSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<Image>?                         CustomImageSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                     CustomEnergyMixSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                  CustomEnergySourceSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<Location>?                         CustomLocationSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                     CustomPublishTokenSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?            CustomAdditionalGeoLocationSerializer              { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                             CustomEVSESerializer                               { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?                   CustomStatusScheduleSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                        CustomConnectorSerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<Location>>?            CustomLocationEnergyMeterSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?                CustomEVSEEnergyMeterSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?       CustomTransparencySoftwareStatusSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?             CustomTransparencySoftwareSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                      CustomDisplayTextSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Credentials>?                      CustomCredentialsSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?                  CustomCredentialsRoleSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?                  CustomBusinessDetailsSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                            CustomHoursSerializer                              { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                            CustomImageSerializer                              { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                        CustomEnergyMixSerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                     CustomEnergySourceSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?              CustomEnvironmentalImpactSerializer                { get; set; }
 
 
-        public CustomJObjectSerializerDelegate<Tariff>?                        CustomTariffSerializer                        { get; set; }
-        public CustomJObjectSerializerDelegate<Price>?                         CustomPriceSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<TariffElement>?                 CustomTariffElementSerializer                 { get; set; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?                CustomPriceComponentSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?            CustomTariffRestrictionsSerializer            { get; set; }
+        public CustomJObjectSerializerDelegate<Tariff>?                           CustomTariffSerializer                             { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                            CustomPriceSerializer                              { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?                    CustomTariffElementSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?                   CustomPriceComponentSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?               CustomTariffRestrictionsSerializer                 { get; set; }
 
-        public CustomJObjectSerializerDelegate<TokenStatus>?                   CustomTokenStatusSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<Token>?                         CustomTokenSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyContract>?                CustomEnergyContractSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<LocationReference>?             CustomLocationReferenceSerializer             { get; set; }
+        public CustomJObjectSerializerDelegate<TokenStatus>?                      CustomTokenStatusSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Token>?                            CustomTokenSerializer                              { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyContract>?                   CustomEnergyContractSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<LocationReference>?                CustomLocationReferenceSerializer                  { get; set; }
 
-        public CustomJObjectSerializerDelegate<Session>?                       CustomSessionSerializer                       { get; set; }
-        public CustomJObjectSerializerDelegate<CDR>?                           CustomCDRSerializer                           { get; set; }
-        public CustomJObjectSerializerDelegate<CDRToken>?                      CustomCDRTokenSerializer                      { get; set; }
-        public CustomJObjectSerializerDelegate<CDRLocation>?                   CustomCDRLocationSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<ChargingPeriod>?                CustomChargingPeriodSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<CDRDimension>?                  CustomCDRDimensionSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<SignedData>?                    CustomSignedDataSerializer                    { get; set; }
-        public CustomJObjectSerializerDelegate<SignedValue>?                   CustomSignedValueSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<Session>?                          CustomSessionSerializer                            { get; set; }
+        public CustomJObjectSerializerDelegate<CDR>?                              CustomCDRSerializer                                { get; set; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                         CustomCDRTokenSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                      CustomCDRLocationSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?                   CustomChargingPeriodSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                     CustomCDRDimensionSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                       CustomSignedDataSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                      CustomSignedValueSerializer                        { get; set; }
+
+        public CustomJObjectSerializerDelegate<ReserveNowCommand>?                CustomReserveNowCommandSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<CancelReservationCommand>?         CustomCancelReservationCommandSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<StartSessionCommand>?              CustomStartSessionCommandSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<StopSessionCommand>?               CustomStopSessionCommandSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<UnlockConnectorCommand>?           CustomUnlockConnectorCommandSerializer             { get; set; }
+
+        public CustomJObjectSerializerDelegate<NotifyWebPaymentsStartedCommand>?  CustomNotifyWebPaymentsStartedCommandSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<NotifyWebPaymentsFailedCommand>?   CustomNotifyWebPaymentsFailedCommandSerializer     { get; set; }
 
         #endregion
 
