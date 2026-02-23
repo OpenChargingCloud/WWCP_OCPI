@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public EVSE_UId       EVSEUId        { get; }
 
         /// <summary>
-        /// The optional identification of the EVSE for which a WebPayment process shall be started.
+        /// An optional identification of the EVSE for which a WebPayment process shall be started.
         /// This can support debugging and logging, but is not required as the EVSE can be identified
         /// by the combination of location_id and evse_uid.
         /// </summary>
@@ -69,8 +69,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public EVSE_Id?       EVSEId         { get; }
 
         /// <summary>
-        /// The optional identification of the connector for which a WebPayment process shall be started.
-        /// This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.
+        /// An optional identification of the connector for which a WebPayment process shall be started.
+        /// This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE
+        /// (ISO 15118 format, e.g. DE*GEF*E12345678*1).
         /// </summary>
         [Optional]
         public Connector_Id?  ConnectorId    { get; }
@@ -83,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public TimeSpan       Timeout        { get; }
 
         /// <summary>
-        /// Custom OCPP data to be forwarded to the charging station.
+        /// Optional custom OCPP data to be forwarded to the charging station.
         /// </summary>
         [Mandatory]
         public JObject?       CustomData     { get; }
@@ -99,10 +100,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// 
         /// <param name="LocationId">The identification of the location for which a WebPayment process shall be started.</param>
         /// <param name="EVSEUId">The unique identification of the EVSE for which a WebPayment process shall be started.</param>
-        /// <param name="EVSEId">The optional identification of the EVSE for which a WebPayment process shall be started. This can support debugging and logging, but is not required as the EVSE can be identified by the combination of location_id and evse_uid.</param>
-        /// <param name="ConnectorId">The optional identification of the connector for which a WebPayment process shall be started. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
-        /// <param name="Timeout">The optional timeout after which the WebPayment process is considered failed of aborted. Should be <= 5 minutes. Default: 2 Minutes.</param>
-        /// <param name="CustomData">Custom OCPP data to be forwarded to the charging station.</param>
+        /// <param name="EVSEId">An optional identification of the EVSE for which a WebPayment process shall be started. This can support debugging and logging, but is not required as the EVSE can be identified by the combination of location_id and evse_uid (ISO 15118 format, e.g. DE*GEF*E12345678*1).</param>
+        /// <param name="ConnectorId">An optional identification of the connector for which a WebPayment process shall be started. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
+        /// <param name="Timeout">An optional timeout after which the WebPayment process is considered failed of aborted. Should be <= 5 minutes. Default: 2 Minutes.</param>
+        /// <param name="CustomData">Optional custom OCPP data to be forwarded to the charging station.</param>
         /// 
         /// <param name="Id">An optional unique identification of the command.</param>
         /// <param name="RequestId">An optional unique request identification.</param>

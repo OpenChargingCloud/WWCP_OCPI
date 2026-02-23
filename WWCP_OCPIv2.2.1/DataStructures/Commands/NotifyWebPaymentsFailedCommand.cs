@@ -52,15 +52,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public EVSE_UId       EVSEUId         { get; }
 
         /// <summary>
-        /// The optional identification of the EVSE at which the WebPayment process was aborted or failed.
+        /// An optional identification of the EVSE at which the WebPayment process was aborted or failed.
         /// This can support debugging and logging, but is not required as the EVSE can be identified
-        /// by the combination of location_id and evse_uid.
+        /// by the combination of location_id and evse_uid (ISO 15118 format, e.g. DE*GEF*E12345678*1).
         /// </summary>
         [Optional]
         public EVSE_Id?       EVSEId          { get; }
 
         /// <summary>
-        /// The optional identification of the connector at which the WebPayment process was aborted or failed.
+        /// An optional identification of the connector at which the WebPayment process was aborted or failed.
         /// This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.
         /// </summary>
         [Optional]
@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public DisplayTexts?  ErrorMessage    { get; }
 
         /// <summary>
-        /// Custom OCPP data to be forwarded to the charging station.
+        /// Optional custom OCPP data to be forwarded to the charging station.
         /// </summary>
         [Mandatory]
         public JObject?       CustomData      { get; }
@@ -87,12 +87,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="ResponseURL">The URL to which the response of this command should be sent to.</param>
         /// 
-        /// <param name="LocationId">The identification of the location at which the WebPayment process was aborted or failed.
-        /// <param name="EVSEUId">The unique identification of the EVSE at which the WebPayment process was aborted or failed.
-        /// <param name="EVSEId">The optional identification of the EVSE at which the WebPayment process was aborted or failed. This can support debugging and logging, but is not required as the EVSE can be identified by the combination of location_id and evse_uid.</param>
-        /// <param name="ConnectorId">The optional identification of the connector at which the WebPayment process was aborted or failed. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
+        /// <param name="LocationId">The identification of the location at which the WebPayment process was aborted or failed.</param>
+        /// <param name="EVSEUId">The unique identification of the EVSE at which the WebPayment process was aborted or failed.</param>
+        /// <param name="EVSEId">An optional identification of the EVSE at which the WebPayment process was aborted or failed. This can support debugging and logging, but is not required as the EVSE can be identified by the combination of location_id and evse_uid (ISO 15118 format, e.g. DE*GEF*E12345678*1).</param>
+        /// <param name="ConnectorId">An optional identification of the connector at which the WebPayment process was aborted or failed. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
         /// <param name="ErrorMessage">An optional error message why the WebPayment process was aborted or failed.</param>
-        /// <param name="CustomData">Custom OCPP data to be forwarded to the charging station.</param>
+        /// <param name="CustomData">Optional custom OCPP data to be forwarded to the charging station.</param>
         /// 
         /// <param name="Id">An optional unique identification of the command.</param>
         /// <param name="RequestId">An optional unique request identification.</param>
