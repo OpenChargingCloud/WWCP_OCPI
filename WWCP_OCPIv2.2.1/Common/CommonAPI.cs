@@ -10327,13 +10327,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region AddOrUpdateEVSE        (Location, newOrUpdatedEVSE, AllowDowngrades = false)
+        #region AddOrUpdateEVSE        (Location, EVSE,            AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<EVSE>>
 
             AddOrUpdateEVSE(Location           Location,
-                            EVSE               newOrUpdatedEVSE,
+                            EVSE               EVSE,
                             Boolean?           AllowDowngrades     = false,
+
+                            Boolean            SkipNotifications   = false,
                             EventTracking_Id?  EventTrackingId     = null,
                             User_Id?           CurrentUserId       = null,
                             CancellationToken  CancellationToken   = default)
@@ -10342,38 +10344,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
+            Location.TryGetEVSE(EVSE.UId, out var existingEVSE);
 
             if (existingEVSE is not null)
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
+                    EVSE.LastUpdated < existingEVSE.LastUpdated)
                 {
 
                     return AddOrUpdateResult<EVSE>.Failed(
                                EventTrackingId,
-                               newOrUpdatedEVSE,
+                               EVSE,
                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!"
                            );
 
                 }
 
-                if (newOrUpdatedEVSE.LastUpdated.ToISO8601() == existingEVSE.LastUpdated.ToISO8601())
+                if (EVSE.LastUpdated.ToISO8601() == existingEVSE.LastUpdated.ToISO8601())
                     return AddOrUpdateResult<EVSE>.NoOperation(
                                EventTrackingId,
-                               newOrUpdatedEVSE,
+                               EVSE,
                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!"
                            );
 
             }
 
 
-            Location.SetEVSE(newOrUpdatedEVSE);
+            Location.SetEVSE(EVSE);
 
             // Update location timestamp!
             var builder = Location.ToBuilder();
-            builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
+            builder.LastUpdated = EVSE.LastUpdated;
             await AddOrUpdateLocation(
                       builder,
                       (AllowDowngrades ?? this.AllowDowngrades) == false,
@@ -10384,11 +10386,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                   );
 
 
-            if (newOrUpdatedEVSE.ParentLocation is not null)
+            if (EVSE.ParentLocation is not null)
                 await LogEvent(
                           OnLocationChanged,
                           loggingDelegate => loggingDelegate.Invoke(
-                              newOrUpdatedEVSE.ParentLocation
+                              EVSE.ParentLocation
                           )
                       );
 
@@ -10402,20 +10404,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     await LogEvent(
                               OnEVSEChanged,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  newOrUpdatedEVSE
+                                  EVSE
                               )
                           );
 
-                    if (existingEVSE.Status != newOrUpdatedEVSE.Status)
+                    if (existingEVSE.Status != EVSE.Status)
                     {
 
                         await LogEvent(
                                   OnEVSEStatusChanged,
                                   loggingDelegate => loggingDelegate.Invoke(
                                       Timestamp.Now,
-                                      newOrUpdatedEVSE,
+                                      EVSE,
                                       existingEVSE.Status,
-                                      newOrUpdatedEVSE.Status
+                                      EVSE.Status
                                   )
                               );
 
@@ -10425,13 +10427,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 else
                 {
 
-                    if (!KeepRemovedEVSEs(newOrUpdatedEVSE))
-                        Location.RemoveEVSE(newOrUpdatedEVSE);
+                    if (!KeepRemovedEVSEs(EVSE))
+                        Location.RemoveEVSE(EVSE);
 
                     await LogEvent(
                               OnEVSERemoved,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  newOrUpdatedEVSE
+                                  EVSE
                               )
                           );
 
@@ -10443,27 +10445,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 await LogEvent(
                           OnEVSEAdded,
                           loggingDelegate => loggingDelegate.Invoke(
-                              newOrUpdatedEVSE
+                              EVSE
                           )
                       );
 
             }
 
             return existingEVSE is null
-                       ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, newOrUpdatedEVSE)
-                       : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, newOrUpdatedEVSE);
+                       ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
+                       : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE);
 
         }
 
         #endregion
 
-        #region TryPatchEVSE           (Location, EVSE, EVSEPatch,  AllowDowngrades = false)
+        #region TryPatchEVSE           (Location, EVSE, EVSEPatch, AllowDowngrades = false)
 
         public async Task<PatchResult<EVSE>>
 
             TryPatchEVSE(Location           Location,
                          EVSE               EVSE,
                          JObject            EVSEPatch,
+
                          Boolean?           AllowDowngrades     = false,
                          EventTracking_Id?  EventTrackingId     = null,
                          User_Id?           CurrentUserId       = null,
@@ -10471,8 +10474,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            var patchResult        = EVSE.TryPatch(EVSEPatch,
-                                                   AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult        = EVSE.TryPatch(
+                                         EVSEPatch,
+                                         AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                         EventTrackingId
+                                     );
 
             var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
 
@@ -10548,13 +10554,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region AddOrUpdateEVSEs       (Location, EVSEs,   AllowDowngrades = false, SkipNotifications = false)
+        #region AddOrUpdateEVSEs       (Location, EVSEs,           AllowDowngrades = false, ...)
 
         public async Task<AddOrUpdateResult<IEnumerable<EVSE>>>
 
             AddOrUpdateEVSEs(Location           Location,
                              IEnumerable<EVSE>  EVSEs,
                              Boolean?           AllowDowngrades     = false,
+
                              Boolean            SkipNotifications   = false,
                              EventTracking_Id?  EventTrackingId     = null,
                              User_Id?           CurrentUserId       = null,
@@ -10664,71 +10671,79 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Connectors
 
-        #region AddOrUpdateConnector  (Location, EVSE, newOrUpdatedConnector,     AllowDowngrades = false)
+        #region AddOrUpdateConnector  (Location, EVSE, Connector,     AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<Connector>>
 
             AddOrUpdateConnector(Location           Location,
                                  EVSE               EVSE,
-                                 Connector          newOrUpdatedConnector,
-                                 Boolean?           AllowDowngrades   = false,
-                                 EventTracking_Id?  EventTrackingId   = null,
-                                 User_Id?           CurrentUserId     = null)
+                                 Connector          Connector,
+                                 Boolean?           AllowDowngrades     = false,
+
+                                 Boolean            SkipNotifications   = false,
+                                 EventTracking_Id?  EventTrackingId     = null,
+                                 User_Id?           CurrentUserId       = null,
+                                 CancellationToken  CancellationToken   = default)
 
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
+            var ConnectorExistedBefore = EVSE.TryGetConnector(Connector.Id, out var existingConnector);
 
             if (existingConnector is not null)
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
+                    Connector.LastUpdated < existingConnector.LastUpdated)
                 {
 
                     return AddOrUpdateResult<Connector>.Failed(
                                EventTrackingId,
-                               newOrUpdatedConnector,
+                               Connector,
                                "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!"
                            );
 
                 }
 
-                if (newOrUpdatedConnector.LastUpdated.ToISO8601() == existingConnector.LastUpdated.ToISO8601())
+                if (Connector.LastUpdated.ToISO8601() == existingConnector.LastUpdated.ToISO8601())
                     return AddOrUpdateResult<Connector>.NoOperation(
                                EventTrackingId,
-                               newOrUpdatedConnector,
+                               Connector,
                                "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!"
                            );
 
             }
 
-            EVSE.UpdateConnector(newOrUpdatedConnector);
+            EVSE.UpdateConnector(Connector);
 
             // Update EVSE/location timestamps!
-            var evseBuilder     = EVSE.ToBuilder();
-            evseBuilder.LastUpdated = newOrUpdatedConnector.LastUpdated;
+            var evseBuilder         = EVSE.ToBuilder();
+            evseBuilder.LastUpdated = Connector.LastUpdated;
             await AddOrUpdateEVSE(
                       Location,
                       evseBuilder,
-                      (AllowDowngrades ?? this.AllowDowngrades) == false
+                      (AllowDowngrades ?? this.AllowDowngrades) == false,
+
+                      SkipNotifications,
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
                   );
 
 
-            if (newOrUpdatedConnector.ParentEVSE?.ParentLocation is not null)
+            if (Connector.ParentEVSE?.ParentLocation is not null)
                 await LogEvent(
                           OnLocationChanged,
                           loggingDelegate => loggingDelegate.Invoke(
-                              newOrUpdatedConnector.ParentEVSE.ParentLocation
+                              Connector.ParentEVSE.ParentLocation
                           )
                       );
 
 
             return ConnectorExistedBefore
-                        ? AddOrUpdateResult<Connector>.Updated(EventTrackingId, newOrUpdatedConnector)
-                        : AddOrUpdateResult<Connector>.Created(EventTrackingId, newOrUpdatedConnector);
+                        ? AddOrUpdateResult<Connector>.Updated(EventTrackingId, Connector)
+                        : AddOrUpdateResult<Connector>.Created(EventTrackingId, Connector);
 
         }
 
@@ -10742,14 +10757,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               EVSE               EVSE,
                               Connector          Connector,
                               JObject            ConnectorPatch,
-                              Boolean?           AllowDowngrades   = false,
-                              EventTracking_Id?  EventTrackingId   = null,
-                              User_Id?           CurrentUserId     = null)
+                              Boolean?           AllowDowngrades     = false,
+
+                              Boolean            SkipNotifications   = false,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null,
+                              CancellationToken  CancellationToken   = default)
 
         {
 
-            var patchResult = Connector.TryPatch(ConnectorPatch,
-                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult = Connector.TryPatch(
+                                  ConnectorPatch,
+                                  AllowDowngrades ?? this.AllowDowngrades ?? false
+                              );
 
             if (patchResult.IsSuccessAndDataNotNull(out var data))
             {
@@ -10763,7 +10783,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 await AddOrUpdateEVSE(
                           Location,
                           evseBuilder,
-                          (AllowDowngrades ?? this.AllowDowngrades) == false
+                          (AllowDowngrades ?? this.AllowDowngrades) == false,
+
+                          SkipNotifications,
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
                       );
 
             }
