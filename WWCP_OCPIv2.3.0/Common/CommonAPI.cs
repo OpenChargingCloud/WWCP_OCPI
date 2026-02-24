@@ -10697,9 +10697,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             AddOrUpdateEVSE(Location           Location,
                             EVSE               EVSE,
+                            Boolean?           AllowDowngrades     = false,
 
                             Boolean            SkipNotifications   = false,
-                            Boolean?           AllowDowngrades     = false,
                             EventTracking_Id?  EventTrackingId     = null,
                             User_Id?           CurrentUserId       = null,
                             CancellationToken  CancellationToken   = default)

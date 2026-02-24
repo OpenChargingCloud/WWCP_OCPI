@@ -4286,11 +4286,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
                     var addOrUpdateResult = await CommonAPI.AddOrUpdateEVSE(
-                                                      existingLocation,
-                                                      newOrUpdatedEVSE,
-                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
-                                                  );
 
+                                                      Location:            existingLocation,
+                                                      EVSE:                newOrUpdatedEVSE,
+                                                      AllowDowngrades:     AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
+
+                                                      SkipNotifications:   false,
+                                                      EventTrackingId:     request.HTTPRequest.EventTrackingId,
+                                                      CurrentUserId:       null,
+                                                      CancellationToken:   request.HTTPRequest.CancellationToken
+
+                                                  );
 
                     #region Send OnPutEVSEResponse event
 
