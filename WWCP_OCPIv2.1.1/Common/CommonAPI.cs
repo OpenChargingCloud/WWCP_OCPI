@@ -1576,10 +1576,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public CommonAPILogger?         Logger                     { get; set; }
 
-
-
-        public String                   DatabaseFilePath           { get; }
-
         /// <summary>
         /// The database file name for all remote party configuration.
         /// </summary>
@@ -2071,37 +2067,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.BaseAPI                   = BaseAPI;
+            this.BaseAPI                = BaseAPI;
 
-            this.OurBusinessDetails        = OurBusinessDetails;
-            this.OurCountryCode            = OurCountryCode;
-            this.OurPartyId                = OurPartyId;
-            this.OurRole                   = OurRole;
+            this.OurBusinessDetails     = OurBusinessDetails;
+            this.OurCountryCode         = OurCountryCode;
+            this.OurPartyId             = OurPartyId;
+            this.OurRole                = OurRole;
 
-            this.KeepRemovedEVSEs          = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs       = KeepRemovedEVSEs          ?? (evse => true);
 
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(
-                                                                                       AppContext.BaseDirectory,
-                                                                                       DefaultHTTPAPI_LoggingPath
-                                                                                   );
+            this.RemotePartyDBFileName  = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName
+                                          );
 
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
+            this.AssetsDBFileName       = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              AssetsDBFileName      ?? DefaultAssetsDBFileName
+                                          );
 
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-            this.Logger                    = this.DisableLogging == false
-                                                 ? new CommonAPILogger(
-                                                       this,
-                                                       LoggingContext,
-                                                       LoggingPath,
-                                                       LogfileCreator
-                                                   )
-                                                 : null;
+            this.Logger                 = this.DisableLogging == false
+                                              ? new CommonAPILogger(
+                                                    this,
+                                                    LoggingContext,
+                                                    LoggingPath,
+                                                    LogfileCreator
+                                                )
+                                              : null;
 
             this.BaseAPI.AddVersionInformation(
                 new VersionInformation(

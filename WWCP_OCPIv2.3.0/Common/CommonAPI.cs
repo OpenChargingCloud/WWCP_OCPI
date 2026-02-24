@@ -3653,10 +3653,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public CommonAPILogger?         Logger                     { get; }
 
-
-
-        public String                   DatabaseFilePath           { get; }
-
         /// <summary>
         /// The database file name for all remote party configuration.
         /// </summary>
@@ -4084,35 +4080,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        public CommonAPI(IEnumerable<PartyData>        OurPartyData,
-                         Party_Idv3                    DefaultPartyId,
+        public CommonAPI(IEnumerable<PartyData>       OurPartyData,
+                         Party_Idv3                   DefaultPartyId,
 
-                         CommonHTTPAPI                 BaseAPI,
+                         CommonHTTPAPI                BaseAPI,
 
-                         I18NString?                   Description               = null,
-                         HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
+                         I18NString?                  Description               = null,
+                         HTTPPath?                    AdditionalURLPathPrefix   = null,
+                         Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
 
-                         HTTPPath?                     BasePath                  = null,
-                         HTTPPath?                     URLPathPrefix             = null,
+                         HTTPPath?                    BasePath                  = null,
+                         HTTPPath?                    URLPathPrefix             = null,
 
-                         String?                       ExternalDNSName           = null,
-                         String?                       HTTPServerName            = DefaultHTTPServerName,
-                         String?                       HTTPServiceName           = DefaultHTTPServiceName,
-                         String?                       APIVersionHash            = null,
-                         JObject?                      APIVersionHashes          = null,
+                         String?                      ExternalDNSName           = null,
+                         String?                      HTTPServerName            = DefaultHTTPServerName,
+                         String?                      HTTPServiceName           = DefaultHTTPServiceName,
+                         String?                      APIVersionHash            = null,
+                         JObject?                     APIVersionHashes          = null,
 
-                         String?                       DatabaseFilePath          = null,
-                         String?                       RemotePartyDBFileName     = null,
-                         String?                       AssetsDBFileName          = null,
+                         String?                      DatabaseFilePath          = null,
+                         String?                      RemotePartyDBFileName     = null,
+                         String?                      AssetsDBFileName          = null,
 
-                         Boolean?                      IsDevelopment             = false,
-                         IEnumerable<String>?          DevelopmentServers        = null,
-                         Boolean?                      DisableLogging            = false,
-                         String?                       LoggingContext            = null,
-                         String?                       LoggingPath               = null,
-                         String?                       LogfileName               = null,
-                         OCPILogfileCreatorDelegate?   LogfileCreator            = null)
+                         Boolean?                     IsDevelopment             = false,
+                         IEnumerable<String>?         DevelopmentServers        = null,
+                         Boolean?                     DisableLogging            = false,
+                         String?                      LoggingContext            = null,
+                         String?                      LoggingPath               = null,
+                         String?                      LogfileName               = null,
+                         OCPILogfileCreatorDelegate?  LogfileCreator            = null)
 
             : base(Description ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
                    BaseAPI.HTTPBaseAPI,
@@ -4139,33 +4135,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (!OurPartyData.Any())
                 throw new ArgumentNullException(nameof(OurPartyData), "The given party data must not be null or empty!");
 
-            this.BaseAPI                   = BaseAPI;
-            this.DefaultPartyId            = DefaultPartyId;
+            this.BaseAPI                = BaseAPI;
+            this.DefaultPartyId         = DefaultPartyId;
 
-            this.KeepRemovedEVSEs          = KeepRemovedEVSEs                   ?? (evse => true);
+            this.KeepRemovedEVSEs       = KeepRemovedEVSEs          ?? (evse => true);
 
-            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(
-                                                                                       AppContext.BaseDirectory,
-                                                                                       DefaultHTTPAPI_LoggingPath
-                                                                                   );
+            this.RemotePartyDBFileName  = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName
+                                          );
 
-            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
-                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
+            this.AssetsDBFileName       = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              AssetsDBFileName      ?? DefaultAssetsDBFileName
+                                          );
 
-            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
-                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
-
-            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
-                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
-
-            this.Logger                    = this.DisableLogging == false
-                                                 ? new CommonAPILogger(
-                                                       this,
-                                                       LoggingContext,
-                                                       LoggingPath,
-                                                       LogfileCreator
-                                                   )
-                                                 : null;
+            this.Logger                 = this.DisableLogging == false
+                                              ? new CommonAPILogger(
+                                                    this,
+                                                    LoggingContext,
+                                                    LoggingPath,
+                                                    LogfileCreator
+                                                )
+                                              : null;
 
             this.BaseAPI.AddVersionInformation(
                 new VersionInformation(

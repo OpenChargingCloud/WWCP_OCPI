@@ -1405,7 +1405,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
 
-        public String                   DatabaseFilePath           { get; }
+        //public String                   DatabaseFilePath           { get; }
 
         /// <summary>
         /// The database file name for all remote party configuration.
@@ -1904,24 +1904,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         {
 
-            this.BaseAPI               = BaseAPI;
+            this.BaseAPI                = BaseAPI;
 
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            //this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
-            this.DefaultPartyId        = DefaultPartyId;
+            //this.OurCredentialRoles     = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            this.DefaultPartyId         = DefaultPartyId;
 
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs       = KeepRemovedEVSEs          ?? (evse => true);
 
-            this.Logger                = this.DisableLogging == false
-                                             ? new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               )
-                                             : null;
+            this.RemotePartyDBFileName  = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              RemotePartyDBFileName ?? DefaultRemotePartyDBFileName
+                                          );
+
+            this.AssetsDBFileName       = Path.Combine(
+                                              DatabaseFilePath      ?? this.LoggingPath,
+                                              AssetsDBFileName      ?? DefaultAssetsDBFileName
+                                          );
+
+            this.Logger                 = this.DisableLogging == false
+                                              ? new CommonAPILogger(
+                                                    this,
+                                                    LoggingContext,
+                                                    LoggingPath,
+                                                    LogfileCreator
+                                                )
+                                              : null;
 
             AddVersionInformation(
                 new VersionInformation(

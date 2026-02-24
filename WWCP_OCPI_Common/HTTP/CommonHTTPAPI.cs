@@ -405,6 +405,8 @@ namespace cloud.charging.open.protocols.OCPI
                              Boolean                        TariffsAsOpenData         = false,
                              Boolean?                       AllowDowngrades           = null,
 
+                             String?                        RemotePartyDBFileName     = null,
+
                              Boolean?                       IsDevelopment             = null,
                              IEnumerable<String>?           DevelopmentServers        = null,
                              //Boolean?                       SkipURLTemplates          = false,
@@ -457,11 +459,10 @@ namespace cloud.charging.open.protocols.OCPI
             this.TariffsAsOpenData        = TariffsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
-            if (this.LoggingPath.IsNotNullOrEmpty())
-                Directory.CreateDirectory(this.LoggingPath);
-
-            this.RemotePartyDBFileName    = Path.Combine(this.LoggingPath,
-                                                         RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
+            this.RemotePartyDBFileName    = Path.Combine(
+                                                this.LoggingPath,
+                                                RemotePartyDBFileName ?? DefaultRemotePartyDBFileName
+                                            );
 
             this.ClientConfigurations     = new ClientConfigurator();
 
