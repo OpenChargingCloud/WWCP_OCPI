@@ -75,7 +75,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.ReservationId  = ReservationId;
+            this.ReservationId = ReservationId;
+
+            unchecked
+            {
+
+                hashCode = this.ReservationId.GetHashCode() * 11 ^
+
+                           this.ResponseURL.  GetHashCode() *  7 ^
+                           this.Id.           GetHashCode() *  5 ^
+                           this.RequestId.    GetHashCode() *  3 ^
+                           this.CorrelationId.GetHashCode();
+
+            }
 
         }
 
@@ -157,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("reservation_id",
                                          "reservation identification",
                                          Reservation_Id.TryParse,
-                                         out Reservation_Id ReservationId,
+                                         out Reservation_Id reservationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -171,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
                                          URL.TryParse,
-                                         out URL ResponseURL,
+                                         out URL responseURL,
                                          out ErrorResponse))
                 {
                     return false;
@@ -184,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("id",
                                        "command identification",
                                        Command_Id.TryParse,
-                                       out Command_Id? CommandId,
+                                       out Command_Id? commandId,
                                        out ErrorResponse))
                 {
                     return false;
@@ -197,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("request_id",
                                        "request identification",
                                        Request_Id.TryParse,
-                                       out Request_Id? RequestId,
+                                       out Request_Id? requestId,
                                        out ErrorResponse))
                 {
                     return false;
@@ -210,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("correlation_Id",
                                        "correlation identification",
                                        Correlation_Id.TryParse,
-                                       out Correlation_Id? CorrelationId,
+                                       out Correlation_Id? correlationId,
                                        out ErrorResponse))
                 {
                     return false;
@@ -221,12 +233,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 CancelReservationCommand = new CancelReservationCommand(
 
-                                               ReservationId,
+                                               reservationId,
 
-                                               ResponseURL,
-                                               CommandId,
-                                               RequestId,
-                                               CorrelationId
+                                               responseURL,
+                                               commandId,
+                                               requestId,
+                                               correlationId
 
                                            );
 
@@ -468,24 +480,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return ReservationId.GetHashCode() * 11 ^
-
-                       ResponseURL.  GetHashCode() *  7 ^
-                       Id.           GetHashCode() *  5 ^
-                       RequestId.    GetHashCode() *  3 ^
-                       CorrelationId.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

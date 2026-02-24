@@ -29,13 +29,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
 {
 
     /// <summary>
-    /// The OCPI HUB client.
+    /// The OCPI HUB-2-CPO client.
     /// </summary>
     public partial class HUB2CPOClient : IHTTPClient
     {
 
         /// <summary>
-        /// The OCPI HUB HTTP client logger.
+        /// The OCPI HUB-2-CPO HTTP client logger.
         /// </summary>
         public new sealed class HTTPClientLogger : CommonHTTPClient.HTTPClientLogger
         {
@@ -68,9 +68,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public HTTPClientLogger(HUB2CPOClient                HUB2CPOClient,
-                          String?                      LoggingPath,
-                          String?                      Context          = DefaultContext,
-                          OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+                                    String?                      LoggingPath,
+                                    String?                      Context          = DefaultContext,
+                                    OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(HUB2CPOClient,
                        LoggingPath,
@@ -366,6 +366,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
                               handler => HUB2CPOClient.OnUnlockConnectorHTTPResponse += handler,
                               handler => HUB2CPOClient.OnUnlockConnectorHTTPResponse -= handler,
                               "UnlockConnector", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                // Open Charging Cloud Extensions
+
+                RegisterEvent("NotifyWebPaymentsStartedRequest",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsStartedResponse",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("NotifyWebPaymentsFailedRequest",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsFailedResponse",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 

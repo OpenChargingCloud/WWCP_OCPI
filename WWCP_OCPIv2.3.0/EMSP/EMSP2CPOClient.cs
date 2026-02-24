@@ -47,101 +47,112 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
             #region Properties
 
-            public APICounterValues  GetLocations          { get; }
-            public APICounterValues  GetLocation           { get; }
-            public APICounterValues  GetEVSE               { get; }
-            public APICounterValues  GetConnector          { get; }
+            public APICounterValues  GetLocations                { get; }
+            public APICounterValues  GetLocation                 { get; }
+            public APICounterValues  GetEVSE                     { get; }
+            public APICounterValues  GetConnector                { get; }
 
 
-            public APICounterValues  GetTariffs            { get; }
-            public APICounterValues  GetTariff             { get; }
+            public APICounterValues  GetTariffs                  { get; }
+            public APICounterValues  GetTariff                   { get; }
 
 
-            public APICounterValues  GetSessions           { get; }
-            public APICounterValues  GetSession            { get; }
+            public APICounterValues  GetSessions                 { get; }
+            public APICounterValues  GetSession                  { get; }
 
 
-            public APICounterValues  GetCDRs               { get; }
-            public APICounterValues  GetCDR                { get; }
+            public APICounterValues  GetCDRs                     { get; }
+            public APICounterValues  GetCDR                      { get; }
 
 
-            public APICounterValues  GetToken              { get; }
-            public APICounterValues  PutToken              { get; }
-            public APICounterValues  PatchToken            { get; }
+            public APICounterValues  GetToken                    { get; }
+            public APICounterValues  PutToken                    { get; }
+            public APICounterValues  PatchToken                  { get; }
 
 
-            public APICounterValues  GetBookings           { get; }
-            public APICounterValues  PostBookings          { get; }
+            public APICounterValues  GetBookings                 { get; }
+            public APICounterValues  PostBookings                { get; }
 
 
-            public APICounterValues  ReserveNow            { get; }
-            public APICounterValues  CancelReservation     { get; }
-            public APICounterValues  StartSession          { get; }
-            public APICounterValues  StopSession           { get; }
-            public APICounterValues  UnlockConnector       { get; }
-            public APICounterValues  SetChargingProfile    { get; }
+            public APICounterValues  ReserveNow                  { get; }
+            public APICounterValues  CancelReservation           { get; }
+            public APICounterValues  StartSession                { get; }
+            public APICounterValues  StopSession                 { get; }
+            public APICounterValues  UnlockConnector             { get; }
+            public APICounterValues  SetChargingProfile          { get; }
+
+
+            // Open Charging Cloud Extensions
+            public APICounterValues  NotifyWebPaymentsStarted    { get; }
+            public APICounterValues  NotifyWebPaymentsFailed     { get; }
 
             #endregion
 
             #region Constructor(s)
 
-            public APICounters(APICounterValues?  GetVersions          = null,
-                               APICounterValues?  Register             = null,
+            public APICounters(APICounterValues?  GetVersions                = null,
+                               APICounterValues?  Register                   = null,
 
-                               APICounterValues?  GetLocations         = null,
-                               APICounterValues?  GetLocation          = null,
-                               APICounterValues?  GetEVSE              = null,
-                               APICounterValues?  GetConnector         = null,
+                               APICounterValues?  GetLocations               = null,
+                               APICounterValues?  GetLocation                = null,
+                               APICounterValues?  GetEVSE                    = null,
+                               APICounterValues?  GetConnector               = null,
 
-                               APICounterValues?  GetTariffs           = null,
-                               APICounterValues?  GetTariff            = null,
+                               APICounterValues?  GetTariffs                 = null,
+                               APICounterValues?  GetTariff                  = null,
 
-                               APICounterValues?  GetSessions          = null,
-                               APICounterValues?  GetSession           = null,
+                               APICounterValues?  GetSessions                = null,
+                               APICounterValues?  GetSession                 = null,
 
-                               APICounterValues?  GetCDRs              = null,
-                               APICounterValues?  GetCDR               = null,
+                               APICounterValues?  GetCDRs                    = null,
+                               APICounterValues?  GetCDR                     = null,
 
-                               APICounterValues?  GetToken             = null,
-                               APICounterValues?  PutToken             = null,
-                               APICounterValues?  PatchToken           = null,
+                               APICounterValues?  GetToken                   = null,
+                               APICounterValues?  PutToken                   = null,
+                               APICounterValues?  PatchToken                 = null,
 
-                               APICounterValues?  ReserveNow           = null,
-                               APICounterValues?  CancelReservation    = null,
-                               APICounterValues?  StartSession         = null,
-                               APICounterValues?  StopSession          = null,
-                               APICounterValues?  UnlockConnector      = null,
-                               APICounterValues?  SetChargingProfile   = null)
+                               APICounterValues?  ReserveNow                 = null,
+                               APICounterValues?  CancelReservation          = null,
+                               APICounterValues?  StartSession               = null,
+                               APICounterValues?  StopSession                = null,
+                               APICounterValues?  UnlockConnector            = null,
+                               APICounterValues?  SetChargingProfile         = null,
+
+                               APICounterValues?  NotifyWebPaymentsStarted   = null,
+                               APICounterValues?  NotifyWebPaymentsFailed    = null)
 
                 : base(GetVersions,
                        Register)
 
             {
 
-                this.GetLocations        = GetLocations       ?? new APICounterValues();
-                this.GetLocation         = GetLocation        ?? new APICounterValues();
-                this.GetEVSE             = GetEVSE            ?? new APICounterValues();
-                this.GetConnector        = GetConnector       ?? new APICounterValues();
+                this.GetLocations              = GetLocations             ?? new APICounterValues();
+                this.GetLocation               = GetLocation              ?? new APICounterValues();
+                this.GetEVSE                   = GetEVSE                  ?? new APICounterValues();
+                this.GetConnector              = GetConnector             ?? new APICounterValues();
 
-                this.GetTariffs          = GetTariffs         ?? new APICounterValues();
-                this.GetTariff           = GetTariff          ?? new APICounterValues();
+                this.GetTariffs                = GetTariffs               ?? new APICounterValues();
+                this.GetTariff                 = GetTariff                ?? new APICounterValues();
 
-                this.GetSessions         = GetSessions        ?? new APICounterValues();
-                this.GetSession          = GetSession         ?? new APICounterValues();
+                this.GetSessions               = GetSessions              ?? new APICounterValues();
+                this.GetSession                = GetSession               ?? new APICounterValues();
 
-                this.GetCDRs             = GetCDRs            ?? new APICounterValues();
-                this.GetCDR              = GetCDR             ?? new APICounterValues();
+                this.GetCDRs                   = GetCDRs                  ?? new APICounterValues();
+                this.GetCDR                    = GetCDR                   ?? new APICounterValues();
 
-                this.GetToken            = GetToken           ?? new APICounterValues();
-                this.PutToken            = PutToken           ?? new APICounterValues();
-                this.PatchToken          = PatchToken         ?? new APICounterValues();
+                this.GetToken                  = GetToken                 ?? new APICounterValues();
+                this.PutToken                  = PutToken                 ?? new APICounterValues();
+                this.PatchToken                = PatchToken               ?? new APICounterValues();
 
-                this.ReserveNow          = ReserveNow         ?? new APICounterValues();
-                this.CancelReservation   = CancelReservation  ?? new APICounterValues();
-                this.StartSession        = StartSession       ?? new APICounterValues();
-                this.StopSession         = StopSession        ?? new APICounterValues();
-                this.UnlockConnector     = UnlockConnector    ?? new APICounterValues();
-                this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
+                this.ReserveNow                = ReserveNow               ?? new APICounterValues();
+                this.CancelReservation         = CancelReservation        ?? new APICounterValues();
+                this.StartSession              = StartSession             ?? new APICounterValues();
+                this.StopSession               = StopSession              ?? new APICounterValues();
+                this.UnlockConnector           = UnlockConnector          ?? new APICounterValues();
+                this.SetChargingProfile        = SetChargingProfile       ?? new APICounterValues();
+
+                this.NotifyWebPaymentsStarted  = NotifyWebPaymentsStarted ?? new APICounterValues();
+                this.NotifyWebPaymentsFailed   = NotifyWebPaymentsFailed  ?? new APICounterValues();
 
             }
 
@@ -155,30 +166,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                 var json = base.ToJSON();
 
-                json.Add(new JProperty("getLocations",        GetLocations.      ToJSON()));
-                json.Add(new JProperty("getLocation",         GetLocation.       ToJSON()));
-                json.Add(new JProperty("getEVSE",             GetEVSE.           ToJSON()));
-                json.Add(new JProperty("getConnecto",         GetConnector.      ToJSON()));
+                json.Add(new JProperty("getLocations",              GetLocations.            ToJSON()));
+                json.Add(new JProperty("getLocation",               GetLocation.             ToJSON()));
+                json.Add(new JProperty("getEVSE",                   GetEVSE.                 ToJSON()));
+                json.Add(new JProperty("getConnecto",               GetConnector.            ToJSON()));
 
-                json.Add(new JProperty("getTariffs",          GetTariffs.        ToJSON()));
-                json.Add(new JProperty("getTariff",           GetTariff.         ToJSON()));
+                json.Add(new JProperty("getTariffs",                GetTariffs.              ToJSON()));
+                json.Add(new JProperty("getTariff",                 GetTariff.               ToJSON()));
 
-                json.Add(new JProperty("getSessions",         GetSessions.       ToJSON()));
-                json.Add(new JProperty("getSession",          GetSession.        ToJSON()));
+                json.Add(new JProperty("getSessions",               GetSessions.             ToJSON()));
+                json.Add(new JProperty("getSession",                GetSession.              ToJSON()));
 
-                json.Add(new JProperty("getCDRs",             GetCDRs.           ToJSON()));
-                json.Add(new JProperty("getCDR",              GetCDR.            ToJSON()));
+                json.Add(new JProperty("getCDRs",                   GetCDRs.                 ToJSON()));
+                json.Add(new JProperty("getCDR",                    GetCDR.                  ToJSON()));
 
-                json.Add(new JProperty("getToken",            GetToken.          ToJSON()));
-                json.Add(new JProperty("putToken",            PutToken.          ToJSON()));
-                json.Add(new JProperty("patchToken",          PatchToken.        ToJSON()));
+                json.Add(new JProperty("getToken",                  GetToken.                ToJSON()));
+                json.Add(new JProperty("putToken",                  PutToken.                ToJSON()));
+                json.Add(new JProperty("patchToken",                PatchToken.              ToJSON()));
 
-                json.Add(new JProperty("reserveNow",          ReserveNow.        ToJSON()));
-                json.Add(new JProperty("cancelReservation",   CancelReservation. ToJSON()));
-                json.Add(new JProperty("startSession",        StartSession.      ToJSON()));
-                json.Add(new JProperty("stopSession",         StopSession.       ToJSON()));
-                json.Add(new JProperty("unlockConnector",     UnlockConnector.   ToJSON()));
-                json.Add(new JProperty("setChargingProfile",  SetChargingProfile.ToJSON()));
+                json.Add(new JProperty("reserveNow",                ReserveNow.              ToJSON()));
+                json.Add(new JProperty("cancelReservation",         CancelReservation.       ToJSON()));
+                json.Add(new JProperty("startSession",              StartSession.            ToJSON()));
+                json.Add(new JProperty("stopSession",               StopSession.             ToJSON()));
+                json.Add(new JProperty("unlockConnector",           UnlockConnector.         ToJSON()));
+                json.Add(new JProperty("setChargingProfile",        SetChargingProfile.      ToJSON()));
+
+                json.Add(new JProperty("NotifyWebPaymentsStarted",  NotifyWebPaymentsStarted.ToJSON()));
+                json.Add(new JProperty("NotifyWebPaymentsFailed",   NotifyWebPaymentsFailed. ToJSON()));
 
                 return json;
 
@@ -726,6 +740,57 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// An event fired whenever a response to a UnlockConnector request had been received.
         /// </summary>
         public event OnUnlockConnectorResponseDelegate?  OnUnlockConnectorResponse;
+
+        #endregion
+
+
+        // Open Charging Cloud Extensions
+
+        #region OnNotifyWebPaymentsStartedRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a NotifyWebPaymentsStarted request will be send.
+        /// </summary>
+        public event OnNotifyWebPaymentsStartedRequestDelegate?     OnNotifyWebPaymentsStartedRequest;
+
+        /// <summary>
+        /// An event fired whenever a NotifyWebPaymentsStarted HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler?                       OnNotifyWebPaymentsStartedHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a NotifyWebPaymentsStarted HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler?                      OnNotifyWebPaymentsStartedHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a NotifyWebPaymentsStarted request had been received.
+        /// </summary>
+        public event OnNotifyWebPaymentsStartedResponseDelegate?    OnNotifyWebPaymentsStartedResponse;
+
+        #endregion
+
+        #region OnNotifyWebPaymentsFailedRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a NotifyWebPaymentsFailed request will be send.
+        /// </summary>
+        public event OnNotifyWebPaymentsFailedRequestDelegate?     OnNotifyWebPaymentsFailedRequest;
+
+        /// <summary>
+        /// An event fired whenever a NotifyWebPaymentsFailed HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler?                      OnNotifyWebPaymentsFailedHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a NotifyWebPaymentsFailed HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler?                     OnNotifyWebPaymentsFailedHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a NotifyWebPaymentsFailed request had been received.
+        /// </summary>
+        public event OnNotifyWebPaymentsFailedResponseDelegate?    OnNotifyWebPaymentsFailedResponse;
 
         #endregion
 
@@ -3466,7 +3531,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "RESERVE_NOW",
-                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomReserveNowCommandSerializer,
+                                                                            CommonAPI.CustomTokenSerializer,
+                                                                            CommonAPI.CustomEnergyContractSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -3654,7 +3723,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "CANCEL_RESERVATION",
-                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomCancelReservationCommandSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -3849,7 +3920,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     var httpResponse = await httpClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "START_SESSION",
-                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomStartSessionCommandSerializer,
+                                                                            CommonAPI.CustomTokenSerializer,
+                                                                            CommonAPI.CustomEnergyContractSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -4036,7 +4111,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "STOP_SESSION",
-                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomStopSessionCommandSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -4221,7 +4298,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
                     var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  httpClient.RemoteURL.Path + "UNLOCK_CONNECTOR",
-                                                 Content:               command.ToJSON().ToUTF8Bytes(JSONFormatting),
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomUnlockConnectorCommandSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
@@ -4308,6 +4387,422 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
 
         //ToDo: Add smart charging commands!
+
+
+        // Open Charging Cloud Extensions
+
+        #region NotifyWebPaymentsStarted (LocationId, EVSEUId, EVSEId = null, ConnectorId = null, Timeout      = null, ...)
+
+        /// <summary>
+        /// Start a charging session.
+        /// </summary>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public async Task<OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>>
+
+            NotifyWebPaymentsStarted(Location_Id        LocationId,
+                                     EVSE_UId           EVSEUId,
+                                     EVSE_Id?           EVSEId              = null,
+                                     Connector_Id?      ConnectorId         = null,
+                                     TimeSpan?          Timeout             = null,
+                                     JObject?           CustomData          = null,
+
+                                     Command_Id?        CommandId           = null,
+                                     Request_Id?        RequestId           = null,
+                                     Correlation_Id?    CorrelationId       = null,
+                                     Version_Id?        VersionId           = null,
+
+                                     DateTimeOffset?    RequestTimestamp    = null,
+                                     EventTracking_Id?  EventTrackingId     = null,
+                                     TimeSpan?          RequestTimeout      = null,
+                                     CancellationToken  CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
+
+            Counters.NotifyWebPaymentsStarted.IncRequests_OK();
+
+            OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnNotifyWebPaymentsStartedRequest event
+
+            await LogEvent(
+                      OnNotifyWebPaymentsStartedRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          LocationId,
+                          EVSEUId,
+                          EVSEId,
+                          ConnectorId,
+                          Timeout,
+                          CustomData,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
+
+                if (httpClient is not null)
+                {
+
+                    var command    = new NotifyWebPaymentsStartedCommand(
+
+                                         CommonAPI.GetModuleURL(
+                                             Module_Id.Commands,
+                                             $"v{SelectedOCPIVersionId}/emsp"
+                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED{commandId}",
+
+                                         LocationId,
+                                         EVSEUId,
+                                         EVSEId,
+                                         ConnectorId,
+                                         Timeout,
+                                         CustomData,
+
+                                         commandId,
+                                         requestId,
+                                         correlationId
+
+                                     );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await NewHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "START_SESSION",
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomNotifyWebPaymentsStartedCommandSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnNotifyWebPaymentsStartedHTTPRequest,
+                                                 ResponseLogDelegate:   OnNotifyWebPaymentsStartedHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>.ParseJObject(
+                                   command,
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => CommandResponse.Parse(
+                                               command,
+                                               json
+                                           )
+                               );
+
+                    Counters.NotifyWebPaymentsStarted.IncResponses_OK();
+
+                }
+                else
+                {
+                    response = OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.NotifyWebPaymentsStarted.IncRequests_Error();
+                }
+
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                    commandValues.Response = response.Data;
+
+            }
+            catch (Exception e)
+            {
+                response = OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>.Exception(e);
+                Counters.NotifyWebPaymentsStarted.IncResponses_Error();
+            }
+
+
+            #region Send OnNotifyWebPaymentsStartedResponse event
+
+            stopwatch.Stop();
+            var endtime = Timestamp.Now;
+
+            await LogEvent(
+                      OnNotifyWebPaymentsStartedResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          LocationId,
+                          EVSEUId,
+                          EVSEId,
+                          ConnectorId,
+                          Timeout,
+                          CustomData,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
+
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region NotifyWebPaymentsFailed  (LocationId, EVSEUId, EVSEId = null, ConnectorId = null, ErrorMessage = null, ...)
+
+        /// <summary>
+        /// Start a charging session.
+        /// </summary>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public async Task<OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>>
+
+            NotifyWebPaymentsFailed(Location_Id        LocationId,
+                                    EVSE_UId           EVSEUId,
+                                    EVSE_Id?           EVSEId              = null,
+                                    Connector_Id?      ConnectorId         = null,
+                                    DisplayTexts?      ErrorMessage        = null,
+                                    JObject?           CustomData          = null,
+
+                                    Command_Id?        CommandId           = null,
+                                    Request_Id?        RequestId           = null,
+                                    Correlation_Id?    CorrelationId       = null,
+                                    Version_Id?        VersionId           = null,
+
+                                    DateTimeOffset?    RequestTimestamp    = null,
+                                    EventTracking_Id?  EventTrackingId     = null,
+                                    TimeSpan?          RequestTimeout      = null,
+                                    CancellationToken  CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var commandId         = CommandId        ?? Command_Id.    NewRandom();
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
+
+            Counters.NotifyWebPaymentsFailed.IncRequests_OK();
+
+            OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnNotifyWebPaymentsFailedRequest event
+
+            await LogEvent(
+                      OnNotifyWebPaymentsFailedRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          LocationId,
+                          EVSEUId,
+                          EVSEId,
+                          ConnectorId,
+                          ErrorMessage,
+                          CustomData,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
+
+                if (httpClient is not null)
+                {
+
+                    var command    = new NotifyWebPaymentsFailedCommand(
+
+                                         CommonAPI.GetModuleURL(
+                                             Module_Id.Commands,
+                                             $"v{SelectedOCPIVersionId}/emsp"
+                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED{commandId}",
+
+                                         LocationId,
+                                         EVSEUId,
+                                         EVSEId,
+                                         ConnectorId,
+                                         ErrorMessage,
+                                         CustomData,
+
+                                         commandId,
+                                         requestId,
+                                         correlationId
+
+                                     );
+
+                    CommonAPI.CommandValueStore.AddOrUpdate(
+                        commandId,
+                        (id)    => CommandValues.FromCommand(command),
+                        (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand)
+                    );
+
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await NewHTTPClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + "START_SESSION",
+                                                 Content:               command.ToJSON(
+                                                                            CommonAPI.CustomNotifyWebPaymentsFailedCommandSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnNotifyWebPaymentsFailedHTTPRequest,
+                                                 ResponseLogDelegate:   OnNotifyWebPaymentsFailedHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>.ParseJObject(
+                                   command,
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => CommandResponse.Parse(
+                                               command,
+                                               json
+                                           )
+                               );
+
+                    Counters.NotifyWebPaymentsFailed.IncResponses_OK();
+
+                }
+                else
+                {
+                    response = OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.NotifyWebPaymentsFailed.IncRequests_Error();
+                }
+
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                    commandValues.Response = response.Data;
+
+            }
+            catch (Exception e)
+            {
+                response = OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>.Exception(e);
+                Counters.NotifyWebPaymentsFailed.IncResponses_Error();
+            }
+
+
+            #region Send OnNotifyWebPaymentsFailedResponse event
+
+            stopwatch.Stop();
+            var endtime = Timestamp.Now;
+
+            await LogEvent(
+                      OnNotifyWebPaymentsFailedResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          requestId,
+                          correlationId,
+
+                          LocationId,
+                          EVSEUId,
+                          EVSEId,
+                          ConnectorId,
+                          ErrorMessage,
+                          CustomData,
+
+                          CancellationToken,
+                          eventTrackingId,
+                          requestTimeout,
+
+                          response,
+                          stopwatch.Elapsed
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
 
 
         #region (private) LogEvent (Logger, LogHandler, ...)

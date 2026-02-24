@@ -1481,6 +1481,143 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+
+        // Open Charging Cloud Extensions
+
+        #region (protected internal) NotifyWebPaymentsStartedHTTPRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsStarted command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnNotifyWebPaymentsStartedHTTPRequest = new();
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsStarted command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">The OCPI request.</param>
+        protected internal Task NotifyWebPaymentsStartedHTTPRequest(DateTimeOffset     Timestamp,
+                                                                    HTTPAPIX           API,
+                                                                    OCPIRequest        Request,
+                                                                    CancellationToken  CancellationToken)
+
+            => OnNotifyWebPaymentsStartedHTTPRequest.WhenAll(
+                    Timestamp,
+                    API,
+                    Request,
+                    CancellationToken
+                );
+
+        #endregion
+
+        #region OnNotifyWebPaymentsStartedCommand
+
+        public delegate Task<CommandResponse> OnNotifyWebPaymentsStartedCommandDelegate(RemoteParty_Id                   RemotePartyId,
+                                                                                        NotifyWebPaymentsStartedCommand  NotifyWebPaymentsStartedCommand);
+
+        public event OnNotifyWebPaymentsStartedCommandDelegate? OnNotifyWebPaymentsStartedCommand;
+
+        #endregion
+
+        #region (protected internal) NotifyWebPaymentsStartedHTTPResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsStarted command HTTP response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnNotifyWebPaymentsStartedHTTPResponse = new();
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsStarted command HTTP response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">The OCPI request.</param>
+        /// <param name="Response">The OCPI response.</param>
+        protected internal Task NotifyWebPaymentsStartedHTTPResponse(DateTimeOffset     Timestamp,
+                                                                        HTTPAPIX           API,
+                                                                        OCPIRequest        Request,
+                                                                        OCPIResponse       Response,
+                                                                        CancellationToken  CancellationToken)
+
+            => OnNotifyWebPaymentsStartedHTTPResponse.WhenAll(
+                    Timestamp,
+                    API,
+                    Request,
+                    Response,
+                    CancellationToken
+                );
+
+        #endregion
+
+
+        #region (protected internal) NotifyWebPaymentsFailedHTTPRequest   (Request)
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsFailed command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnNotifyWebPaymentsFailedHTTPRequest = new();
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsFailed command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">The OCPI request.</param>
+        protected internal Task NotifyWebPaymentsFailedHTTPRequest(DateTimeOffset     Timestamp,
+                                                                    HTTPAPIX           API,
+                                                                    OCPIRequest        Request,
+                                                                    CancellationToken  CancellationToken)
+
+            => OnNotifyWebPaymentsFailedHTTPRequest.WhenAll(
+                    Timestamp,
+                    API,
+                    Request,
+                    CancellationToken
+                );
+
+        #endregion
+
+        #region OnNotifyWebPaymentsFailedCommand
+
+        public delegate Task<CommandResponse> OnNotifyWebPaymentsFailedCommandDelegate(RemoteParty_Id                  RemotePartyId,
+                                                                                       NotifyWebPaymentsFailedCommand  NotifyWebPaymentsFailedCommand);
+
+        public event OnNotifyWebPaymentsFailedCommandDelegate? OnNotifyWebPaymentsFailedCommand;
+
+        #endregion
+
+        #region (protected internal) NotifyWebPaymentsFailedHTTPResponse  (Response)
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsFailed command HTTP response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnNotifyWebPaymentsFailedHTTPResponse = new();
+
+        /// <summary>
+        /// An event sent whenever a NotifyWebPaymentsFailed command HTTP response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The CPO HTTP API.</param>
+        /// <param name="Request">The OCPI request.</param>
+        /// <param name="Response">The OCPI response.</param>
+        protected internal Task NotifyWebPaymentsFailedHTTPResponse(DateTimeOffset     Timestamp,
+                                                                    HTTPAPIX           API,
+                                                                    OCPIRequest        Request,
+                                                                    OCPIResponse       Response,
+                                                                    CancellationToken  CancellationToken)
+
+            => OnNotifyWebPaymentsFailedHTTPResponse.WhenAll(
+                    Timestamp,
+                    API,
+                    Request,
+                    Response,
+                    CancellationToken
+                );
+
+        #endregion
+
         #endregion
 
         #region Constructor(s)
@@ -4308,6 +4445,238 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
+
+            // Open Charging Cloud Extensions
+
+            #region ~/commands/NOTIFY_WEB_PAYMENT_STARTED
+
+            #region OPTIONS  ~/commands/NOTIFY_WEB_PAYMENT_STARTED
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/NOTIFY_WEB_PAYMENT_STARTED",
+                request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region POST     ~/commands/NOTIFY_WEB_PAYMENT_STARTED
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.POST,
+                URLPathPrefix + "commands/NOTIFY_WEB_PAYMENT_STARTED",
+                NotifyWebPaymentsStartedHTTPRequest,
+                NotifyWebPaymentsStartedHTTPResponse,
+                async request => {
+
+                    #region Check access token
+
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Parse NotifyWebPaymentsStarted command JSON
+
+                    if (!request.TryParseJObjectRequestBody(out var notifyWebPaymentsStartedJSON, out var ocpiResponse))
+                        return ocpiResponse;
+
+                    if (!NotifyWebPaymentsStartedCommand.TryParse(notifyWebPaymentsStartedJSON,
+                                                                  out var notifyWebPaymentsStartedCommand,
+                                                                  out var errorResponse))
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2001,
+                                   StatusMessage        = "Could not parse the given 'NOTIFY_WEB_PAYMENT_STARTED' command JSON: " + errorResponse,
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+
+                    CommandResponse? commandResponse = null;
+
+                    if (OnNotifyWebPaymentsStartedCommand is not null)
+                        commandResponse = await OnNotifyWebPaymentsStartedCommand.Invoke(
+                                                    request.RemoteParty.Id,
+                                                    notifyWebPaymentsStartedCommand
+                                                );
+
+                    commandResponse ??= new CommandResponse(
+                                            notifyWebPaymentsStartedCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
+
+
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 1000,
+                               StatusMessage        = "Hello world!",
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/NOTIFY_WEB_PAYMENT_FAILED
+
+            #region OPTIONS  ~/commands/NOTIFY_WEB_PAYMENT_FAILED
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/NOTIFY_WEB_PAYMENT_FAILED",
+                request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region POST     ~/commands/NOTIFY_WEB_PAYMENT_FAILED
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.POST,
+                URLPathPrefix + "commands/NOTIFY_WEB_PAYMENT_FAILED",
+                NotifyWebPaymentsFailedHTTPRequest,
+                NotifyWebPaymentsFailedHTTPResponse,
+                async request => {
+
+                    #region Check access token
+
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "Invalid or blocked access token!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+                    #region Parse NotifyWebPaymentsFailed command JSON
+
+                    if (!request.TryParseJObjectRequestBody(out var notifyWebPaymentsFailedJSON, out var ocpiResponse))
+                        return ocpiResponse;
+
+                    if (!NotifyWebPaymentsFailedCommand.TryParse(notifyWebPaymentsFailedJSON,
+                                                                 out var notifyWebPaymentsFailedCommand,
+                                                                 out var errorResponse))
+                    {
+
+                        return new OCPIResponse.Builder(request) {
+                                   StatusCode           = 2001,
+                                   StatusMessage        = "Could not parse the given 'NOTIFY_WEB_PAYMENT_FAILED' command JSON: " + errorResponse,
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                   }
+                               };
+
+                    }
+
+                    #endregion
+
+
+                    CommandResponse? commandResponse = null;
+
+                    if (OnNotifyWebPaymentsFailedCommand is not null)
+                        commandResponse = await OnNotifyWebPaymentsFailedCommand.Invoke(
+                                                    request.RemoteParty.Id,
+                                                    notifyWebPaymentsFailedCommand
+                                                );
+
+                    commandResponse ??= new CommandResponse(
+                                            notifyWebPaymentsFailedCommand,
+                                            CommandResponseTypes.NOT_SUPPORTED,
+                                            Timeout: TimeSpan.FromSeconds(15),
+                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                        );
+
+
+                    return new OCPIResponse.Builder(request) {
+                               StatusCode           = 1000,
+                               StatusMessage        = "Hello world!",
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                           };
+
+                });
+
+            #endregion
+
+            #endregion
 
         }
 

@@ -29,13 +29,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP2CPO client.
+    /// The OCPI EMSP-2-CPO client.
     /// </summary>
     public partial class EMSP2CPOClient : IHTTPClient
     {
 
         /// <summary>
-        /// The OCPI EMSP2CPO HTTP client logger.
+        /// The OCPI EMSP-2-CPO HTTP client logger.
         /// </summary>
         public new sealed class HTTPClientLogger : CommonHTTPClient.HTTPClientLogger
         {
@@ -68,9 +68,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public HTTPClientLogger(EMSP2CPOClient               EMSP2CPOClient,
-                          String?                      LoggingPath,
-                          String?                      Context          = DefaultContext,
-                          OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+                                    String?                      LoggingPath,
+                                    String?                      Context          = DefaultContext,
+                                    OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(EMSP2CPOClient,
                        LoggingPath,
@@ -366,6 +366,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                               handler => EMSP2CPOClient.OnUnlockConnectorHTTPResponse += handler,
                               handler => EMSP2CPOClient.OnUnlockConnectorHTTPResponse -= handler,
                               "UnlockConnector", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                // Open Charging Cloud Extensions
+
+                RegisterEvent("NotifyWebPaymentsStartedRequest",
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest += handler,
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsStartedResponse",
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse += handler,
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("NotifyWebPaymentsFailedRequest",
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest += handler,
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsFailedResponse",
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse += handler,
+                              handler => EMSP2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 

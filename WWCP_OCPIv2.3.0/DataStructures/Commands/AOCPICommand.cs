@@ -65,12 +65,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     }
 
     /// <summary>
-    /// An abstract OCPI command.
+    /// An abstract OCPI command of type T.
     /// </summary>
     /// <typeparam name="T">the type of the command.</typeparam>
-    public abstract class AOCPICommand<T> : IOCPICommand<T>,
-                                            IEquatable<T>,
-                                            IComparable<T>
+    /// <param name="ResponseURL">The response URL.</param>
+    /// <param name="Id">An optional unique identification of the command.</param>
+    /// <param name="RequestId">An optional unique request identification.</param>
+    /// <param name="CorrelationId">An optional unique request correlation identification.</param>
+    public abstract class AOCPICommand<T>(URL              ResponseURL,
+                                          Command_Id?      Id              = null,
+                                          Request_Id?      RequestId       = null,
+                                          Correlation_Id?  CorrelationId   = null)
+
+        : IOCPICommand<T>,
+          IEquatable<T>,
+          IComparable<T>
+
     {
 
         #region Properties
@@ -80,55 +90,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// unique identification to be able to distinguish between 'reserve now' command requests.
         /// </summary>
         [Mandatory]
-        public URL             ResponseURL      { get; }
+        public URL             ResponseURL      { get; } = ResponseURL;
 
         /// <summary>
         /// The unique identification of the command.
         /// </summary>
-        public Command_Id      Id               { get; }
+        public Command_Id      Id               { get; } = Id            ?? Command_Id.NewRandom();
 
         /// <summary>
         /// The unique request identification.
         /// </summary>
-        public Request_Id      RequestId        { get; }
+        public Request_Id      RequestId        { get; } = RequestId     ?? Request_Id.NewRandom();
 
         /// <summary>
         /// The unique request correlation identification.
         /// </summary>
-        public Correlation_Id  CorrelationId    { get; }
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Create a new abstract OCPI command.
-        /// </summary>
-        /// <param name="ResponseURL">The response URL.</param>
-        /// <param name="Id">An optional unique identification of the command.</param>
-        /// <param name="RequestId">An optional unique request identification.</param>
-        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
-        public AOCPICommand(URL              ResponseURL,
-                            Command_Id?      Id              = null,
-                            Request_Id?      RequestId       = null,
-                            Correlation_Id?  CorrelationId   = null)
-        {
-
-            this.ResponseURL    = ResponseURL;
-            this.Id             = Id            ?? Command_Id.    NewRandom();
-            this.RequestId      = RequestId     ?? Request_Id.    NewRandom();
-            this.CorrelationId  = CorrelationId ?? Correlation_Id.NewRandom();
-
-        }
+        public Correlation_Id  CorrelationId    { get; } = CorrelationId ?? Correlation_Id.NewRandom();
 
         #endregion
 
 
-        public abstract Int32   CompareTo(Object? Command);
+        public abstract Int32    CompareTo(Object? Command);
 
-        public abstract Int32   CompareTo(T? Command);
+        public abstract Int32    CompareTo(T? Command);
 
-        public abstract Boolean Equals   (T? Command);
+        public abstract Boolean  Equals   (T? Command);
 
 
     }

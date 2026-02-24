@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            this.ReservationId  = ReservationId;
+            this.ReservationId = ReservationId;
 
             unchecked
             {

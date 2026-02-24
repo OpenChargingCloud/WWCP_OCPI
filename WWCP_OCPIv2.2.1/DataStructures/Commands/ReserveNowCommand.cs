@@ -119,7 +119,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.ExpiryDate              = ExpiryDate;
             this.ReservationId           = ReservationId;
             this.LocationId              = LocationId;
-
             this.EVSEUId                 = EVSEUId;
             this.AuthorizationReference  = AuthorizationReference;
 
@@ -130,7 +129,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            this.ExpiryDate.             GetHashCode()       * 23 ^
                            this.ReservationId.          GetHashCode()       * 19 ^
                            this.LocationId.             GetHashCode()       * 17 ^
-
                           (this.EVSEUId?.               GetHashCode() ?? 0) * 13 ^
                           (this.AuthorizationReference?.GetHashCode() ?? 0) * 11 ^
 
@@ -220,15 +218,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
-                                             OCPIv2_2_1.Token.TryParse,
+                                             Token.TryParse,
                                              out Token? token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
-
-                if (token is null)
-                    return false;
 
                 #endregion
 
@@ -278,7 +273,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        out EVSE_UId? evseUId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -353,7 +349,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-
                 ReserveNowCommand = new ReserveNowCommand(
 
                                         token,
@@ -361,7 +356,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         reservationId,
                                         locationId,
                                         responseURL,
-
                                         evseUId,
                                         authorizationReference,
 

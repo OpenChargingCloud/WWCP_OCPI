@@ -209,15 +209,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
-                                             OCPIv2_2_1.Token.TryParse,
+                                             Token.TryParse,
                                              out Token? token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
-
-                if (token is null)
-                    return false;
 
                 #endregion
 

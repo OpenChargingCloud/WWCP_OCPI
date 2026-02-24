@@ -96,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                hashCode = this.Token.        GetHashCode()       * 17 ^
+                hashCode = this.Token.        GetHashCode()       * 19 ^
                            this.LocationId.   GetHashCode()       * 13 ^
                           (this.EVSEUId?.     GetHashCode() ?? 0) * 11 ^
 
@@ -190,31 +190,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Token            [mandatory]
 
-                if (JSON["token"] is not JObject jsonToken)
-                {
-                    ErrorResponse = "Invalid token!";
-                    return false;
-                }
-
-                if (!OCPIv2_1_1.Token.TryParse(jsonToken,
-                                               out Token? Token,
-                                               out ErrorResponse,
-                                               CountryCodeURL,
-                                               PartyIdURL) ||
-                     Token is null)
+                if (!JSON.ParseMandatoryJSON("token",
+                                             "token",
+                                             Token.TryParse,
+                                             out Token? token,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
-
-                //if (!JSON.ParseMandatoryJSON("token",
-                //                             "token",
-                //                             OCPIv2_1_1.Token.TryParse,
-                //                             out Token? Token,
-                //                             out ErrorResponse) ||
-                //     Token is null)
-                //{
-                //    return false;
-                //}
 
                 #endregion
 
@@ -223,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
                                          Location_Id.TryParse,
-                                         out Location_Id LocationId,
+                                         out Location_Id locationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -236,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("evse_uid",
                                        "EVSE identification",
                                        EVSE_UId.TryParse,
-                                       out EVSE_UId? EVSEUId,
+                                       out EVSE_UId? evseUId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -251,7 +234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
                                          URL.TryParse,
-                                         out URL ResponseURL,
+                                         out URL responseURL,
                                          out ErrorResponse))
                 {
                     return false;
@@ -264,10 +247,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("id",
                                        "command identification",
                                        Command_Id.TryParse,
-                                       out Command_Id? CommandId,
+                                       out Command_Id? commandId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -277,10 +261,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("request_id",
                                        "request identification",
                                        Request_Id.TryParse,
-                                       out Request_Id? RequestId,
+                                       out Request_Id? requestId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -290,23 +275,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("correlation_Id",
                                        "correlation identification",
                                        Correlation_Id.TryParse,
-                                       out Correlation_Id? CorrelationId,
+                                       out Correlation_Id? correlationId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
 
 
-                StartSessionCommand = new StartSessionCommand(Token,
-                                                              LocationId,
-                                                              ResponseURL,
-                                                              EVSEUId,
+                StartSessionCommand = new StartSessionCommand(
 
-                                                              CommandId,
-                                                              RequestId,
-                                                              CorrelationId);
+                                          token,
+                                          locationId,
+                                          responseURL,
+                                          evseUId,
+
+                                          commandId,
+                                          requestId,
+                                          correlationId
+
+                                      );
 
                 if (CustomStartSessionCommandParser is not null)
                     StartSessionCommand = CustomStartSessionCommandParser(JSON,
@@ -339,16 +329,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("token",         Token.      ToJSON(false,
-                                                                                   CustomTokenSerializer)),
+                                 new JProperty("token",          Token.      ToJSON(false,
+                                                                                    CustomTokenSerializer)),
 
-                                 new JProperty("location_id",   LocationId. ToString()),
+                                 new JProperty("location_id",    LocationId. ToString()),
 
                            EVSEUId.HasValue
-                               ? new JProperty("evse_uid",      EVSEUId.    ToString())
+                               ? new JProperty("evse_uid",       EVSEUId.    ToString())
                                : null,
 
-                                 new JProperty("response_url",  ResponseURL.ToString())
+                                 new JProperty("response_url",   ResponseURL.ToString())
 
                        );
 
@@ -580,6 +570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
+        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
             => hashCode;
 

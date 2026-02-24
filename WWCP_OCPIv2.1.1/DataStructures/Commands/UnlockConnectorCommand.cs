@@ -93,6 +93,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.EVSEUId      = EVSEUId;
             this.ConnectorId  = ConnectorId;
 
+            unchecked
+            {
+
+                hashCode = this.LocationId.   GetHashCode() * 17 ^
+                           this.EVSEUId.      GetHashCode() * 13 ^
+                           this.ConnectorId.  GetHashCode() * 11 ^
+
+                           this.ResponseURL.  GetHashCode() *  7 ^
+                           this.Id.           GetHashCode() *  5 ^
+                           this.RequestId.    GetHashCode() *  3 ^
+                           this.CorrelationId.GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -173,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
                                          Location_Id.TryParse,
-                                         out Location_Id LocationId,
+                                         out Location_Id locationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -186,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("evse_uid",
                                          "EVSE identification",
                                          EVSE_UId.TryParse,
-                                         out EVSE_UId EVSEUId,
+                                         out EVSE_UId evseUId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -199,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("connector_id",
                                          "connector identification",
                                          Connector_Id.TryParse,
-                                         out Connector_Id ConnectorId,
+                                         out Connector_Id connectorId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -213,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
                                          URL.TryParse,
-                                         out URL ResponseURL,
+                                         out URL responseURL,
                                          out ErrorResponse))
                 {
                     return false;
@@ -226,10 +240,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("id",
                                        "command identification",
                                        Command_Id.TryParse,
-                                       out Command_Id? CommandId,
+                                       out Command_Id? commandId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -239,10 +254,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("request_id",
                                        "request identification",
                                        Request_Id.TryParse,
-                                       out Request_Id? RequestId,
+                                       out Request_Id? requestId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -252,24 +268,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptional("correlation_Id",
                                        "correlation identification",
                                        Correlation_Id.TryParse,
-                                       out Correlation_Id? CorrelationId,
+                                       out Correlation_Id? correlationId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
 
 
+                UnlockConnectorCommand = new UnlockConnectorCommand(
 
-                UnlockConnectorCommand = new UnlockConnectorCommand(LocationId,
-                                                                    EVSEUId,
-                                                                    ConnectorId,
+                                             locationId,
+                                             evseUId,
+                                             connectorId,
 
-                                                                    ResponseURL,
-                                                                    CommandId,
-                                                                    RequestId,
-                                                                    CorrelationId);
+                                             responseURL,
+                                             commandId,
+                                             requestId,
+                                             correlationId
+
+                                         );
 
                 if (CustomUnlockConnectorCommandParser is not null)
                     UnlockConnectorCommand = CustomUnlockConnectorCommandParser(JSON,
@@ -519,26 +539,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return LocationId.   GetHashCode() * 17 ^
-                       EVSEUId.      GetHashCode() * 13 ^
-                       ConnectorId.  GetHashCode() * 11 ^
-
-                       ResponseURL.  GetHashCode() *  7 ^
-                       Id.           GetHashCode() *  5 ^
-                       RequestId.    GetHashCode() *  3 ^
-                       CorrelationId.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

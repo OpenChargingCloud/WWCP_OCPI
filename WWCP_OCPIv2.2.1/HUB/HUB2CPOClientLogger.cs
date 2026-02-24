@@ -369,6 +369,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
+
+                // Open Charging Cloud Extensions
+
+                RegisterEvent("NotifyWebPaymentsStartedRequest",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPRequest -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsStartedResponse",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsStartedHTTPResponse -= handler,
+                              "NotifyWebPaymentsStarted", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("NotifyWebPaymentsFailedRequest",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPRequest -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("NotifyWebPaymentsFailedResponse",
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse += handler,
+                              handler => HUB2CPOClient.OnNotifyWebPaymentsFailedHTTPResponse -= handler,
+                              "NotifyWebPaymentsFailed", "commands", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
                 #endregion
 
             }
