@@ -10691,68 +10691,71 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
+        #region AddOrUpdateEVSE        (Location, EVSE,            AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<EVSE>>
 
             AddOrUpdateEVSE(Location           Location,
-                            EVSE               newOrUpdatedEVSE,
-                            Boolean?           AllowDowngrades   = false,
-                            EventTracking_Id?  EventTrackingId   = null,
-                            User_Id?           CurrentUserId     = null)
+                            EVSE               EVSE,
+
+                            Boolean            SkipNotifications   = false,
+                            Boolean?           AllowDowngrades     = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
 
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
+            Location.TryGetEVSE(EVSE.UId, out var existingEVSE);
 
             if (existingEVSE is not null)
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
+                    EVSE.LastUpdated < existingEVSE.LastUpdated)
                 {
+
                     return AddOrUpdateResult<EVSE>.Failed(
                                EventTrackingId,
-                               newOrUpdatedEVSE,
+                               EVSE,
                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!"
                            );
+
                 }
 
-                if (newOrUpdatedEVSE.LastUpdated.ToISO8601() == existingEVSE.LastUpdated.ToISO8601())
+                if (EVSE.LastUpdated.ToISO8601() == existingEVSE.LastUpdated.ToISO8601())
                     return AddOrUpdateResult<EVSE>.NoOperation(
                                EventTrackingId,
-                               newOrUpdatedEVSE,
+                               EVSE,
                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!"
                            );
 
             }
 
 
-            Location.SetEVSE(newOrUpdatedEVSE);
+            Location.SetEVSE(EVSE);
 
             // Update location timestamp!
             var builder = Location.ToBuilder();
-            builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
-            await AddOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+            builder.LastUpdated = EVSE.LastUpdated;
+            await AddOrUpdateLocation(
+                      builder,
+                      (AllowDowngrades ?? this.AllowDowngrades) == false,
+                      true,
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
 
-            var OnLocationChangedLocal = OnLocationChanged;
-            if (OnLocationChangedLocal is not null)
-            {
-                try
-                {
-                    OnLocationChangedLocal(newOrUpdatedEVSE.ParentLocation).Wait();
-                }
-                catch (Exception e)
-                {
-                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
-                                Environment.NewLine, e.Message,
-                                e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                }
-            }
+            if (EVSE.ParentLocation is not null)
+                await LogEvent(
+                          OnLocationChanged,
+                          loggingDelegate => loggingDelegate.Invoke(
+                              EVSE.ParentLocation
+                          )
+                      );
 
 
             if (existingEVSE is not null)
@@ -10761,118 +10764,84 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (existingEVSE.Status != StatusType.REMOVED)
                 {
 
-                    var OnEVSEChangedLocal = OnEVSEChanged;
-                    if (OnEVSEChangedLocal is not null)
+                    await LogEvent(
+                              OnEVSEChanged,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  EVSE
+                              )
+                          );
+
+                    if (existingEVSE.Status != EVSE.Status)
                     {
-                        try
-                        {
-                            OnEVSEChangedLocal(newOrUpdatedEVSE).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
-                                        Environment.NewLine, e.Message,
-                                        e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                        }
-                    }
 
+                        await LogEvent(
+                                  OnEVSEStatusChanged,
+                                  loggingDelegate => loggingDelegate.Invoke(
+                                      Timestamp.Now,
+                                      EVSE,
+                                      existingEVSE.Status,
+                                      EVSE.Status
+                                  )
+                              );
 
-                    if (existingEVSE.Status != newOrUpdatedEVSE.Status)
-                    {
-                        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        if (OnEVSEStatusChangedLocal is not null)
-                        {
-                            try
-                            {
-
-                                OnEVSEStatusChangedLocal(Timestamp.Now,
-                                                         newOrUpdatedEVSE,
-                                                         existingEVSE.Status,
-                                                         newOrUpdatedEVSE.Status).Wait();
-
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
-                                            Environment.NewLine, e.Message,
-                                            e.StackTrace is not null
-                                                ? Environment.NewLine + e.StackTrace
-                                                : String.Empty);
-                            }
-                        }
                     }
 
                 }
                 else
                 {
 
-                    if (!KeepRemovedEVSEs(newOrUpdatedEVSE))
-                        Location.RemoveEVSE(newOrUpdatedEVSE);
+                    if (!KeepRemovedEVSEs(EVSE))
+                        Location.RemoveEVSE(EVSE);
 
-                    var OnEVSERemovedLocal = OnEVSERemoved;
-                    if (OnEVSERemovedLocal is not null)
-                    {
-                        try
-                        {
-                            OnEVSERemovedLocal(newOrUpdatedEVSE).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
-                                        Environment.NewLine, e.Message,
-                                        e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                        }
-                    }
+                    await LogEvent(
+                              OnEVSERemoved,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  EVSE
+                              )
+                          );
 
                 }
             }
             else
             {
-                var OnEVSEAddedLocal = OnEVSEAdded;
-                if (OnEVSEAddedLocal is not null)
-                {
-                    try
-                    {
-                        OnEVSEAddedLocal(newOrUpdatedEVSE).Wait();
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                    }
-                }
+
+                await LogEvent(
+                          OnEVSEAdded,
+                          loggingDelegate => loggingDelegate.Invoke(
+                              EVSE
+                          )
+                      );
+
             }
 
             return existingEVSE is null
-                       ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, newOrUpdatedEVSE)
-                       : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, newOrUpdatedEVSE);
+                       ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
+                       : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE);
 
         }
 
         #endregion
 
-        #region TryPatchEVSE          (Location, EVSE, EVSEPatch,  AllowDowngrades = false)
+        #region TryPatchEVSE           (Location, EVSE, EVSEPatch, AllowDowngrades = false)
 
         public async Task<PatchResult<EVSE>>
 
             TryPatchEVSE(Location           Location,
                          EVSE               EVSE,
                          JObject            EVSEPatch,
-                         Boolean?           AllowDowngrades   = false,
-                         EventTracking_Id?  EventTrackingId   = null,
-                         User_Id?           CurrentUserId     = null)
+
+                         Boolean?           AllowDowngrades     = false,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         User_Id?           CurrentUserId       = null,
+                         CancellationToken  CancellationToken   = default)
 
         {
 
-            var patchResult        = EVSE.TryPatch(EVSEPatch,
-                                                   AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult        = EVSE.TryPatch(
+                                         EVSEPatch,
+                                         AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                         EventTrackingId
+                                     );
 
             var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
 
@@ -10887,7 +10856,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 // Update location timestamp!
                 var builder = Location.ToBuilder();
                 builder.LastUpdated = data.LastUpdated;
-                await AddOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+                await AddOrUpdateLocation(
+                          builder,
+                          (AllowDowngrades ?? this.AllowDowngrades) == false,
+                          SkipNotifications: true,
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
 
                 if (EVSE.Status != StatusType.REMOVED)
@@ -10896,50 +10872,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     if (justAStatusChange)
                     {
 
-                        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        if (OnEVSEStatusChangedLocal is not null)
-                        {
-                            try
-                            {
-
-                                OnEVSEStatusChangedLocal(
-                                    data.LastUpdated,
-                                    EVSE,
-                                    EVSE.Status,
-                                    data.Status
-                                ).Wait();
-
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
-                                            Environment.NewLine, e.Message,
-                                            e.StackTrace is not null
-                                                ? Environment.NewLine + e.StackTrace
-                                                : String.Empty);
-                            }
-                        }
+                        await LogEvent(
+                                  OnEVSEStatusChanged,
+                                  loggingDelegate => loggingDelegate.Invoke(
+                                      data.LastUpdated,
+                                      EVSE,
+                                      EVSE.Status,
+                                      data.Status
+                                  )
+                              );
 
                     }
                     else
                     {
 
-                        var OnEVSEChangedLocal = OnEVSEChanged;
-                        if (OnEVSEChangedLocal is not null)
-                        {
-                            try
-                            {
-                                OnEVSEChangedLocal(data).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
-                                            Environment.NewLine, e.Message,
-                                            e.StackTrace is not null
-                                                ? Environment.NewLine + e.StackTrace
-                                                : String.Empty);
-                            }
-                        }
+                        await LogEvent(
+                                  OnEVSEChanged,
+                                  loggingDelegate => loggingDelegate.Invoke(
+                                      data
+                                  )
+                              );
 
                     }
 
@@ -10947,22 +10899,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 else
                 {
 
-                    var OnEVSERemovedLocal = OnEVSERemoved;
-                    if (OnEVSERemovedLocal is not null)
-                    {
-                        try
-                        {
-                            OnEVSERemovedLocal(data).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
-                                        Environment.NewLine, e.Message,
-                                        e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                        }
-                    }
+                    await LogEvent(
+                              OnEVSERemoved,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  data
+                              )
+                          );
 
                 }
 
@@ -10975,13 +10917,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region AddOrUpdateEVSEs       (Location, EVSEs,   AllowDowngrades = false, SkipNotifications = false)
+        #region AddOrUpdateEVSEs       (Location, EVSEs,           AllowDowngrades = false, ...)
 
         public async Task<AddOrUpdateResult<IEnumerable<EVSE>>>
 
             AddOrUpdateEVSEs(Location           Location,
                              IEnumerable<EVSE>  EVSEs,
                              Boolean?           AllowDowngrades     = false,
+
                              Boolean            SkipNotifications   = false,
                              EventTracking_Id?  EventTrackingId     = null,
                              User_Id?           CurrentUserId       = null,
@@ -11090,66 +11033,79 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Connectors
 
-        #region AddOrUpdateConnector  (Location, EVSE, newOrUpdatedConnector,     AllowDowngrades = false)
+        #region AddOrUpdateConnector  (Location, EVSE, Connector,     AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<Connector>>
 
             AddOrUpdateConnector(Location           Location,
                                  EVSE               EVSE,
-                                 Connector          newOrUpdatedConnector,
-                                 Boolean?           AllowDowngrades   = false,
-                                 EventTracking_Id?  EventTrackingId   = null,
-                                 User_Id?           CurrentUserId     = null)
+                                 Connector          Connector,
+                                 Boolean?           AllowDowngrades     = false,
+
+                                 Boolean            SkipNotifications   = false,
+                                 EventTracking_Id?  EventTrackingId     = null,
+                                 User_Id?           CurrentUserId       = null,
+                                 CancellationToken  CancellationToken   = default)
 
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
+            var ConnectorExistedBefore = EVSE.TryGetConnector(Connector.Id, out var existingConnector);
 
             if (existingConnector is not null)
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
+                    Connector.LastUpdated < existingConnector.LastUpdated)
                 {
-                    return AddOrUpdateResult<Connector>.Failed     (EventTrackingId, newOrUpdatedConnector,
-                                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+
+                    return AddOrUpdateResult<Connector>.Failed(
+                               EventTrackingId,
+                               Connector,
+                               "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!"
+                           );
+
                 }
 
-                if (newOrUpdatedConnector.LastUpdated.ToISO8601() == existingConnector.LastUpdated.ToISO8601())
-                    return AddOrUpdateResult<Connector>.NoOperation(EventTrackingId, newOrUpdatedConnector,
-                                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+                if (Connector.LastUpdated.ToISO8601() == existingConnector.LastUpdated.ToISO8601())
+                    return AddOrUpdateResult<Connector>.NoOperation(
+                               EventTrackingId,
+                               Connector,
+                               "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!"
+                           );
 
             }
 
-            EVSE.UpdateConnector(newOrUpdatedConnector);
+            EVSE.UpdateConnector(Connector);
 
             // Update EVSE/location timestamps!
             var evseBuilder     = EVSE.ToBuilder();
-            evseBuilder.LastUpdated = newOrUpdatedConnector.LastUpdated;
-            await AddOrUpdateEVSE(Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
+            evseBuilder.LastUpdated = Connector.LastUpdated;
+            await AddOrUpdateEVSE(
+                      Location,
+                      evseBuilder,
+                      (AllowDowngrades ?? this.AllowDowngrades) == false,
+
+                      SkipNotifications,
+                      EventTrackingId,
+                      CurrentUserId,
+                      CancellationToken
+                  );
 
 
-            var OnLocationChangedLocal = OnLocationChanged;
-            if (OnLocationChangedLocal is not null)
-            {
-                try
-                {
-                    OnLocationChangedLocal(newOrUpdatedConnector.ParentEVSE.ParentLocation).Wait();
-                }
-                catch (Exception e)
-                {
-                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
-                                Environment.NewLine, e.Message,
-                                Environment.NewLine, e.StackTrace ?? "");
-                }
-            }
+            if (Connector.ParentEVSE?.ParentLocation is not null)
+                await LogEvent(
+                          OnLocationChanged,
+                          loggingDelegate => loggingDelegate.Invoke(
+                              Connector.ParentEVSE.ParentLocation
+                          )
+                      );
 
 
             return ConnectorExistedBefore
-                        ? AddOrUpdateResult<Connector>.Updated(EventTrackingId, newOrUpdatedConnector)
-                        : AddOrUpdateResult<Connector>.Created(EventTrackingId, newOrUpdatedConnector);
+                        ? AddOrUpdateResult<Connector>.Updated(EventTrackingId, Connector)
+                        : AddOrUpdateResult<Connector>.Created(EventTrackingId, Connector);
 
         }
 
@@ -11163,14 +11119,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               EVSE               EVSE,
                               Connector          Connector,
                               JObject            ConnectorPatch,
-                              Boolean?           AllowDowngrades   = false,
-                              EventTracking_Id?  EventTrackingId   = null,
-                              User_Id?           CurrentUserId     = null)
+                              Boolean?           AllowDowngrades     = false,
+
+                              Boolean            SkipNotifications   = false,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null,
+                              CancellationToken  CancellationToken   = default)
 
         {
 
-            var patchResult = Connector.TryPatch(ConnectorPatch,
-                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult = Connector.TryPatch(
+                                  ConnectorPatch,
+                                  AllowDowngrades ?? this.AllowDowngrades ?? false
+                              );
 
             if (patchResult.IsSuccessAndDataNotNull(out var data))
             {
@@ -11180,7 +11141,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 // Update EVSE/location timestamps!
                 var evseBuilder = EVSE.ToBuilder();
                 evseBuilder.LastUpdated = data.LastUpdated;
-                await AddOrUpdateEVSE(Location, evseBuilder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+                await AddOrUpdateEVSE(
+                          Location,
+                          evseBuilder,
+                          (AllowDowngrades ?? this.AllowDowngrades) == false,
+
+                          SkipNotifications,
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
             }
 

@@ -7804,25 +7804,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddEVSE                (Location, EVSE,                                                     SkipNotifications = false)
 
-        public async Task<AddResult<EVSE>> AddEVSE(Location           Location,
-                                                   EVSE               EVSE,
-                                                   Boolean            SkipNotifications   = false,
-                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                   User_Id?           CurrentUserId       = null,
-                                                   CancellationToken  CancellationToken   = default)
+        public async Task<AddResult<EVSE>>
+
+            AddEVSE(Location           Location,
+                    EVSE               EVSE,
+                    Boolean            SkipNotifications   = false,
+                    EventTracking_Id?  EventTrackingId     = null,
+                    User_Id?           CurrentUserId       = null,
+                    CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
             if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              $"The given EVSE '{EVSE.UId}' already exists!");
+                return AddResult<EVSE>.Failed(
+                           EventTrackingId, EVSE,
+                           $"The given EVSE '{EVSE.UId}' already exists!"
+                       );
 
-            var newLocation = Location.Update(locationBuilder => {
-                                                  locationBuilder.SetEVSE(EVSE);
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-                                              },
-                                              out var warnings);
+            var newLocation = Location.Update(
+                                  locationBuilder => {
+                                      locationBuilder.SetEVSE(EVSE);
+                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                  },
+                                  out var warnings
+                              );
 
             if (newLocation is null)
                 return AddResult<EVSE>.Failed(
@@ -7858,30 +7865,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddEVSEIfNotExists     (Location, EVSE,                                                     SkipNotifications = false)
 
-        public async Task<AddResult<EVSE>> AddEVSEIfNotExists(Location           Location,
-                                                              EVSE               EVSE,
-                                                              Boolean            SkipNotifications   = false,
-                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                              User_Id?           CurrentUserId       = null,
-                                                              CancellationToken  CancellationToken   = default)
+        public async Task<AddResult<EVSE>>
+
+            AddEVSEIfNotExists(Location           Location,
+                               EVSE               EVSE,
+                               Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
             if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              $"The given EVSE '{EVSE.UId}' already exists!");
+                return AddResult<EVSE>.Failed(
+                           EventTrackingId,
+                           EVSE,
+                           $"The given EVSE '{EVSE.UId}' already exists!"
+                       );
 
 
-            var newLocation = Location.Update(locationBuilder => {
-                                                  locationBuilder.SetEVSE(EVSE);
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-                                              },
-                                              out var warnings);
+            var newLocation = Location.Update(
+                                  locationBuilder => {
+                                      locationBuilder.SetEVSE(EVSE);
+                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                  },
+                                  out var warnings
+                              );
 
             if (newLocation is null)
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              warnings.First().Text.FirstText());
+                return AddResult<EVSE>.Failed(
+                           EventTrackingId,
+                           EVSE,
+                           warnings.First().Text.FirstText()
+                       );
 
 
             var updateLocationResult = await UpdateLocation(
@@ -7904,13 +7922,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddOrUpdateEVSE        (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location           Location,
-                                                                   EVSE               EVSE,
-                                                                   Boolean?           AllowDowngrades     = false,
-                                                                   Boolean            SkipNotifications   = false,
-                                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                                   User_Id?           CurrentUserId       = null,
-                                                                   CancellationToken  CancellationToken   = default)
+        public async Task<AddOrUpdateResult<EVSE>>
+
+            AddOrUpdateEVSE(Location           Location,
+                            EVSE               EVSE,
+                            Boolean?           AllowDowngrades     = false,
+                            Boolean            SkipNotifications   = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -7936,21 +7957,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            var newLocation = Location.Update(locationBuilder => {
+            var newLocation = Location.Update(
+                                  locationBuilder => {
 
-                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
-                                                      locationBuilder.SetEVSE(EVSE);
-                                                  else
-                                                      locationBuilder.RemoveEVSE(EVSE);
+                                      if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                          locationBuilder.SetEVSE(EVSE);
+                                      else
+                                          locationBuilder.RemoveEVSE(EVSE);
 
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
 
-                                              },
-                                              out var warnings);
+                                  },
+                                  out var warnings
+                              );
 
             if (newLocation is null)
-                return AddOrUpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                      warnings.First().Text.FirstText());
+                return AddOrUpdateResult<EVSE>.Failed(
+                           EventTrackingId,
+                           EVSE,
+                           warnings.First().Text.FirstText()
+                       );
 
 
             var updateLocationResult = await UpdateLocation(
@@ -7963,9 +7989,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              );
 
             return updateLocationResult.IsSuccess
+
                        ? existingEVSE is null
                              ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
                              : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE)
+
                        : AddOrUpdateResult<EVSE>.Failed(
                              EventTrackingId, EVSE,
                              updateLocationResult.ErrorResponse ?? "Unknown error!"
@@ -7977,13 +8005,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region UpdateEVSE             (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<UpdateResult<EVSE>> UpdateEVSE(Location           Location,
-                                                         EVSE               EVSE,
-                                                         Boolean?           AllowDowngrades     = false,
-                                                         Boolean            SkipNotifications   = false,
-                                                         EventTracking_Id?  EventTrackingId     = null,
-                                                         User_Id?           CurrentUserId       = null,
-                                                         CancellationToken  CancellationToken   = default)
+        public async Task<UpdateResult<EVSE>>
+
+            UpdateEVSE(Location           Location,
+                       EVSE               EVSE,
+                       Boolean?           AllowDowngrades     = false,
+                       Boolean            SkipNotifications   = false,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       User_Id?           CurrentUserId       = null,
+                       CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -8012,21 +8042,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            var newLocation = Location.Update(locationBuilder => {
+            var newLocation = Location.Update(
+                                  locationBuilder => {
 
-                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
-                                                      locationBuilder.SetEVSE(EVSE);
-                                                  else
-                                                      locationBuilder.RemoveEVSE(EVSE);
+                                      if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                          locationBuilder.SetEVSE(EVSE);
+                                      else
+                                          locationBuilder.RemoveEVSE(EVSE);
 
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
 
-                                              },
-                                              out var warnings);
+                                  },
+                                  out var warnings
+                              );
 
             if (newLocation is null)
-                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                 warnings.First().Text.FirstText());
+                return UpdateResult<EVSE>.Failed(
+                           EventTrackingId,
+                           EVSE,
+                           warnings.First().Text.FirstText()
+                       );
 
 
             var updateLocationResult = await UpdateLocation(
@@ -8049,34 +8084,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region TryPatchEVSE           (Location, EVSE, EVSEPatch,                 AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location           Location,
-                                                          EVSE               EVSE,
-                                                          JObject            EVSEPatch,
-                                                          Boolean?           AllowDowngrades     = false,
-                                                          Boolean            SkipNotifications   = false,
-                                                          EventTracking_Id?  EventTrackingId     = null,
-                                                          User_Id?           CurrentUserId       = null,
-                                                          CancellationToken  CancellationToken   = default)
+        public async Task<PatchResult<EVSE>>
+
+            TryPatchEVSE(Location           Location,
+                         EVSE               EVSE,
+                         JObject            EVSEPatch,
+                         Boolean?           AllowDowngrades     = false,
+
+                         Boolean            SkipNotifications   = false,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         User_Id?           CurrentUserId       = null,
+                         CancellationToken  CancellationToken   = default)
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
             if (!EVSEPatch.HasValues)
-                return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                "The given EVSE patch must not be null or empty!");
+                return PatchResult<EVSE>.Failed(
+                           EventTrackingId,
+                           EVSE,
+                           "The given EVSE patch must not be null or empty!"
+                       );
 
-            var patchResult = EVSE.TryPatch(EVSEPatch,
-                                            AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult = EVSE.TryPatch(
+                                  EVSEPatch,
+                                  AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                  EventTrackingId
+                              );
 
             //var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
 
-            if (patchResult.IsSuccess &&
-                patchResult.PatchedData is not null)
+            if (patchResult.IsSuccessAndDataNotNull(out var patchedEVSE))
             {
 
                 var updateEVSEResult = await UpdateEVSE(
                                                  Location,
-                                                 patchResult.PatchedData,
+                                                 patchedEVSE,
                                                  AllowDowngrades,
                                                  SkipNotifications,
                                                  EventTrackingId,
@@ -8085,8 +8128,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              );
 
                 if (updateEVSEResult.IsFailed)
-                    return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                    updateEVSEResult.ErrorResponse ?? "Unknown error!");
+                    return PatchResult<EVSE>.Failed(
+                               EventTrackingId,
+                               EVSE,
+                               updateEVSEResult.ErrorResponse ?? "Unknown error!"
+                           );
 
             }
 
@@ -8294,11 +8340,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
 
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
+            var newEVSE = EVSE.Update(
+                              evseBuilder => {
+                                  evseBuilder.SetConnector(Connector);
+                                  evseBuilder.LastUpdated = Connector.LastUpdated;
+                              },
+                              out var warnings
+                          );
 
             if (newEVSE is null)
                 return AddResult<Connector>.Failed(
@@ -8376,15 +8424,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
+            var newEVSE = EVSE.Update(
+                              evseBuilder => {
+                                  evseBuilder.SetConnector(Connector);
+                                  evseBuilder.LastUpdated  = Connector.LastUpdated;
+                              },
+                              out var warnings
+                          );
 
             if (newEVSE is null)
-                return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                           warnings.First().Text.FirstText());
+                return AddOrUpdateResult<Connector>.Failed(
+                           EventTrackingId,
+                           Connector,
+                           warnings.First().Text.FirstText()
+                       );
 
 
             var result = await AddOrUpdateEVSE(
@@ -8468,15 +8521,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
+            var newEVSE = EVSE.Update(
+                              evseBuilder => {
+                                  evseBuilder.SetConnector(Connector);
+                                  evseBuilder.LastUpdated  = Connector.LastUpdated;
+                              },
+                              out var warnings
+                          );
 
             if (newEVSE is null)
-                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                      warnings.First().Text.FirstText());
+                return UpdateResult<Connector>.Failed(
+                           EventTrackingId,
+                           Connector,
+                           warnings.First().Text.FirstText()
+                       );
 
 
             var updateEVSEResult = await UpdateEVSE(
@@ -8514,20 +8572,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EventTrackingId ??= EventTracking_Id.New;
 
             if (!ConnectorPatch.HasValues)
-                return PatchResult<Connector>.Failed(EventTrackingId, Connector,
-                                                     "The given connector patch must not be null or empty!");
+                return PatchResult<Connector>.Failed(
+                           EventTrackingId,
+                           Connector,
+                           "The given connector patch must not be null or empty!"
+                       );
 
-            var patchResult = Connector.TryPatch(ConnectorPatch,
-                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+            var patchResult = Connector.TryPatch(
+                                  ConnectorPatch,
+                                  AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                  EventTrackingId
+                              );
 
-            if (patchResult.IsSuccess &&
-                patchResult.PatchedData is not null)
+            if (patchResult.IsSuccessAndDataNotNull(out var patchedConnector))
             {
 
                 var updateConnectorResult = await UpdateConnector(
                                                       Location,
                                                       EVSE,
-                                                      patchResult.PatchedData,
+                                                      patchedConnector,
                                                       AllowDowngrades,
                                                       SkipNotifications,
                                                       EventTrackingId,
@@ -8536,8 +8599,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   );
 
                 if (updateConnectorResult.IsFailed)
-                    return PatchResult<Connector>.Failed(EventTrackingId, Connector,
-                                                         updateConnectorResult.ErrorResponse ?? "Unknown error!");
+                    return PatchResult<Connector>.Failed(
+                               EventTrackingId,
+                               Connector,
+                               updateConnectorResult.ErrorResponse ?? "Unknown error!"
+                           );
 
             }
 

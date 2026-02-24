@@ -770,6 +770,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
+                    EventTrackingId ??= EventTracking_Id.New;
+
                     IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
@@ -789,11 +791,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
 
                             var result = await CommonAPI.AddLocation(
+
                                                    Location:            location,
+
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
                                                    CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
+
                                                );
 
                             //ToDo: Handle errors!!!
@@ -873,13 +878,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       CancellationToken
                                   );
 
-            EventTrackingId ??= EventTracking_Id.New;
-
             try
             {
 
                 if (lockTaken)
                 {
+
+                    EventTrackingId ??= EventTracking_Id.New;
 
                     IEnumerable<Warning> warnings = [];
 
@@ -887,23 +892,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-
-                        var location = ChargingPool.ToOCPI(CustomChargingPoolIdConverter,
-                                                           CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           evseId      => true,
-                                                           connectorId => true,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomChargingPoolIdConverter,
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => true,
+                                           connectorId => true,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
 
-                            var result = await CommonAPI.AddLocation(
+                            var result = await CommonAPI.AddOrUpdateLocation(
+
                                                    Location:            location,
+                                                   AllowDowngrades:     null,
+
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
                                                    CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
+
                                                );
 
                             //ToDo: Handle errors!
@@ -991,13 +1001,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       CancellationToken
                                   );
 
-            EventTrackingId ??= EventTracking_Id.New;
-
             try
             {
 
                 if (lockTaken)
                 {
+
+                    EventTrackingId ??= EventTracking_Id.New;
 
                     IEnumerable<Warning> warnings = [];
 
@@ -1016,15 +1026,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         {
 
                             var result = await CommonAPI.UpdateLocation(
+
                                                    Location:            location,
                                                    AllowDowngrades:     null,
+
                                                    SkipNotifications:   false,
                                                    EventTrackingId:     EventTrackingId,
-                                                   CurrentUserId:       null,
+                                                   CurrentUserId:       CurrentUserId,
                                                    CancellationToken:   CancellationToken
+
                                                );
 
-                            //ToDo: Process errors!!!
+                            //ToDo: Handle errors!
+
+                            if (!result.IsSuccess)
+                            {
+
+                            }
 
                             if (PropertyName is not null)
                             {
@@ -1318,7 +1336,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             );
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(
+
+                                                       Location:            location,
+                                                       EVSE:                evse2,
+                                                       AllowDowngrades:     null,
+
+                                                       SkipNotifications:   false,
+                                                       EventTrackingId:     EventTrackingId,
+                                                       CurrentUserId:       CurrentUserId,
+                                                       CancellationToken:   CancellationToken
+
+                                                   );
                                 else
                                     result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
