@@ -123,6 +123,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.EVSEUId                 = EVSEUId;
             this.AuthorizationReference  = AuthorizationReference;
 
+            unchecked
+            {
+
+                hashCode = this.Token.                  GetHashCode()       * 29 ^
+                           this.ExpiryDate.             GetHashCode()       * 23 ^
+                           this.ReservationId.          GetHashCode()       * 19 ^
+                           this.LocationId.             GetHashCode()       * 17 ^
+
+                          (this.EVSEUId?.               GetHashCode() ?? 0) * 13 ^
+                          (this.AuthorizationReference?.GetHashCode() ?? 0) * 11 ^
+
+                           this.ResponseURL.            GetHashCode()       *  7 ^
+                           this.Id.                     GetHashCode()       *  5 ^
+                           this.RequestId.              GetHashCode()       *  3 ^
+                           this.CorrelationId.          GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -203,13 +221,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
                                              OCPIv2_2_1.Token.TryParse,
-                                             out Token? Token,
+                                             out Token? token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
 
-                if (Token is null)
+                if (token is null)
                     return false;
 
                 #endregion
@@ -218,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("expiry_date",
                                          "expiry date",
-                                         out DateTimeOffset ExpiryDate,
+                                         out DateTimeOffset expiryDate,
                                          out ErrorResponse))
                 {
                     return false;
@@ -231,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatory("reservation_id",
                                          "reservation identification",
                                          Reservation_Id.TryParse,
-                                         out Reservation_Id ReservationId,
+                                         out Reservation_Id reservationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -244,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
                                          Location_Id.TryParse,
-                                         out Location_Id LocationId,
+                                         out Location_Id locationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -257,7 +275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptional("evse_uid",
                                        "EVSE identification",
                                        EVSE_UId.TryParse,
-                                       out EVSE_UId? EVSEUId,
+                                       out EVSE_UId? evseUId,
                                        out ErrorResponse))
                 {
                     return false;
@@ -270,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
                                        OCPIv2_2_1.AuthorizationReference.TryParse,
-                                       out AuthorizationReference? AuthorizationReference,
+                                       out AuthorizationReference? authorizationReference,
                                        out ErrorResponse))
                 {
                     return false;
@@ -284,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
                                          URL.TryParse,
-                                         out URL ResponseURL,
+                                         out URL responseURL,
                                          out ErrorResponse))
                 {
                     return false;
@@ -297,10 +315,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptional("id",
                                        "command identification",
                                        Command_Id.TryParse,
-                                       out Command_Id? CommandId,
+                                       out Command_Id? commandId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -310,10 +329,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptional("request_id",
                                        "request identification",
                                        Request_Id.TryParse,
-                                       out Request_Id? RequestId,
+                                       out Request_Id? requestId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -323,10 +343,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptional("correlation_Id",
                                        "correlation identification",
                                        Correlation_Id.TryParse,
-                                       out Correlation_Id? CorrelationId,
+                                       out Correlation_Id? correlationId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -334,18 +355,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                 ReserveNowCommand = new ReserveNowCommand(
-                                        Token,
-                                        ExpiryDate,
-                                        ReservationId,
-                                        LocationId,
-                                        ResponseURL,
 
-                                        EVSEUId,
-                                        AuthorizationReference,
+                                        token,
+                                        expiryDate,
+                                        reservationId,
+                                        locationId,
+                                        responseURL,
 
-                                        CommandId,
-                                        RequestId,
-                                        CorrelationId
+                                        evseUId,
+                                        authorizationReference,
+
+                                        commandId,
+                                        requestId,
+                                        correlationId
+
                                     );
 
                 if (CustomReserveNowCommandParser is not null)
@@ -627,29 +650,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Token.                  GetHashCode()       * 29 ^
-                       ExpiryDate.             GetHashCode()       * 23 ^
-                       ReservationId.          GetHashCode()       * 19 ^
-                       LocationId.             GetHashCode()       * 17 ^
-                      (EVSEUId?.               GetHashCode() ?? 0) * 13 ^
-                      (AuthorizationReference?.GetHashCode() ?? 0) * 11 ^
-
-                       ResponseURL.            GetHashCode()       *  7 ^
-                       Id.                     GetHashCode()       *  5 ^
-                       RequestId.              GetHashCode()       *  3 ^
-                       CorrelationId.          GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

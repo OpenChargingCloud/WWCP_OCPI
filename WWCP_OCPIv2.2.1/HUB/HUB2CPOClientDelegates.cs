@@ -739,4 +739,98 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB2CPO.HTTP
 
     #endregion
 
+
+    // Open Charging Cloud Extensions
+
+    #region OnNotifyWebPaymentsStartedRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a NotifyWebPaymentsStarted command request will be send.
+    /// </summary>
+    public delegate Task OnNotifyWebPaymentsStartedRequestDelegate(DateTimeOffset      LogTimestamp,
+                                                                   HUB2CPOClient       Sender,
+                                                                   Request_Id          RequestId,
+                                                                   Correlation_Id      CorrelationId,
+
+                                                                   Location_Id         LocationId,
+                                                                   EVSE_UId            EVSEUId,
+                                                                   EVSE_Id?            EVSEId,
+                                                                   Connector_Id?       ConnectorId,
+                                                                   TimeSpan?           Timeout,
+                                                                   JObject?            CustomData,
+
+                                                                   CancellationToken?  CancellationToken,
+                                                                   EventTracking_Id    EventTrackingId,
+                                                                   TimeSpan            RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a NotifyWebPaymentsStarted command request had been received.
+    /// </summary>
+    public delegate Task OnNotifyWebPaymentsStartedResponseDelegate(DateTimeOffset                                                  LogTimestamp,
+                                                                    HUB2CPOClient                                                   Sender,
+                                                                    Request_Id                                                      RequestId,
+                                                                    Correlation_Id                                                  CorrelationId,
+
+                                                                    Location_Id                                                     LocationId,
+                                                                    EVSE_UId                                                        EVSEUId,
+                                                                    EVSE_Id?                                                        EVSEId,
+                                                                    Connector_Id?                                                   ConnectorId,
+                                                                    TimeSpan?                                                       Timeout,
+                                                                    JObject?                                                        CustomData,
+
+                                                                    CancellationToken?                                              CancellationToken,
+                                                                    EventTracking_Id                                                EventTrackingId,
+                                                                    TimeSpan                                                        RequestTimeout,
+
+                                                                    OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>  Response,
+                                                                    TimeSpan                                                        Runtime);
+
+    #endregion
+
+    #region OnNotifyWebPaymentsFailedRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a NotifyWebPaymentsFailed command request will be send.
+    /// </summary>
+    public delegate Task OnNotifyWebPaymentsFailedRequestDelegate(DateTimeOffset      LogTimestamp,
+                                                                  HUB2CPOClient       Sender,
+                                                                  Request_Id          RequestId,
+                                                                  Correlation_Id      CorrelationId,
+
+                                                                  Location_Id         LocationId,
+                                                                  EVSE_UId            EVSEUId,
+                                                                  EVSE_Id?            EVSEId,
+                                                                  Connector_Id?       ConnectorId,
+                                                                  DisplayTexts?       ErrorMessage,
+                                                                  JObject?            CustomData,
+
+                                                                  CancellationToken?  CancellationToken,
+                                                                  EventTracking_Id    EventTrackingId,
+                                                                  TimeSpan            RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a NotifyWebPaymentsFailed command request had been received.
+    /// </summary>
+    public delegate Task OnNotifyWebPaymentsFailedResponseDelegate(DateTimeOffset                                                 LogTimestamp,
+                                                                   HUB2CPOClient                                                  Sender,
+                                                                   Request_Id                                                     RequestId,
+                                                                   Correlation_Id                                                 CorrelationId,
+
+                                                                   Location_Id                                                    LocationId,
+                                                                   EVSE_UId                                                       EVSEUId,
+                                                                   EVSE_Id?                                                       EVSEId,
+                                                                   Connector_Id?                                                  ConnectorId,
+                                                                   DisplayTexts?                                                  ErrorMessage,
+                                                                   JObject?                                                       CustomData,
+
+                                                                   CancellationToken?                                             CancellationToken,
+                                                                   EventTracking_Id                                               EventTrackingId,
+                                                                   TimeSpan                                                       RequestTimeout,
+
+                                                                   OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>  Response,
+                                                                   TimeSpan                                                       Runtime);
+
+    #endregion
+
+
 }
