@@ -1490,6 +1490,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
 
 
+                var tariffs1 = new List<Tariff>();
+
+                if (TariffGetter is not null)
+                {
+                    foreach (var tariffId in tariffIds)
+                    {
+
+                        var tariff2 = TariffGetter(
+                                          partyIdv3,
+                                          tariffId,
+                                          ChargeDetailRecord.SessionTime.StartTime,
+                                          null
+                                      );
+
+                        if (tariff2 is not null)
+                            tariffs1.Add(tariff2);
+
+                    }
+                }
+
+
                 // Request the charging tariff from back at the session start time!
                 var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(
                                                                          partyIdv3,
