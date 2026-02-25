@@ -40,14 +40,16 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
                                                                   WWCP.ChargingPool_Id?             ChargingPoolId,
                                                                   WWCP.ChargingStation_Id?          ChargingStationId,
                                                                   WWCP.EVSE_Id?                     EVSEId,
                                                                   WWCP.ChargingConnector_Id?        ChargingConnectorId,
                                                                   WWCP.EMobilityProvider_Id?        EMobilityProviderId);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
                                                                   WWCP.ChargingPool_Id?             ChargingPoolId,
                                                                   WWCP.ChargingStation_Id?          ChargingStationId,
                                                                   WWCP.EVSE_Id?                     EVSEId,
@@ -322,12 +324,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         connectorId,
                                                         empId) =>
 
-                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-                                      null,
-                                      evseId.     HasValue ? WWCP.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
-                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+                    this.GetTariffIds(
+                        this.RoamingNetwork.Id,
+                        WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                        locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
+                        null,
+                        evseId.     HasValue ? WWCP.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
+                        connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
+                        empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null
+                    );
 
             }
 

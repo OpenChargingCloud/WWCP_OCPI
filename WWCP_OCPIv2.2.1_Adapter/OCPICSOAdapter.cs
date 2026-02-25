@@ -41,7 +41,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
                                                                   WWCP.ChargingPool_Id?             ChargingPoolId,
                                                                   WWCP.ChargingStation_Id?          ChargingStationId,
                                                                   WWCP.EVSE_Id?                     EVSEId,
@@ -329,6 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
                         return this.GetTariffIds(
+                                   this.RoamingNetwork.Id,
                                    WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
                                    WWCP.ChargingPool_Id.           Parse($"{cpoPartyId}*P{locationId.Value}"),
                                    null,
