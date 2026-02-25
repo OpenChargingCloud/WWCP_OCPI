@@ -178,18 +178,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region ToWWCP(this DisplayTexts)
 
-        public static I18NString ToOCPI(this IEnumerable<DisplayText> DisplayTexts)
+        public static I18NString ToWWCP(this IEnumerable<DisplayText> DisplayTexts)
         {
 
             var i18nString = I18NString.Empty;
 
             foreach (var displayText in DisplayTexts)
-                i18nString.Set(displayText.Language,
-                               displayText.Text);
+                i18nString.Set(
+                    displayText.Language,
+                    displayText.Text
+                );
 
             return i18nString;
 
         }
+
+        public static I18NString ToWWCP(this DisplayTexts DisplayTexts)
+        {
+
+            var i18nString = I18NString.Empty;
+
+            foreach (var displayText in DisplayTexts)
+                i18nString.Set(
+                    displayText.Language,
+                    displayText.Text
+                );
+
+            return i18nString;
+
+        }
+
+        public static I18NString ToWWCP(this DisplayText DisplayText)
+
+            => I18NString.Create(
+                   DisplayText.Language,
+                   DisplayText.Text
+               );
 
         #endregion
 

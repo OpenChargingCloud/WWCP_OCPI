@@ -2111,13 +2111,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                     authorizationInfo.Data.Allowed,
                                                                                     authorizationInfo.Data.Token,
                                                                                     authorizationInfo.Data.Location,
-                                                                                    null, // AuthReference
+                                                                                    authorizationInfo.Data.AuthorizationReference,
                                                                                     authorizationInfo.Data.Info,
                                                                                     remoteParty,
                                                                                     EMSP_Id.TryParse(
                                                                                         authorizationInfo.FromCountryCode,
                                                                                         authorizationInfo.FromPartyId
-                                                                                    ),
+                                                                                    ) ?? EMSP_Id.From(remoteParty.Id),
                                                                                     authorizationInfo.Data.Runtime
                                                                                 )
 

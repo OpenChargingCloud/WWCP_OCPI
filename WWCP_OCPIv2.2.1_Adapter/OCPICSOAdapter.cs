@@ -2097,13 +2097,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                        authorizationInfo.Data.Allowed,
                                                                        authorizationInfo.Data.Token,
                                                                        authorizationInfo.Data.Location,
-                                                                       null, // AuthReference
+                                                                       authorizationInfo.Data.AuthorizationReference,
                                                                        authorizationInfo.Data.Info,
                                                                        remoteParty,
                                                                        EMSP_Id.TryParse(
                                                                            authorizationInfo.FromCountryCode,
                                                                            authorizationInfo.FromPartyId
-                                                                       ),
+                                                                       ) ?? EMSP_Id.From(remoteParty.Id),
                                                                        authorizationInfo.Data.Runtime
                                                                    )
 
@@ -2140,12 +2140,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                     authStartResult = WWCP.AuthStartResult.Authorized(
-                               AuthorizatorId:            Id,
+                               AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                ISendAuthorizeStartStop:   this,
                                SessionId:                 SessionId,
                                EMPPartnerSessionId:       null,
-                               ContractId:                null,
-                               PrintedNumber:             null,
+                               ContractId:                authorizationInfo.Token?.ContractId.ToString(),
+                               PrintedNumber:             authorizationInfo.Token?.VisualNumber,
+
+                               // Location                 
+                               // AuthorizationReference   
+                               // Info                     
+                               // RemoteParty              
+
+                               // Token.CountryCode        
+                               // Token.PartyId            
+                               // Token.Id                 
+                               // Token.Type               
+                               // Token.ContractId         
+                               // Token.Issuer             
+                               // Token.IsValid            
+                               // Token.WhitelistType      
+                               // 
+                               // Token.GroupId            
+                               // Token.UILanguage         
+                               // Token.DefaultProfile     
+                               // Token.EnergyContract     
+                               // 
+                               // Token.Created            
+                               // Token.LastUpdated        
+
                                ExpiryDate:                null,
                                MaxkW:                     null,
                                MaxkWh:                    null,
@@ -2154,7 +2177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ListOfAuthStopTokens:      null,
                                ListOfAuthStopPINs:        null,
                                ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                               Description:               null,
+                               Description:               authorizationInfo.Info?. ToWWCP(),
                                AdditionalInfo:            null,
                                NumberOfRetries:           0,
                                Runtime:                   authorizationInfo.Runtime
