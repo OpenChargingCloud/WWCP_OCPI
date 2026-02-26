@@ -14351,8 +14351,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             EventTrackingId ??= EventTracking_Id.New;
 
             var partyId       = Party_Idv3.From(
-                                    CDR.CountryCode,
-                                    CDR.PartyId
+                                    CDR.CDRToken.CountryCode,
+                                    CDR.CDRToken.PartyId
                                 );
 
             if (parties.TryGetValue(partyId, out var party))
@@ -14454,8 +14454,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             EventTrackingId ??= EventTracking_Id.New;
 
             var partyId       = Party_Idv3.From(
-                                    CDR.CountryCode,
-                                    CDR.PartyId
+                                    CDR.CDRToken.CountryCode,
+                                    CDR.CDRToken.PartyId
                                 );
 
             if (parties.TryGetValue(partyId, out var party))
@@ -14559,8 +14559,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             EventTrackingId ??= EventTracking_Id.New;
 
             var partyId       = Party_Idv3.From(
-                                    CDR.CountryCode,
-                                    CDR.PartyId
+                                    CDR.CDRToken.CountryCode,
+                                    CDR.CDRToken.PartyId
                                 );
 
             if (parties.TryGetValue(partyId, out var party))
@@ -14758,8 +14758,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             EventTrackingId ??= EventTracking_Id.New;
 
             var partyId       = Party_Idv3.From(
-                                    CDR.CountryCode,
-                                    CDR.PartyId
+                                    CDR.CDRToken.CountryCode,
+                                    CDR.CDRToken.PartyId
                                 );
 
             if (parties.TryGetValue(partyId, out var party))
@@ -14971,8 +14971,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 => RemoveCDR(
                        Party_Idv3.From(
-                           CDR.CountryCode,
-                           CDR.PartyId
+                           CDR.Token.CountryCode,
+                           CDR.Token.PartyId
                        ),
                        CDR.Id,
                        SkipNotifications,
