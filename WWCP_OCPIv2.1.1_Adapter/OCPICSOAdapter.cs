@@ -479,6 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        WWCP.ReservationHandling.Close,
                                        emspId.ToWWCP(),
                                        null,                                   // Remote authentication
+                                       null,
                                        WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                            Id.ToString()
                                        ),

@@ -1301,6 +1301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  CDRToken                                  CDRToken,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
                                   EMSP_Id?                                  EMSPId,
                                   GetTariff2_Delegate?                      TariffGetter,
@@ -1313,6 +1314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 CustomChargingPoolIdConverter,
                                 CustomEVSEUIdConverter,
                                 CustomEVSEIdConverter,
+                                CDRToken,
                                 GetTariffIdsDelegate,
                                 EMSPId,
                                 TariffGetter,
@@ -1334,6 +1336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  CDRToken                                  CDRToken,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
                                   EMSP_Id?                                  EMSPId,
                                   GetTariff2_Delegate?                      TariffGetter,
@@ -1490,7 +1493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
 
 
-                var tariffs1 = new List<Tariff>();
+                var tariffs = new List<Tariff>();
 
                 if (TariffGetter is not null)
                 {
@@ -1500,28 +1503,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         var tariff2 = TariffGetter(
                                           partyIdv3,
                                           tariffId,
+                                          // Request the charging tariff from back at the session start time!
                                           ChargeDetailRecord.SessionTime.StartTime,
                                           null
                                       );
 
                         if (tariff2 is not null)
-                            tariffs1.Add(tariff2);
+                            tariffs.Add(tariff2);
 
                     }
                 }
-
-
-                // Request the charging tariff from back at the session start time!
-                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(
-                                                                         partyIdv3,
-                                                                         tariffId,
-                                                                         ChargeDetailRecord.SessionTime.StartTime,
-                                                                         null
-                                                                     ))?.
-                                                  Where (tariff   => tariff is not null)?.
-                                                  Cast<Tariff>()
-                                       ?? [];
-
 
                 if (!tariffs.Any())
                 {
@@ -1539,14 +1530,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
                                    Start:                   ChargeDetailRecord.SessionTime.StartTime,
                                    End:                     ChargeDetailRecord.SessionTime.EndTime.Value,
-                                   CDRToken:                   new CDRToken(
-                                                                   CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                                                                   PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-                                                                   UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                   TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                   ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                               ),
-                                   AuthMethod:                 authMethod.Value,
+                                   CDRToken:                CDRToken,
+                                   AuthMethod:              authMethod.Value,
                                    Location:                new CDRLocation(          //ToDo: Might still have not required connectors!
                                                                 Id:                   filteredLocation.Id,
                                                                 Address:              filteredLocation.Address,
@@ -1594,10 +1579,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                );
 
 
-                var newCDR = tempCDR.SplittIntoChargingPeriods(
-                                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<WattHour>(mv.Timestamp, mv.WattHours)),
-                                 tariffs
-                             );
+                //var newCDR = tempCDR.SplittIntoChargingPeriods(
+                //                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<WattHour>(mv.Timestamp, mv.WattHours)),
+                //                 tariffs
+                //             );
 
 
                 //// "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
@@ -1751,8 +1736,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                        PostalCode:           filteredLocation.PostalCode,
                                                        State:                filteredLocation.State
                                                    ),
-                           Currency:               newCDR.Currency,
-                           ChargingPeriods:        newCDR.ChargingPeriods,
+                           Currency:               tempCDR.Currency,
+                           ChargingPeriods:        tempCDR.ChargingPeriods,
                            TotalCosts:             new Price(
                                                        ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
                                                        IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total

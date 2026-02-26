@@ -734,6 +734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            ReservationHandling?   ReservationHandling,
                                                            EMobilityProvider_Id?  ProviderId,
                                                            RemoteAuthentication?  RemoteAuthentication,
+                                                           JObject?               AdditionalSessionInfos,
                                                            Auth_Path?             AuthenticationPath,
                                                            ICSORoamingProvider?   CSORoamingProvider,
 

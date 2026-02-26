@@ -454,7 +454,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                     $"{startSessionCommand.Token.CountryCode}-{startSessionCommand.Token.PartyId}-{startSessionCommand.Token.Id}"
                                                 )
                                             ),
-                                            null,
+                                            JSONObject.Create(
+                                                new Newtonsoft.Json.Linq.JProperty("startSessionCommand",  startSessionCommand.ToJSON())
+                                            ),
                                             WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                 remotePartyId.ToString()
                                             ),
@@ -503,6 +505,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            WWCP.ReservationHandling.Close,
                                            providerId,
                                            null,                                   // Remote authentication
+                                           JSONObject.Create(
+                                               new Newtonsoft.Json.Linq.JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
+                                           ),
                                            WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                remotePartyId.ToString()
                                            ),

@@ -29,11 +29,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
-    /// The price of a charging session.
+    /// The price of something.
     /// </summary>
-    public readonly struct Price : IEquatable<Price>,
-                                   IComparable<Price>,
-                                   IComparable
+    /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
+    /// <param name="IncludingVAT">Price/Cost including VAT.</param>
+    public readonly struct Price(Double   ExcludingVAT,
+                                 Double?  IncludingVAT   = null)
+
+        : IEquatable<Price>,
+          IComparable<Price>,
+          IComparable
+
     {
 
         #region Properties
@@ -42,36 +48,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Price/Cost excluding VAT.
         /// </summary>
         [Mandatory]
-        public Double   ExcludingVAT    { get; }
+        public Double   ExcludingVAT    { get; } = ExcludingVAT;
 
         /// <summary>
         /// Price/Cost including VAT.
         /// </summary>
         [Optional]
-        public Double?  IncludingVAT    { get; }
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Create a new price for a charging session.
-        /// </summary>
-        /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
-        /// <param name="IncludingVAT">Price/Cost including VAT.</param>
-        public Price(Double   ExcludingVAT,
-                     Double?  IncludingVAT   = null)
-        {
-
-            this.ExcludingVAT  = ExcludingVAT;
-            this.IncludingVAT  = IncludingVAT;
-
-        }
+        public Double?  IncludingVAT    { get; } = IncludingVAT;
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomPriceParser = null)
+        #region (static) Parse    (JSON, CustomPriceParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a price.
@@ -97,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomPriceParser = null)
+        #region (static) TryParse (JSON, CustomPriceParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a price.
@@ -122,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out Price, out ErrorResponse, CustomPriceParser = null)
+        #region (static) TryParse (JSON, out Price, out ErrorResponse, CustomPriceParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -170,7 +158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("excl_vat",
                                          "price excluding VAT",
-                                         out Double ExcludingVAT,
+                                         out Double excludingVAT,
                                          out ErrorResponse))
                 {
                     return false;
@@ -182,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("incl_vat",
                                        "price including VAT",
-                                       out Double? IncludingVAT,
+                                       out Double? includingVAT,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -193,8 +181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                 Price = new Price(
-                            ExcludingVAT,
-                            IncludingVAT
+                            excludingVAT,
+                            includingVAT
                         );
 
 

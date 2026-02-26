@@ -24,6 +24,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
+using Newtonsoft.Json.Linq;
+
 using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Styx;
@@ -388,7 +390,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnStartSessionCommand  => RemoteStart
 
-            this.CPO_HTTPAPI.OnStartSessionCommand += async (remotePartyId, from, to, startSessionCommand) => {
+            this.CPO_HTTPAPI.OnStartSessionCommand += async (remotePartyId,
+                                                             from,
+                                                             to,
+                                                             startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, startSessionCommand.LocationId, out var location))
                     return new CommandResponse(
@@ -453,7 +458,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     $"{startSessionCommand.Token.CountryCode}-{startSessionCommand.Token.PartyId}-{startSessionCommand.Token.Id}"
                                                 )
                                             ),
-                                            null,
+                                            JSONObject.Create(
+                                                new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
+                                            ),
                                             WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                 remotePartyId.ToString()
                                             ),
@@ -487,7 +494,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnStopSessionCommand   => RemoteStop
 
-            this.CPO_HTTPAPI.OnStopSessionCommand += async (remotePartyId, from, to, stopSessionCommand) => {
+            this.CPO_HTTPAPI.OnStopSessionCommand += async (remotePartyId,
+                                                            from,
+                                                            to,
+                                                            stopSessionCommand) => {
 
                 var providerId = (from ?? remotePartyId.AsEMSPId()).ToWWCP();
 
@@ -502,6 +512,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            WWCP.ReservationHandling.Close,
                                            providerId,
                                            null,                                   // Remote authentication
+                                           JSONObject.Create(
+                                               new JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
+                                           ),
                                            WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                remotePartyId.ToString()//Id.ToString()
                                            ),
@@ -2623,15 +2636,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Convert and send charge detail record
 
-                    var cdr = chargeDetailRecord.ToOCPI(
-                                  CustomChargingPoolIdConverter,
-                                  CustomEVSEUIdConverter,
-                                  CustomEVSEIdConverter,
-                                  CommonAPI.GetTariffIds,
-                                  EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
-                                  CommonAPI.GetTariff,
-                                  ref warnings
-                              );
+                    var session   = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
+
+                    if (!StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _))
+                        continue;
+
+                    var cdrToken  = new CDRToken(
+                                        startSessionCommand.Token.CountryCode,
+                                        startSessionCommand.Token.PartyId,
+                                        startSessionCommand.Token.Id,
+                                        startSessionCommand.Token.Type,
+                                        startSessionCommand.Token.ContractId
+                                    );
+
+                    var cdr       = chargeDetailRecord.ToOCPI(
+                                        CustomChargingPoolIdConverter,
+                                        CustomEVSEUIdConverter,
+                                        CustomEVSEIdConverter,
+                                        cdrToken,
+                                        CommonAPI.GetTariffIds,
+                                        EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                        CommonAPI.GetTariff,
+                                        ref warnings
+                                    );
 
                     if (cdr is not null && CustomCDRMapper is not null)
                         cdr = CustomCDRMapper(chargeDetailRecord, cdr);

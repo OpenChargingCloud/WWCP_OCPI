@@ -810,7 +810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.AuthMethod                = AuthMethod;
             this.Location                  = Location;
             this.Currency                  = Currency;
-            this.ChargingPeriods           = ChargingPeriods       ?? [];
+            this.ChargingPeriods           = ChargingPeriods      ?? [];
             this.TotalCosts                = TotalCosts;
             this.TotalEnergy               = TotalEnergy;
             this.TotalTime                 = TotalTime;
@@ -819,8 +819,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.AuthorizationReference    = AuthorizationReference;
             this.EnergyMeterId             = EnergyMeterId;
             this.EnergyMeter               = EnergyMeter;
-            this.TransparencySoftware     = TransparencySoftware ?? [];
-            this.Tariffs                   = Tariffs               ?? [];
+            this.TransparencySoftware      = TransparencySoftware ?? [];
+            this.Tariffs                   = Tariffs              ?? [];
             this.SignedData                = SignedData;
             this.TotalFixedCosts           = TotalFixedCosts;
             this.TotalEnergyCost           = TotalEnergyCost;
