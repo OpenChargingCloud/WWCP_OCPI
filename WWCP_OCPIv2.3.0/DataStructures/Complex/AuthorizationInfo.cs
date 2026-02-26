@@ -192,8 +192,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(JObject                                          JSON,
                                        [NotNullWhen(true)]  out AuthorizationInfo?      AuthorizationInfo,
                                        [NotNullWhen(false)] out String?                 ErrorResponse,
-                                       RemoteParty?                                     RemoteParty                     = null,
-                                       EMSP_Id?                                         EMSPId                          = null,
+                                       RemoteParty?                                     remoteParty                     = null,
+                                       EMSP_Id?                                         emspId                          = null,
                                        CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
@@ -213,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!JSON.ParseMandatory("allowed",
                                          "allowed",
                                          AllowedType.TryParse,
-                                         out AllowedType Allowed,
+                                         out AllowedType allowed,
                                          out ErrorResponse))
                 {
                     return false;
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptionalJSON("token",
                                            "token",
                                            OCPIv2_3_0.Token.TryParse,
-                                           out Token? Token,
+                                           out Token? token,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -239,8 +239,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalJSON("location",
                                            "location reference",
-                                           OCPIv2_3_0.LocationReference.TryParse,
-                                           out LocationReference? LocationReference,
+                                           OCPI.LocationReference.TryParse,
+                                           out LocationReference? locationReference,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -253,8 +253,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_3_0.AuthorizationReference.TryParse,
-                                       out AuthorizationReference? AuthorizationReference,
+                                       OCPI.AuthorizationReference.TryParse,
+                                       out AuthorizationReference? authorizationReference,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptionalJSON("info",
                                            "multi-language information",
                                            DisplayText.TryParse,
-                                           out DisplayText? Info,
+                                           out DisplayText? info,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -278,13 +278,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                AuthorizationInfo = new AuthorizationInfo(Allowed,
-                                                          Token,
-                                                          LocationReference,
-                                                          AuthorizationReference,
-                                                          Info,
-                                                          RemoteParty,
-                                                          EMSPId);
+                AuthorizationInfo = new AuthorizationInfo(
+                                        allowed,
+                                        token,
+                                        locationReference,
+                                        authorizationReference,
+                                        info,
+                                        remoteParty,
+                                        emspId
+                                    );
 
 
                 if (CustomAuthorizationInfoParser is not null)

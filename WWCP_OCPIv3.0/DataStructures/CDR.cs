@@ -890,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv3_0.AuthorizationReference.TryParse,
+                                       OCPI.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {
@@ -941,7 +941,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse TransparencySoftware       [optional]
+                #region Parse TransparencySoftware        [optional]
 
                 if (JSON.ParseOptionalJSON("transparency_software",
                                            "transparency software",

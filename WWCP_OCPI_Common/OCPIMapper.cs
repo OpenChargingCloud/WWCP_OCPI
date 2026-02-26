@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPI
     public static class OCPIMapper
     {
 
-        #region ToOCPI_CountryCode(this CSOId)
+        #region ToOCPI_CountryCode (this CSOId)
 
         public static CountryCode ToOCPI_CountryCode(this WWCP.ChargingStationOperator_Id CSOId)
 
@@ -91,11 +91,50 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ToOCPI_PartyId(this CSOId)
+        #region ToOCPI_PartyId     (this CSOId)
 
         public static Party_Id ToOCPI_PartyId(this WWCP.ChargingStationOperator_Id CSOId)
 
             => Party_Id.Parse(CSOId.Suffix);
+
+        #endregion
+
+        #region ToOCPI_PartyIdv3   (this CSOId)
+
+        public static Party_Idv3 ToOCPI_PartyIdv3(this WWCP.ChargingStationOperator_Id CSOId)
+
+            => Party_Idv3.From(
+                   CSOId.ToOCPI_CountryCode(),
+                   CSOId.ToOCPI_PartyId()
+               );
+
+        #endregion
+
+
+        #region ToOCPI_CountryCode (this EMPId)
+
+        public static CountryCode ToOCPI_CountryCode(this WWCP.EMobilityProvider_Id EMPId)
+
+            => CountryCode.Parse(EMPId.CountryCode.Alpha2Code);
+
+        #endregion
+
+        #region ToOCPI_PartyId     (this EMPId)
+
+        public static Party_Id ToOCPI_PartyId(this WWCP.EMobilityProvider_Id EMPId)
+
+            => Party_Id.Parse(EMPId.Suffix);
+
+        #endregion
+
+        #region ToOCPI_PartyIdv3   (this EMPId)
+
+        public static Party_Idv3 ToOCPI_PartyIdv3(this WWCP.EMobilityProvider_Id EMPId)
+
+            => Party_Idv3.From(
+                   EMPId.ToOCPI_CountryCode(),
+                   EMPId.ToOCPI_PartyId()
+               );
 
         #endregion
 
@@ -175,6 +214,43 @@ namespace cloud.charging.open.protocols.OCPI
             => EVSEId.HasValue
                    ? EVSEId.Value.ToOCPI_EVSEId(CustomEVSEIdConverter)
                    : null;
+
+        #endregion
+
+
+        #region ToOCPI(this ChargingPoolId,   ...)
+
+        public static Location_Id? ToOCPI(this WWCP.ChargingPool_Id              ChargingPoolId,
+                                          ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter = null)
+
+            => CustomChargingPoolIdConverter is not null
+                   ? CustomChargingPoolIdConverter(ChargingPoolId)
+                   : Location_Id.TryParse(ChargingPoolId.Suffix);
+
+        #endregion
+
+        #region ToOCPI(this ChargingLocation, ...)
+
+        public static LocationReference? ToOCPI(this WWCP.ChargingLocation?            ChargingLocation,
+                                                ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter   = null,
+                                                WWCPEVSEId_2_EVSEUId_Delegate?         CustomEVSEIdConverter           = null)
+        {
+
+            if (ChargingLocation is null)
+                return null;
+
+            var locationId  = ChargingLocation.ChargingPoolId?.ToOCPI(CustomChargingPoolIdConverter);
+
+            if (!locationId.HasValue)
+                return null;
+
+            var evseUId     = ChargingLocation.EVSEId?.ToOCPI_EVSEUId(CustomEVSEIdConverter);
+
+            return new LocationReference(
+                    //   LocationId:   
+                   );
+
+        }
 
         #endregion
 

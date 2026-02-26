@@ -4442,6 +4442,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
+                      Party_Idv3?         From                = null,
+                      Party_Idv3?         To                  = null,
+
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
                       Version_Id?         VersionId           = null,
@@ -4516,11 +4519,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set("X-Request-ID",         requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID",     correlationId);
+
+                                                                            if (From.HasValue) {
+                                                                                requestBuilder.Set("X-From-Country-Code",  From.Value.CountryCode.ToString());
+                                                                                requestBuilder.Set("X-From-Party-Id",      From.Value.PartyId.    ToString());
+                                                                            }
+
+                                                                            if (To.  HasValue) {
+                                                                                requestBuilder.Set("X-To-Country-Code",    To.  Value.CountryCode.ToString());
+                                                                                requestBuilder.Set("X-To-Party-Id",        To.  Value.PartyId.    ToString());
+                                                                            }
 
                                                                             if (TokenType.HasValue)
-                                                                                requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
+                                                                                requestBuilder.QueryString.Add("type",     TokenType.       Value.ToString());
 
                                                                             if (LocationReference.HasValue)
                                                                             {

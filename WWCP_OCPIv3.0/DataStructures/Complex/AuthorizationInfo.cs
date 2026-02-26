@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalJSON("location",
                                            "location reference",
-                                           OCPIv3_0.LocationReference.TryParse,
+                                           OCPI.LocationReference.TryParse,
                                            out LocationReference? LocationReference,
                                            out ErrorResponse))
                 {
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv3_0.AuthorizationReference.TryParse,
+                                       OCPI.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {

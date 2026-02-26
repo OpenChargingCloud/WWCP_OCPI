@@ -760,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    AuthorizationReference?                                 AuthorizationReference                 = null,
                    EnergyMeter_Id?                                         EnergyMeterId                          = null,
                    EnergyMeter<EVSE>?                                      EnergyMeter                            = null,
-                   IEnumerable<TransparencySoftware>?                      TransparencySoftware                  = null,
+                   IEnumerable<TransparencySoftware>?                      TransparencySoftware                   = null,
                    IEnumerable<Tariff>?                                    Tariffs                                = null,
                    SignedData?                                             SignedData                             = null,
                    Price?                                                  TotalFixedCosts                        = null,
@@ -884,7 +884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
                           (this.EnergyMeterId?.           GetHashCode()  ?? 0) *  47 ^
                           (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
-                           this.TransparencySoftware.    CalcHashCode()       *  41 ^
+                           this.TransparencySoftware.    CalcHashCode()        *  41 ^
                           (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
                           (this.TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
                           (this.TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
@@ -1138,7 +1138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_2_1.AuthorizationReference.TryParse,
+                                       OCPI.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {

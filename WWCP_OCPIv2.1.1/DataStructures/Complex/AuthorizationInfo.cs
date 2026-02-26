@@ -185,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("allowed",
                                          "allowed",
                                          AllowedType.TryParse,
-                                         out AllowedType Allowed,
+                                         out AllowedType allowed,
                                          out ErrorResponse))
                 {
                     return false;
@@ -197,8 +197,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalJSON("location",
                                            "location reference",
-                                           OCPIv2_1_1.LocationReference.TryParse,
-                                           out LocationReference? LocationReference,
+                                           OCPI.LocationReference.TryParse,
+                                           out LocationReference? locationReference,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptionalJSON("info",
                                            "multi-language information",
                                            DisplayText.TryParse,
-                                           out DisplayText? Info,
+                                           out DisplayText? info,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -222,9 +222,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                AuthorizationInfo = new AuthorizationInfo(Allowed,
-                                                          LocationReference,
-                                                          Info);
+                AuthorizationInfo = new AuthorizationInfo(
+                                        allowed,
+                                        locationReference,
+                                        info
+                                    );
 
 
                 if (CustomAuthorizationInfoParser is not null)

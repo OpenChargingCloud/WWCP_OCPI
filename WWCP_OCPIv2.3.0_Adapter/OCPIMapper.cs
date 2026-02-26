@@ -469,13 +469,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         }
 
-        public static Location_Id? ToOCPI(this WWCP.ChargingPool_Id              ChargingPoolId,
-                                          ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter = null)
-
-            => CustomChargingPoolIdConverter is not null
-                   ? CustomChargingPoolIdConverter(ChargingPoolId)
-                   : Location_Id.TryParse(ChargingPoolId.Suffix);
-
 
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
