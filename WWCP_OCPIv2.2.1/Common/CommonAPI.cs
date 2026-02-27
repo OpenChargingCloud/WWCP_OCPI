@@ -14971,8 +14971,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 => RemoveCDR(
                        Party_Idv3.From(
-                           CDR.Token.CountryCode,
-                           CDR.Token.PartyId
+                           CDR.CDRToken.CountryCode,
+                           CDR.CDRToken.PartyId
                        ),
                        CDR.Id,
                        SkipNotifications,

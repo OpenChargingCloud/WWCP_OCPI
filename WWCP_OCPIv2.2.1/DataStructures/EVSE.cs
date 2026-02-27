@@ -736,63 +736,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("uid",                         UId.         ToString()),
+                                 new JProperty("uid",                    UId.         ToString()),
 
                            EVSEId.HasValue
-                               ? new JProperty("evse_id",               EVSEId.Value.ToString())
+                               ? new JProperty("evse_id",                EVSEId.Value.ToString())
                                : null,
 
-                           new JProperty("status",                      Status.      ToString()),
+                                 new JProperty("status",                 Status.      ToString()),
 
                            StatusSchedule.Any()
-                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select (statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
+                               ? new JProperty("status_schedule",        new JArray(StatusSchedule.     Select (statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
                                : null,
 
                            Capabilities.Any()
-                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select (capability         => capability.        ToString())))
+                               ? new JProperty("capabilities",           new JArray(Capabilities.       Select (capability         => capability.        ToString())))
                                : null,
 
                            Connectors.Any()
-                               ? new JProperty("connectors",            new JArray(Connectors.         OrderBy(connector          => connector.Id).
-                                                                                                       Select (connector          => connector.         ToJSON(true,
-                                                                                                                                                               true,
-                                                                                                                                                               EMSPId,
-                                                                                                                                                               CustomConnectorSerializer))))
+                               ? new JProperty("connectors",             new JArray(Connectors.         OrderBy(connector          => connector.Id).
+                                                                                                        Select (connector          => connector.         ToJSON(true,
+                                                                                                                                                                true,
+                                                                                                                                                                EMSPId,
+                                                                                                                                                                CustomConnectorSerializer))))
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",          EnergyMeter. ToJSON(CustomEVSEEnergyMeterSerializer,
-                                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                                            CustomTransparencySoftwareSerializer))
+                               ? new JProperty("energy_meter",           EnergyMeter. ToJSON(CustomEVSEEnergyMeterSerializer,
+                                                                                             CustomTransparencySoftwareStatusSerializer,
+                                                                                             CustomTransparencySoftwareSerializer))
                                : null,
                            FloorLevel.IsNotNullOrEmpty()
-                               ? new JProperty("floor_level",           FloorLevel)
+                               ? new JProperty("floor_level",            FloorLevel)
                                : null,
 
                            Coordinates.HasValue
-                               ? new JProperty("coordinates",           new JObject(
-                                                                            new JProperty("latitude",   Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                            new JProperty("longitude",  Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
-                                                                        ))
+                               ? new JProperty("coordinates",            new JObject(
+                                                                             new JProperty("latitude",   Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                             new JProperty("longitude",  Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                         ))
                                : null,
 
                            PhysicalReference.IsNotNullOrEmpty()
-                               ? new JProperty("physical_reference",    PhysicalReference)
+                               ? new JProperty("physical_reference",     PhysicalReference)
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",            new JArray(Directions.         Select (displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",             new JArray(Directions.         Select (displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingRestrictions.Any()
-                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select (parkingRestriction => parkingRestriction.ToString())))
+                               ? new JProperty("parking_restrictions",   new JArray(ParkingRestrictions.Select (parkingRestriction => parkingRestriction.ToString())))
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                 new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
-                           new JProperty("last_updated",                LastUpdated.ToISO8601())
+                                 new JProperty("created",                Created.    ToISO8601()),
+                                 new JProperty("last_updated",           LastUpdated.ToISO8601())
 
                        );
 

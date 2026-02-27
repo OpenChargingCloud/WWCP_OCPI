@@ -1409,10 +1409,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
 
                 var response2 = await graphDefinedEMSP1.PutEVSE(
-                                          EVSE1_v2_2_1,
                                           CountryCode.Parse("DE"),
                                           Party_Id.   Parse("GEF"),
-                                          Location1_v2_2_1.Id
+                                          Location1_v2_2_1.Id,
+                                          EVSE1_v2_2_1
                                       );
 
                 // HTTP/1.1 201 Created

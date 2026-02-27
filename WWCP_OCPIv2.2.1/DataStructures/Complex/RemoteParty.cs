@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// An optional persistent EMSP to CPO client.
         /// </summary>
-        public EMSP2CPOClient?  EMSP2CPOClient    { get; set; }
+        public EMSP2CPOClient?       EMSP2CPOClient    { get; set; }
 
         #endregion
 
