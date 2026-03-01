@@ -24,6 +24,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
+using Newtonsoft.Json.Linq;
+
 using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Styx;
@@ -1431,7 +1433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (Set/Add/Update/Delete) EVSE(s)...
 
-        #region AddEVSE         (EVSE, TransmissionType = Enqueue, ...)
+        #region AddEVSE          (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Add the given EVSE.
@@ -1583,7 +1585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AddOrUpdateEVSE (EVSE, TransmissionType = Enqueue, ...)
+        #region AddOrUpdateEVSE  (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Set the given EVSE as new static EVSE data at the OCPI server.
@@ -1739,7 +1741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region UpdateEVSE      (EVSE, PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
+        #region UpdateEVSE       (EVSE, PropertyName = null, NewValue = null, OldValue = null, DataSource = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the EVSE data of the given charging pool within the static EVSE data at the OCPI server.
@@ -1895,7 +1897,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region DeleteEVSE      (EVSE, TransmissionType = Enqueue, ...)
+        #region DeleteEVSE       (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Delete the EVSE data of the given EVSE from the static EVSE data at the OCPI server.
@@ -1927,7 +1929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region UpdateEVSEStatus(EVSEStatusUpdates, TransmissionType = Enqueue, ...)
+        #region UpdateEVSEStatus (EVSEStatusUpdates, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given enumeration of EVSE status updates.
@@ -1935,7 +1937,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EVSEStatusUpdates">An enumeration of EVSE status updates.</param>
         /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
@@ -1944,7 +1946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
                                               WWCP.TransmissionTypes              TransmissionType,
 
-                                              DateTimeOffset?                     Timestamp,
+                                              DateTimeOffset?                     RequestTimestamp,
                                               EventTracking_Id?                   EventTrackingId,
                                               TimeSpan?                           RequestTimeout,
                                               User_Id?                            CurrentUserId,
@@ -1965,48 +1967,204 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     WWCP.PushEVSEStatusResult result;
 
-                    var startTime  = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                    var startTime  = Timestamp.Now;
                     var warnings   = new List<Warning>();
                     var results    = new List<WWCP.PushEVSEStatusResult>();
 
-                    foreach (var evseStatusUpdate in EVSEStatusUpdates)
+                    foreach (var statusUpdate in EVSEStatusUpdates)
                     {
 
-                        if (RoamingNetwork.TryGetEVSEById(evseStatusUpdate.Id, out var evse) && evse is not null)
+                        if (RoamingNetwork.TryGetEVSEById(statusUpdate.Id, out var evse))
                         {
 
                             if (IncludeEVSEs is null ||
                                (IncludeEVSEs is not null && IncludeEVSEs(evse)))
                             {
 
-                                var locationId = evse.ChargingPool is not null
-                                                     ? Location_Id.TryParse(evse.ChargingPool.Id.ToString())
-                                                     : null;
-
+                                var locationId = evse.ChargingPool?.Id.ToOCPI(CustomChargingPoolIdConverter);
                                 if (locationId.HasValue)
                                 {
 
-                                    if (CommonAPI.TryGetLocation(locationId.Value, out var location) &&
-                                        location is not null)
+                                    if (CommonAPI.TryGetLocation(locationId.Value, out var location))
                                     {
 
-                                        var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
-                                                                CustomEVSEIdConverter,
-                                                                connectorId => true,
-                                                                //null,
-                                                                evse.Status.Timestamp > evse.LastChangeDate
-                                                                    ? evse.Status.Timestamp
-                                                                    : evse.LastChangeDate,
-                                                                ref warnings);
+                                        var evse2 = evse.ToOCPI(
+                                                        CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        connectorId => true,
+                                                        evse.Status.Timestamp > evse.LastChangeDate
+                                                            ? evse.Status.Timestamp
+                                                            : evse.LastChangeDate,
+                                                        ref warnings
+                                                    );
 
                                         if (evse2 is not null)
                                         {
 
-                                            var result2 = await CommonAPI.UpdateEVSE(location, evse2);
+                                            var result2 = await CommonAPI.AddOrUpdateEVSE(
+                                                                    location,
+                                                                    evse2,
+                                                                    CancellationToken: CancellationToken
+                                                                );
 
                                             result = result2.IsSuccess
                                                          ? WWCP.PushEVSEStatusResult.Success(Id, this, null, warnings)
                                                          : WWCP.PushEVSEStatusResult.Failed (Id, this, EVSEStatusUpdates, result2.ErrorResponse, warnings);
+
+
+                                            #region Get all remote parties with online access
+
+                                            var remotes = new PriorityList<RemoteParty>();
+                                            foreach (var remoteParty in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB))
+                                            {
+
+                                                var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+
+                                                if (remoteAccessInfo is not null)
+                                                    remotes.Add(remoteParty);
+
+                                            }
+
+                                            #endregion
+
+
+                                            var x = await remotes.WhenAll(
+
+                                                             Work:                   async (remoteParty, cancellationToken) => {
+
+                                                                 remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus = RemoteParty.Fie.Yes;
+
+                                                                                          #region Check remote party configuration
+
+                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.No)
+                                                                                              return new AuthorizationInfo(
+                                                                                                         Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                         //Token:        null,
+                                                                                                         Info:         new DisplayText(Languages.en, $"Sending EVSE status updates to '{remoteParty.Id}' is disabled within its remote party configuration!"),
+                                                                                                         RemoteParty:  remoteParty
+                                                                                                     ) as Object;
+
+                                                                                          #endregion
+
+                                                                                          #region Setup HTTP client
+
+                                                                                          var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
+
+                                                                                                              CPO_HTTPAPI,
+                                                                                                              remoteParty,
+                                                                                                              null, // VirtualHostname
+                                                                                                              null, // Description
+                                                                                                              null, // HTTPLogger
+
+                                                                                                              DisableLogging,
+                                                                                                              ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                              ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                              ClientsLogfileCreator,
+                                                                                                              DNSClient
+
+                                                                                                          );
+
+                                                                                          if (cpoClient is null)
+                                                                                              return new AuthorizationInfo(
+                                                                                                         Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                         //Token:        null,
+                                                                                                         Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                                                         RemoteParty:  remoteParty
+                                                                                                     ) as Object;
+
+
+                                                                                          var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                                                                                    cpoClient,
+                                                                                                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                    ClientsLogfileCreator
+                                                                                                                );
+
+                                                                                          #endregion
+
+
+                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
+                                                                                          {
+
+                                                                                              var patchEVSEResponse = await cpoClient.PatchEVSE(
+
+                                                                                                                                LocationId:          locationId. Value,
+                                                                                                                                EVSEUId:             evse2.UId,
+                                                                                                                                EVSEPatch:           JSONObject.Create(
+                                                                                                                                                         new JProperty("status",  evse2.Status.ToString())
+                                                                                                                                                     ),
+
+                                                                                                                                RequestId:           null,
+                                                                                                                                CorrelationId:       null,
+                                                                                                                                VersionId:           null,
+
+                                                                                                                                RequestTimestamp:    RequestTimestamp,
+                                                                                                                                EventTrackingId:     EventTrackingId,
+                                                                                                                                RequestTimeout:      null,
+                                                                                                                                CancellationToken:   cancellationToken
+
+                                                                                                                            );
+
+                                                                                              return patchEVSEResponse as Object;
+
+                                                                                          }
+
+                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                          {
+
+                                                                                              var putEVSEResponse = await cpoClient.PutEVSE(
+
+                                                                                                                              LocationId:          locationId. Value,
+                                                                                                                              EVSE:                evse2,
+
+                                                                                                                              RequestId:           null,
+                                                                                                                              CorrelationId:       null,
+                                                                                                                              VersionId:           null,
+
+                                                                                                                              RequestTimestamp:    RequestTimestamp,
+                                                                                                                              EventTrackingId:     EventTrackingId,
+                                                                                                                              RequestTimeout:      null,
+                                                                                                                              CancellationToken:   cancellationToken
+
+                                                                                                                          );
+
+                                                                                              return putEVSEResponse as Object;
+
+                                                                                          }
+
+                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
+                                                                                          {
+
+                                                                                              var patchEVSEResponse = await cpoClient.PatchEVSE(
+
+                                                                                                                                LocationId:          locationId. Value,
+                                                                                                                                EVSEUId:             evse2.UId,
+                                                                                                                                EVSEPatch:           JSONObject.Create(
+                                                                                                                                                         new JProperty("status",  evse2.Status.ToString())
+                                                                                                                                                     ),
+
+                                                                                                                                RequestId:           null,
+                                                                                                                                CorrelationId:       null,
+                                                                                                                                VersionId:           null,
+
+                                                                                                                                RequestTimestamp:    RequestTimestamp,
+                                                                                                                                EventTrackingId:     EventTrackingId,
+                                                                                                                                RequestTimeout:      null,
+                                                                                                                                CancellationToken:   cancellationToken
+
+                                                                                                                            );
+
+                                                                                              return patchEVSEResponse as Object;
+
+                                                                                          }
+
+                                                                                          return new Object();
+
+                                                                                     },
+
+                                                             ExternalCancellation:   CancellationToken
+
+                                                         ).ConfigureAwait(false);
 
                                         }
                                         else
@@ -2036,7 +2194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Id,
                                this,
                                results,
-                               org.GraphDefined.Vanaheimr.Illias.Timestamp.Now - startTime
+                               Timestamp.Now - startTime
                            );
 
                 }

@@ -367,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (error.ParseOptional("authorization_reference",
                                         "authorization reference",
-                                        OCPIv3_0.AuthorizationReference.TryParse,
+                                        OCPI.AuthorizationReference.TryParse,
                                         out AuthorizationReference AuthorizationReference,
                                         out ErrorResponse))
                 {

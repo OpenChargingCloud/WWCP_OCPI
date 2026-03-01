@@ -17,15 +17,15 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
-using cloud.charging.open.protocols.OCPI;
-
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
@@ -64,7 +64,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         {
 
             this.LocationId  = LocationId;
-            this.EVSEUIds    = EVSEUIds?.Distinct() ?? Array.Empty<EVSE_UId>();
+            this.EVSEUIds    = EVSEUIds?.Distinct() ?? [];
+
+            unchecked
+            {
+
+                hashCode = this.LocationId.GetHashCode() * 3 ^
+                           this.EVSEUIds.  CalcHashCode();
+
+            }
 
         }
 
@@ -132,9 +140,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="LocationReference">The parsed location reference.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                JSON,
-                                       out LocationReference  LocationReference,
-                                       out String?            ErrorResponse)
+        public static Boolean TryParse(JObject                                     JSON,
+                                       [NotNullWhen(true)]  out LocationReference  LocationReference,
+                                       [NotNullWhen(false)] out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out LocationReference,
@@ -150,8 +158,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
         public static Boolean TryParse(JObject                                          JSON,
-                                       out LocationReference                            LocationReference,
-                                       out String?                                      ErrorResponse,
+                                       [NotNullWhen(true)]  out LocationReference       LocationReference,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse,
                                        CustomJObjectParserDelegate<LocationReference>?  CustomLocationReferenceParser   = null)
         {
 
@@ -171,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
                                          Location_Id.TryParse,
-                                         out Location_Id LocationId,
+                                         out Location_Id locationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -184,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (JSON.ParseOptionalJSON("evse_uids",
                                            "EVSE identifications",
                                            EVSE_UId.TryParse,
-                                           out IEnumerable<EVSE_UId> EVSEUIds,
+                                           out IEnumerable<EVSE_UId> evseUIds,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -194,8 +202,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 #endregion
 
 
-                LocationReference = new LocationReference(LocationId,
-                                                          EVSEUIds);
+                LocationReference = new LocationReference(
+                                        locationId,
+                                        evseUIds
+                                    );
 
 
                 if (CustomLocationReferenceParser is not null)
@@ -252,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => new (
                    LocationId.Clone(),
-                   EVSEUIds.Select(evseUId => evseUId.Clone())
+                   [.. EVSEUIds.Select(evseUId => evseUId.Clone())]
                );
 
         #endregion
@@ -429,20 +439,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return LocationId.GetHashCode() * 3 ^
-                       EVSEUIds.  GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

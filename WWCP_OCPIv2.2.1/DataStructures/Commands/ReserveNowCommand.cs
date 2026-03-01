@@ -283,7 +283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_2_1.AuthorizationReference.TryParse,
+                                       OCPI.AuthorizationReference.TryParse,
                                        out AuthorizationReference? authorizationReference,
                                        out ErrorResponse))
                 {

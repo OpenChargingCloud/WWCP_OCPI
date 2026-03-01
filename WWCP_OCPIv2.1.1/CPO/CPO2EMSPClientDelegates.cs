@@ -245,6 +245,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
     #endregion
 
 
+    #region OnPostEVSEStatusRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a post EVSE status request will be send.
+    /// </summary>
+    public delegate Task OnPostEVSEStatusRequestDelegate(DateTimeOffset            LogTimestamp,
+                                                         CPO2EMSP_HTTPClient       Sender,
+                                                         EventTracking_Id          EventTrackingId,
+                                                         Request_Id                RequestId,
+                                                         Correlation_Id            CorrelationId,
+                                                         TimeSpan                  RequestTimeout,
+
+                                                         Location_Id               LocationId,
+                                                         EVSE_UId                  EVSEUId,
+                                                         StatusType                EVSEStatus,
+
+                                                         CancellationToken         CancellationToken);
+
+    /// <summary>
+    /// A delegate called whenever a response to a post EVSE status request had been received.
+    /// </summary>
+    public delegate Task OnPostEVSEStatusResponseDelegate(DateTimeOffset            LogTimestamp,
+                                                          CPO2EMSP_HTTPClient       Sender,
+                                                          EventTracking_Id          EventTrackingId,
+                                                          Request_Id                RequestId,
+                                                          Correlation_Id            CorrelationId,
+                                                          TimeSpan                  RequestTimeout,
+
+                                                          Location_Id               LocationId,
+                                                          EVSE_UId                  EVSEUId,
+                                                          StatusType                EVSEStatus,
+
+                                                          OCPIResponse<EVSE>        Response,
+                                                          TimeSpan                  Runtime,
+                                                          CancellationToken         CancellationToken);
+
+    #endregion
+
+
     #region OnGetConnectorRequest/-Response
 
     /// <summary>

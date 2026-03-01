@@ -21,7 +21,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (static) NewRandom(Length = 30)
+        #region (static) NewRandom (Length = 30)
 
         /// <summary>
         /// Create a new random authorization reference.
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) Parse    (Text)
+        #region (static) Parse     (Text)
 
         /// <summary>
         /// Parse the given text as an authorization reference.
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse (Text)
+        #region (static) TryParse  (Text)
 
         /// <summary>
         /// Try to parse the given text as an authorization reference.
@@ -147,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse (Text, out AuthorizationReference)
+        #region (static) TryParse  (Text, out AuthorizationReference)
 
         /// <summary>
         /// Try to parse the given text as an authorization reference.

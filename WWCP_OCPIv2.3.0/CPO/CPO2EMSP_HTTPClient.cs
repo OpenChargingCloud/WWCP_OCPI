@@ -55,6 +55,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             public APICounterValues  PutEVSE               { get; }
             public APICounterValues  PatchEVSE             { get; }
 
+            public APICounterValues  PostEVSEStatus        { get; }
+
             public APICounterValues  GetConnector          { get; }
             public APICounterValues  PutConnector          { get; }
             public APICounterValues  PatchConnector        { get; }
@@ -94,6 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                APICounterValues?  PutEVSE              = null,
                                APICounterValues?  PatchEVSE            = null,
 
+                               APICounterValues?  PostEVSEStatus       = null,
+
                                APICounterValues?  GetConnector         = null,
                                APICounterValues?  PutConnector         = null,
                                APICounterValues?  PatchConnector       = null,
@@ -129,6 +133,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                 this.PutEVSE             = PutEVSE            ?? new APICounterValues();
                 this.PatchEVSE           = PatchEVSE          ?? new APICounterValues();
 
+                this.PostEVSEStatus      = PostEVSEStatus     ?? new APICounterValues();
+
                 this.GetConnector        = GetConnector       ?? new APICounterValues();
                 this.PutConnector        = PutConnector       ?? new APICounterValues();
                 this.PatchConnector      = PatchConnector     ?? new APICounterValues();
@@ -148,6 +154,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
                 this.GetTokens           = GetTokens          ?? new APICounterValues();
                 this.PostToken           = PostToken          ?? new APICounterValues();
+
+                this.PutBooking          = PutBooking         ?? new APICounterValues();
 
                 this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
 
@@ -171,6 +179,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                 json.Add(new JProperty("putEVSE",             PutEVSE.           ToJSON()));
                 json.Add(new JProperty("patchEVSE",           PatchEVSE.         ToJSON()));
 
+                json.Add(new JProperty("postEVSEStatus",      PostEVSEStatus.    ToJSON()));
+
                 json.Add(new JProperty("getConnector",        GetConnector.      ToJSON()));
                 json.Add(new JProperty("putConnector",        PutConnector.      ToJSON()));
                 json.Add(new JProperty("patchConnector",      PatchConnector.    ToJSON()));
@@ -190,6 +200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
                 json.Add(new JProperty("getTokens",           GetTokens.         ToJSON()));
                 json.Add(new JProperty("postToken",           PostToken.         ToJSON()));
+
+                json.Add(new JProperty("putBooking",          PutBooking.        ToJSON()));
 
                 json.Add(new JProperty("setChargingProfile",  SetChargingProfile.ToJSON()));
 
@@ -442,6 +454,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// An event fired whenever a response to a patching an EVSE request had been received.
         /// </summary>
         public event OnPatchEVSEResponseDelegate?  OnPatchEVSEResponse;
+
+        #endregion
+
+
+        #region OnPostEVSEStatusRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a request psoting an EVSE status will be send.
+        /// </summary>
+        public event OnPostEVSEStatusRequestDelegate?   OnPostEVSEStatusRequest;
+
+        /// <summary>
+        /// An event fired whenever a HTTP request psoting an EVSE status will be send.
+        /// </summary>
+        public event ClientRequestLogHandler?           OnPostEVSEStatusHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a psoting an EVSE status HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler?          OnPostEVSEStatusHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a psoting an EVSE status request had been received.
+        /// </summary>
+        public event OnPostEVSEStatusResponseDelegate?  OnPostEVSEStatusResponse;
 
         #endregion
 
@@ -2015,6 +2052,179 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                           LocationId,
                           EVSEUId,
                           EVSEPatch,
+
+                          response,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+
+        #region PostEVSEStatus     (CountryCode, PartyId, LocationId, EVSEUId, EVSEStatus, ...)
+
+        /// <summary>
+        /// Patch a location.
+        /// </summary>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
+        public async Task<OCPIResponse<EVSE>>
+
+            PostEVSEStatus(CountryCode        CountryCode,
+                           Party_Id           PartyId,
+                           Location_Id        LocationId,
+                           EVSE_UId           EVSEUId,
+                           StatusType         EVSEStatus,
+
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
+                           Version_Id?        VersionId           = null,
+
+                           DateTimeOffset?    RequestTimestamp    = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
+
+            Counters.PostEVSEStatus.IncRequests_OK();
+
+            OCPIResponse<EVSE> response;
+
+            #endregion
+
+            #region Send OnPostEVSEStatusRequest event
+
+            await LogEvent(
+                      OnPostEVSEStatusRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          eventTrackingId,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEStatus,
+
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Locations,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
+
+                if (httpClient is not null)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await httpClient.POST(
+                                                 Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                                                    PartyId.    ToString() +
+                                                                                                    LocationId. ToString() +
+                                                                                                    EVSEUId.    ToString() +
+                                                                                                    "status",
+                                                 Content:               JSONObject.Create(
+                                                                            new JProperty("status",  EVSEStatus.ToString())
+                                                                        ).ToUTF8Bytes(),
+                                                 Authentication:        TokenAuth,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPostEVSEStatusHTTPRequest,
+                                                 ResponseLogDelegate:   OnPostEVSEStatusHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<EVSE>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => EVSE.Parse(json)
+                               );
+
+                    Counters.PostEVSEStatus.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, EVSE>.Error("No remote URL available!");
+                    Counters.PostEVSEStatus.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, EVSE>.Exception(e);
+                Counters.PostEVSEStatus.IncResponses_Error();
+            }
+
+
+            #region Send OnPostEVSEStatusResponse event
+
+            stopwatch.Stop();
+            var endtime = Timestamp.Now;
+
+            await LogEvent(
+                      OnPostEVSEStatusResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endtime,
+                          this,
+                          eventTrackingId,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          CountryCode,
+                          PartyId,
+                          LocationId,
+                          EVSEUId,
+                          EVSEStatus,
 
                           response,
                           stopwatch.Elapsed,
@@ -4442,6 +4652,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                       TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
+                      Party_Idv3?         From                = null,
+                      Party_Idv3?         To                  = null,
+
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
                       Version_Id?         VersionId           = null,
@@ -4516,11 +4729,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set("X-Request-ID",         requestId);
+                                                                                requestBuilder.Set("X-Correlation-ID",     correlationId);
+
+                                                                            if (From.HasValue) {
+                                                                                requestBuilder.Set("X-From-Country-Code",  From.Value.CountryCode.ToString());
+                                                                                requestBuilder.Set("X-From-Party-Id",      From.Value.PartyId.    ToString());
+                                                                            }
+
+                                                                            if (To.  HasValue) {
+                                                                                requestBuilder.Set("X-To-Country-Code",    To.  Value.CountryCode.ToString());
+                                                                                requestBuilder.Set("X-To-Party-Id",        To.  Value.PartyId.    ToString());
+                                                                            }
 
                                                                             if (TokenType.HasValue)
-                                                                                requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
+                                                                                requestBuilder.QueryString.Add("type",     TokenType.       Value.ToString());
 
                                                                             if (LocationReference.HasValue)
                                                                             {

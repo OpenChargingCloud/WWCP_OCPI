@@ -378,7 +378,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              TimeSpan.              FromMinutes(30),
 
                                              Session_Id.            Parse("0815"),
-                                             OCPIv2_2_1.AuthorizationReference.Parse("Auth0815"),
+                                             OCPI.AuthorizationReference.Parse("Auth0815"),
                                              EnergyMeter_Id.              Parse("Meter0815"),
 
                                              // OCPI Computer Science Extensions
@@ -697,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              TimeSpan.              FromMinutes(30),
 
                                              Session_Id.            Parse("0815"),
-                                             OCPIv2_3_0.AuthorizationReference.Parse("Auth0815"),
+                                             OCPI.AuthorizationReference.Parse("Auth0815"),
                                              EnergyMeter_Id.              Parse("Meter0815"),
 
                                              // OCPI Computer Science Extensions

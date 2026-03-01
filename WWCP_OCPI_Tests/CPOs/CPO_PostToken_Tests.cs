@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                 var response  = await graphDefinedEMSP1.PostToken(
                                           rfidUID,
                                           TokenType.RFID,
-                                          new OCPIv2_1_1.LocationReference(
+                                          new LocationReference(
                                               Location_Id.Parse("DE*GDF*P*LOC0001"),
                                               [
                                                   EVSE_UId.Parse("DE*GDF*E*LOC0001*1"),
@@ -125,7 +125,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                 var response  = await graphDefinedEMSP1.PostToken(
                                           rfidUID,
                                           TokenType.RFID,
-                                          new OCPIv2_2_1.LocationReference(
+                                          new LocationReference(
                                               Location_Id.Parse("DE*GDF*P*LOC0001"),
                                               [
                                                   EVSE_UId.Parse("DE*GDF*E*LOC0001*1"),
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                 var response  = await graphDefinedEMSP1.PostToken(
                                           rfidUID,
                                           TokenType.RFID,
-                                          new OCPIv2_3_0.LocationReference(
+                                          new LocationReference(
                                               Location_Id.Parse("DE*GDF*P*LOC0001"),
                                               [
                                                   EVSE_UId.Parse("DE*GDF*E*LOC0001*1"),

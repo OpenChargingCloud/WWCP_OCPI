@@ -38,6 +38,67 @@ namespace cloud.charging.open.protocols.OCPI
     public class RemoteParty : IRemoteParty
     {
 
+        public enum Tri
+        {
+            Yes,
+            No,
+            Patch2Put
+        }
+
+        public enum Fie
+        {
+            Yes,
+            No,
+            Patch2Put,
+            StatusUpdate
+        }
+
+
+        public class CPO_2_EMSP_Role
+        {
+
+            public Boolean  Send_PUT_Location        { get; set; }
+            public Boolean  Send_PATCH_Location      { get; set; }
+
+            public Boolean  Send_PUT_EVSE            { get; set; }
+            public Tri      Send_PATCH_EVSE          { get; set; }
+            public Fie      Send_PATCH_EVSEStatus    { get; set; }
+
+            public Boolean  Send_PUT_Connector       { get; set; }
+            public Tri      Send_PATCH_Connector     { get; set; }
+
+            public Boolean  Send_PUT_Tariff          { get; set; }
+            public Tri      Send_PATCH_Tariff        { get; set; }
+
+            public Boolean  Send_PUT_Session         { get; set; }
+            public Tri      Send_PATCH_Session       { get; set; }
+
+            public Boolean  Send_POST_CDR            { get; set; }
+
+            public Boolean  Send_POST_Token          { get; set; }
+
+
+        }
+
+        public class EMSP_2_CPO_Role
+        {
+
+            public Boolean  Send_PUT_Token                   { get; set; }
+            public Boolean  Send_PATCH_Token                 { get; set; }
+
+            public Boolean  Send_ReserveNow                  { get; set; }
+            public Boolean  Send_CancelReservation           { get; set; }
+            public Boolean  Send_StartSession                { get; set; }
+            public Boolean  Send_StopSession                 { get; set; }
+            public Boolean  Send_UnlockConnector             { get; set; }
+
+            public Boolean  Send_NotifyWebPaymentsStarted    { get; set; }
+            public Boolean  Send_NotifyWebPaymentsFailed     { get; set; }
+
+
+        }
+
+
         #region (class) IOModifiers
 
         /// <summary>
@@ -128,6 +189,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// Optional outgoing request and response modifiers.
         /// </summary>
         public IOModifiers?     OUT                { get; set; }
+
+
+        public CPO_2_EMSP_Role               CPO2EMPRole     { get; } = new CPO_2_EMSP_Role();
+
+        public EMSP_2_CPO_Role               EMSP2CPORole    { get; } = new EMSP_2_CPO_Role();
 
         #endregion
 
