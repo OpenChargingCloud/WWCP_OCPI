@@ -1189,7 +1189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse TransparencySoftware       [optional]
+                #region Parse TransparencySoftware        [optional]
 
                 if (JSON.ParseOptionalJSON("transparency_software",
                                            "transparency software",
