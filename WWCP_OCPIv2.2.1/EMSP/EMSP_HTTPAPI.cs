@@ -14859,7 +14859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                         $"Could not call {nameof(EMSP_HTTPAPI)}.OnRFIDAuthToken(...): {e.Message}",
                                                         false,
-                                                        WhitelistTypes.NEVER
+                                                        WhitelistType.NEVER
                                                     )
                                                 );
 
@@ -15079,7 +15079,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                   "Internal Error!",
                                                   false,
-                                                  WhitelistTypes.NEVER
+                                                  WhitelistType.NEVER
                                               )
                                           );
 

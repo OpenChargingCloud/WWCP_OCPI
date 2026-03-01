@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual("DF000-2001-8999",                   parsedToken.VisualNumber);
                 ClassicAssert.AreEqual("TheNewMotion",                      parsedToken.Issuer);
                 ClassicAssert.AreEqual(true,                                parsedToken.IsValid);
-                ClassicAssert.AreEqual(WhitelistTypes.ALLOWED,              parsedToken.WhitelistType);
+                ClassicAssert.AreEqual(WhitelistType.ALLOWED,               parsedToken.WhitelistType);
                 ClassicAssert.AreEqual("2015-06-29T22:39:09.000Z",          parsedToken.LastUpdated.ToISO8601());
 
             }
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                              Auth_Id.    Parse("0815"),
                              "GraphDefined GmbH",
                              true,
-                             WhitelistTypes.NEVER,
+                             WhitelistType.NEVER,
                              "RFID:0815",
                              Languages.de,
                              DateTime.Parse("2020-09-21T00:00:00.000Z")

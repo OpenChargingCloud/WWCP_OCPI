@@ -1256,7 +1256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalJSON("signed_data",
                                            "signed data",
-                                           OCPIv2_3_0.SignedData.TryParse,
+                                           OCPI.SignedData.TryParse,
                                            out SignedData? SignedData,
                                            out ErrorResponse))
                 {

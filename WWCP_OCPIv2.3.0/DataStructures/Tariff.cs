@@ -504,7 +504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("type",
                                        "tariff type",
-                                       OCPIv2_3_0.TariffType.TryParse,
+                                       OCPI.TariffType.TryParse,
                                        out TariffType? TariffType,
                                        out ErrorResponse))
                 {
@@ -627,7 +627,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_3_0.EnergyMix.TryParse,
+                                           OCPI.EnergyMix.TryParse,
                                            out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {

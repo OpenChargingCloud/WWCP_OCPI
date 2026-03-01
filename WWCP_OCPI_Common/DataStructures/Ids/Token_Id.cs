@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public static Token_Id NewRandom
 
-            => Parse(Guid.NewGuid().ToString());
+            => Parse(UUIDv7.Generate().ToString());
 
         #endregion
 

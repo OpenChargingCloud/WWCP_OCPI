@@ -976,7 +976,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv3_0.Facility.TryParse,
+                                              Facility.TryParse,
                                               out HashSet<Facility> Facilities,
                                               out ErrorResponse))
                 {
@@ -1031,7 +1031,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv3_0.EnergyMix.TryParse,
+                                           OCPI.EnergyMix.TryParse,
                                            out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {

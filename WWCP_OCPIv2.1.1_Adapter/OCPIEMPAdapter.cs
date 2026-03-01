@@ -827,7 +827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                "Issuer",
                                                                                true,
 
-                                                                               WhitelistType:   WhitelistTypes.NEVER,
+                                                                               WhitelistType:   WhitelistType.NEVER,
                                                                                VisualNumber:    remoteAuthentication,
                                                                                UILanguage:      null,
 

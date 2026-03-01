@@ -644,7 +644,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
-                                           OCPIv3_0.EnergyContract.TryParse,
+                                           OCPI.EnergyContract.TryParse,
                                            out EnergyContract? EnergyContract,
                                            out ErrorResponse))
                 {

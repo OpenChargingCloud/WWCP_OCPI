@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Indicates what type of white-listing is allowed.
         /// </summary>
         [Mandatory]
-        public   WhitelistTypes   WhitelistType     { get; }
+        public   WhitelistType    WhitelistType     { get; }
 
         /// <summary>
         /// The optional visual readable number/identification as printed on the token/RFID card.
@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                      Contract_Id                                       ContractId,
                      String                                            Issuer,
                      Boolean                                           IsValid,
-                     WhitelistTypes                                    WhitelistType,
+                     WhitelistType                                     WhitelistType,
 
                      String?                                           VisualNumber                     = null,
                      Group_Id?                                         GroupId                          = null,
@@ -499,8 +499,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("whitelist",
                                          "whitelist type",
-                                         WhitelistTypesExtensions.TryParse,
-                                         out WhitelistTypes WhitelistType,
+                                         OCPI.WhitelistType.TryParse,
+                                         out WhitelistType WhitelistType,
                                          out ErrorResponse))
                 {
                     return false;
@@ -538,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
-                                           OCPIv2_2_1.EnergyContract.TryParse,
+                                           OCPI.EnergyContract.TryParse,
                                            out EnergyContract? EnergyContract,
                                            out ErrorResponse))
                 {
@@ -576,6 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                 Token = new Token(
+
                             CountryCodeBody ?? CountryCodeURL!.Value,
                             PartyIdBody     ?? PartyIdURL!.    Value,
                             TokenIdBody     ?? TokenIdURL!.    Value,
@@ -592,6 +593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                             Created,
                             LastUpdated
+
                         );
 
 
@@ -643,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                                  new JProperty("valid",                 IsValid),
-                                 new JProperty("whitelist",             WhitelistType.       AsText()),
+                                 new JProperty("whitelist",             WhitelistType.       ToString()),
 
                            UILanguage.HasValue
                                ? new JProperty("language",              UILanguage.    Value.ToString())

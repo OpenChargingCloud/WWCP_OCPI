@@ -99,18 +99,19 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) NewRandom
+        #region (static) NewRandom (Length = 30)
 
         /// <summary>
         /// Create a new random session identification.
         /// </summary>
-        public static Session_Id NewRandom
+        /// <param name="Length">The expected length of the session identification.</param>
+        public static Session_Id NewRandom(Byte Length = 30)
 
-            => Parse(Guid.NewGuid().ToString());
+            => new (RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse     (Text)
 
         /// <summary>
         /// Parse the given text as a session identification.
@@ -129,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse  (Text)
 
         /// <summary>
         /// Try to parse the given text as a session identification.
@@ -147,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out SessionId)
+        #region (static) TryParse  (Text, out SessionId)
 
         /// <summary>
         /// Try to parse the given text as a session identification.

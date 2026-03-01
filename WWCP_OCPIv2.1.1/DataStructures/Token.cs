@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Indicates what type of white-listing is allowed.
         /// </summary>
         [Mandatory]
-        public   WhitelistTypes  WhitelistType    { get; }
+        public   WhitelistType   WhitelistType    { get; }
 
         /// <summary>
         /// The optional visual readable number/identification as printed on the token/RFID card.
@@ -167,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                      String                                   Issuer,
                      Boolean                                  IsValid,
 
-                     WhitelistTypes                           WhitelistType,
+                     WhitelistType                            WhitelistType,
                      String?                                  VisualNumber            = null,
                      Languages?                               UILanguage              = null,
 
@@ -439,8 +439,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("whitelist",
                                          "whitelist type",
-                                         WhitelistTypesExtensions.TryParse,
-                                         out WhitelistTypes WhitelistType,
+                                         OCPI.WhitelistType.TryParse,
+                                         out WhitelistType WhitelistType,
                                          out ErrorResponse))
                 {
                     return false;
@@ -559,7 +559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("issuer",          Issuer),
 
                                  new JProperty("valid",           IsValid),
-                                 new JProperty("whitelist",       WhitelistType.   AsText()),
+                                 new JProperty("whitelist",       WhitelistType.   ToString()),
 
                            UILanguage.HasValue
                                ? new JProperty("language",        UILanguage.Value.ToString())

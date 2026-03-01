@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public static Parking_Id NewRandom
 
-            => Parse(Guid.NewGuid().ToString());
+            => Parse(UUIDv7.Generate().ToString());
 
         #endregion
 

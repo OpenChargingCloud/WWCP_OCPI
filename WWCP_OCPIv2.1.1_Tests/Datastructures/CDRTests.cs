@@ -28,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
-using System.Linq;
 
 #endregion
 
@@ -194,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                            new DisplayText(Languages.en, "Hello world!"),
                                        ],
                                        URL.Parse("https://open.charging.cloud"),
-                                       new EnergyMix(
+                                       new OCPI.EnergyMix(
                                            true,
                                            [
                                                new EnergySource(

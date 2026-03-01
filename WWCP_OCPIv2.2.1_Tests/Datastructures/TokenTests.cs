@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                              Contract_Id.Parse("0815"),
                              "GraphDefined GmbH",
                              true,
-                             WhitelistTypes.NEVER,
+                             WhitelistType.NEVER,
                              "RFID:0815",
                              Group_Id.Parse("G1234"),
                              Languages.de,
@@ -151,7 +151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
             ClassicAssert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
             ClassicAssert.AreEqual(true,                                                parsedToken.IsValid);
-            ClassicAssert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
+            ClassicAssert.AreEqual(WhitelistType.ALWAYS,                               parsedToken.WhitelistType);
             ClassicAssert.AreEqual(DateTime.Parse("2015-06-29T22:39:09Z").ToISO8601(),  parsedToken.LastUpdated.ToISO8601());
 
         }
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
             ClassicAssert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
             ClassicAssert.AreEqual(true,                                                parsedToken.IsValid);
-            ClassicAssert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
+            ClassicAssert.AreEqual(WhitelistType.ALWAYS,                               parsedToken.WhitelistType);
             //ClassicAssert.AreEqual(Languages.it,                                        parsedToken.UILanguage);
             //ClassicAssert.AreEqual(ProfileTypes.GREEN,                                  parsedToken.DefaultProfile);
             //ClassicAssert.AreEqual("Greenpeace Energy eG",                              parsedToken.EnergyContract.Value.SupplierName);
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                        parsedToken.ContractId);
             ClassicAssert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
             ClassicAssert.AreEqual(true,                                                       parsedToken.IsValid);
-            ClassicAssert.AreEqual(WhitelistTypes.ALLOWED,                                     parsedToken.WhitelistType);
+            ClassicAssert.AreEqual(WhitelistType.ALLOWED,                                     parsedToken.WhitelistType);
             ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:16:15Z").ToISO8601(),         parsedToken.LastUpdated.ToISO8601());
 
         }

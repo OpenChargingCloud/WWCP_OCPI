@@ -126,9 +126,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                  Is.Not.Null);
                     Assert.That(endpoints.Count,                                            Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Credentials].URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/credentials")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Locations].  URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_1_1.Module_Id.Tariffs].    URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/cpo/tariffs")));
+                    Assert.That(endpoints[Module_Id.Credentials].URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/credentials")));
+                    Assert.That(endpoints[Module_Id.Locations].  URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/cpo/locations")));
+                    Assert.That(endpoints[Module_Id.Tariffs].    URL,            Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.1.1/cpo/tariffs")));
 
                 }
 
@@ -241,13 +241,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                  Is.Not.Null);
                     Assert.That(endpoints.Count,                                            Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/credentials")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/tariffs")));
+                    Assert.That(endpoints[Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/credentials")));
+                    Assert.That(endpoints[Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/locations")));
+                    Assert.That(endpoints[Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.2.1/cpo/tariffs")));
 
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Credentials].First().Role,   Is.EqualTo(OCPIv2_2_1.InterfaceRoles.RECEIVER)); //ToDo: Does this make sense for OpenData access?
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Locations].  First().Role,   Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_2_1.Module_Id.Tariffs].    First().Role,   Is.EqualTo(OCPIv2_2_1.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[Module_Id.Credentials].First().Role,   Is.EqualTo(InterfaceRoles.RECEIVER)); //ToDo: Does this make sense for OpenData access?
+                    Assert.That(endpoints[Module_Id.Locations].  First().Role,   Is.EqualTo(InterfaceRoles.SENDER));
+                    Assert.That(endpoints[Module_Id.Tariffs].    First().Role,   Is.EqualTo(InterfaceRoles.SENDER));
 
                 }
 
@@ -360,13 +360,13 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints,                                                  Is.Not.Null);
                     Assert.That(endpoints.Count,                                            Is.EqualTo(3));
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/credentials")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/locations")));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
+                    Assert.That(endpoints[Module_Id.Credentials].First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/credentials")));
+                    Assert.That(endpoints[Module_Id.Locations].  First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/locations")));
+                    Assert.That(endpoints[Module_Id.Tariffs].    First().URL,    Is.EqualTo(URL.Parse("http://localhost:3301/ocpi/v2.3.0/cpo/tariffs"))); //ToDo: Should AdHoc tariffs be available on default?
 
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Credentials].First().Role,   Is.EqualTo(OCPIv2_3_0.InterfaceRoles.RECEIVER)); //ToDo: Does this make sense for OpenData access?
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Locations].  First().Role,   Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
-                    Assert.That(endpoints[OCPIv2_3_0.Module_Id.Tariffs].    First().Role,   Is.EqualTo(OCPIv2_3_0.InterfaceRoles.SENDER));
+                    Assert.That(endpoints[Module_Id.Credentials].First().Role,   Is.EqualTo(InterfaceRoles.RECEIVER)); //ToDo: Does this make sense for OpenData access?
+                    Assert.That(endpoints[Module_Id.Locations].  First().Role,   Is.EqualTo(InterfaceRoles.SENDER));
+                    Assert.That(endpoints[Module_Id.Tariffs].    First().Role,   Is.EqualTo(InterfaceRoles.SENDER));
 
                 }
 

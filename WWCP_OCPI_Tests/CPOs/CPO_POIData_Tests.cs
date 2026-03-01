@@ -62,13 +62,13 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    [
                        new OCPIv2_1_1.EVSE(
                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                           OCPIv2_1_1.StatusType.AVAILABLE,
+                           StatusType.AVAILABLE,
                            [
                                new OCPIv2_1_1.Connector(
                                    Connector_Id.Parse("1"),
-                                   OCPIv2_1_1.ConnectorType.IEC_62196_T2,
-                                   OCPIv2_1_1.ConnectorFormats.SOCKET,
-                                   OCPIv2_1_1.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2,
+                                   ConnectorFormats.SOCKET,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(30),
                                    Tariff_Id.Parse("DE*GEF*T0001"),
@@ -77,9 +77,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                ),
                                new OCPIv2_1_1.Connector(
                                    Connector_Id.Parse("2"),
-                                   OCPIv2_1_1.ConnectorType.IEC_62196_T2_COMBO,
-                                   OCPIv2_1_1.ConnectorFormats.CABLE,
-                                   OCPIv2_1_1.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2_COMBO,
+                                   ConnectorFormats.CABLE,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(20),
                                    Tariff_Id.Parse("DE*GEF*T0003"),
@@ -89,20 +89,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ],
                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                            [
-                               new OCPIv2_1_1.StatusSchedule(
-                                   OCPIv2_1_1.StatusType.INOPERATIVE,
+                               new StatusSchedule(
+                                   StatusType.INOPERATIVE,
                                    DateTime.Parse("2020-09-23"),
                                    DateTime.Parse("2020-09-24")
                                ),
-                               new OCPIv2_1_1.StatusSchedule(
-                                   OCPIv2_1_1.StatusType.OUTOFORDER,
+                               new StatusSchedule(
+                                   StatusType.OUTOFORDER,
                                    DateTime.Parse("2020-12-30"),
                                    DateTime.Parse("2020-12-31")
                                )
                            ],
                            [
-                               OCPIv2_1_1.Capability.RFID_READER,
-                               OCPIv2_1_1.Capability.RESERVABLE
+                               Capability.RFID_READER,
+                               Capability.RESERVABLE
                            ],
 
                            // OCPI Computer Science Extensions
@@ -162,8 +162,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                DisplayText.Create(Languages.en, "Ken sent me!")
                            ],
                            [
-                               OCPIv2_1_1.ParkingRestriction.EV_ONLY,
-                               OCPIv2_1_1.ParkingRestriction.PLUGGED
+                               ParkingRestriction.EV_ONLY,
+                               ParkingRestriction.PLUGGED
                            ],
                            [
                                new Image(
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
                    [
-                       OCPIv2_1_1.Facility.CAFE
+                       Facility.CAFE
                    ],
                    "Europe/Berlin",
                    new Hours(
@@ -256,21 +256,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                        )
                    ],
-                   new OCPIv2_1_1.EnergyMix(
+                   new OCPI.EnergyMix(
                        true,
                        [
-                           new OCPIv2_1_1.EnergySource(
-                               OCPIv2_1_1.EnergySourceCategory.SOLAR,
+                           new EnergySource(
+                               EnergySourceCategory.SOLAR,
                                80
                            ),
-                           new OCPIv2_1_1.EnergySource(
-                               OCPIv2_1_1.EnergySourceCategory.WIND,
+                           new EnergySource(
+                               EnergySourceCategory.WIND,
                                20
                            )
                        ],
                        [
-                           new OCPIv2_1_1.EnvironmentalImpact(
-                               OCPIv2_1_1.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                           new EnvironmentalImpact(
+                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                0.1
                            )
                        ],
@@ -310,18 +310,18 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            Name: DisplayText.Create(Languages.de, "Postkasten")
                        )
                    ],
-                   OCPIv2_2_1.ParkingType.PARKING_LOT,
+                   ParkingType.PARKING_LOT,
 
                    [
                        new OCPIv2_2_1.EVSE(
                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                           OCPIv2_2_1.StatusType.AVAILABLE,
+                           StatusType.AVAILABLE,
                            [
                                new OCPIv2_2_1.Connector(
                                    Connector_Id.Parse("1"),
-                                   OCPIv2_2_1.ConnectorType.IEC_62196_T2,
-                                   OCPIv2_2_1.ConnectorFormats.SOCKET,
-                                   OCPIv2_2_1.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2,
+                                   ConnectorFormats.SOCKET,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(30),
                                    Watt.  ParseW(12),
@@ -334,9 +334,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                ),
                                new OCPIv2_2_1.Connector(
                                    Connector_Id.Parse("2"),
-                                   OCPIv2_2_1.ConnectorType.IEC_62196_T2_COMBO,
-                                   OCPIv2_2_1.ConnectorFormats.CABLE,
-                                   OCPIv2_2_1.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2_COMBO,
+                                   ConnectorFormats.CABLE,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(20),
                                    Watt.  ParseW(8),
@@ -350,20 +350,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ],
                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                            [
-                               new OCPIv2_2_1.StatusSchedule(
-                                   OCPIv2_2_1.StatusType.INOPERATIVE,
+                               new StatusSchedule(
+                                   StatusType.INOPERATIVE,
                                    DateTime.Parse("2020-09-23"),
                                    DateTime.Parse("2020-09-24")
                                ),
-                               new OCPIv2_2_1.StatusSchedule(
-                                   OCPIv2_2_1.StatusType.OUTOFORDER,
+                               new StatusSchedule(
+                                   StatusType.OUTOFORDER,
                                    DateTime.Parse("2020-12-30"),
                                    DateTime.Parse("2020-12-31")
                                )
                            ],
                            [
-                               OCPIv2_2_1.Capability.RFID_READER,
-                               OCPIv2_2_1.Capability.RESERVABLE
+                               Capability.RFID_READER,
+                               Capability.RESERVABLE
                            ],
 
                            // OCPI Computer Science Extensions
@@ -387,8 +387,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                DisplayText.Create(Languages.en, "Ken sent me!")
                            ],
                            [
-                               OCPIv2_2_1.ParkingRestriction.EV_ONLY,
-                               OCPIv2_2_1.ParkingRestriction.PLUGGED
+                               ParkingRestriction.EV_ONLY,
+                               ParkingRestriction.PLUGGED
                            ],
                            [
                                new Image(
@@ -445,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
                    [
-                       OCPIv2_2_1.Facility.CAFE
+                       Facility.CAFE
                    ],
                    new Hours(
                        [
@@ -482,18 +482,18 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    new(
                        true,
                        [
-                           new OCPIv2_2_1.EnergySource(
-                               OCPIv2_2_1.EnergySourceCategory.SOLAR,
+                           new EnergySource(
+                               EnergySourceCategory.SOLAR,
                                80
                            ),
-                           new OCPIv2_2_1.EnergySource(
-                               OCPIv2_2_1.EnergySourceCategory.WIND,
+                           new EnergySource(
+                               EnergySourceCategory.WIND,
                                20
                            )
                        ],
                        [
-                           new OCPIv2_2_1.EnvironmentalImpact(
-                               OCPIv2_2_1.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                           new EnvironmentalImpact(
+                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                0.1
                            )
                        ],
@@ -533,17 +533,17 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            Name: DisplayText.Create(Languages.de, "Postkasten")
                        )
                    ],
-                   OCPIv2_3_0.ParkingType.PARKING_LOT,
+                   ParkingType.PARKING_LOT,
                    [
                        new OCPIv2_3_0.EVSE(
                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                           OCPIv2_3_0.StatusType.AVAILABLE,
+                           StatusType.AVAILABLE,
                            [
                                new OCPIv2_3_0.Connector(
                                    Connector_Id.Parse("1"),
-                                   OCPIv2_3_0.ConnectorType.IEC_62196_T2,
-                                   OCPIv2_3_0.ConnectorFormats.SOCKET,
-                                   OCPIv2_3_0.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2,
+                                   ConnectorFormats.SOCKET,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(30),
                                    Watt.  ParseW(12),
@@ -558,9 +558,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                ),
                                new OCPIv2_3_0.Connector(
                                    Connector_Id.Parse("2"),
-                                   OCPIv2_3_0.ConnectorType.IEC_62196_T2_COMBO,
-                                   OCPIv2_3_0.ConnectorFormats.CABLE,
-                                   OCPIv2_3_0.PowerTypes.AC_3_PHASE,
+                                   ConnectorType.IEC_62196_T2_COMBO,
+                                   ConnectorFormats.CABLE,
+                                   PowerTypes.AC_3_PHASE,
                                    Volt.  ParseV(400),
                                    Ampere.ParseA(20),
                                    Watt.  ParseW(8),
@@ -578,20 +578,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                            [
-                               new OCPIv2_3_0.StatusSchedule(
-                                   OCPIv2_3_0.StatusType.INOPERATIVE,
+                               new StatusSchedule(
+                                   StatusType.INOPERATIVE,
                                    DateTime.Parse("2020-09-23"),
                                    DateTime.Parse("2020-09-24")
                                ),
-                               new OCPIv2_3_0.StatusSchedule(
-                                   OCPIv2_3_0.StatusType.OUTOFORDER,
+                               new StatusSchedule(
+                                   StatusType.OUTOFORDER,
                                    DateTime.Parse("2020-12-30"),
                                    DateTime.Parse("2020-12-31")
                                )
                            ],
                            [
-                               OCPIv2_3_0.Capability.RFID_READER,
-                               OCPIv2_3_0.Capability.RESERVABLE
+                               Capability.RFID_READER,
+                               Capability.RESERVABLE
                            ],
 
                            // OCPI Computer Science Extensions
@@ -614,7 +614,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                DisplayText.Create(Languages.en, "Ken sent me!")
                            ],
-                           [ OCPIv2_3_0.ParkingRestriction.CUSTOMERS ],
+                           [
+                               ParkingRestriction.CUSTOMERS
+                           ],
                            [
                                new OCPIv2_3_0.EVSEParking(
                                    Parking_Id.Parse("1"),
@@ -701,7 +703,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ),
 
-                   [ OCPIv2_3_0.Facility.CAFE ],
+                   [
+                       Facility.CAFE
+                   ],
                    new Hours(
                        [
                            new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -737,18 +741,18 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    new(
                        true,
                        [
-                           new OCPIv2_3_0.EnergySource(
-                               OCPIv2_3_0.EnergySourceCategory.SOLAR,
+                           new EnergySource(
+                               EnergySourceCategory.SOLAR,
                                80
                            ),
-                           new OCPIv2_3_0.EnergySource(
-                               OCPIv2_3_0.EnergySourceCategory.WIND,
+                           new EnergySource(
+                               EnergySourceCategory.WIND,
                                20
                            )
                        ],
                        [
-                           new OCPIv2_3_0.EnvironmentalImpact(
-                               OCPIv2_3_0.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                           new EnvironmentalImpact(
+                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                0.1
                            )
                        ],
@@ -770,13 +774,13 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
             => new (
 
                    EVSE_UId.Parse("DE*GEF*E*LOC0001*2"),
-                   OCPIv2_1_1.StatusType.AVAILABLE,
+                   StatusType.AVAILABLE,
                    [
                        new OCPIv2_1_1.Connector(
                            Connector_Id.Parse("1"),
-                           OCPIv2_1_1.ConnectorType.CHADEMO,
-                           OCPIv2_1_1.ConnectorFormats.SOCKET,
-                           OCPIv2_1_1.PowerTypes.DC,
+                           ConnectorType.CHADEMO,
+                           ConnectorFormats.SOCKET,
+                           PowerTypes.DC,
                            Volt.  ParseV(400),
                            Ampere.ParseA(30),
                            Tariff_Id.Parse("DE*GEF*T0003"),
@@ -785,9 +789,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        ),
                        new OCPIv2_1_1.Connector(
                            Connector_Id.Parse("2"),
-                           OCPIv2_1_1.ConnectorType.CHADEMO,
-                           OCPIv2_1_1.ConnectorFormats.CABLE,
-                           OCPIv2_1_1.PowerTypes.DC,
+                           ConnectorType.CHADEMO,
+                           ConnectorFormats.CABLE,
+                           PowerTypes.DC,
                            Volt.  ParseV(400),
                            Ampere.ParseA(20),
                            Tariff_Id.Parse("DE*GEF*T0004"),
@@ -797,20 +801,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    ],
                    EVSE_Id.Parse("DE*GEF*E*LOC0001*2"),
                    [
-                       new OCPIv2_1_1.StatusSchedule(
-                           OCPIv2_1_1.StatusType.INOPERATIVE,
+                       new StatusSchedule(
+                           StatusType.INOPERATIVE,
                            DateTime.Parse("2021-11-23"),
                            DateTime.Parse("2021-11-24")
                        ),
-                       new OCPIv2_1_1.StatusSchedule(
-                           OCPIv2_1_1.StatusType.OUTOFORDER,
+                       new StatusSchedule(
+                           StatusType.OUTOFORDER,
                            DateTime.Parse("2021-10-30"),
                            DateTime.Parse("2021-10-31")
                        )
                    ],
                    [
-                       OCPIv2_1_1.Capability.RFID_READER,
-                       OCPIv2_1_1.Capability.RESERVABLE
+                       Capability.RFID_READER,
+                       Capability.RESERVABLE
                    ],
 
                    // OCPI Computer Science Extensions
@@ -870,8 +874,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        DisplayText.Create(Languages.en, "Dave sent me!")
                    ],
                    [
-                       OCPIv2_1_1.ParkingRestriction.EV_ONLY,
-                       OCPIv2_1_1.ParkingRestriction.PLUGGED
+                       ParkingRestriction.EV_ONLY,
+                       ParkingRestriction.PLUGGED
                    ],
                    [
                        new Image(
@@ -897,13 +901,13 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
             => new (
 
                    EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                   OCPIv2_2_1.StatusType.AVAILABLE,
+                   StatusType.AVAILABLE,
                    [
                        new OCPIv2_2_1.Connector(
                            Connector_Id.Parse("1"),
-                           OCPIv2_2_1.ConnectorType.IEC_62196_T2,
-                           OCPIv2_2_1.ConnectorFormats.SOCKET,
-                           OCPIv2_2_1.PowerTypes.AC_3_PHASE,
+                           ConnectorType.IEC_62196_T2,
+                           ConnectorFormats.SOCKET,
+                           PowerTypes.AC_3_PHASE,
                            Volt.  ParseV(400),
                            Ampere.ParseA(30),
                            Watt.  ParseW(12),
@@ -916,9 +920,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        ),
                        new OCPIv2_2_1.Connector(
                            Connector_Id.Parse("2"),
-                           OCPIv2_2_1.ConnectorType.IEC_62196_T2_COMBO,
-                           OCPIv2_2_1.ConnectorFormats.CABLE,
-                           OCPIv2_2_1.PowerTypes.AC_3_PHASE,
+                           ConnectorType.IEC_62196_T2_COMBO,
+                           ConnectorFormats.CABLE,
+                           PowerTypes.AC_3_PHASE,
                            Volt.  ParseV(400),
                            Ampere.ParseA(20),
                            Watt.  ParseW(8),
@@ -932,20 +936,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    ],
                    EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                    [
-                       new OCPIv2_2_1.StatusSchedule(
-                           OCPIv2_2_1.StatusType.INOPERATIVE,
+                       new StatusSchedule(
+                           StatusType.INOPERATIVE,
                            DateTime.Parse("2020-09-23"),
                            DateTime.Parse("2020-09-24")
                        ),
-                       new OCPIv2_2_1.StatusSchedule(
-                           OCPIv2_2_1.StatusType.OUTOFORDER,
+                       new StatusSchedule(
+                           StatusType.OUTOFORDER,
                            DateTime.Parse("2020-12-30"),
                            DateTime.Parse("2020-12-31")
                        )
                    ],
                    [
-                       OCPIv2_2_1.Capability.RFID_READER,
-                       OCPIv2_2_1.Capability.RESERVABLE
+                       Capability.RFID_READER,
+                       Capability.RESERVABLE
                    ],
 
                    // OCPI Computer Science Extensions
@@ -969,8 +973,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        DisplayText.Create(Languages.en, "Ken sent me!")
                    ],
                    [
-                       OCPIv2_2_1.ParkingRestriction.EV_ONLY,
-                       OCPIv2_2_1.ParkingRestriction.PLUGGED
+                       ParkingRestriction.EV_ONLY,
+                       ParkingRestriction.PLUGGED
                    ],
                    [
                        new Image(
@@ -996,13 +1000,13 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
             => new (
 
                    EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                   OCPIv2_3_0.StatusType.AVAILABLE,
+                   StatusType.AVAILABLE,
                    [
                        new OCPIv2_3_0.Connector(
                            Connector_Id.Parse("1"),
-                           OCPIv2_3_0.ConnectorType.IEC_62196_T2,
-                           OCPIv2_3_0.ConnectorFormats.SOCKET,
-                           OCPIv2_3_0.PowerTypes.AC_3_PHASE,
+                           ConnectorType.IEC_62196_T2,
+                           ConnectorFormats.SOCKET,
+                           PowerTypes.AC_3_PHASE,
                            Volt.  ParseV(400),
                            Ampere.ParseA(30),
                            Watt.  ParseW(12),
@@ -1017,9 +1021,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        ),
                        new OCPIv2_3_0.Connector(
                            Connector_Id.Parse("2"),
-                           OCPIv2_3_0.ConnectorType.IEC_62196_T2_COMBO,
-                           OCPIv2_3_0.ConnectorFormats.CABLE,
-                           OCPIv2_3_0.PowerTypes.AC_3_PHASE,
+                           ConnectorType.IEC_62196_T2_COMBO,
+                           ConnectorFormats.CABLE,
+                           PowerTypes.AC_3_PHASE,
                            Volt.  ParseV(400),
                            Ampere.ParseA(20),
                            Watt.  ParseW(8),
@@ -1036,20 +1040,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
                    EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                    [
-                       new OCPIv2_3_0.StatusSchedule(
-                           OCPIv2_3_0.StatusType.INOPERATIVE,
+                       new StatusSchedule(
+                           StatusType.INOPERATIVE,
                            DateTime.Parse("2020-09-23"),
                            DateTime.Parse("2020-09-24")
                        ),
-                       new OCPIv2_3_0.StatusSchedule(
-                           OCPIv2_3_0.StatusType.OUTOFORDER,
+                       new StatusSchedule(
+                           StatusType.OUTOFORDER,
                            DateTime.Parse("2020-12-30"),
                            DateTime.Parse("2020-12-31")
                        )
                    ],
                    [
-                       OCPIv2_3_0.Capability.RFID_READER,
-                       OCPIv2_3_0.Capability.RESERVABLE
+                       Capability.RFID_READER,
+                       Capability.RESERVABLE
                    ],
 
                    // OCPI Computer Science Extensions
@@ -1072,7 +1076,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        DisplayText.Create(Languages.de, "Bitte klingeln!"),
                        DisplayText.Create(Languages.en, "Ken sent me!")
                    ],
-                   [ OCPIv2_3_0.ParkingRestriction.CUSTOMERS ],
+                   [ ParkingRestriction.CUSTOMERS ],
                    [
                        new OCPIv2_3_0.EVSEParking(
                            Parking_Id.Parse("1"),

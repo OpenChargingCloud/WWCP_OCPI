@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public static Calendar_Id NewRandom
 
-            => Parse(Guid.NewGuid().ToString());
+            => Parse(UUIDv7.Generate().ToString());
 
         #endregion
 

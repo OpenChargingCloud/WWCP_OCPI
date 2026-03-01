@@ -531,7 +531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalJSON("status_schedule",
                                            "status schedule",
-                                           OCPIv2_1_1.StatusSchedule.TryParse,
+                                           OCPI.StatusSchedule.TryParse,
                                            out IEnumerable<StatusSchedule> StatusSchedule,
                                            out ErrorResponse))
                 {

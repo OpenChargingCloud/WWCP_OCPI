@@ -833,7 +833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("parking_type",
                                        "parking type",
-                                       OCPIv2_3_0.ParkingType.TryParse,
+                                       OCPI.ParkingType.TryParse,
                                        out ParkingType? ParkingType,
                                        out ErrorResponse))
                 {
@@ -931,7 +931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv2_3_0.Facility.TryParse,
+                                              Facility.TryParse,
                                               out HashSet<Facility> Facilities,
                                               out ErrorResponse))
                 {
@@ -986,7 +986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_3_0.EnergyMix.TryParse,
+                                           OCPI.EnergyMix.TryParse,
                                            out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {

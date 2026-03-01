@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_3_0
@@ -74,12 +76,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Role        = Role;
             this.URL         = URL;
 
+            unchecked
+            {
+
+                hashCode = this.Identifier.GetHashCode() * 5 ^
+                           this.Role.      GetHashCode() * 3 ^
+                           this.URL.       GetHashCode();
+
+            }
+
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomVersionEndpointParser = null)
+        #region (static) Parse    (JSON, CustomVersionEndpointParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a version endpoint.
@@ -105,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out VersionEndpoint, out ErrorResponse, CustomVersionEndpointParser = null)
+        #region (static) TryParse (JSON, out VersionEndpoint, out ErrorResponse, CustomVersionEndpointParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -420,21 +431,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Identifier.GetHashCode() * 5 ^
-                       Role.      GetHashCode() * 3 ^
-                       URL.       GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

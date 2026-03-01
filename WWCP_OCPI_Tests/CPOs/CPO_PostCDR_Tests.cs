@@ -82,8 +82,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_1_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:49Z"),
                                                      [
-                                                         OCPIv2_1_1.CDRDimension.Create(
-                                                             OCPIv2_1_1.CDRDimensionType.ENERGY,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.ENERGY,
                                                              1.33M
                                                          )
                                                      ]
@@ -91,8 +91,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_1_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:50Z"),
                                                      [
-                                                         OCPIv2_1_1.CDRDimension.Create(
-                                                             OCPIv2_1_1.CDRDimensionType.TIME,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.TIME,
                                                              5.12M
                                                          )
                                                      ]
@@ -198,21 +198,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                          new DisplayText(Languages.en, "Hello world!")
                                                      ],
                                                      URL.Parse("https://open.charging.cloud"),
-                                                     new OCPIv2_1_1.EnergyMix(
+                                                     new OCPI.EnergyMix(
                                                          true,
                                                          [
-                                                             new OCPIv2_1_1.EnergySource(
-                                                                 OCPIv2_1_1.EnergySourceCategory.SOLAR,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.SOLAR,
                                                                  80
                                                              ),
-                                                             new OCPIv2_1_1.EnergySource(
-                                                                 OCPIv2_1_1.EnergySourceCategory.WIND,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.WIND,
                                                                  20
                                                              )
                                                          ],
                                                          [
-                                                             new OCPIv2_1_1.EnvironmentalImpact(
-                                                                 OCPIv2_1_1.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             new EnvironmentalImpact(
+                                                                 EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                  0.1
                                                              )
                                                          ],
@@ -223,21 +223,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  )
                                              ],
 
-                                             new OCPIv2_1_1.SignedData(
-                                                 OCPIv2_1_1.EncodingMethod.GraphDefined,
+                                             new SignedData(
+                                                 EncodingMethod.GraphDefined,
                                                  [
-                                                     new OCPIv2_1_1.SignedValue(
-                                                         OCPIv2_1_1.SignedValueNature.START,
+                                                     new SignedValue(
+                                                         SignedValueNature.START,
                                                          "PlainStartValue",
                                                          "SignedStartValue"
                                                      ),
-                                                     new OCPIv2_1_1.SignedValue(
-                                                         OCPIv2_1_1.SignedValueNature.INTERMEDIATE,
+                                                     new SignedValue(
+                                                         SignedValueNature.INTERMEDIATE,
                                                          "PlainIntermediateValue",
                                                          "SignedIntermediateValue"
                                                      ),
-                                                     new OCPIv2_1_1.SignedValue(
-                                                         OCPIv2_1_1.SignedValueNature.END,
+                                                     new SignedValue(
+                                                         SignedValueNature.END,
                                                          "PlainEndValue",
                                                          "SignedEndValue"
                                                      )
@@ -334,9 +334,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
                                                  EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),
                                                  Connector_Id.    Parse("1"),
-                                                 OCPIv2_2_1.ConnectorType.   IEC_62196_T2,
-                                                 OCPIv2_2_1.ConnectorFormats.SOCKET,
-                                                 OCPIv2_2_1.PowerTypes.      AC_3_PHASE,
+                                                 ConnectorType.   IEC_62196_T2,
+                                                 ConnectorFormats.SOCKET,
+                                                 PowerTypes.      AC_3_PHASE,
                                                  "Name?",
                                                  "07749"
                                              ),
@@ -346,8 +346,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_2_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                                      [
-                                                         OCPIv2_2_1.CDRDimension.Create(
-                                                             OCPIv2_2_1.CDRDimensionType.ENERGY,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.ENERGY,
                                                              1.33M
                                                          )
                                                      ],
@@ -356,8 +356,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_2_1.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                                      [
-                                                         OCPIv2_2_1.CDRDimension.Create(
-                                                             OCPIv2_2_1.CDRDimensionType.TIME,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.TIME,
                                                              5.12M
                                                          )
                                                      ],
@@ -467,7 +467,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                              )
                                                          )
                                                      ],
-                                                     OCPIv2_2_1.TariffType.PROFILE_GREEN,
+                                                     TariffType.PROFILE_GREEN,
                                                      [
                                                          new DisplayText(Languages.de, "Hallo Welt!"),
                                                          new DisplayText(Languages.en, "Hello world!"),
@@ -483,21 +483,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                      ),
                                                      DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
                                                      DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
-                                                     new OCPIv2_2_1.EnergyMix(
+                                                     new OCPI.EnergyMix(
                                                          true,
                                                          [
-                                                             new OCPIv2_2_1.EnergySource(
-                                                                 OCPIv2_2_1.EnergySourceCategory.SOLAR,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.SOLAR,
                                                                  80
                                                              ),
-                                                             new OCPIv2_2_1.EnergySource(
-                                                                 OCPIv2_2_1.EnergySourceCategory.WIND,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.WIND,
                                                                  20
                                                              )
                                                          ],
                                                          [
-                                                             new OCPIv2_2_1.EnvironmentalImpact(
-                                                                 OCPIv2_2_1.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             new EnvironmentalImpact(
+                                                                 EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                  0.1
                                                              )
                                                          ],
@@ -508,21 +508,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  )
                                              ],
 
-                                             new OCPIv2_2_1.SignedData(
-                                                 OCPIv2_2_1.EncodingMethod.GraphDefined,
+                                             new SignedData(
+                                                 EncodingMethod.GraphDefined,
                                                  [
-                                                     new OCPIv2_2_1.SignedValue(
-                                                         OCPIv2_2_1.SignedValueNature.START,
+                                                     new SignedValue(
+                                                         SignedValueNature.START,
                                                          "PlainStartValue",
                                                          "SignedStartValue"
                                                      ),
-                                                     new OCPIv2_2_1.SignedValue(
-                                                         OCPIv2_2_1.SignedValueNature.INTERMEDIATE,
+                                                     new SignedValue(
+                                                         SignedValueNature.INTERMEDIATE,
                                                          "PlainIntermediateValue",
                                                          "SignedIntermediateValue"
                                                      ),
-                                                     new OCPIv2_2_1.SignedValue(
-                                                         OCPIv2_2_1.SignedValueNature.END,
+                                                     new SignedValue(
+                                                         SignedValueNature.END,
                                                          "PlainEndValue",
                                                          "SignedEndValue"
                                                      )
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              ),
 
                                              "Remark!",
-                                             OCPIv2_2_1.InvoiceReference_Id.Parse("Invoice:0815"),
+                                             InvoiceReference_Id.Parse("Invoice:0815"),
                                              true, // IsCredit
                                              OCPIv2_2_1.CreditReference_Id. Parse("Credit:0815"),
                                              false,
@@ -653,9 +653,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
                                                  EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),
                                                  Connector_Id.    Parse("1"),
-                                                 OCPIv2_3_0.ConnectorType.   IEC_62196_T2,
-                                                 OCPIv2_3_0.ConnectorFormats.SOCKET,
-                                                 OCPIv2_3_0.PowerTypes.      AC_3_PHASE,
+                                                 ConnectorType.   IEC_62196_T2,
+                                                 ConnectorFormats.SOCKET,
+                                                 PowerTypes.      AC_3_PHASE,
                                                  "Name?",
                                                  "07749"
                                              ),
@@ -665,8 +665,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_3_0.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                                      [
-                                                         OCPIv2_3_0.CDRDimension.Create(
-                                                             OCPIv2_3_0.CDRDimensionType.ENERGY,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.ENERGY,
                                                              1.33M
                                                          )
                                                      ],
@@ -675,8 +675,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  OCPIv2_3_0.ChargingPeriod.Create(
                                                      DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                                      [
-                                                         OCPIv2_3_0.CDRDimension.Create(
-                                                             OCPIv2_3_0.CDRDimensionType.TIME,
+                                                         CDRDimension.Create(
+                                                             CDRDimensionType.TIME,
                                                              5.12M
                                                          )
                                                      ],
@@ -787,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                          )
                                                      ],
                                                      OCPIv2_3_0.TaxIncluded.Yes,
-                                                     OCPIv2_3_0.TariffType.PROFILE_GREEN,
+                                                     TariffType.PROFILE_GREEN,
                                                      [
                                                          new DisplayText(Languages.de, "Hallo Welt!"),
                                                          new DisplayText(Languages.en, "Hello world!"),
@@ -803,21 +803,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                      ),
                                                      DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
                                                      DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
-                                                     new OCPIv2_3_0.EnergyMix(
+                                                     new OCPI.EnergyMix(
                                                          true,
                                                          [
-                                                             new OCPIv2_3_0.EnergySource(
-                                                                 OCPIv2_3_0.EnergySourceCategory.SOLAR,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.SOLAR,
                                                                  80
                                                              ),
-                                                             new OCPIv2_3_0.EnergySource(
-                                                                 OCPIv2_3_0.EnergySourceCategory.WIND,
+                                                             new EnergySource(
+                                                                 EnergySourceCategory.WIND,
                                                                  20
                                                              )
                                                          ],
                                                          [
-                                                             new OCPIv2_3_0.EnvironmentalImpact(
-                                                                 OCPIv2_3_0.EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             new EnvironmentalImpact(
+                                                                 EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                  0.1
                                                              )
                                                          ],
@@ -828,21 +828,21 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                  )
                                              ],
 
-                                             new OCPIv2_3_0.SignedData(
-                                                 OCPIv2_3_0.EncodingMethod.GraphDefined,
+                                             new SignedData(
+                                                 EncodingMethod.GraphDefined,
                                                  [
-                                                     new OCPIv2_3_0.SignedValue(
-                                                         OCPIv2_3_0.SignedValueNature.START,
+                                                     new SignedValue(
+                                                         SignedValueNature.START,
                                                          "PlainStartValue",
                                                          "SignedStartValue"
                                                      ),
-                                                     new OCPIv2_3_0.SignedValue(
-                                                         OCPIv2_3_0.SignedValueNature.INTERMEDIATE,
+                                                     new SignedValue(
+                                                         SignedValueNature.INTERMEDIATE,
                                                          "PlainIntermediateValue",
                                                          "SignedIntermediateValue"
                                                      ),
-                                                     new OCPIv2_3_0.SignedValue(
-                                                         OCPIv2_3_0.SignedValueNature.END,
+                                                     new SignedValue(
+                                                         SignedValueNature.END,
                                                          "PlainEndValue",
                                                          "SignedEndValue"
                                                      )
@@ -886,7 +886,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              ),
 
                                              "Remark!",
-                                             OCPIv2_3_0.InvoiceReference_Id.Parse("Invoice:0815"),
+                                             InvoiceReference_Id.Parse("Invoice:0815"),
                                              true, // IsCredit
                                              OCPIv2_3_0.CreditReference_Id. Parse("Credit:0815"),
                                              false,

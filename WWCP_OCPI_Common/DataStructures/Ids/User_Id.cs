@@ -105,7 +105,7 @@
 //        /// </summary>
 //        public static User_Id NewRandom
 
-//            => Parse(Guid.NewGuid().ToString());
+//            => Parse(UUIDv7.Generate().ToString());
 
 //        #endregion
 

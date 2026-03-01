@@ -434,26 +434,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 switch (facility.ToString())
                 {
 
-                    case "HOTEL":           facilities.Add(OCPIv3_0.Facility.HOTEL);            break;
-                    case "RESTAURANT":      facilities.Add(OCPIv3_0.Facility.RESTAURANT);       break;
-                    case "CAFE":            facilities.Add(OCPIv3_0.Facility.CAFE);             break;
-                    case "MALL":            facilities.Add(OCPIv3_0.Facility.MALL);             break;
-                    case "SUPERMARKET":     facilities.Add(OCPIv3_0.Facility.SUPERMARKET);      break;
-                    case "SPORT":           facilities.Add(OCPIv3_0.Facility.SPORT);            break;
-                    case "RECREATION_AREA": facilities.Add(OCPIv3_0.Facility.RECREATION_AREA);  break;
-                    case "NATURE":          facilities.Add(OCPIv3_0.Facility.NATURE);           break;
-                    case "MUSEUM":          facilities.Add(OCPIv3_0.Facility.MUSEUM);           break;
-                    case "BIKE_SHARING":    facilities.Add(OCPIv3_0.Facility.BIKE_SHARING);     break;
-                    case "BUS_STOP":        facilities.Add(OCPIv3_0.Facility.BUS_STOP);         break;
-                    case "TAXI_STAND":      facilities.Add(OCPIv3_0.Facility.TAXI_STAND);       break;
-                    case "TRAM_STOP":       facilities.Add(OCPIv3_0.Facility.TRAM_STOP);        break;
-                    case "METRO_STATION":   facilities.Add(OCPIv3_0.Facility.METRO_STATION);    break;
-                    case "TRAIN_STATION":   facilities.Add(OCPIv3_0.Facility.TRAIN_STATION);    break;
-                    case "AIRPORT":         facilities.Add(OCPIv3_0.Facility.AIRPORT);          break;
-                    case "PARKING_LOT":     facilities.Add(OCPIv3_0.Facility.PARKING_LOT);      break;
-                    case "CARPOOL_PARKING": facilities.Add(OCPIv3_0.Facility.CARPOOL_PARKING);  break;
-                    case "FUEL_STATION":    facilities.Add(OCPIv3_0.Facility.FUEL_STATION);     break;
-                    case "WIFI":            facilities.Add(OCPIv3_0.Facility.WIFI);             break;
+                    case "HOTEL":           facilities.Add(Facility.HOTEL);            break;
+                    case "RESTAURANT":      facilities.Add(Facility.RESTAURANT);       break;
+                    case "CAFE":            facilities.Add(Facility.CAFE);             break;
+                    case "MALL":            facilities.Add(Facility.MALL);             break;
+                    case "SUPERMARKET":     facilities.Add(Facility.SUPERMARKET);      break;
+                    case "SPORT":           facilities.Add(Facility.SPORT);            break;
+                    case "RECREATION_AREA": facilities.Add(Facility.RECREATION_AREA);  break;
+                    case "NATURE":          facilities.Add(Facility.NATURE);           break;
+                    case "MUSEUM":          facilities.Add(Facility.MUSEUM);           break;
+                    case "BIKE_SHARING":    facilities.Add(Facility.BIKE_SHARING);     break;
+                    case "BUS_STOP":        facilities.Add(Facility.BUS_STOP);         break;
+                    case "TAXI_STAND":      facilities.Add(Facility.TAXI_STAND);       break;
+                    case "TRAM_STOP":       facilities.Add(Facility.TRAM_STOP);        break;
+                    case "METRO_STATION":   facilities.Add(Facility.METRO_STATION);    break;
+                    case "TRAIN_STATION":   facilities.Add(Facility.TRAIN_STATION);    break;
+                    case "AIRPORT":         facilities.Add(Facility.AIRPORT);          break;
+                    case "PARKING_LOT":     facilities.Add(Facility.PARKING_LOT);      break;
+                    case "CARPOOL_PARKING": facilities.Add(Facility.CARPOOL_PARKING);  break;
+                    case "FUEL_STATION":    facilities.Add(Facility.FUEL_STATION);     break;
+                    case "WIFI":            facilities.Add(Facility.WIFI);             break;
 
                 }
 

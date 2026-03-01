@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv3_0
@@ -73,6 +75,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Identifier  = Identifier;
             this.Role        = Role;
             this.URL         = URL;
+
+            unchecked
+            {
+
+                hashCode = this.Identifier.GetHashCode() * 5 ^
+                           this.Role.      GetHashCode() * 3 ^
+                           this.URL.       GetHashCode();
+
+            }
 
         }
 
@@ -420,21 +431,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Identifier.GetHashCode() * 5 ^
-                       Role.      GetHashCode() * 3 ^
-                       URL.       GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
