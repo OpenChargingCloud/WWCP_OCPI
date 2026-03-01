@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            // Total costs
                            new Price(
                                10.00m,
-                               [new TaxAmount("VAT", 11.60m)]
+                               [ TaxAmount.VAT(11.60m) ]
                            ),
 
                            // Total Energy
@@ -277,19 +277,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            // Total Fixed Costs
                            new Price(
                                20.00m,
-                               [new TaxAmount("VAT", 23.10m)]
+                               [ TaxAmount.VAT(23.10m) ]
                            ),
 
                            // Total Energy Cost
                            new Price(
                                20.00m,
-                               [new TaxAmount("VAT", 23.10m)]
+                               [ TaxAmount.VAT(23.10m) ]
                            ),
 
                            // Total Time Cost
                            new Price(
                                20.00m,
-                               [new TaxAmount("VAT", 23.10m)]
+                               [ TaxAmount.VAT(23.10m) ]
                            ),
 
                            // Total Parking Time
@@ -298,13 +298,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            // Total Parking Cost
                            new Price(
                                20.00m,
-                               [new TaxAmount("VAT", 23.10m)]
+                               [ TaxAmount.VAT(23.10m) ]
                            ),
 
                            // Total Reservation Cost
                            new Price(
                                20.00m,
-                               [new TaxAmount("VAT", 23.10m)]
+                               [ TaxAmount.VAT(23.10m) ]
                            ),
 
                            "Remark!",

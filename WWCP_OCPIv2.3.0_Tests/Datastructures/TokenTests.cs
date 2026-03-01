@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                              "RFID:0815",
                              Group_Id.Parse("G1234"),
                              Languages.de,
-                             ProfileTypes.FAST,
+                             ProfileType.FAST,
                              new EnergyContract(
                                  "Stadtwerke Jena-Ost",
                                  EnergyContract_Id.Parse("GDF012324")

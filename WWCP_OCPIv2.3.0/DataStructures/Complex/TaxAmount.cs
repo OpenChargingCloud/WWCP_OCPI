@@ -23,6 +23,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_3_0
@@ -43,26 +45,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// In countries where this is not required, this can be something more generic like "VAT" or "General Sales Tax".
         /// </summary>
         [Mandatory]
-        public String    Name             { get; }
+        public Tax_Id       Name             { get; }
 
         /// <summary>
         /// The amount of money of this tax that is due.
         /// </summary>
         [Mandatory]
-        public Decimal   Amount           { get; }
+        public Decimal      Amount           { get; }
 
         /// <summary>
         /// Optional Tax Account Number of the business entity remitting these taxes.
         /// Optional as this is not required in all countries.
         /// </summary>
         [Optional]
-        public String?   AccountNumber    { get; }
+        public String?      AccountNumber    { get; }
 
         /// <summary>
         /// Tax percentage. Optional as this is not required in all countries.
         /// </summary>
         [Optional]
-        public Decimal?  Percentage       { get; }
+        public Percentage?  Percentage       { get; }
 
         #endregion
 
@@ -75,10 +77,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="Amount">The amount of money of this tax that is due.</param>
         /// <param name="AccountNumber">Optional Tax Account Number of the business entity remitting these taxes. Optional as this is not required in all countries.</param>
         /// <param name="Percentage">Tax percentage. Optional as this is not required in all countries.</param>
-        public TaxAmount(String    Name,
-                         Decimal   Amount,
-                         String?   AccountNumber   = null,
-                         Decimal?  Percentage      = null)
+        public TaxAmount(Tax_Id       Name,
+                         Decimal      Amount,
+                         String?      AccountNumber   = null,
+                         Percentage?  Percentage      = null)
         {
 
             this.Name           = Name;
@@ -108,8 +110,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTaxAmountParser">A delegate to parse custom tax amount JSON objects.</param>
-        public static TaxAmount Parse(JObject                                       JSON,
-                                           CustomJObjectParserDelegate<TaxAmount>?  CustomTaxAmountParser   = null)
+        public static TaxAmount Parse(JObject                                  JSON,
+                                      CustomJObjectParserDelegate<TaxAmount>?  CustomTaxAmountParser   = null)
         {
 
             if (TryParse(JSON,
@@ -173,10 +175,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse Name             [mandatory]
 
-                if (!JSON.ParseMandatoryText("name",
-                                             "tax name",
-                                             out String? Name,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("name",
+                                         "tax name",
+                                         Tax_Id.TryParse,
+                                         out Tax_Id name,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -187,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (!JSON.ParseMandatory("amount",
                                          "tax amount",
-                                         out Decimal Amount,
+                                         out Decimal amount,
                                          out ErrorResponse))
                 {
                     return false;
@@ -197,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse AccountNumber    [optional]
 
-                var AccountNumber = JSON.GetString("account_number");
+                var accountNumber = JSON.GetString("account_number");
 
                 #endregion
 
@@ -205,7 +208,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("percentage",
                                        "tax percentage",
-                                       out Decimal? Percentage,
+                                       org.GraphDefined.Vanaheimr.Illias.Percentage.TryParse,
+                                       out Percentage? percentage,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -216,10 +220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
                 TaxAmount = new TaxAmount(
-                                Name,
-                                Amount,
-                                AccountNumber,
-                                Percentage
+                                name,
+                                amount,
+                                accountNumber,
+                                percentage
                             );
 
 
@@ -252,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             var json = JSONObject.Create(
 
-                                 new JProperty("name",             Name),
+                                 new JProperty("name",             Name.ToString()),
                                  new JProperty("amount",           Amount),
 
                            AccountNumber.IsNotNullOrEmpty()
@@ -260,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            Percentage.HasValue
-                               ? new JProperty("percentage",       Percentage.Value)
+                               ? new JProperty("percentage",       Percentage.Value.Value)
                                : null
 
                        );
@@ -281,11 +285,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public TaxAmount Clone()
 
             => new (
-                   new String(Name.ToCharArray()),
+                   Name.Clone(),
                    Amount,
                    AccountNumber is not null
                        ? new String(AccountNumber.ToCharArray())
                        : null,
+                   Percentage.HasValue
+                       ? Percentage.Value.Clone()
+                       : null
+               );
+
+        #endregion
+
+
+        #region Static definitions
+
+        /// <summary>
+        /// Value Added Tax (VAT).
+        /// </summary>
+        public static TaxAmount VAT(Decimal      Amount,
+                                    String?      AccountNumber   = null,
+                                    Percentage?  Percentage      = null)
+
+            => new (
+                   Tax_Id.VAT,
+                   Amount,
+                   AccountNumber,
                    Percentage
                );
 

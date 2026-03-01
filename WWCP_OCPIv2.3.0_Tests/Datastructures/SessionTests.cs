@@ -76,9 +76,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                        [
-                                           CDRDimension.Create(
-                                               CDRDimensionType.ENERGY,
-                                               1.33M
+                                           CDRDimension.ENERGY(
+                                               WattHour.ParseKWh(1.33M)
                                            )
                                        ],
                                        Tariff_Id.Parse("DE*GEF*T0001")
@@ -86,9 +85,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                    ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                        [
-                                           CDRDimension.Create(
-                                               CDRDimensionType.TIME,
-                                               5.12M
+                                           CDRDimension.TIME(
+                                               TimeSpan.FromHours(5.12)
                                            )
                                        ],
                                        Tariff_Id.Parse("DE*GEF*T0002")
@@ -98,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                                // Total Costs
                                new Price(
                                    1.12m,
-                                   [new TaxAmount("VAT", 2.24m)]
+                                   [ TaxAmount.VAT(2.24m) ]
                                ),
 
                                DateTime.Parse("2020-09-21T00:00:00.000Z").ToUniversalTime()
@@ -145,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.AreEqual(session1.LocationId,               session2.LocationId);
             ClassicAssert.AreEqual(session1.EVSEUId,                  session2.EVSEUId);
             ClassicAssert.AreEqual(session1.ConnectorId,              session2.ConnectorId);
-            ClassicAssert.AreEqual(session1.EnergyMeterId,                  session2.EnergyMeterId);
+            ClassicAssert.AreEqual(session1.EnergyMeterId,            session2.EnergyMeterId);
             ClassicAssert.AreEqual(session1.Currency,                 session2.Currency);
             ClassicAssert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
             ClassicAssert.AreEqual(session1.TotalCosts,               session2.TotalCosts);

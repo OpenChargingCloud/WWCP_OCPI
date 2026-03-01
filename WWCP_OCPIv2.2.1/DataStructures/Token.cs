@@ -133,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// set via: SetChargingPreferences.
         /// </summary>
         [Optional]
-        public   ProfileTypes?    DefaultProfile    { get; }
+        public   ProfileType?     DefaultProfile    { get; }
 
         /// <summary>
         /// When the EVSE supports using your own energy supplier/contract, information about
@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                      String?                                           VisualNumber                     = null,
                      Group_Id?                                         GroupId                          = null,
                      Languages?                                        UILanguage                       = null,
-                     ProfileTypes?                                     DefaultProfile                   = null,
+                     ProfileType?                                      DefaultProfile                   = null,
                      EnergyContract?                                   EnergyContract                   = null,
 
                      DateTimeOffset?                                   Created                          = null,
@@ -523,10 +523,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse DefaultProfile    [optional]
 
-                if (JSON.ParseOptionalEnum("default_profile_type",
-                                           "user-interface language",
-                                           out ProfileTypes? DefaultProfile,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("default_profile_type",
+                                       "user-interface language",
+                                       ProfileType.TryParse,
+                                       out ProfileType? DefaultProfile,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

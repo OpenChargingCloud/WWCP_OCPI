@@ -463,7 +463,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                                      DayOfWeek.Monday,
                                                                      DayOfWeek.Tuesday
                                                                  ],
-                                                                 OCPIv2_2_1.ReservationRestrictions.RESERVATION
+                                                                 ReservationRestrictions.RESERVATION
                                                              )
                                                          )
                                                      ],
@@ -568,7 +568,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              "Remark!",
                                              InvoiceReference_Id.Parse("Invoice:0815"),
                                              true, // IsCredit
-                                             OCPIv2_2_1.CreditReference_Id. Parse("Credit:0815"),
+                                             CreditReference_Id. Parse("Credit:0815"),
                                              false,
 
                                              DateTimeOffset.Parse("2026-01-17")
@@ -687,7 +687,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              // Total costs
                                              new OCPIv2_3_0.Price(
                                                  10.00m,
-                                                 [ new OCPIv2_3_0.TaxAmount("VAT", 11.60m) ]
+                                                 [ new OCPIv2_3_0.TaxAmount(Tax_Id.VAT, 11.60m) ]
                                              ),
 
                                              // Total Energy
@@ -782,7 +782,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                                      DayOfWeek.Monday,
                                                                      DayOfWeek.Tuesday
                                                                  ],
-                                                                 OCPIv2_3_0.ReservationRestrictions.RESERVATION
+                                                                 ReservationRestrictions.RESERVATION
                                                              )
                                                          )
                                                      ],
@@ -855,19 +855,19 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              // Total Fixed Costs
                                              new OCPIv2_3_0.Price(
                                                  20.00m,
-                                                 [new OCPIv2_3_0.TaxAmount("VAT", 23.10m)]
+                                                 [ OCPIv2_3_0.TaxAmount.VAT(23.10m) ]
                                              ),
 
                                              // Total Energy Cost
                                              new OCPIv2_3_0.Price(
                                                  20.00m,
-                                                 [new OCPIv2_3_0.TaxAmount("VAT", 23.10m)]
+                                                 [ OCPIv2_3_0.TaxAmount.VAT(23.10m) ]
                                              ),
 
                                              // Total Time Cost
                                              new OCPIv2_3_0.Price(
                                                  20.00m,
-                                                 [new OCPIv2_3_0.TaxAmount("VAT", 23.10m)]
+                                                 [ OCPIv2_3_0.TaxAmount.VAT(23.10m) ]
                                              ),
 
                                              // Total Parking Time
@@ -876,19 +876,19 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              // Total Parking Cost
                                              new OCPIv2_3_0.Price(
                                                  20.00m,
-                                                 [new OCPIv2_3_0.TaxAmount("VAT", 23.10m)]
+                                                 [ OCPIv2_3_0.TaxAmount.VAT(23.10m) ]
                                              ),
 
                                              // Total Reservation Cost
                                              new OCPIv2_3_0.Price(
                                                  20.00m,
-                                                 [new OCPIv2_3_0.TaxAmount("VAT", 23.10m)]
+                                                 [ OCPIv2_3_0.TaxAmount.VAT(23.10m) ]
                                              ),
 
                                              "Remark!",
                                              InvoiceReference_Id.Parse("Invoice:0815"),
                                              true, // IsCredit
-                                             OCPIv2_3_0.CreditReference_Id. Parse("Credit:0815"),
+                                             CreditReference_Id. Parse("Credit:0815"),
                                              false,
 
                                              DateTimeOffset.Parse("2026-01-17")
