@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The linked SCSP API.
         /// </summary>
-        public SCSPAPI  SCSPAPI  { get; }
+        public SCSP_HTTPAPI  SCSPAPI  { get; }
 
         #endregion
 
@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="SCSPAPI">An SCSP API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public SCSPAPILogger(SCSPAPI                      SCSPAPI,
+        public SCSPAPILogger(SCSP_HTTPAPI                      SCSPAPI,
                              String?                      Context          = DefaultContext,
                              String?                      LoggingPath      = null,
                              OCPILogfileCreatorDelegate?  LogfileCreator   = null)

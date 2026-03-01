@@ -165,6 +165,44 @@ namespace cloud.charging.open.protocols.OCPI
         public const String removeBookingLocation              = "removeBookingLocation";
         public const String removeAllBookingLocations          = "removeAllBookingLocations";
 
+
+        // EMSPs
+
+        public const String addRemoteLocation                        = "addRemoteLocation";
+        public const String addRemoteLocationIfNotExists             = "addRemoteLocationIfNotExists";
+        public const String addOrUpdateRemoteLocation                = "addOrUpdateRemoteLocation";
+        public const String updateRemoteLocation                     = "updateRemoteLocation";
+        public const String removeRemoteLocation                     = "removeRemoteLocation";
+        public const String removeAllRemoteLocations                 = "removeAllRemoteLocations";
+
+        public const String addRemoteEVSE                            = "addRemoteEVSE";
+        public const String addRemoteEVSEIfNotExists                 = "addRemoteEVSEIfNotExists";
+        public const String addOrUpdateRemoteEVSE                    = "addOrUpdateRemoteEVSE";
+        public const String updateRemoteEVSE                         = "updateRemoteEVSE";
+        public const String removeRemoteEVSE                         = "removeRemoteEVSE";
+        public const String removeAllRemoteEVSEs                     = "removeAllRemoteEVSEs";
+
+        public const String addRemoteTariff                          = "addRemoteTariff";
+        public const String addRemoteTariffIfNotExists               = "addRemoteTariffIfNotExists";
+        public const String addOrUpdateRemoteTariff                  = "addOrUpdateRemoteTariff";
+        public const String updateRemoteTariff                       = "updateRemoteTariff";
+        public const String removeRemoteTariff                       = "removeRemoteTariff";
+        public const String removeAllRemoteTariffs                   = "removeAllRemoteTariffs";
+
+        public const String addRemoteSession                         = "addRemoteSession";
+        public const String addRemoteSessionIfNotExists              = "addRemoteSessionIfNotExists";
+        public const String addOrUpdateRemoteSession                 = "addOrUpdateRemoteSession";
+        public const String updateRemoteSession                      = "updateRemoteSession";
+        public const String removeRemoteSession                      = "removeRemoteSession";
+        public const String removeAllRemoteSessions                  = "removeAllRemoteSessions";
+
+        public const String addRemoteChargeDetailRecord              = "addRemoteChargeDetailRecord";
+        public const String addRemoteChargeDetailRecordIfNotExists   = "addRemoteChargeDetailRecordIfNotExists";
+        public const String addOrUpdateRemoteChargeDetailRecord      = "addOrUpdateRemoteChargeDetailRecord";
+        public const String updateRemoteChargeDetailRecord           = "updateRemoteChargeDetailRecord";
+        public const String removeRemoteChargeDetailRecord           = "removeRemoteChargeDetailRecord";
+        public const String removeAllRemoteChargeDetailRecords       = "removeAllRemoteChargeDetailRecords";
+
         #endregion
 
         #endregion

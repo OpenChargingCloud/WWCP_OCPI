@@ -155,6 +155,64 @@ function StartDebugLog() {
 
 
 
+        eventSource.addEventListener('OnPatchEVSERequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp        ?? Date.now(),
+                    request.roamingNetworkId ?? "",
+                    request.eventTrackingId  ?? "",
+                    request.from,
+                    request.to,
+                    "OnPatchEVSERequest",
+                    `${request.evseId} (${JSON.stringify(request.patch)}`,
+                    request.from ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchEVSERequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPatchEVSEResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    `⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchEVSEResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
         eventSource.addEventListener('OnPutSessionRequest', (event: MessageEvent<string>) => {
 
             try

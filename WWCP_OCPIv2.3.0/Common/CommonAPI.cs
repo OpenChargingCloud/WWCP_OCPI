@@ -11689,7 +11689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// Try to patch the given charging tariff with the given JSON patch document.
         /// </summary>
-        /// <param name="PartyId">The identification of the party owning the token.</param>
+        /// <param name="PartyId">The identification of the party owning the charging tariff.</param>
         /// <param name="TariffId">The identification of the charging tariff to patch.</param>
         /// <param name="TariffPatch">The JSON patch document to apply to the charging tariff.</param>
         /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
@@ -11880,7 +11880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             return RemoveResult<IEnumerable<Tariff>>.Failed(
                        EventTrackingId,
-                       $"The party identification '{PartyId}' of the token is unknown!"
+                       $"The party identification '{PartyId}' of the charging tariff is unknown!"
                    );
 
         }
@@ -15336,8 +15336,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 => RemoveCDR(
                        Party_Idv3.From(
-                           CDR.Token.CountryCode,
-                           CDR.Token.PartyId
+                           CDR.CDRToken.CountryCode,
+                           CDR.CDRToken.PartyId
                        ),
                        CDR.Id,
                        SkipNotifications,

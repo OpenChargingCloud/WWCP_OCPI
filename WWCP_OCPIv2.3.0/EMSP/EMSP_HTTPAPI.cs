@@ -6957,11 +6957,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     // ToDo: What kind of error might happen here?
                     var addResult    = await CommonAPI.AddCDR(newCDR);
 
+                                       // ~/cdrs/{country_code}/{party_id}/{cdrId}
                     var cdrLocation  = Hermod.Location.From(
                                            URLPathPrefix + "cdrs" +
                                            newCDR.CountryCode.ToString() +
-                                           newCDR.PartyId.ToString() +
-                                           newCDR.Id.ToString()
+                                           newCDR.PartyId.    ToString() +
+                                           newCDR.Id.         ToString()
                                        );
 
 

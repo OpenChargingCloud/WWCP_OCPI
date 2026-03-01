@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Command  = Command;
             this.Result   = Result;
             this.Timeout  = Timeout;
-            this.Message  = Message?.Distinct() ?? Array.Empty<DisplayText>();
+            this.Message  = Message?.Distinct() ?? [];
 
         }
 
@@ -147,12 +147,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Try to parse the given JSON representation of a command response.
         /// </summary>
-        /// <param name="Command">The command leading to this response.</param>
+        /// <param name="command">The command leading to this response.</param>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CommandResponse">The parsed command response.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static Boolean TryParse(IOCPICommand                                   Command,
+        public static Boolean TryParse(IOCPICommand                                   command,
                                        JObject                                        JSON,
                                        [NotNullWhen(true)]  out CommandResponse?      CommandResponse,
                                        [NotNullWhen(false)] out String?               ErrorResponse,
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryEnum("result",
                                              "command response",
-                                             out CommandResponseTypes Result,
+                                             out CommandResponseTypes result,
                                              out ErrorResponse))
                 {
                     return false;
@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("timeout",
                                          "command timeout",
-                                         out TimeSpan Timeout,
+                                         out TimeSpan timeout,
                                          out ErrorResponse))
                 {
                     return false;
@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("message",
                                            "message",
                                            DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Message,
+                                           out IEnumerable<DisplayText> message,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -209,10 +209,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CommandResponse = new CommandResponse(Command,
-                                                      Result,
-                                                      Timeout,
-                                                      Message);
+                CommandResponse = new CommandResponse(
+                                      command,
+                                      result,
+                                      timeout,
+                                      message
+                                  );
 
                 if (CustomCommandResponseParser is not null)
                     CommandResponse = CustomCommandResponseParser(JSON,
