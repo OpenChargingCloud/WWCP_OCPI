@@ -70,9 +70,14 @@ namespace cloud.charging.open.protocols.WWCP
 
                                         OCPIv2_2_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 
-                                        OCPI.      ChargingPoolId_2_LocationId_Delegate?         CustomChargingPoolIdConverter        = null,
-                                        OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
-                                        OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                                   ChargingPoolId_2_LocationId_Delegate?         CustomChargingPoolIdConverter        = null,
+                                                   LocationId_2_ChargingPoolId_Delegate?         CustomLocationIdConverter            = null,
+                                                   WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
+                                                   WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                                   EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEUId2Converter              = null,
+                                                   WWCPConnectorId_2_ConnectorId_Delegate?       CustomConnectorIdConverter           = null,
+                                                   ConnectorId_2_WWCPConnectorId_Delegate?       CustomConnectorId2Converter          = null,
+
                                         OCPIv2_2_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
                                         OCPIv2_2_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
                                         OCPIv2_2_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
@@ -139,9 +144,13 @@ namespace cloud.charging.open.protocols.WWCP
                                          GetTariffIds,
 
                                          CustomChargingPoolIdConverter,
+                                         CustomLocationIdConverter,
                                          CustomEVSEUIdConverter,
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,
+                                         CustomEVSEUId2Converter,
+                                         CustomConnectorIdConverter,
+                                         CustomConnectorId2Converter,
                                          CustomEVSEStatusUpdateConverter,
                                          CustomChargeDetailRecordConverter,
 

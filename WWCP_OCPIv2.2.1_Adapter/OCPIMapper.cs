@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public static class OCPIMapper
     {
 
-        public const String OCPI_EVSEUId = "OCPI.EVSEUId";
+        //public const String OCPI_EVSEUId = "OCPI.EVSEUId";
 
 
         #region AsWWCPEVSEStatus(this EVSEStatus)
@@ -837,13 +837,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 EVSE_UId? evseUId = null;
 
-                // Favour the OCPI EVSE Unique identification over the WWCP EVSE identification!
-                if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
-                {
-                    evseUId = uid;
-                }
-                else
-                {
+                //// Favour the OCPI EVSE Unique identification over the WWCP EVSE identification!
+                //if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
+                //{
+                //    evseUId = uid;
+                //}
+                //else
+                //{
 
                     evseUId = EVSE.Id.ToOCPI_EVSEUId(CustomEVSEUIdConverter);
 
@@ -854,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         return null;
                     }
 
-                }
+                //}
 
 
                 var evseId = EVSE.Id.ToOCPI_EVSEId(CustomEVSEIdConverter);

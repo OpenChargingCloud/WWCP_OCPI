@@ -34,8 +34,10 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// A delegate which allows you to modify the conversion from OCPI Location identifications to WWCP ChargingPool identifications.
     /// </summary>
+    /// <param name="PartyId">The party identification of the ChargingPool.</param>
     /// <param name="LocationId">A Location identification.</param>
-    public delegate WWCP.ChargingPool_Id?    LocationId_2_ChargingPoolId_Delegate               (Location_Id              LocationId);
+    public delegate WWCP.ChargingPool_Id?    LocationId_2_ChargingPoolId_Delegate               (Party_Idv3               PartyId,
+                                                                                                 Location_Id              LocationId);
 
 
     /// <summary>
@@ -61,7 +63,8 @@ namespace cloud.charging.open.protocols.OCPI
     /// A delegate which allows you to modify the conversion from OCPI EVSE unique identifications to WWCP EVSE identifications.
     /// </summary>
     /// <param name="EVSEId">An EVSE identification.</param>
-    public delegate WWCP.EVSE_Id?            EVSEUId_2_WWCPEVSEId_Delegate                      (EVSE_UId                 EVSEUId);
+    public delegate WWCP.EVSE_Id?            EVSEUId_2_WWCPEVSEId_Delegate                      (Party_Idv3               PartyId,
+                                                                                                 EVSE_UId                 EVSEUId);
 
     /// <summary>
     /// A delegate which allows you to modify the conversion from WWCP EVSE identifications to OCPI EVSE identifications.
@@ -74,6 +77,20 @@ namespace cloud.charging.open.protocols.OCPI
     /// </summary>
     /// <param name="EVSEId">An EVSE identification.</param>
     public delegate WWCP.EVSE_Id?            EVSEId_2_WWCPEVSEId_Delegate                       (EVSE_Id                  EVSEId);
+
+
+    /// <summary>
+    /// A delegate which allows you to modify the conversion from WWCP connector identifications to OCPI connector identifications.
+    /// </summary>
+    /// <param name="ConnectorId">A WWCP connector identification.</param>
+    public delegate Connector_Id?               WWCPConnectorId_2_ConnectorId_Delegate          (WWCP.ChargingConnector_Id  ConnectorId);
+
+    /// <summary>
+    /// A delegate which allows you to modify the conversion from OCPI connector identifications to WWCP connector identifications.
+    /// </summary>
+    /// <param name="ConnectorId">A connector identification.</param>
+    public delegate WWCP.ChargingConnector_Id?  ConnectorId_2_WWCPConnectorId_Delegate          (Party_Idv3                 PartyId,
+                                                                                                 Connector_Id               ConnectorId);
 
 
     /// <summary>
