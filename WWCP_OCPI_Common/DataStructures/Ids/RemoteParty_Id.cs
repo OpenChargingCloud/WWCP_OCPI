@@ -64,6 +64,7 @@ namespace cloud.charging.open.protocols.OCPI
                    ? RemotePartyId.Value.AsCPOId()
                    : null;
 
+
         /// <summary>
         /// This remote party identification as a EMSP identification.
         /// </summary>
@@ -78,6 +79,23 @@ namespace cloud.charging.open.protocols.OCPI
         public static EMSP_Id? AsEMSPId(this RemoteParty_Id? RemotePartyId)
             => RemotePartyId.HasValue
                    ? RemotePartyId.Value.AsEMSPId()
+                   : null;
+
+
+        /// <summary>
+        /// This remote party identification as a HUB identification.
+        /// </summary>
+        public static HUB_Id? AsHUBId(this RemoteParty_Id RemotePartyId)
+            => RemotePartyId.Role == Role.HUB
+                   ? HUB_Id.Parse($"{RemotePartyId.CountryCode}-{RemotePartyId.PartyId}")
+                   : null;
+
+        /// <summary>
+        /// This remote party identification as a HUB identification.
+        /// </summary>
+        public static HUB_Id? AsHUBId(this RemoteParty_Id? RemotePartyId)
+            => RemotePartyId.HasValue
+                   ? RemotePartyId.Value.AsHUBId()
                    : null;
 
     }

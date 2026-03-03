@@ -1874,131 +1874,177 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                           #endregion
 
-                                                                                          #region Setup HTTP client
-
-                                                                                          var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
-
-                                                                                                              CPO_HTTPAPI,
-                                                                                                              remoteParty,
-                                                                                                              null, // VirtualHostname
-                                                                                                              null, // Description
-                                                                                                              null, // HTTPLogger
-
-                                                                                                              DisableLogging,
-                                                                                                              ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                              ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                              ClientsLogfileCreator,
-                                                                                                              DNSClient
-
-                                                                                                          );
-
-                                                                                          if (cpoClient is null)
-                                                                                              return new AuthorizationInfo(
-                                                                                                         Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                         Token:        null,
-                                                                                                         Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
-                                                                                                         RemoteParty:  remoteParty
-                                                                                                     ) as Object;
-
-
-                                                                                          var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
-                                                                                                                    cpoClient,
-                                                                                                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                                    ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                                    ClientsLogfileCreator
-                                                                                                                );
-
-                                                                                          #endregion
-
-
-                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
+                                                                                          if (remoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Role.EMSP))
                                                                                           {
 
-                                                                                              var patchEVSEResponse = await cpoClient.PatchEVSE(
+                                                                                              #region Setup HTTP client
 
-                                                                                                                                CountryCode:         countryCode.Value,
-                                                                                                                                PartyId:             partyId.    Value,
-                                                                                                                                LocationId:          locationId. Value,
-                                                                                                                                EVSEUId:             evse2.UId,
-                                                                                                                                EVSEPatch:           JSONObject.Create(
-                                                                                                                                                         new JProperty("status",  evse2.Status.ToString())
-                                                                                                                                                     ),
+                                                                                              var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
-                                                                                                                                //From:                fromChargingStationOperatorId,
-                                                                                                                                //To:                  toEMobilityProviderId,
+                                                                                                                  CPO_HTTPAPI,
+                                                                                                                  remoteParty,
+                                                                                                                  null, // VirtualHostname
+                                                                                                                  null, // Description
+                                                                                                                  null, // HTTPLogger
 
-                                                                                                                                RequestId:           null,
-                                                                                                                                CorrelationId:       null,
-                                                                                                                                VersionId:           null,
+                                                                                                                  DisableLogging,
+                                                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                  ClientsLogfileCreator,
+                                                                                                                  DNSClient
 
-                                                                                                                                RequestTimestamp:    RequestTimestamp,
-                                                                                                                                EventTrackingId:     EventTrackingId,
-                                                                                                                                RequestTimeout:      null,
-                                                                                                                                CancellationToken:   cancellationToken
+                                                                                                              );
 
-                                                                                                                            );
+                                                                                              if (cpoClient is null)
+                                                                                                  return new AuthorizationInfo(
+                                                                                                             Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                             Token:        null,
+                                                                                                             Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                                                             RemoteParty:  remoteParty
+                                                                                                         ) as Object;
 
-                                                                                              return patchEVSEResponse as Object;
+
+                                                                                              var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                                                                                        cpoClient,
+                                                                                                                        ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                        ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                        ClientsLogfileCreator
+                                                                                                                    );
+
+                                                                                              #endregion
+
+
+                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
+                                                                                              {
+
+                                                                                                  var patchEVSEResponse = await cpoClient.PatchEVSE(
+
+                                                                                                                                    CountryCode:         countryCode.Value,
+                                                                                                                                    PartyId:             partyId.    Value,
+                                                                                                                                    LocationId:          locationId. Value,
+                                                                                                                                    EVSEUId:             evse2.UId,
+                                                                                                                                    EVSEPatch:           JSONObject.Create(
+                                                                                                                                                             new JProperty("status",  evse2.Status.ToString())
+                                                                                                                                                         ),
+
+                                                                                                                                    //From:                fromChargingStationOperatorId,
+                                                                                                                                    //To:                  toEMobilityProviderId,
+
+                                                                                                                                    RequestId:           null,
+                                                                                                                                    CorrelationId:       null,
+                                                                                                                                    VersionId:           null,
+
+                                                                                                                                    RequestTimestamp:    RequestTimestamp,
+                                                                                                                                    EventTrackingId:     EventTrackingId,
+                                                                                                                                    RequestTimeout:      null,
+                                                                                                                                    CancellationToken:   cancellationToken
+
+                                                                                                                                );
+
+                                                                                                  return patchEVSEResponse as Object;
+
+                                                                                              }
+
+                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                              {
+
+                                                                                                  var putEVSEResponse = await cpoClient.PutEVSE(
+
+                                                                                                                                  CountryCode:         countryCode.Value,
+                                                                                                                                  PartyId:             partyId.    Value,
+                                                                                                                                  LocationId:          locationId. Value,
+                                                                                                                                  EVSE:                evse2,
+                                                                                                                                  EMSPId:              null,
+
+                                                                                                                                  //From:                fromChargingStationOperatorId,
+                                                                                                                                  //To:                  toEMobilityProviderId,
+
+                                                                                                                                  RequestId:           null,
+                                                                                                                                  CorrelationId:       null,
+                                                                                                                                  VersionId:           null,
+
+                                                                                                                                  RequestTimestamp:    RequestTimestamp,
+                                                                                                                                  EventTrackingId:     EventTrackingId,
+                                                                                                                                  RequestTimeout:      null,
+                                                                                                                                  CancellationToken:   cancellationToken
+
+                                                                                                                              );
+
+                                                                                                  return putEVSEResponse as Object;
+
+                                                                                              }
+
+                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
+                                                                                              {
+
+                                                                                                  var patchEVSEResponse = await cpoClient.PatchEVSE(
+
+                                                                                                                                    CountryCode:         countryCode.Value,
+                                                                                                                                    PartyId:             partyId.    Value,
+                                                                                                                                    LocationId:          locationId. Value,
+                                                                                                                                    EVSEUId:             evse2.UId,
+                                                                                                                                    EVSEPatch:           JSONObject.Create(
+                                                                                                                                                             new JProperty("status",  evse2.Status.ToString())
+                                                                                                                                                         ),
+
+                                                                                                                                    //From:                fromChargingStationOperatorId,
+                                                                                                                                    //To:                  toEMobilityProviderId,
+
+                                                                                                                                    RequestId:           null,
+                                                                                                                                    CorrelationId:       null,
+                                                                                                                                    VersionId:           null,
+
+                                                                                                                                    RequestTimestamp:    RequestTimestamp,
+                                                                                                                                    EventTrackingId:     EventTrackingId,
+                                                                                                                                    RequestTimeout:      null,
+                                                                                                                                    CancellationToken:   cancellationToken
+
+                                                                                                                                );
+
+                                                                                                  return patchEVSEResponse as Object;
+
+                                                                                              }
 
                                                                                           }
 
-                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                          if (remoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Role.HUB))
                                                                                           {
 
-                                                                                              var putEVSEResponse = await cpoClient.PutEVSE(
+                                                                                              #region Setup HTTP client
 
-                                                                                                                              CountryCode:         countryCode.Value,
-                                                                                                                              PartyId:             partyId.    Value,
-                                                                                                                              LocationId:          locationId. Value,
-                                                                                                                              EVSE:                evse2,
-                                                                                                                              EMSPId:              null,
+                                                                                              var cpoClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
 
-                                                                                                                              //From:                fromChargingStationOperatorId,
-                                                                                                                              //To:                  toEMobilityProviderId,
+                                                                                                                  CPO_HTTPAPI,
+                                                                                                                  remoteParty,
+                                                                                                                  null, // VirtualHostname
+                                                                                                                  null, // Description
+                                                                                                                  null, // HTTPLogger
 
-                                                                                                                              RequestId:           null,
-                                                                                                                              CorrelationId:       null,
-                                                                                                                              VersionId:           null,
+                                                                                                                  DisableLogging,
+                                                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                  ClientsLogfileCreator,
+                                                                                                                  DNSClient
 
-                                                                                                                              RequestTimestamp:    RequestTimestamp,
-                                                                                                                              EventTrackingId:     EventTrackingId,
-                                                                                                                              RequestTimeout:      null,
-                                                                                                                              CancellationToken:   cancellationToken
+                                                                                                              );
 
-                                                                                                                          );
+                                                                                              if (cpoClient is null)
+                                                                                                  return new AuthorizationInfo(
+                                                                                                             Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                             Token:        null,
+                                                                                                             Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                                                             RemoteParty:  remoteParty
+                                                                                                         ) as Object;
 
-                                                                                              return putEVSEResponse as Object;
 
-                                                                                          }
+                                                                                              var cpoClientLogger = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
+                                                                                                                        cpoClient,
+                                                                                                                        ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                        ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                        ClientsLogfileCreator
+                                                                                                                    );
 
-                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
-                                                                                          {
-
-                                                                                              var patchEVSEResponse = await cpoClient.PatchEVSE(
-
-                                                                                                                                CountryCode:         countryCode.Value,
-                                                                                                                                PartyId:             partyId.    Value,
-                                                                                                                                LocationId:          locationId. Value,
-                                                                                                                                EVSEUId:             evse2.UId,
-                                                                                                                                EVSEPatch:           JSONObject.Create(
-                                                                                                                                                         new JProperty("status",  evse2.Status.ToString())
-                                                                                                                                                     ),
-
-                                                                                                                                //From:                fromChargingStationOperatorId,
-                                                                                                                                //To:                  toEMobilityProviderId,
-
-                                                                                                                                RequestId:           null,
-                                                                                                                                CorrelationId:       null,
-                                                                                                                                VersionId:           null,
-
-                                                                                                                                RequestTimestamp:    RequestTimestamp,
-                                                                                                                                EventTrackingId:     EventTrackingId,
-                                                                                                                                RequestTimeout:      null,
-                                                                                                                                CancellationToken:   cancellationToken
-
-                                                                                                                            );
-
-                                                                                              return patchEVSEResponse as Object;
+                                                                                              #endregion
 
                                                                                           }
 
