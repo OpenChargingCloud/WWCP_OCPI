@@ -439,8 +439,8 @@ namespace cloud.charging.open.protocols.OCPI
                              ISMTPClient?                   SMTPClient                = null,
 
                              HTTPPath?                      AdditionalURLPathPrefix   = null,
-                             Boolean                        LocationsAsOpenData       = true,
-                             Boolean                        TariffsAsOpenData         = false,
+                             Boolean?                       LocationsAsOpenData       = null,
+                             Boolean?                       TariffsAsOpenData         = null,
                              Boolean?                       AllowDowngrades           = null,
 
                              String?                        RemotePartyDBFileName     = null,
@@ -493,9 +493,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.OurVersionsURL           = OurVersionsURL;
 
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
-            this.LocationsAsOpenData      = LocationsAsOpenData;
-            this.TariffsAsOpenData        = TariffsAsOpenData;
-            this.AllowDowngrades          = AllowDowngrades;
+            this.LocationsAsOpenData      = LocationsAsOpenData ?? true;
+            this.TariffsAsOpenData        = TariffsAsOpenData   ?? true;
+            this.AllowDowngrades          = AllowDowngrades     ?? false;
 
             this.RemotePartyDBFileName    = Path.Combine(
                                                 this.LoggingPath,

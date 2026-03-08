@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Reflection;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -122,24 +124,29 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         #region Data
 
         /// <summary>
-        /// The default HTTP URI prefix.
+        /// The default HTTP URL prefix.
         /// </summary>
         public     static readonly  HTTPPath            DefaultURLPathPrefix      = HTTPPath.Parse("webapi");
 
         /// <summary>
-        /// The default HTTP service name.
+        /// The default HTTP server name.
         /// </summary>
-        public new const            String              DefaultHTTPServiceName    = $"Open Charging Cloud OCPI WebAPI";
+        public new const            String              DefaultHTTPServerName     = "Open Charging Cloud OCPI WebAPI";
 
         /// <summary>
-        /// The default HTTP realm, if HTTP Basic Authentication is used.
+        /// The default HTTP service name.
         /// </summary>
-        public     const            String              DefaultHTTPRealm          = $"Open Charging Cloud OCPI WebAPI";
+        public new const            String              DefaultHTTPServiceName    = "Open Charging Cloud OCPI WebAPI";
 
         /// <summary>
         /// The HTTP root for embedded resources.
         /// </summary>
         public     const            String              HTTPRoot                  = "cloud.charging.open.protocols.OCPI.WebAPI.HTTPRoot.";
+
+        ///// <summary>
+        ///// The default HTTP realm, if HTTP Basic Authentication is used.
+        ///// </summary>
+        //public     const            String              DefaultHTTPRealm          = "Open Charging Cloud OCPI WebAPI";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -155,11 +162,19 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         //public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse($"OCPI_debugLog");
+        public static readonly      HTTPEventSource_Id  DebugLogId           = HTTPEventSource_Id.Parse($"OCPI_debugLog");
+
+        /// <summary>
+        /// The default WebAPI logfile name.
+        /// </summary>
+        public  const               String              DefaultLogfileName   = "OCPI_WebAPI.log";
 
         #endregion
 
         #region Properties
+
+        public CommonHTTPAPI             CommonHTTPAPI
+            => HTTPBaseAPI;
 
         /// <summary>
         /// The HTTP URI prefix.
@@ -181,9 +196,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// Debug information via HTTP Server Sent Events.
         /// </summary>
         public HTTPEventSource<JObject>  DebugLog                { get; }
-
-        public CommonHTTPAPI             CommonHTTPAPI
-            => HTTPBaseAPI;
 
         #endregion
 
@@ -261,9 +273,9 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         }
 
         /// <summary>
-        /// Attach the OCPI WebAPI to the given HTTP server.
+        /// Attach the OCPI WebAPI to the given OCPI Common HTTP API.
         /// </summary>
-        /// <param name="CommonHTTPAPI">A OCPI Common API.</param>
+        /// <param name="CommonHTTPAPI">The OCPI Common HTTP API.</param>
         /// 
         /// <param name="OverlayURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="APIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
@@ -286,10 +298,10 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             String?                  APIVersionHash         = null,
                             JObject?                 APIVersionHashes       = null,
 
-                            Boolean?                 IsDevelopment          = false,
+                            Boolean?                 IsDevelopment          = null,
                             IEnumerable<String>?     DevelopmentServers     = null,
-                            Boolean?                 DisableNotifications   = false,
-                            Boolean?                 DisableLogging         = false,
+                            Boolean?                 DisableNotifications   = null,
+                            Boolean?                 DisableLogging         = null,
                             String?                  LoggingPath            = null,
                             String?                  LogfileName            = null,
                             LogfileCreatorDelegate?  LogfileCreator         = null)
@@ -310,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   LogfileName,
+                   LogfileName     ?? DefaultLogfileName,
                    LogfileCreator)
 
         {
@@ -339,14 +351,18 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         #region Manage HTTP Resources
 
+        private readonly Tuple<String, Assembly>[] resourceAssemblies = [
+            new Tuple<String, Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
+            new Tuple<String, Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+        ];
+
         #region (protected override) GetResourceStream      (ResourceName)
 
         protected override Stream? GetResourceStream(String ResourceName)
 
             => GetResourceStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -357,8 +373,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceMemoryStream(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -369,8 +384,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceString(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -381,8 +395,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => GetResourceBytes(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -393,8 +406,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
             => MixWithHTMLTemplate(
                    ResourceName,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
@@ -406,13 +418,13 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             => MixWithHTMLTemplate(
                    ResourceName,
                    HTMLConverter,
-                   new Tuple<String, System.Reflection.Assembly>(CommonWebAPI.HTTPRoot, typeof(CommonWebAPI).Assembly),
-                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.     HTTPRoot, typeof(HTTPAPI).     Assembly)
+                   resourceAssemblies
                );
 
         #endregion
 
         #endregion
+
 
         /// <summary>
         /// The following will register HTTP overlays for text/html

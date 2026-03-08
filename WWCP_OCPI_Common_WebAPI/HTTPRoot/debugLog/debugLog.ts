@@ -98,7 +98,48 @@ function StartDebugLog() {
 
         // Will only be called for events without an event type!
         eventSource.onmessage = function (event) {
-            console.debug(event);
+
+            try
+            {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                const [key, value] = entries[0];
+
+                const container = document.createElement('div');
+                container.className = 'OnMessage';
+
+                const keyDiv = document.createElement('div');
+                keyDiv.className = 'key';
+                keyDiv.textContent = String(key);
+
+                const valueDiv = document.createElement('div');
+                valueDiv.className = 'value';
+                valueDiv.textContent = value == null ? '' : String(value);
+
+                container.append(keyDiv, valueDiv);
+
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.roamingNetworkId ?? "",
+                    request.eventTrackingId ?? "",
+                    "",
+                    "",
+                    "OnMessage",
+                    container.outerHTML,
+                    request.EVSEId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                console.error(exception);
+            }
+
         };
 
         eventSource.onerror = function (event) {

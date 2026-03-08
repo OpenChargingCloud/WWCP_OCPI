@@ -188,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.WebAPI
         #region Data
 
         /// <summary>
-        /// The default HTTP URI prefix.
+        /// The default HTTP URL prefix.
         /// </summary>
         public new static readonly HTTPPath                         DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
 
