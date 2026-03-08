@@ -14206,37 +14206,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     if (addResult.IsSuccess)
                         return new OCPIResponse.Builder(request) {
-                                        StatusCode           = 1000,
-                                        StatusMessage        = "Hello world!",
-                                        Data                 = newCDR.ToJSON(
-                                                                   CustomCDRSerializer,
-                                                                   CustomCDRTokenSerializer,
-                                                                   CustomCDRLocationSerializer,
-                                                                   CustomEVSEEnergyMeterSerializer,
-                                                                   CustomTransparencySoftwareSerializer,
-                                                                   CustomTariffSerializer,
-                                                                   CustomDisplayTextSerializer,
-                                                                   CustomPriceSerializer,
-                                                                   CustomTariffElementSerializer,
-                                                                   CustomPriceComponentSerializer,
-                                                                   CustomTariffRestrictionsSerializer,
-                                                                   CustomEnergyMixSerializer,
-                                                                   CustomEnergySourceSerializer,
-                                                                   CustomEnvironmentalImpactSerializer,
-                                                                   CustomChargingPeriodSerializer,
-                                                                   CustomCDRDimensionSerializer,
-                                                                   CustomSignedDataSerializer,
-                                                                   CustomSignedValueSerializer
-                                                               ),
-                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                            HTTPStatusCode             = HTTPStatusCode.Created,
-                                            Location                   = cdrLocation,
-                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
-                                            AccessControlAllowHeaders  = [ "Authorization" ],
-                                            LastModified               = newCDR.LastUpdated,
-                                            ETag                       = newCDR.ETag
-                                        }
-                                    };
+                                   StatusCode           = 1000,
+                                   StatusMessage        = "Hello world!",
+                                   Data                 = newCDR.ToJSON(
+                                                              CustomCDRSerializer,
+                                                              CustomCDRTokenSerializer,
+                                                              CustomCDRLocationSerializer,
+                                                              CustomEVSEEnergyMeterSerializer,
+                                                              CustomTransparencySoftwareSerializer,
+                                                              CustomTariffSerializer,
+                                                              CustomDisplayTextSerializer,
+                                                              CustomPriceSerializer,
+                                                              CustomTariffElementSerializer,
+                                                              CustomPriceComponentSerializer,
+                                                              CustomTariffRestrictionsSerializer,
+                                                              CustomEnergyMixSerializer,
+                                                              CustomEnergySourceSerializer,
+                                                              CustomEnvironmentalImpactSerializer,
+                                                              CustomChargingPeriodSerializer,
+                                                              CustomCDRDimensionSerializer,
+                                                              CustomSignedDataSerializer,
+                                                              CustomSignedValueSerializer
+                                                          ),
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.Created,
+                                       Location                   = cdrLocation,
+                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
+                                       AccessControlAllowHeaders  = [ "Authorization" ],
+                                       LastModified               = newCDR.LastUpdated,
+                                       ETag                       = newCDR.ETag
+                                   }
+                               };
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 2000,
