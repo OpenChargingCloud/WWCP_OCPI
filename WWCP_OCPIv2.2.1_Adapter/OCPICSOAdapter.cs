@@ -2444,7 +2444,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           SessionId,
                           CPOPartnerSessionId,
                           [],
-                          RequestTimeout
+                          RequestTimeout,
+                          CancellationToken
                       )
                   );
 
@@ -2585,7 +2586,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           [],
                           RequestTimeout,
                           authStartResult,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2662,7 +2664,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           SessionId,
                           CPOPartnerSessionId,
                           [],
-                          RequestTimeout
+                          RequestTimeout,
+                          CancellationToken
                       )
                   );
 
@@ -2800,7 +2803,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           [],
                           RequestTimeout,
                           authStartResult,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 

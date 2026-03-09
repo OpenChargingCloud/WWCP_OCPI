@@ -1913,7 +1913,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                 SessionId,
                                                 CPOPartnerSessionId,
                                                 Array.Empty<WWCP.ISendAuthorizeStartStop>(),
-                                                RequestTimeout);
+                                                RequestTimeout,
+                                                CancellationToken);
 
             }
             catch (Exception e)
@@ -2166,10 +2167,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                  ChargingProduct,
                                                  SessionId,
                                                  CPOPartnerSessionId,
-                                                 Array.Empty<WWCP.ISendAuthorizeStartStop>(),
+                                                 [],
                                                  RequestTimeout,
                                                  authStartResult,
-                                                 runtime);
+                                                 runtime,
+                                                 CancellationToken);
 
             }
             catch (Exception e)
