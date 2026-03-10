@@ -555,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
             GetVersions(Request_Id?        RequestId           = null,
@@ -705,12 +705,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnGetVersionsResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnGetVersionsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -743,7 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
             GetVersionDetails(Version_Id?        VersionId             = null,
@@ -960,12 +960,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnGetVersionDetailsResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnGetVersionDetailsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -999,7 +999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ModuleId">The OCPI module identification.</param>
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<URL?> GetModuleRemoteURL(Module_Id          ModuleId,
                                                    Version_Id?        VersionId           = null,
 
@@ -1072,7 +1072,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ModuleId">The OCPI module identification.</param>
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<HTTPTestClient?>
 
             GetModuleHTTPClient(Module_Id          ModuleId,
@@ -1169,7 +1169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             GetCredentials(Version_Id?        VersionId           = null,
@@ -1306,12 +1306,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnGetCredentialsHTTPResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnGetCredentialsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -1350,7 +1350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             PostCredentials(Credentials        Credentials,
@@ -1491,12 +1491,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnPostCredentialsHTTPResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnPostCredentialsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -1535,7 +1535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Credentials>>
@@ -1710,12 +1710,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnPutCredentialsHTTPResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnPutCredentialsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -1753,7 +1753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse>
 
             DeleteCredentials(Version_Id?        VersionId           = null,
@@ -1886,12 +1886,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnDeleteCredentialsHTTPResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnDeleteCredentialsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",
@@ -1953,7 +1953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             Register(Version_Id?        VersionId             = null,
@@ -2182,12 +2182,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #region Send OnRegisterResponse event
 
             stopwatch.Stop();
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             await LogEvent(
                       OnRegisterResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           requestTimestamp,
                           this,
                           $"{nameof(CommonHTTPClient)} {RemoteParty?.Id}",

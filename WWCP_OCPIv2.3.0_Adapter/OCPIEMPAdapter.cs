@@ -146,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
         }
 
-        event OnSendCDRsRequestDelegate IEMPRoamingProvider.OnChargeDetailRecordRequest
+        event OnChargeDetailRecordsRequestDelegate IEMPRoamingProvider.OnChargeDetailRecordRequest
         {
             add
             {
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
         }
 
-        event OnSendCDRsResponseDelegate IEMPRoamingProvider.OnChargeDetailRecordResponse
+        event OnChargeDetailRecordsResponseDelegate IEMPRoamingProvider.OnChargeDetailRecordResponse
         {
             add
             {

@@ -1015,7 +1015,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1023,7 +1023,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetLocationsResponse is not null)
                     await Task.WhenAll(OnGetLocationsResponse.GetInvocationList().
                                        Cast<OnGetLocationsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1033,7 +1033,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1208,7 +1208,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1216,7 +1216,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetLocationResponse is not null)
                     await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
                                        Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1228,7 +1228,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1406,7 +1406,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1414,7 +1414,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetEVSEResponse is not null)
                     await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
                                        Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1427,7 +1427,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1616,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetConnectorResponse is not null)
                     await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
                                        Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1630,7 +1630,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1812,7 +1812,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1820,7 +1820,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetTariffsResponse is not null)
                     await Task.WhenAll(OnGetTariffsResponse.GetInvocationList().
                                        Cast<OnGetTariffsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1830,7 +1830,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2005,7 +2005,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2013,7 +2013,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetTariffResponse is not null)
                     await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
                                        Cast<OnGetTariffResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2025,7 +2025,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2223,7 +2223,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2231,7 +2231,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetSessionsResponse is not null)
                     await Task.WhenAll(OnGetSessionsResponse.GetInvocationList().
                                        Cast<OnGetSessionsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2241,7 +2241,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2416,7 +2416,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2424,7 +2424,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetSessionResponse is not null)
                     await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
                                        Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2436,7 +2436,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2472,7 +2472,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
             GetCDRs(DateTimeOffset?     From                = null,
@@ -2620,7 +2620,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetCDRsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2628,7 +2628,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetCDRsResponse is not null)
                     await Task.WhenAll(OnGetCDRsResponse.GetInvocationList().
                                        Cast<OnGetCDRsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2638,7 +2638,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2668,7 +2668,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<CDR>>
 
             GetCDR(CDR_Id              CDRId,
@@ -2813,7 +2813,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetCDRResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2821,7 +2821,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetCDRResponse is not null)
                     await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
                                        Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2833,7 +2833,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2858,7 +2858,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             GetToken(CountryCode         CountryCode,
@@ -3009,7 +3009,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnGetTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3017,7 +3017,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnGetTokenResponse is not null)
                     await Task.WhenAll(OnGetTokenResponse.GetInvocationList().
                                        Cast<OnGetTokenResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3031,7 +3031,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3057,7 +3057,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             PutToken(Token               Token,
@@ -3206,7 +3206,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnPutTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3214,7 +3214,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnPutTokenResponse is not null)
                     await Task.WhenAll(OnPutTokenResponse.GetInvocationList().
                                        Cast<OnPutTokenResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3226,7 +3226,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3250,7 +3250,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             PatchToken(CountryCode         CountryCode,
@@ -3412,7 +3412,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnPatchTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3420,7 +3420,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                 if (OnPatchTokenResponse is not null)
                     await Task.WhenAll(OnPatchTokenResponse.GetInvocationList().
                                        Cast<OnPatchTokenResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3435,7 +3435,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3462,7 +3462,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
@@ -3641,7 +3641,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnReserveNowResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3666,7 +3666,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3690,7 +3690,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<CancelReservationCommand, CommandResponse>>
 
             CancelReservation(Reservation_Id      ReservationId,
@@ -3853,7 +3853,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnCancelReservationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3873,7 +3873,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3897,7 +3897,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<StartSessionCommand, CommandResponse>>
 
             StartSession(Token                    Token,
@@ -4073,7 +4073,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnStartSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4097,7 +4097,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4121,7 +4121,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<StopSessionCommand, CommandResponse>>
 
             StopSession(Session_Id          SessionId,
@@ -4285,7 +4285,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnStopSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4305,7 +4305,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4329,7 +4329,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<UnlockConnectorCommand, CommandResponse>>
 
             UnlockConnector(Location_Id         LocationId,
@@ -4499,7 +4499,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
 
             #region Send OnUnlockConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4521,7 +4521,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }

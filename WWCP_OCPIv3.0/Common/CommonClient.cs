@@ -756,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
             GetVersions(Request_Id?        RequestId           = null,
@@ -930,7 +930,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetVersionsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -945,7 +945,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnGetVersionsResponse is not null)
                     await Task.WhenAll(OnGetVersionsResponse.GetInvocationList().
                                        Cast<OnGetVersionsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -956,7 +956,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data ?? Array.Empty<VersionInformation>(),
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -983,7 +983,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
             GetVersionDetails(Version_Id?        VersionId             = null,
@@ -1227,7 +1227,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetVersionDetailsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1241,7 +1241,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnGetVersionDetailsResponse is not null)
                     await Task.WhenAll(OnGetVersionDetailsResponse.GetInvocationList().
                                        Cast<OnGetVersionDetailsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -1254,7 +1254,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1343,7 +1343,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             GetCredentials(Version_Id?        VersionId           = null,
@@ -1499,7 +1499,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnGetCredentialsHTTPResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1514,7 +1514,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnGetCredentialsResponse is not null)
                     await Task.WhenAll(OnGetCredentialsResponse.GetInvocationList().
                                        Cast<OnGetCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -1527,7 +1527,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1558,7 +1558,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             PostCredentials(Credentials        Credentials,
@@ -1719,7 +1719,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnPostCredentialsHTTPResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1734,7 +1734,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnPostCredentialsResponse is not null)
                     await Task.WhenAll(OnPostCredentialsResponse.GetInvocationList().
                                        Cast<OnPostCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -1748,7 +1748,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1779,7 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             PutCredentials(Credentials        Credentials,
@@ -2005,7 +2005,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnPutCredentialsHTTPResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2020,7 +2020,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnPutCredentialsResponse is not null)
                     await Task.WhenAll(OnPutCredentialsResponse.GetInvocationList().
                                        Cast<OnPutCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -2034,7 +2034,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2063,7 +2063,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse>
 
             DeleteCredentials(Version_Id?        VersionId           = null,
@@ -2219,7 +2219,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnDeleteCredentialsHTTPResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2234,7 +2234,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnDeleteCredentialsResponse is not null)
                     await Task.WhenAll(OnDeleteCredentialsResponse.GetInvocationList().
                                        Cast<OnDeleteCredentialsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      requestTimestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -2246,7 +2246,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                      versionId,
 
                                                      requestTimeout,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2294,7 +2294,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Credentials>>
 
             Register(Version_Id?        VersionId             = null,
@@ -2578,7 +2578,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnRegisterResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2593,7 +2593,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (OnRegisterResponse is not null)
                     await Task.WhenAll(OnRegisterResponse.GetInvocationList().
                                        Cast<OnRegisterResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      timestamp,
                                                      this,
                                                      $"{nameof(CommonClient)} {RemoteParty.Id}",
@@ -2606,7 +2606,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                                      requestTimeout,
                                                      response.Data,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }

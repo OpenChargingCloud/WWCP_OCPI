@@ -5825,13 +5825,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Send OnPostCDRResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPostCDRResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -6739,13 +6739,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Send OnPostTokenResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPostTokenResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,

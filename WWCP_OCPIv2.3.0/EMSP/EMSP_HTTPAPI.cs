@@ -3722,13 +3722,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPutLocationResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPutLocationResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -3917,13 +3917,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPatchLocationResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPatchLocationResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -4300,13 +4300,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPutEVSEResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPutEVSEResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -4476,13 +4476,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPatchEVSEResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPatchEVSEResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -4838,13 +4838,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPutConnectorResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPutConnectorResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -4999,13 +4999,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPatchConnectorResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPatchConnectorResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -5637,13 +5637,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPutTariffResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPutTariffResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -6968,13 +6968,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPostCDRResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPostCDRResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.CPOId?.CountryCode,
@@ -8053,13 +8053,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Send OnPostTokenResponse event
 
-                    var endtime = Timestamp.Now;
+                    var endTime = Timestamp.Now;
                     stopwatch.Stop();
 
                     await LogEvent(
                               OnPostTokenResponse,
                               loggingDelegate => loggingDelegate.Invoke(
-                                  endtime,
+                                  endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
                                   request.From?.CountryCode ?? request.CPOId?.CountryCode,

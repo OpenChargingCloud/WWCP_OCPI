@@ -1154,7 +1154,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1162,7 +1162,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetLocationResponse is not null)
                     await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
                                        Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1176,7 +1176,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1377,7 +1377,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPutLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1385,7 +1385,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPutLocationResponse is not null)
                     await Task.WhenAll(OnPutLocationResponse.GetInvocationList().
                                        Cast<OnPutLocationResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1397,7 +1397,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1582,7 +1582,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPatchLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1590,7 +1590,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPatchLocationResponse is not null)
                     await Task.WhenAll(OnPatchLocationResponse.GetInvocationList().
                                        Cast<OnPatchLocationResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1603,7 +1603,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -1780,7 +1780,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -1788,7 +1788,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetEVSEResponse is not null)
                     await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
                                        Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1801,7 +1801,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2046,7 +2046,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPutEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2054,7 +2054,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPutEVSEResponse is not null)
                     await Task.WhenAll(OnPutEVSEResponse.GetInvocationList().
                                        Cast<OnPutEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2069,7 +2069,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2258,7 +2258,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPatchEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2266,7 +2266,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPatchEVSEResponse is not null)
                     await Task.WhenAll(OnPatchEVSEResponse.GetInvocationList().
                                        Cast<OnPatchEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2282,7 +2282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2464,7 +2464,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2472,7 +2472,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetConnectorResponse is not null)
                     await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
                                        Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2488,7 +2488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2683,7 +2683,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPutConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2691,7 +2691,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPutConnectorResponse is not null)
                     await Task.WhenAll(OnPutConnectorResponse.GetInvocationList().
                                        Cast<OnPutConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2703,7 +2703,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -2888,7 +2888,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPatchConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -2896,7 +2896,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPatchConnectorResponse is not null)
                     await Task.WhenAll(OnPatchConnectorResponse.GetInvocationList().
                                        Cast<OnPatchConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -2913,7 +2913,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3089,7 +3089,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3097,7 +3097,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetTariffResponse is not null)
                     await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
                                        Cast<OnGetTariffResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3111,7 +3111,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3286,7 +3286,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPutTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3294,7 +3294,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPutTariffResponse is not null)
                     await Task.WhenAll(OnPutTariffResponse.GetInvocationList().
                                        Cast<OnPutTariffResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3306,7 +3306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3492,7 +3492,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPatchTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3500,7 +3500,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPatchTariffResponse is not null)
                     await Task.WhenAll(OnPatchTariffResponse.GetInvocationList().
                                        Cast<OnPatchTariffResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3515,7 +3515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3690,7 +3690,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnDeleteTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3698,7 +3698,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnDeleteTariffResponse is not null)
                     await Task.WhenAll(OnDeleteTariffResponse.GetInvocationList().
                                        Cast<OnDeleteTariffResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3712,7 +3712,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -3888,7 +3888,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -3896,7 +3896,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetSessionResponse is not null)
                     await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
                                        Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -3910,7 +3910,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4083,7 +4083,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPutSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4091,7 +4091,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPutSessionResponse is not null)
                     await Task.WhenAll(OnPutSessionResponse.GetInvocationList().
                                        Cast<OnPutSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -4103,7 +4103,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4289,7 +4289,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPatchSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4297,7 +4297,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPatchSessionResponse is not null)
                     await Task.WhenAll(OnPatchSessionResponse.GetInvocationList().
                                        Cast<OnPatchSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -4312,7 +4312,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4487,7 +4487,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnDeleteSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4495,7 +4495,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnDeleteSessionResponse is not null)
                     await Task.WhenAll(OnDeleteSessionResponse.GetInvocationList().
                                        Cast<OnDeleteSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -4509,7 +4509,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4683,7 +4683,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPostCDRResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4691,7 +4691,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPostCDRResponse is not null)
                     await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
                                        Cast<OnPostCDRResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -4703,7 +4703,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -4878,7 +4878,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetCDRResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -4886,7 +4886,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetCDRResponse is not null)
                     await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
                                        Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -4900,7 +4900,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -5089,7 +5089,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnGetTokensResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -5097,7 +5097,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnGetTokensResponse is not null)
                     await Task.WhenAll(OnGetTokensResponse.GetInvocationList().
                                        Cast<OnGetTokensResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -5110,7 +5110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -5320,7 +5320,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnPostTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -5328,7 +5328,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnPostTokenResponse is not null)
                     await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
                                        Cast<OnPostTokenResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -5342,7 +5342,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }
@@ -5524,7 +5524,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
             #region Send OnSetChargingProfileResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
 
             try
             {
@@ -5532,7 +5532,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                 if (OnSetChargingProfileResponse is not null)
                     await Task.WhenAll(OnSetChargingProfileResponse.GetInvocationList().
                                        Cast<OnSetChargingProfileResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -5545,7 +5545,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      requestTimeout,
 
                                                      response,
-                                                     endtime - startTime))).
+                                                     endTime - startTime))).
                                        ConfigureAwait(false);
 
             }

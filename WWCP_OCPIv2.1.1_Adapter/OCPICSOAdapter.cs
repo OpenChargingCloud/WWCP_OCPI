@@ -129,8 +129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public event WWCP.OnNewChargingSessionDelegate?          OnNewChargingSession;
 
-        public event WWCP.OnSendCDRsRequestDelegate?             OnChargeDetailRecordRequest;
-        public event WWCP.OnSendCDRsResponseDelegate?            OnChargeDetailRecordResponse;
+        public event WWCP.OnChargeDetailRecordsRequestDelegate?             OnChargeDetailRecordRequest;
+        public event WWCP.OnChargeDetailRecordsResponseDelegate?            OnChargeDetailRecordResponse;
         public event WWCP.OnNewChargeDetailRecordDelegate?       OnNewChargeDetailRecord;
 
 
@@ -191,17 +191,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// An event fired whenever a charge detail record was enqueued for later sending upstream.
         /// </summary>
-        public event WWCP.OnSendCDRsRequestDelegate?   OnEnqueueSendCDRsRequest;
+        public event WWCP.OnChargeDetailRecordsRequestDelegate?   OnEnqueueSendCDRsRequest;
 
         /// <summary>
         /// An event fired whenever a charge detail record will be send upstream.
         /// </summary>
-        public event WWCP.OnSendCDRsRequestDelegate?   OnSendCDRsRequest;
+        public event WWCP.OnChargeDetailRecordsRequestDelegate?   OnSendCDRsRequest;
 
         /// <summary>
         /// An event fired whenever a charge detail record had been sent upstream.
         /// </summary>
-        public event WWCP.OnSendCDRsResponseDelegate?  OnSendCDRsResponse;
+        public event WWCP.OnChargeDetailRecordsResponseDelegate?  OnChargeDetailRecordsResponse;
 
         #endregion
 
@@ -685,7 +685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.AddChargingPoolResult>
 
             AddChargingPool(WWCP.IChargingPool      ChargingPool,
@@ -800,7 +800,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.AddOrUpdateChargingPoolResult>
 
             AddOrUpdateChargingPool(WWCP.IChargingPool      ChargingPool,
@@ -920,7 +920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.UpdateChargingPoolResult>
 
             UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
@@ -1289,7 +1289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.UpdateChargingStationResult>
 
             UpdateChargingStation(WWCP.IChargingStation   ChargingStation,
@@ -1444,7 +1444,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.AddEVSEResult>
 
             AddEVSE(WWCP.IEVSE              EVSE,
@@ -1596,7 +1596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.AddOrUpdateEVSEResult>
 
             AddOrUpdateEVSE(WWCP.IEVSE              EVSE,
@@ -1756,7 +1756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override async Task<WWCP.UpdateEVSEResult>
 
             UpdateEVSE(WWCP.IEVSE              EVSE,
@@ -1908,7 +1908,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public override Task<WWCP.DeleteEVSEResult>
 
             DeleteEVSE(WWCP.IEVSE              EVSE,
@@ -1940,7 +1940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         async Task<WWCP.PushEVSEStatusResult>
 
             WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
@@ -2277,7 +2277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.AuthStartResult>
 
             AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
@@ -2600,7 +2600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.AuthStopResult>
 
             AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
@@ -2645,7 +2645,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     SessionId,
                     CPOPartnerSessionId,
                     LocalAuthentication,
-                    RequestTimeout
+                    RequestTimeout,
+                    CancellationToken
                 );
 
             }
@@ -2865,7 +2866,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     LocalAuthentication,
                     RequestTimeout,
                     authStopResult,
-                    runtime
+                    runtime,
+                    CancellationToken
                 );
 
             }
@@ -2894,7 +2896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.SendCDRResult>
 
             SendChargeDetailRecord(WWCP.ChargeDetailRecord  ChargeDetailRecord,
@@ -2928,7 +2930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.SendCDRsResult>
 
             SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
@@ -2990,7 +2992,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           EventTrackingId,
                           RoamingNetwork.Id,
                           ChargeDetailRecords,
-                          RequestTimeout
+                          RequestTimeout,
+                          CancellationToken
                       )
                   );
 
@@ -3220,13 +3223,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Send OnSendCDRsRequest event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
-                      OnSendCDRsResponse,
+                      OnChargeDetailRecordsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           startTime,
                           this,
                           Id.ToString(),
@@ -3235,7 +3238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           ChargeDetailRecords,
                           RequestTimeout,
                           sendCDRsResult,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 

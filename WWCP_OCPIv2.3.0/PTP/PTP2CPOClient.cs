@@ -999,13 +999,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -1181,13 +1181,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -1368,13 +1368,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetEVSEResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -1559,13 +1559,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetConnectorResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -1752,13 +1752,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetTariffsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -1934,13 +1934,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetTariffResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2141,13 +2141,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetSessionsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2323,13 +2323,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetSessionResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2372,7 +2372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
             GetCDRs(DateTimeOffset?     From                = null,
@@ -2516,13 +2516,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetCDRsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetCDRsResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2557,7 +2557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<CDR>>
 
             GetCDR(CDR_Id              CDRId,
@@ -2698,13 +2698,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetCDRResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetCDRResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2736,7 +2736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             GetToken(CountryCode         CountryCode,
@@ -2883,13 +2883,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnGetTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnGetTokenResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -2924,7 +2924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             PutToken(Token               Token,
@@ -3069,13 +3069,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnPutTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnPutTokenResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -3106,7 +3106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Token>>
 
             PatchToken(CountryCode         CountryCode,
@@ -3264,13 +3264,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnPatchTokenResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnPatchTokenResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -3307,7 +3307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
@@ -3490,13 +3490,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnReserveNowResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnReserveNowResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -3532,7 +3532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<CancelReservationCommand, CommandResponse>>
 
             CancelReservation(Reservation_Id      ReservationId,
@@ -3699,13 +3699,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnCancelReservationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnCancelReservationResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -3736,7 +3736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<StartSessionCommand, CommandResponse>>
 
             StartSession(Token                    Token,
@@ -3916,13 +3916,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnStartSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnStartSessionResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -3957,7 +3957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<StopSessionCommand, CommandResponse>>
 
             StopSession(Session_Id          SessionId,
@@ -4125,13 +4125,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnStopSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnStopSessionResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,
@@ -4162,7 +4162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<UnlockConnectorCommand, CommandResponse>>
 
             UnlockConnector(Location_Id         LocationId,
@@ -4336,13 +4336,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP
 
             #region Send OnUnlockConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             await LogEvent(
                       OnUnlockConnectorResponse,
                       loggingDelegate => loggingDelegate.Invoke(
-                          endtime,
+                          endTime,
                           this,
                           requestId,
                           correlationId,

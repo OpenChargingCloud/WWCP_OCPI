@@ -431,7 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
             GetLocations(Version_Id?         VersionId           = null,
@@ -571,7 +571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -580,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetLocationsResponse is not null)
                     await Task.WhenAll(OnGetLocationsResponse.GetInvocationList().
                                        Cast<OnGetLocationsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Location>>
 
             GetLocation(Location_Id         LocationId,
@@ -764,7 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -773,7 +773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetLocationResponse is not null)
                     await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
                                        Cast<OnGetLocationResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -816,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<EVSE>>
 
             GetEVSE(Location_Id         LocationId,
@@ -962,7 +962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -971,7 +971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetEVSEResponse is not null)
                     await Task.WhenAll(OnGetEVSEResponse.GetInvocationList().
                                        Cast<OnGetEVSEResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1016,7 +1016,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Connector>>
 
             GetConnector(Location_Id         LocationId,
@@ -1164,7 +1164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -1173,7 +1173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetConnectorResponse is not null)
                     await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
                                        Cast<OnGetConnectorResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1217,7 +1217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
             GetSessions(Version_Id?         VersionId           = null,
@@ -1357,7 +1357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -1366,7 +1366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetSessionsResponse is not null)
                     await Task.WhenAll(OnGetSessionsResponse.GetInvocationList().
                                        Cast<OnGetSessionsResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,
@@ -1406,7 +1406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<Session>>
 
             GetSession(Session_Id          SessionId,
@@ -1550,7 +1550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var endtime = Timestamp.Now;
+            var endTime = Timestamp.Now;
             stopwatch.Stop();
 
             try
@@ -1559,7 +1559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                 if (OnGetSessionResponse is not null)
                     await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
                                        Cast<OnGetSessionResponseDelegate>().
-                                       Select(e => e(endtime,
+                                       Select(e => e(endTime,
                                                      this,
                                                      requestId,
                                                      correlationId,

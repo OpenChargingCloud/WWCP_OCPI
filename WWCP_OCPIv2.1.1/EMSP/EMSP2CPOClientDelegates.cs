@@ -38,9 +38,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                         Request_Id                           RequestId,
                                                         Correlation_Id                       CorrelationId,
 
-                                                        CancellationToken?                   CancellationToken,
                                                         EventTracking_Id                     EventTrackingId,
-                                                        TimeSpan                             RequestTimeout);
+                                                        TimeSpan                             RequestTimeout,
+                                                        CancellationToken                    CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get locations request had been received.
@@ -50,12 +50,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                         Request_Id                            RequestId,
                                                         Correlation_Id                        CorrelationId,
 
-                                                        CancellationToken?                    CancellationToken,
                                                         EventTracking_Id                      EventTrackingId,
                                                         TimeSpan                              RequestTimeout,
 
                                                         OCPIResponse<IEnumerable<Location>>   Response,
-                                                        TimeSpan                              Runtime);
+                                                        TimeSpan                              Runtime,
+                                                        CancellationToken                     CancellationToken);
 
     #endregion
 
@@ -71,9 +71,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                       Location_Id              LocationId,
 
-                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
-                                                      TimeSpan                 RequestTimeout);
+                                                      TimeSpan                 RequestTimeout,
+                                                      CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get location by its identification request had been received.
@@ -85,12 +85,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                        Location_Id              LocationId,
 
-                                                       CancellationToken        CancellationToken,
                                                        EventTracking_Id         EventTrackingId,
                                                        TimeSpan                 RequestTimeout,
 
                                                        OCPIResponse<Location>   Response,
-                                                       TimeSpan                 Runtime);
+                                                       TimeSpan                 Runtime,
+                                                       CancellationToken        CancellationToken);
 
     #endregion
 
@@ -107,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                   Location_Id              LocationId,
                                                   EVSE_UId                 EVSEUId,
 
-                                                  CancellationToken        CancellationToken,
                                                   EventTracking_Id         EventTrackingId,
-                                                  TimeSpan                 RequestTimeout);
+                                                  TimeSpan                 RequestTimeout,
+                                                  CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
@@ -122,12 +122,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                    Location_Id              LocationId,
                                                    EVSE_UId                 EVSEUId,
 
-                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
                                                    TimeSpan                 RequestTimeout,
 
                                                    OCPIResponse<EVSE>       Response,
-                                                   TimeSpan                 Runtime);
+                                                   TimeSpan                 Runtime,
+                                                   CancellationToken        CancellationToken);
 
     #endregion
 
@@ -145,9 +145,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                        EVSE_UId                  EVSEUId,
                                                        Connector_Id              ConnectorId,
 
-                                                       CancellationToken         CancellationToken,
                                                        EventTracking_Id          EventTrackingId,
-                                                       TimeSpan                  RequestTimeout);
+                                                       TimeSpan                  RequestTimeout,
+                                                       CancellationToken         CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get connector by its identification request had been received.
@@ -161,12 +161,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                         EVSE_UId                  EVSEUId,
                                                         Connector_Id              ConnectorId,
 
-                                                        CancellationToken         CancellationToken,
                                                         EventTracking_Id          EventTrackingId,
                                                         TimeSpan                  RequestTimeout,
 
                                                         OCPIResponse<Connector>   Response,
-                                                        TimeSpan                  Runtime);
+                                                        TimeSpan                  Runtime,
+                                                        CancellationToken         CancellationToken);
 
     #endregion
 
@@ -186,9 +186,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                      UInt64?                               Offset,
                                                      UInt64?                               Limit,
 
-                                                     CancellationToken?                    CancellationToken,
                                                      EventTracking_Id                      EventTrackingId,
-                                                     TimeSpan                              RequestTimeout);
+                                                     TimeSpan                              RequestTimeout,
+                                                     CancellationToken                     CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get tariffs request had been received.
@@ -203,12 +203,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                       UInt64?                               Offset,
                                                       UInt64?                               Limit,
 
-                                                      CancellationToken?                    CancellationToken,
                                                       EventTracking_Id                      EventTrackingId,
                                                       TimeSpan                              RequestTimeout,
 
                                                       OCPIResponse<IEnumerable<Tariff>>     Response,
-                                                      TimeSpan                              Runtime);
+                                                      TimeSpan                              Runtime,
+                                                      CancellationToken                     CancellationToken);
 
     #endregion
 
@@ -226,9 +226,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                     DateTimeOffset?          TariffTimestamp,
                                                     TimeSpan?                Tolerance,
 
-                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
-                                                    TimeSpan                 RequestTimeout);
+                                                    TimeSpan                 RequestTimeout,
+                                                    CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get tariff by its identification request had been received.
@@ -242,12 +242,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                      DateTimeOffset?          TariffTimestamp,
                                                      TimeSpan?                Tolerance,
 
-                                                     CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,
                                                      TimeSpan                 RequestTimeout,
 
                                                      OCPIResponse<Tariff>     Response,
-                                                     TimeSpan                 Runtime);
+                                                     TimeSpan                 Runtime,
+                                                     CancellationToken        CancellationToken);
 
     #endregion
 
@@ -262,9 +262,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                       Request_Id                            RequestId,
                                                       Correlation_Id                        CorrelationId,
 
-                                                      CancellationToken?                    CancellationToken,
                                                       EventTracking_Id                      EventTrackingId,
-                                                      TimeSpan                              RequestTimeout);
+                                                      TimeSpan                              RequestTimeout,
+                                                      CancellationToken                     CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get sessions request had been received.
@@ -274,12 +274,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                        Request_Id                            RequestId,
                                                        Correlation_Id                        CorrelationId,
 
-                                                       CancellationToken?                    CancellationToken,
                                                        EventTracking_Id                      EventTrackingId,
                                                        TimeSpan                              RequestTimeout,
 
                                                        OCPIResponse<IEnumerable<Session>>    Response,
-                                                       TimeSpan                              Runtime);
+                                                       TimeSpan                              Runtime,
+                                                       CancellationToken                     CancellationToken);
 
     #endregion
 
@@ -295,9 +295,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                      Session_Id               SessionId,
 
-                                                     CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,
-                                                     TimeSpan                 RequestTimeout);
+                                                     TimeSpan                 RequestTimeout,
+                                                     CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get session by its identification request had been received.
@@ -309,12 +309,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                       Session_Id               SessionId,
 
-                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
                                                       TimeSpan                 RequestTimeout,
 
                                                       OCPIResponse<Session>    Response,
-                                                      TimeSpan                 Runtime);
+                                                      TimeSpan                 Runtime,
+                                                      CancellationToken        CancellationToken);
 
     #endregion
 
@@ -329,9 +329,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                   Request_Id                            RequestId,
                                                   Correlation_Id                        CorrelationId,
 
-                                                  CancellationToken?                    CancellationToken,
                                                   EventTracking_Id                      EventTrackingId,
-                                                  TimeSpan                              RequestTimeout);
+                                                  TimeSpan                              RequestTimeout,
+                                                  CancellationToken                     CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get CDRs request had been received.
@@ -341,12 +341,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                    Request_Id                            RequestId,
                                                    Correlation_Id                        CorrelationId,
 
-                                                   CancellationToken?                    CancellationToken,
                                                    EventTracking_Id                      EventTrackingId,
                                                    TimeSpan                              RequestTimeout,
 
                                                    OCPIResponse<IEnumerable<CDR>>        Response,
-                                                   TimeSpan                              Runtime);
+                                                   TimeSpan                              Runtime,
+                                                   CancellationToken                     CancellationToken);
 
     #endregion
 
@@ -376,12 +376,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                   CDR_Id                   CDRId,
 
-                                                  CancellationToken        CancellationToken,
                                                   EventTracking_Id         EventTrackingId,
                                                   TimeSpan                 RequestTimeout,
 
                                                   OCPIResponse<CDR>        Response,
-                                                  TimeSpan                 Runtime);
+                                                  TimeSpan                 Runtime,
+                                                  CancellationToken        CancellationToken);
 
     #endregion
 
@@ -400,9 +400,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                    Party_Id                 PartyId,
                                                    Token_Id                 TokenId,
 
-                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
-                                                   TimeSpan                 RequestTimeout);
+                                                   TimeSpan                 RequestTimeout,
+                                                   CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a get token request had been received.
@@ -416,12 +416,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                     Party_Id                 PartyId,
                                                     Token_Id                 TokenId,
 
-                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
                                                     TimeSpan                 RequestTimeout,
 
                                                     OCPIResponse<Token>      Response,
-                                                    TimeSpan                 Runtime);
+                                                    TimeSpan                 Runtime,
+                                                    CancellationToken        CancellationToken);
 
     #endregion
 
@@ -437,9 +437,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                    Token                    Token,
 
-                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
-                                                   TimeSpan                 RequestTimeout);
+                                                   TimeSpan                 RequestTimeout,
+                                                   CancellationToken        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a put token request had been received.
@@ -451,12 +451,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                                                     Token                    Token,
 
-                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
                                                     TimeSpan                 RequestTimeout,
 
                                                     OCPIResponse<Token>      Response,
-                                                    TimeSpan                 Runtime);
+                                                    TimeSpan                 Runtime,
+                                                    CancellationToken        CancellationToken);
 
     #endregion
 
@@ -466,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever a patch token request will be send.
     /// </summary>
     public delegate Task OnPatchTokenRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                     EMSP2CPOClient                Sender,
+                                                     EMSP2CPOClient            Sender,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
 
@@ -475,15 +475,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                      Token_Id                  TokenId,
                                                      JObject                   TokenPatch,
 
-                                                     CancellationToken         CancellationToken,
                                                      EventTracking_Id          EventTrackingId,
-                                                     TimeSpan                  RequestTimeout);
+                                                     TimeSpan                  RequestTimeout,
+                                                     CancellationToken         CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a patch token request had been received.
     /// </summary>
     public delegate Task OnPatchTokenResponseDelegate(DateTimeOffset            LogTimestamp,
-                                                      EMSP2CPOClient                Sender,
+                                                      EMSP2CPOClient            Sender,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
 
@@ -492,12 +492,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                       Token_Id                  TokenId,
                                                       JObject                   TokenPatch,
 
-                                                      CancellationToken         CancellationToken,
                                                       EventTracking_Id          EventTrackingId,
                                                       TimeSpan                  RequestTimeout,
 
                                                       OCPIResponse<Token>       Response,
-                                                      TimeSpan                  Runtime);
+                                                      TimeSpan                  Runtime,
+                                                      CancellationToken         CancellationToken);
 
     #endregion
 
@@ -508,7 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever a reserve now command request will be send.
     /// </summary>
     public delegate Task OnReserveNowRequestDelegate(DateTimeOffset                                      LogTimestamp,
-                                                     EMSP2CPOClient                                          Sender,
+                                                     EMSP2CPOClient                                      Sender,
                                                      Request_Id                                          RequestId,
                                                      Correlation_Id                                      CorrelationId,
 
@@ -518,15 +518,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                      Location_Id                                         LocationId,
                                                      EVSE_UId?                                           EVSEUId,
 
-                                                     CancellationToken                                   CancellationToken,
                                                      EventTracking_Id                                    EventTrackingId,
-                                                     TimeSpan                                            RequestTimeout);
+                                                     TimeSpan                                            RequestTimeout,
+                                                     CancellationToken                                   CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a reserve now command request had been received.
     /// </summary>
     public delegate Task OnReserveNowResponseDelegate(DateTimeOffset                                      LogTimestamp,
-                                                      EMSP2CPOClient                                          Sender,
+                                                      EMSP2CPOClient                                      Sender,
                                                       Request_Id                                          RequestId,
                                                       Correlation_Id                                      CorrelationId,
 
@@ -536,12 +536,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                       Location_Id                                         LocationId,
                                                       EVSE_UId?                                           EVSEUId,
 
-                                                      CancellationToken                                   CancellationToken,
                                                       EventTracking_Id                                    EventTrackingId,
                                                       TimeSpan                                            RequestTimeout,
 
                                                       OCPIResponse<ReserveNowCommand, CommandResponse>    Response,
-                                                      TimeSpan                                            Runtime);
+                                                      TimeSpan                                            Runtime,
+                                                      CancellationToken                                   CancellationToken);
 
     #endregion
 
@@ -551,32 +551,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever a cancel reservation command request will be send.
     /// </summary>
     public delegate Task OnCancelReservationRequestDelegate(DateTimeOffset                                             LogTimestamp,
-                                                            EMSP2CPOClient                                                 Sender,
+                                                            EMSP2CPOClient                                             Sender,
                                                             Request_Id                                                 RequestId,
                                                             Correlation_Id                                             CorrelationId,
 
                                                             Reservation_Id                                             ReservationId,
 
-                                                            CancellationToken?                                         CancellationToken,
                                                             EventTracking_Id                                           EventTrackingId,
-                                                            TimeSpan                                                   RequestTimeout);
+                                                            TimeSpan                                                   RequestTimeout,
+                                                            CancellationToken                                          CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a cancel reservation command request had been received.
     /// </summary>
     public delegate Task OnCancelReservationResponseDelegate(DateTimeOffset                                             LogTimestamp,
-                                                             EMSP2CPOClient                                                 Sender,
+                                                             EMSP2CPOClient                                             Sender,
                                                              Request_Id                                                 RequestId,
                                                              Correlation_Id                                             CorrelationId,
 
                                                              Reservation_Id                                             ReservationId,
 
-                                                             CancellationToken?                                         CancellationToken,
                                                              EventTracking_Id                                           EventTrackingId,
                                                              TimeSpan                                                   RequestTimeout,
 
                                                              OCPIResponse<CancelReservationCommand, CommandResponse>    Response,
-                                                             TimeSpan                                                   Runtime);
+                                                             TimeSpan                                                   Runtime,
+                                                             CancellationToken                                          CancellationToken);
 
     #endregion
 
@@ -586,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever a start session command request will be send.
     /// </summary>
     public delegate Task OnStartSessionRequestDelegate(DateTimeOffset                                        LogTimestamp,
-                                                       EMSP2CPOClient                                            Sender,
+                                                       EMSP2CPOClient                                        Sender,
                                                        Request_Id                                            RequestId,
                                                        Correlation_Id                                        CorrelationId,
 
@@ -594,15 +594,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                        Location_Id                                           LocationId,
                                                        EVSE_UId?                                             EVSEUId,
 
-                                                       CancellationToken?                                    CancellationToken,
                                                        EventTracking_Id                                      EventTrackingId,
-                                                       TimeSpan                                              RequestTimeout);
+                                                       TimeSpan                                              RequestTimeout,
+                                                       CancellationToken                                     CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a start session command request had been received.
     /// </summary>
     public delegate Task OnStartSessionResponseDelegate(DateTimeOffset                                        LogTimestamp,
-                                                        EMSP2CPOClient                                            Sender,
+                                                        EMSP2CPOClient                                        Sender,
                                                         Request_Id                                            RequestId,
                                                         Correlation_Id                                        CorrelationId,
 
@@ -610,12 +610,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                         Location_Id                                           LocationId,
                                                         EVSE_UId?                                             EVSEUId,
 
-                                                        CancellationToken?                                    CancellationToken,
                                                         EventTracking_Id                                      EventTrackingId,
                                                         TimeSpan                                              RequestTimeout,
 
                                                         OCPIResponse<StartSessionCommand, CommandResponse>    Response,
-                                                        TimeSpan                                              Runtime);
+                                                        TimeSpan                                              Runtime,
+                                                        CancellationToken                                     CancellationToken);
 
     #endregion
 
@@ -625,32 +625,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever a stop session command request will be send.
     /// </summary>
     public delegate Task OnStopSessionRequestDelegate(DateTimeOffset                                       LogTimestamp,
-                                                      EMSP2CPOClient                                           Sender,
+                                                      EMSP2CPOClient                                       Sender,
                                                       Request_Id                                           RequestId,
                                                       Correlation_Id                                       CorrelationId,
 
                                                       Session_Id                                           SessionId,
 
-                                                      CancellationToken?                                   CancellationToken,
                                                       EventTracking_Id                                     EventTrackingId,
-                                                      TimeSpan                                             RequestTimeout);
+                                                      TimeSpan                                             RequestTimeout,
+                                                      CancellationToken                                    CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a stop session command request had been received.
     /// </summary>
     public delegate Task OnStopSessionResponseDelegate(DateTimeOffset                                       LogTimestamp,
-                                                       EMSP2CPOClient                                           Sender,
+                                                       EMSP2CPOClient                                       Sender,
                                                        Request_Id                                           RequestId,
                                                        Correlation_Id                                       CorrelationId,
 
                                                        Session_Id                                           SessionId,
 
-                                                       CancellationToken?                                   CancellationToken,
                                                        EventTracking_Id                                     EventTrackingId,
                                                        TimeSpan                                             RequestTimeout,
 
                                                        OCPIResponse<StopSessionCommand, CommandResponse>    Response,
-                                                       TimeSpan                                             Runtime);
+                                                       TimeSpan                                             Runtime,
+                                                       CancellationToken                                    CancellationToken);
 
     #endregion
 
@@ -660,7 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
     public delegate Task OnUnlockConnectorRequestDelegate(DateTimeOffset                                           LogTimestamp,
-                                                          EMSP2CPOClient                                               Sender,
+                                                          EMSP2CPOClient                                           Sender,
                                                           Request_Id                                               RequestId,
                                                           Correlation_Id                                           CorrelationId,
 
@@ -668,15 +668,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                           EVSE_UId                                                 EVSEUId,
                                                           Connector_Id                                             ConnectorId,
 
-                                                          CancellationToken?                                       CancellationToken,
                                                           EventTracking_Id                                         EventTrackingId,
-                                                          TimeSpan                                                 RequestTimeout);
+                                                          TimeSpan                                                 RequestTimeout,
+                                                          CancellationToken                                        CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
     public delegate Task OnUnlockConnectorResponseDelegate(DateTimeOffset                                           LogTimestamp,
-                                                           EMSP2CPOClient                                               Sender,
+                                                           EMSP2CPOClient                                           Sender,
                                                            Request_Id                                               RequestId,
                                                            Correlation_Id                                           CorrelationId,
 
@@ -684,12 +684,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                            EVSE_UId                                                 EVSEUId,
                                                            Connector_Id                                             ConnectorId,
 
-                                                           CancellationToken?                                       CancellationToken,
                                                            EventTracking_Id                                         EventTrackingId,
                                                            TimeSpan                                                 RequestTimeout,
 
                                                            OCPIResponse<UnlockConnectorCommand, CommandResponse>    Response,
-                                                           TimeSpan                                                 Runtime);
+                                                           TimeSpan                                                 Runtime,
+                                                           CancellationToken                                        CancellationToken);
 
     #endregion
 
@@ -713,9 +713,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                    TimeSpan?           Timeout,
                                                                    JObject?            CustomData,
 
-                                                                   CancellationToken?  CancellationToken,
                                                                    EventTracking_Id    EventTrackingId,
-                                                                   TimeSpan            RequestTimeout);
+                                                                   TimeSpan            RequestTimeout,
+                                                                   CancellationToken   CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a NotifyWebPaymentsStarted command request had been received.
@@ -732,12 +732,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                     TimeSpan?                                                       Timeout,
                                                                     JObject?                                                        CustomData,
 
-                                                                    CancellationToken?                                              CancellationToken,
                                                                     EventTracking_Id                                                EventTrackingId,
                                                                     TimeSpan                                                        RequestTimeout,
 
                                                                     OCPIResponse<NotifyWebPaymentsStartedCommand, CommandResponse>  Response,
-                                                                    TimeSpan                                                        Runtime);
+                                                                    TimeSpan                                                        Runtime,
+                                                                    CancellationToken                                               CancellationToken);
 
     #endregion
 
@@ -758,9 +758,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                   DisplayTexts?       ErrorMessage,
                                                                   JObject?            CustomData,
 
-                                                                  CancellationToken?  CancellationToken,
                                                                   EventTracking_Id    EventTrackingId,
-                                                                  TimeSpan            RequestTimeout);
+                                                                  TimeSpan            RequestTimeout,
+                                                                  CancellationToken   CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a NotifyWebPaymentsFailed command request had been received.
@@ -777,12 +777,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                    DisplayTexts?                                                  ErrorMessage,
                                                                    JObject?                                                       CustomData,
 
-                                                                   CancellationToken?                                             CancellationToken,
                                                                    EventTracking_Id                                               EventTrackingId,
                                                                    TimeSpan                                                       RequestTimeout,
 
                                                                    OCPIResponse<NotifyWebPaymentsFailedCommand, CommandResponse>  Response,
-                                                                   TimeSpan                                                       Runtime);
+                                                                   TimeSpan                                                       Runtime,
+                                                                   CancellationToken                                              CancellationToken);
 
     #endregion
 
