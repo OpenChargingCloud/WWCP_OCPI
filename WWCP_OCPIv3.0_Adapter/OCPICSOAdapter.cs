@@ -185,6 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// An event fired whenever a charge detail record had been sent upstream.
         /// </summary>
         public event WWCP.OnChargeDetailRecordsResponseDelegate?   OnChargeDetailRecordsResponse;
+        public event WWCP.OnChargeDetailRecordsRequestDelegate? OnChargeDetailRecordsRequest;
 
         #endregion
 
