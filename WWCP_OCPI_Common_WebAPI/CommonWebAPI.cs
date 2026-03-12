@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <summary>
         /// Make use of HTTP Server Sent Events for debug information.
         /// </summary>
-        public Boolean                   UseHTTPSSE              { get; }
+        public ServiceSettings           UseHTTPSSE              { get; }
 
         /// <summary>
         /// Debug information via HTTP Server Sent Events.
@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                             I18NString?              Description            = null,
 
-                            Boolean?                 UseHTTPSSE             = null,
+                            ServiceSettings?         UseHTTPSSE             = null,
 
                             String?                  ExternalDNSName        = null,
                             String?                  HTTPServerName         = DefaultHTTPServerName,
@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             this.OverlayURLPathPrefix  = CommonHTTPAPI.URLPathPrefix + OverlayURLPathPrefix;
             this.APIURLPathPrefix      = CommonHTTPAPI.URLPathPrefix + APIURLPathPrefix;
 
-            this.UseHTTPSSE            = UseHTTPSSE ?? false;
+            this.UseHTTPSSE            = UseHTTPSSE ?? ServiceSettings.Disabled;
 
             this.DebugLog              = HTTPBaseAPI.HTTPBaseAPI.AddJSONEventSource(
                                              EventSourceId:            DebugLogId,
@@ -666,34 +666,59 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/debugLog
 
-                if (UseHTTPSSE)
+                if (UseHTTPSSE != ServiceSettings.Disabled)
                 {
 
                     HTTPBaseAPI.HTTPBaseAPI.MapJSONEventSource(
                         DebugLog,
-                        OverlayURLPathPrefix.Value + "debugLog"
+                        OverlayURLPathPrefix.Value + "debugLog",
+                        RequireAuthentication:  UseHTTPSSE == ServiceSettings.RequiresAuthentication
                     );
 
                     CommonHTTPAPI.HTTPBaseAPI.AddHandler(
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "debug",
-                        //HTTPContentType.Text.HTML_UTF8,
-                        HTTPDelegate: request =>
+                        HTTPContentType.Text.HTML_UTF8,
+                        HTTPDelegate: async request => {
 
-                            Task.FromResult(
-                                new HTTPResponse.Builder(request) {
-                                    HTTPStatusCode             = HTTPStatusCode.OK,
-                                    Server                     = HTTPServerName,
-                                    Date                       = Timestamp.Now,
-                                    AccessControlAllowOrigin   = "*",
-                                    AccessControlAllowMethods  = [ "GET" ],
-                                    AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                    ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                    Content                    = MixWithHTMLTemplate("debugLog.debugLog.shtml").ToUTF8Bytes(),
-                                    Connection                 = ConnectionType.KeepAlive,
-                                    Vary                       = "Accept"
-                                }.AsImmutable
-                            )
+                            #region Check authentication
+
+                            if (request.User == null &&
+                                UseHTTPSSE == ServiceSettings.RequiresAuthentication)
+                            {
+
+                                //ToDo: Maybe redirect to a login page instead of sending a 401?
+                                return new HTTPResponse.Builder(request) {
+                                           HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                           Server                     = HTTPServerName,
+                                           Date                       = Timestamp.Now,
+                                           AccessControlAllowOrigin   = "*",
+                                           AccessControlAllowMethods  = [ "GET" ],
+                                           AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                           Connection                 = ConnectionType.Close,
+                                           Vary                       = "Accept"
+                                       }.AsImmutable;
+
+                            }
+
+                            #endregion
+
+
+                            return new HTTPResponse.Builder(request) {
+                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                       Server                     = HTTPServerName,
+                                       Date                       = Timestamp.Now,
+                                       AccessControlAllowOrigin   = "*",
+                                       AccessControlAllowMethods  = [ "GET" ],
+                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                       Content                    = MixWithHTMLTemplate("debugLog.debugLog.shtml").ToUTF8Bytes(),
+                                       Connection                 = ConnectionType.KeepAlive,
+                                       Vary                       = "Accept"
+                                   }.AsImmutable;
+
+                        }
+
                     );
 
                 }
