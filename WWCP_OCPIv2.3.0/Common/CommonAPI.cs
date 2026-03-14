@@ -7495,6 +7495,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
                         remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
 
+                if (IN is not null)
+                    existingRemoteParty.LocalAccessInfos. FirstOrDefault(localAccessInfo  => localAccessInfo. AccessToken == LocalAccessToken)?.IN   = IN;
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
@@ -7626,6 +7629,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (RemoteCertificateValidator is not null)
                     foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
                         remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
+                if (OUT is not null)
+                    existingRemoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.AccessToken == RemoteAccessToken)?.OUT = OUT;
 
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
@@ -7764,6 +7770,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (RemoteCertificateValidator is not null)
                     foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
                         remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
+                if (IN is not null)
+                    existingRemoteParty.LocalAccessInfos. FirstOrDefault(localAccessInfo  => localAccessInfo. AccessToken == LocalAccessToken)?. IN  = IN;
+
+                if (OUT is not null)
+                    existingRemoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.AccessToken == RemoteAccessToken)?.OUT = OUT;
 
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,

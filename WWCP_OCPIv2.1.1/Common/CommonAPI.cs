@@ -4598,6 +4598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = [];
 
+
         /// <summary>
         /// Return an enumeration of all remote parties.
         /// </summary>
@@ -5084,6 +5085,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
                         remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
 
+                if (IN is not null)
+                    existingRemoteParty.LocalAccessInfos. FirstOrDefault(localAccessInfo  => localAccessInfo. AccessToken == LocalAccessToken)?. IN  = IN;
+
+                if (OUT is not null)
+                    existingRemoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.AccessToken == RemoteAccessToken)?.OUT = OUT;
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
@@ -5222,11 +5229,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             if (remoteParties.TryGetValue(RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}"), out var existingRemoteParty))
+            {
+
+                if (IN is not null)
+                    existingRemoteParty.LocalAccessInfos. FirstOrDefault(localAccessInfo  => localAccessInfo. AccessToken == LocalAccessToken)?.IN   = IN;
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
                            "The remote party already exists!"
                        );
+
+            }
 
             var newRemoteParty = new RemoteParty(
 
@@ -5333,6 +5347,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (RemoteCertificateValidator is not null)
                     foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
                         remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
+                if (OUT is not null)
+                    existingRemoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.AccessToken == RemoteAccessToken)?.OUT = OUT;
 
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
@@ -12854,6 +12871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             DebugX.LogException(e, $"OCPI {Version.String}.{nameof(CommonAPI)}");
             return Task.CompletedTask;
         }
+
 
     }
 
