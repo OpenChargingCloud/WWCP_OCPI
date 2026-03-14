@@ -701,6 +701,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async virtual Task SetupOnce()
         {
 
+            await Delete_RemotePartyDBFiles();
+
             #region Generate PKI
 
             if (RSASize        is not null ||
@@ -5764,11 +5766,34 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async virtual Task ShutdownOnce()
         {
 
-            #region CPO #1
-
             if (cpo1HTTPServer is not null)
                 await cpo1HTTPServer.Stop();
 
+            if (cpo2HTTPServer is not null)
+                await cpo2HTTPServer.Stop();
+
+            if (hub1HTTPServer is not null)
+                await hub1HTTPServer.Stop();
+
+            if (emsp1HTTPServer is not null)
+                await emsp1HTTPServer.Stop();
+
+            if (emsp2HTTPServer is not null)
+                await emsp2HTTPServer.Stop();
+
+            await Delete_RemotePartyDBFiles();
+
+        }
+
+        #endregion
+
+
+        #region (private) Delete_RemotePartyDBFiles()
+
+        private async Task Delete_RemotePartyDBFiles()
+        {
+
+            #region CPO #1
 
             if (cpo1CommonAPI_v2_1_1 is not null)
                 File.Delete(cpo1CommonAPI_v2_1_1.RemotePartyDBFileName);
@@ -5786,10 +5811,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region CPO #2
 
-            if (cpo2HTTPServer is not null)
-                await cpo2HTTPServer.Stop();
-
-
             if (cpo2CommonAPI_v2_1_1 is not null)
                 File.Delete(cpo2CommonAPI_v2_1_1.RemotePartyDBFileName);
 
@@ -5806,13 +5827,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region HUB #1
 
-            if (hub1HTTPServer is not null)
-                await hub1HTTPServer.Stop();
-
-
-            //if (hub1CommonAPI_v2_1_1 is not null)
-            //    File.Delete(hub1CommonAPI_v2_1_1.RemotePartyDBFileName);
-
             if (hub1CommonAPI_v2_2_1 is not null)
                 File.Delete(hub1CommonAPI_v2_2_1.RemotePartyDBFileName);
 
@@ -5825,10 +5839,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #endregion
 
             #region EMSP #1
-
-            if (emsp1HTTPServer is not null)
-                await emsp1HTTPServer.Stop();
-
 
             if (emsp1CommonAPI_v2_1_1 is not null)
                 File.Delete(emsp1CommonAPI_v2_1_1.RemotePartyDBFileName);
@@ -5845,10 +5855,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             #endregion
 
             #region EMSP #2
-
-            if (emsp2HTTPServer is not null)
-                await emsp2HTTPServer.Stop();
-
 
             if (emsp2CommonAPI_v2_1_1 is not null)
                 File.Delete(emsp2CommonAPI_v2_1_1.RemotePartyDBFileName);
@@ -5867,7 +5873,6 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         }
 
         #endregion
-
 
     }
 

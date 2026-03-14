@@ -718,7 +718,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// Maybe some remote access parameters need already to be set for a successful registration.
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="CredentialsRoles"></param>
         /// 
         /// <param name="LocalAccessToken"></param>
         /// <param name="LocalAccessTokenBase64Encoding"></param>
@@ -759,11 +758,11 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                            AccessToken                                                LocalAccessToken,
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = null,
@@ -788,6 +787,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -803,11 +803,11 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -832,6 +832,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -875,7 +876,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                            URL                                                        RemoteVersionsURL,
                            AccessToken                                                RemoteAccessToken,
@@ -897,6 +897,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -917,7 +918,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      RemoteVersionsURL,
                                      RemoteAccessToken,
@@ -939,6 +939,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -987,7 +988,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                            AccessToken                                                LocalAccessToken,
 
@@ -1011,6 +1011,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
@@ -1020,6 +1021,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
@@ -1037,7 +1039,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
 
@@ -1061,6 +1062,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -1070,6 +1072,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -1114,7 +1117,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemoteParty(RemoteParty_Id                 Id,
-                           //IEnumerable<CredentialsRole>   CredentialsRoles,
 
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
@@ -1131,7 +1133,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessInfos,
                                      RemoteAccessInfos,
@@ -1180,7 +1181,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// Maybe some remote access parameters need already to be set for a successful registration.
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="CredentialsRoles"></param>
         /// 
         /// <param name="LocalAccessToken"></param>
         /// <param name="LocalAccessTokenBase64Encoding"></param>
@@ -1221,11 +1221,11 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
-                                      //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                       AccessToken                                                LocalAccessToken,
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = null,
@@ -1250,6 +1250,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = null,
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -1272,11 +1273,11 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -1301,6 +1302,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -1344,7 +1346,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
-                                      //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                       URL                                                        RemoteVersionsURL,
                                       AccessToken                                                RemoteAccessToken,
@@ -1366,6 +1367,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
 
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -1393,7 +1395,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      RemoteVersionsURL,
                                      RemoteAccessToken,
@@ -1415,6 +1416,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -1463,7 +1465,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemotePartyIfNotExists(RemoteParty_Id                                             Id,
-                                      //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                       AccessToken                                                LocalAccessToken,
 
@@ -1487,6 +1488,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                       Version_Id?                                                SelectedVersionId                 = null,
@@ -1496,6 +1498,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = false,
@@ -1520,7 +1523,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
 
@@ -1544,6 +1546,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -1553,6 +1556,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -1598,7 +1602,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddResult<RemoteParty>>
 
             AddRemotePartyIfNotExists(RemoteParty_Id                 Id,
-                                      //IEnumerable<CredentialsRole>   CredentialsRoles,
 
                                       IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
@@ -1622,7 +1625,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessInfos,
                                      RemoteAccessInfos,
@@ -1671,7 +1673,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// Maybe some remote access parameters need already to be set for a successful registration.
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="CredentialsRoles"></param>
         /// 
         /// <param name="LocalAccessToken"></param>
         /// <param name="LocalAccessTokenBase64Encoding"></param>
@@ -1712,11 +1713,11 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddOrUpdateResult<RemoteParty>>
 
             AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
-                                   //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                    AccessToken                                                LocalAccessToken,
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = null,
@@ -1741,6 +1742,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = null,
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -1756,11 +1758,11 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -1785,6 +1787,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -1838,7 +1841,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddOrUpdateResult<RemoteParty>>
 
             AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
-                                   //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                    URL                                                        RemoteVersionsURL,
                                    AccessToken                                                RemoteAccessToken,
@@ -1860,6 +1862,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
 
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -1880,7 +1883,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      RemoteVersionsURL,
                                      RemoteAccessToken,
@@ -1902,6 +1904,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -1960,7 +1963,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddOrUpdateResult<RemoteParty>>
 
             AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
-                                   //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                                    AccessToken                                                LocalAccessToken,
 
@@ -1984,6 +1986,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                    Version_Id?                                                SelectedVersionId                 = null,
@@ -1993,6 +1996,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = false,
@@ -2010,7 +2014,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
 
@@ -2034,6 +2037,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -2043,6 +2047,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -2098,7 +2103,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<AddOrUpdateResult<RemoteParty>>
 
             AddOrUpdateRemoteParty(RemoteParty_Id                 Id,
-                                   //IEnumerable<CredentialsRole>   CredentialsRoles,
 
                                    IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                    IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
@@ -2115,7 +2119,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessInfos,
                                      RemoteAccessInfos,
@@ -2215,11 +2218,11 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<UpdateResult<RemoteParty>>
 
             UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
-                              //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                               AccessToken                                                LocalAccessToken,
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = null,
@@ -2239,6 +2242,7 @@ namespace cloud.charging.open.protocols.OCPI
                               HTTPContentType?                                           ContentType                       = null,
                               AcceptTypes?                                               Accept                            = null,
                               String?                                                    HTTPUserAgent                     = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               TimeSpan?                                                  RequestTimeout                    = null,
                               TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
                               UInt16?                                                    MaxNumberOfRetries                = null,
@@ -2259,11 +2263,11 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -2288,6 +2292,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -2332,7 +2337,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<UpdateResult<RemoteParty>>
 
             UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
-                              //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                               URL                                                        RemoteVersionsURL,
                               AccessToken                                                RemoteAccessToken,
@@ -2354,6 +2358,7 @@ namespace cloud.charging.open.protocols.OCPI
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
 
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -2374,7 +2379,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     //CredentialsRoles,
 
                                      RemoteVersionsURL,
                                      RemoteAccessToken,
@@ -2396,6 +2400,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -2445,7 +2450,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<UpdateResult<RemoteParty>>
 
             UpdateRemoteParty(RemoteParty                                                ExistingRemoteParty,
-                              //IEnumerable<CredentialsRole>                               CredentialsRoles,
 
                               AccessToken                                                LocalAccessToken,
 
@@ -2469,6 +2473,7 @@ namespace cloud.charging.open.protocols.OCPI
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                               Version_Id?                                                SelectedVersionId                 = null,
@@ -2478,6 +2483,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = false,
@@ -2495,7 +2501,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessToken,
 
@@ -2519,6 +2524,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -2528,6 +2534,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -2574,7 +2581,6 @@ namespace cloud.charging.open.protocols.OCPI
         public async Task<UpdateResult<RemoteParty>>
 
             UpdateRemoteParty(RemoteParty                    ExistingRemoteParty,
-                              //IEnumerable<CredentialsRole>   CredentialsRoles,
 
                               IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                               IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
@@ -2591,7 +2597,6 @@ namespace cloud.charging.open.protocols.OCPI
             var newRemoteParty = new RemoteParty(
 
                                      ExistingRemoteParty.Id,
-                                     //CredentialsRoles,
 
                                      LocalAccessInfos,
                                      RemoteAccessInfos,

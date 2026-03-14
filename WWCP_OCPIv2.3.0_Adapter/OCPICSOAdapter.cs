@@ -579,6 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
@@ -588,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
@@ -627,6 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
                    RemoteStatus,
                    RemoteVersionIds,
                    SelectedVersionId,
@@ -636,6 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    LocalAccessTokenBase64Encoding,
                    LocalTOTPConfig,
+                   IN,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
                    LocalAllowDowngrades,
@@ -656,16 +660,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         public Task<AddResult<RemoteParty>>
 
-            AddRemoteParty(RemoteParty_Id                Id,
-                           IEnumerable<CredentialsRole>  CredentialsRoles,
+            AddRemoteParty(RemoteParty_Id                                             Id,
+                           IEnumerable<CredentialsRole>                               CredentialsRoles,
 
-                           AccessToken                   LocalAccessToken,
-                           Boolean?                      LocalAccessTokenBase64Encoding   = null,
-                           TOTPConfig?                   LocalTOTPConfig                  = null,
-                           DateTimeOffset?               LocalAccessNotBefore             = null,
-                           DateTimeOffset?               LocalAccessNotAfter              = null,
-                           Boolean?                      LocalAllowDowngrades             = false,
-                           AccessStatus?                 LocalAccessStatus                = AccessStatus.ALLOWED,
+                           AccessToken                                                LocalAccessToken,
+                           Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
+                           TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
+                           DateTimeOffset?                                            LocalAccessNotBefore              = null,
+                           DateTimeOffset?                                            LocalAccessNotAfter               = null,
+                           Boolean?                                                   LocalAllowDowngrades              = false,
+                           AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
@@ -686,15 +691,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
-                           PartyStatus?                  Status                           = null,
+                           PartyStatus?                                               Status                            = null,
 
-                           DateTimeOffset?               Created                          = null,
-                           DateTimeOffset?               LastUpdated                      = null,
-                           EventTracking_Id?             EventTrackingId                  = null,
-                           User_Id?                      CurrentUserId                    = null)
+                           DateTimeOffset?                                            Created                           = null,
+                           DateTimeOffset?                                            LastUpdated                       = null,
+                           EventTracking_Id?                                          EventTrackingId                   = null,
+                           User_Id?                                                   CurrentUserId                     = null)
 
             => CommonAPI.AddRemoteParty(
 
@@ -704,6 +710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    LocalAccessToken,
                    LocalAccessTokenBase64Encoding,
                    LocalTOTPConfig,
+                   IN,
                    LocalAccessNotBefore,
                    LocalAccessNotAfter,
                    LocalAllowDowngrades,
@@ -728,6 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
                    RemoteStatus,
                    RemoteAllowDowngrades,
 

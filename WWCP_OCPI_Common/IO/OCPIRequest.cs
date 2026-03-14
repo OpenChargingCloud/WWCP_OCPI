@@ -497,12 +497,13 @@ namespace cloud.charging.open.protocols.OCPI
                 var tuple = partiesAccessInfosRAW.FirstOrDefault();
                 if (tuple is not null)
                 {
-                    if (!tuple.Item2.AccessTokenIsBase64Encoded)
-                    {
+                    //Note: Has side effects when it is FALSE for one version and true for another within the same test!
+                    //if (!tuple.Item2.AccessTokenIsBase64Encoded)
+                    //{
                         AccessToken      = accessTokenRAW;
                         RemoteParty      = tuple.Item1;
                         localAccessInfo  = tuple.Item2;
-                    }
+                    //}
                 }
             }
 
@@ -517,12 +518,13 @@ namespace cloud.charging.open.protocols.OCPI
                 var tuple = partiesAccessInfosBASE64.FirstOrDefault();
                 if (tuple is not null)
                 {
-                    if (tuple.Item2.AccessTokenIsBase64Encoded)
-                    {
+                    //Note: Has side effects when it is FALSE for one version and true for another within the same test!
+                    //if (tuple.Item2.AccessTokenIsBase64Encoded)
+                    //{
                         AccessToken      = accessTokenBASE64;
                         RemoteParty      = tuple.Item1;
                         localAccessInfo  = tuple.Item2;
-                    }
+                    //}
                 }
             }
 
@@ -575,8 +577,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                 //}
 
-                if (RemoteParty.IN?.RequestModifier is not null)
-                    HTTPRequest = RemoteParty.IN.RequestModifier(HTTPRequest);
+                if (localAccessInfo.IN?.RequestModifier is not null)
+                    HTTPRequest = localAccessInfo.IN.RequestModifier(HTTPRequest);
 
             }
 

@@ -482,6 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 UInt16?                                                    MaxNumberOfRetries                = null,
                                 UInt32?                                                    InternalBufferSize                = null,
                                 Boolean?                                                   UseHTTPPipelining                 = null,
+                                HTTPModifiers?                                             OUT                               = null,
                                 org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?   HTTPLogger                        = null,
 
                                 Boolean?                                                   DisableLogging                    = false,
@@ -516,6 +517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        MaxNumberOfRetries,
                        InternalBufferSize,
                        UseHTTPPipelining,
+                       OUT,
 
                        null,  // RemoteStatus
                        null,  // RemoteVersionIds
@@ -2238,6 +2240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           null,                       // MaxNumberOfRetries
                                                                           null,                       // InternalBufferSize
                                                                           null,                       // UseHTTPPipelining
+                                                                          null,                       // HTTP Modifiers
                                                                           RemoteAccessStatus.ONLINE,  // RemoteStatus
                                                                           [ versionId.Value ],        // RemoteVersionIds
                                                                           versionId.Value,            // SelectedVersionId
@@ -2247,6 +2250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                                           null,                       // LocalAccessTokenBase64Encoding
                                                                           null,                       // LocalTOTPConfig
+                                                                          null,                       // HTTP Modifiers
                                                                           null,                       // LocalAccessNotBefore
                                                                           null,                       // LocalAccessNotAfter
                                                                           null,                       // LocalAllowDowngrades

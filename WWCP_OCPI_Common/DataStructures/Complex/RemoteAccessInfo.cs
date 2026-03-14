@@ -156,6 +156,12 @@ namespace cloud.charging.open.protocols.OCPI
 
 
         /// <summary>
+        /// Optional outgoing request and response modifiers.
+        /// </summary>
+        public HTTPModifiers?                                             OUT                           { get; set; }
+
+
+        /// <summary>
         /// All available OCPI versions of the remote party.
         /// </summary>
         [Optional]
@@ -231,6 +237,7 @@ namespace cloud.charging.open.protocols.OCPI
                                 UInt16?                                                    MaxNumberOfRetries           = null,
                                 UInt32?                                                    InternalBufferSize           = null,
                                 Boolean?                                                   UseHTTPPipelining            = null,
+                                HTTPModifiers?                                               OUT                          = null,
 
                                 IEnumerable<Version_Id>?                                   VersionIds                   = null,
                                 Version_Id?                                                SelectedVersionId            = null,
@@ -269,6 +276,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.MaxNumberOfRetries          = MaxNumberOfRetries;
             this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
+            this.OUT                         = OUT;
 
             this.VersionIds                  = VersionIds?.Distinct()     ?? [];
             this.SelectedVersionId           = SelectedVersionId;
@@ -610,23 +618,25 @@ namespace cloud.charging.open.protocols.OCPI
                                        accessTokenIsBase64Encoded,
                                        totpConfig,
 
-                                       null, //preferIPv4
-                                       null, //remoteCertificateValidator
-                                       null, //localCertificateSelector
+                                       null,  // preferIPv4
+                                       null,  // remoteCertificateValidator
+                                       null,  // localCertificateSelector
                                        clientCertificates,
-                                       null, //clientCertificateContext
+                                       null,  // clientCertificateContext
                                        clientCertificateChain,
                                        tlsProtocols,
-                                       null, //contentType
-                                       null, //accept
+                                       null,  // contentType
+                                       null,  // accept
                                        httpUserAgent,
-                                       null, //requestTimeout
-                                       null, //transmissionRetryDelay
-                                       null, //maxNumberOfRetries
-                                       null, //internalBufferSize
-                                       null, //useHTTPPipelining
+                                       null,  // requestTimeout
+                                       null,  // transmissionRetryDelay
+                                       null,  // maxNumberOfRetries
+                                       null,  // internalBufferSize
+                                       null,  // useHTTPPipelining
 
-                                       null, // VersionIds
+                                       null,  // OUT
+
+                                       null,  // VersionIds
                                        selectedVersionId,
                                        notBefore,
                                        notAfter,
@@ -800,6 +810,7 @@ namespace cloud.charging.open.protocols.OCPI
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
 
                    VersionIds.Select(versionId => versionId.Clone()),
                    SelectedVersionId,

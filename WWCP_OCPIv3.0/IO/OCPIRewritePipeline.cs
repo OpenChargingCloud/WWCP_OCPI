@@ -119,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 }
 
 
-                var requestModifier = remoteParty?.IN?.RequestModifier;
+                var requestModifier = remoteParty?.LocalAccessInfos.FirstOrDefault()?.IN?.RequestModifier;
                 if (requestModifier is not null)
                 {
                     try

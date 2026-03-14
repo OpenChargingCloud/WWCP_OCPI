@@ -17,15 +17,16 @@
 
 #region Usings
 
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Diagnostics.CodeAnalysis;
 using org.GraphDefined.Vanaheimr.Hermod;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Authentication;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -99,32 +100,6 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        #region (class) IOModifiers
-
-        /// <summary>
-        /// Incoming and outgoing HTTP request/response modifiers.
-        /// </summary>
-        /// <param name="RequestModifier">An optional HTTP request modifier.</param>
-        /// <param name="ResponseModifier">An optional HTTP response modifier.</param>
-        public sealed class IOModifiers(Func<HTTPRequest,  HTTPRequest>?   RequestModifier    = null,
-                                        Func<HTTPResponse, HTTPResponse>?  ResponseModifier   = null)
-        {
-
-            /// <summary>
-            /// A delegate to modify HTTP requests.
-            /// </summary>
-            public Func<HTTPRequest, HTTPRequest>?    RequestModifier     { get; set; } = RequestModifier;
-
-            /// <summary>
-            /// A delegate to modify HTTP responses.
-            /// </summary>
-            public Func<HTTPResponse, HTTPResponse>?  ResponseModifier    { get; set; } = ResponseModifier;
-
-        }
-
-        #endregion
-
-
         #region Properties
 
         /// <summary>
@@ -180,15 +155,15 @@ namespace cloud.charging.open.protocols.OCPI
             => remoteAccessInfos;
 
 
-        /// <summary>
-        /// Optional incoming request and response modifiers.
-        /// </summary>
-        public IOModifiers?     IN                 { get; set; }
+        ///// <summary>
+        ///// Optional incoming request and response modifiers.
+        ///// </summary>
+        //public IOModifiers?     IN                 { get; set; }
 
-        /// <summary>
-        /// Optional outgoing request and response modifiers.
-        /// </summary>
-        public IOModifiers?     OUT                { get; set; }
+        ///// <summary>
+        ///// Optional outgoing request and response modifiers.
+        ///// </summary>
+        //public IOModifiers?     OUT                { get; set; }
 
 
         public CPO_2_EMSP_Role               CPO2EMPRole     { get; } = new CPO_2_EMSP_Role();
@@ -248,7 +223,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// The remote party will start the OCPI registration process afterwards!
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="Roles"></param>
         /// 
         /// <param name="LocalAccessToken"></param>
         /// <param name="LocalAccessTokenBase64Encoding"></param>
@@ -285,11 +259,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Created"></param>
         /// <param name="LastUpdated"></param>
         public RemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               Roles,
 
                            AccessToken                                                LocalAccessToken,
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = null,
@@ -314,6 +288,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -323,13 +298,13 @@ namespace cloud.charging.open.protocols.OCPI
                            DateTimeOffset?                                            LastUpdated                       = null)
 
             : this(Id,
-                   //Roles,
 
                    [
                        new LocalAccessInfo(
                            LocalAccessToken,
                            LocalAccessStatus,
                            LocalTOTPConfig,
+                           IN,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            LocalAccessTokenBase64Encoding,
@@ -379,6 +354,7 @@ namespace cloud.charging.open.protocols.OCPI
                                   MaxNumberOfRetries,
                                   InternalBufferSize,
                                   UseHTTPPipelining,
+                                  OUT,
                                   null,  // We do not know the RemoteVersionIds yet!
                                   null,  // We do not know the SelectedVersionId yet!
                                   RemoteAccessNotBefore,
@@ -403,7 +379,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// _WE_ will start the OCPI registration process afterwards!
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="Roles"></param>
         /// 
         /// <param name="RemoteVersionsURL"></param>
         /// <param name="RemoteAccessToken"></param>
@@ -439,7 +414,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Created"></param>
         /// <param name="LastUpdated"></param>
         public RemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               Roles,
 
                            URL                                                        RemoteVersionsURL,
                            AccessToken?                                               RemoteAccessToken                 = null,
@@ -461,6 +435,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
 
@@ -476,7 +451,6 @@ namespace cloud.charging.open.protocols.OCPI
                            DateTimeOffset?                                            LastUpdated                       = null)
 
             : this(Id,
-                   //Roles,
 
                    [],
                    [
@@ -504,6 +478,7 @@ namespace cloud.charging.open.protocols.OCPI
                            MaxNumberOfRetries,
                            InternalBufferSize,
                            UseHTTPPipelining,
+                           OUT,
 
                            RemoteVersionIds,
                            SelectedVersionId,
@@ -528,7 +503,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// Create a new Remote Party with a manual configuration of local and remote access.
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="Roles"></param>
         /// 
         /// <param name="LocalAccessToken"></param>
         /// 
@@ -570,7 +544,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Created"></param>
         /// <param name="LastUpdated"></param>
         public RemoteParty(RemoteParty_Id                                             Id,
-                           //IEnumerable<CredentialsRole>                               Roles,
 
                            AccessToken                                                LocalAccessToken,
 
@@ -594,6 +567,7 @@ namespace cloud.charging.open.protocols.OCPI
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
@@ -603,6 +577,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = null,
@@ -614,13 +589,13 @@ namespace cloud.charging.open.protocols.OCPI
                            DateTimeOffset?                                            LastUpdated                       = null)
 
             : this(Id,
-                   //Roles,
 
                    [
                        new LocalAccessInfo(
                            LocalAccessToken,
                            LocalAccessStatus,
                            LocalTOTPConfig,
+                           IN,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
                            LocalAccessTokenBase64Encoding,
@@ -652,6 +627,7 @@ namespace cloud.charging.open.protocols.OCPI
                            MaxNumberOfRetries,
                            InternalBufferSize,
                            UseHTTPPipelining,
+                           OUT,
 
                            RemoteVersionIds,
                            SelectedVersionId,
@@ -856,11 +832,11 @@ namespace cloud.charging.open.protocols.OCPI
 
         public JObject ToJSON(Boolean gfg)
         {
-               return ToJSON(
-                          null,
-                          null,
-                          null
-                      );
+            return ToJSON(
+                       null,
+                       null,
+                       null
+                   );
         }
 
         #region ToJSON(JSONLDContext, CustomLocalAccessInfoSerializer, CustomRemoteAccessInfoSerializer)
@@ -910,39 +886,6 @@ namespace cloud.charging.open.protocols.OCPI
             return json;
 
         }
-
-        #endregion
-
-
-        #region CalcSHA256Hash(CustomARemotePartySerializer = null, CustomCredentialsRoleSerializer = null, ...)
-
-        ///// <summary>
-        ///// Calculate the SHA256 hash of the JSON representation of this remote party in HEX.
-        ///// </summary>
-        ///// <param name="CustomARemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
-        ///// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials roles JSON objects.</param>
-        ///// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        ///// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
-        ///// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
-        //public String CalcSHA256Hash(CustomJObjectSerializerDelegate<ARemoteParty>?       CustomARemotePartySerializer        = null,
-        //                             CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
-        //                             CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-        //                             CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
-        //                             CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
-        //                             CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
-        //{
-
-        //    this.ETag = SHA256.HashData(ToJSON(false, // always with @context!
-        //                                       CustomARemotePartySerializer,
-        //                                       CustomCredentialsRoleSerializer,
-        //                                       CustomBusinessDetailsSerializer,
-        //                                       CustomImageSerializer,
-        //                                       CustomLocalAccessInfoSerializer,
-        //                                       CustomRemoteAccessInfoSerializer).ToUTF8Bytes()).ToBase64();
-
-        //    return this.ETag;
-
-        //}
 
         #endregion
 

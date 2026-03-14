@@ -3064,6 +3064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                 MaxNumberOfRetries:                oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.MaxNumberOfRetries,
                                                 InternalBufferSize:                oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.InternalBufferSize,
                                                 UseHTTPPipelining:                 oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.UseHTTPPipelining,
+                                                OUT:                               oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.OUT,
                                                 //HTTPLogger:                        
 
                                                 //DisableLogging:                    
@@ -3207,6 +3208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.MaxNumberOfRetries,
                       oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.InternalBufferSize,
                       oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.UseHTTPPipelining,
+                      oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.OUT,
 
                       RemoteAccessStatus.ONLINE,                                // RemoteStatus
                       otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
@@ -3217,6 +3219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                       null,                                                     // LocalAccessTokenBase64Encoding
                       null,                                                     // LocalTOTPConfig
+                      null,                                                     // HTTP Modifier
                       null,                                                     // LocalAccessNotBefore
                       null,                                                     // LocalAccessNotAfter
                       null,                                                     // LocalAllowDowngrades
@@ -4671,34 +4674,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonHTTPClient GetCommonClient(URL                                                        RemoteVersionsURL,
-                                            AccessToken?                                               RemoteAccessToken                 = null,
-                                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
-                                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                AccessToken?                                               RemoteAccessToken                 = null,
+                                                Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                            HTTPHostname?                                              VirtualHostname                   = null,
-                                            I18NString?                                                Description                       = null,
-                                            Boolean?                                                   PreferIPv4                        = null,
-                                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
-                                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
-                                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
-                                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
-                                            SslProtocols?                                              TLSProtocols                      = null,
-                                            HTTPContentType?                                           ContentType                       = null,
-                                            AcceptTypes?                                               Accept                            = null,
-                                            String?                                                    HTTPUserAgent                     = null,
-                                            TimeSpan?                                                  RequestTimeout                    = null,
-                                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
-                                            UInt16?                                                    MaxNumberOfRetries                = null,
-                                            UInt32?                                                    InternalBufferSize                = null,
-                                            Boolean?                                                   UseHTTPPipelining                 = null,
-                                            HTTPClientLogger?                                          HTTPLogger                        = null,
+                                                HTTPHostname?                                              VirtualHostname                   = null,
+                                                I18NString?                                                Description                       = null,
+                                                Boolean?                                                   PreferIPv4                        = null,
+                                                RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                                                SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                                                IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                                                SslProtocols?                                              TLSProtocols                      = null,
+                                                HTTPContentType?                                           ContentType                       = null,
+                                                AcceptTypes?                                               Accept                            = null,
+                                                String?                                                    HTTPUserAgent                     = null,
+                                                TimeSpan?                                                  RequestTimeout                    = null,
+                                                TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                UInt16?                                                    MaxNumberOfRetries                = null,
+                                                UInt32?                                                    InternalBufferSize                = null,
+                                                Boolean?                                                   UseHTTPPipelining                 = null,
+                                                HTTPModifiers?                                             OUT                               = null,
+                                                HTTPClientLogger?                                          HTTPLogger                        = null,
 
-                                            Boolean?                                                   DisableLogging                    = false,
-                                            String?                                                    LoggingPath                       = null,
-                                            String?                                                    LoggingContext                    = null,
-                                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
-                                            IDNSClient?                                                DNSClient                         = null)
+                                                Boolean?                                                   DisableLogging                    = false,
+                                                String?                                                    LoggingPath                       = null,
+                                                String?                                                    LoggingContext                    = null,
+                                                OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                                                IDNSClient?                                                DNSClient                         = null)
 
             => GetCommonClient(
 
@@ -4726,6 +4730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
                    HTTPLogger,
 
                    DisableLogging,
@@ -4776,35 +4781,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="DNSClient">The DNS client to use.</param>
         public CommonHTTPClient GetCommonClient(RemoteParty_Id                                             RemotePartyId,
 
-                                            URL                                                        RemoteVersionsURL,
-                                            AccessToken?                                               RemoteAccessToken                 = null,
-                                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
-                                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
+                                                URL                                                        RemoteVersionsURL,
+                                                AccessToken?                                               RemoteAccessToken                 = null,
+                                                Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
+                                                TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                            HTTPHostname?                                              VirtualHostname                   = null,
-                                            I18NString?                                                Description                       = null,
-                                            Boolean?                                                   PreferIPv4                        = null,
-                                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
-                                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
-                                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
-                                            SslStreamCertificateContext?                               ClientCertificateContext          = null,
-                                            IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
-                                            SslProtocols?                                              TLSProtocols                      = null,
-                                            HTTPContentType?                                           ContentType                       = null,
-                                            AcceptTypes?                                               Accept                            = null,
-                                            String?                                                    HTTPUserAgent                     = null,
-                                            TimeSpan?                                                  RequestTimeout                    = null,
-                                            TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
-                                            UInt16?                                                    MaxNumberOfRetries                = null,
-                                            UInt32?                                                    InternalBufferSize                = null,
-                                            Boolean?                                                   UseHTTPPipelining                 = null,
-                                            HTTPClientLogger?                                          HTTPLogger                        = null,
+                                                HTTPHostname?                                              VirtualHostname                   = null,
+                                                I18NString?                                                Description                       = null,
+                                                Boolean?                                                   PreferIPv4                        = null,
+                                                RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
+                                                LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
+                                                IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
+                                                SslStreamCertificateContext?                               ClientCertificateContext          = null,
+                                                IEnumerable<X509Certificate2>?                             ClientCertificateChain            = null,
+                                                SslProtocols?                                              TLSProtocols                      = null,
+                                                HTTPContentType?                                           ContentType                       = null,
+                                                AcceptTypes?                                               Accept                            = null,
+                                                String?                                                    HTTPUserAgent                     = null,
+                                                TimeSpan?                                                  RequestTimeout                    = null,
+                                                TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
+                                                UInt16?                                                    MaxNumberOfRetries                = null,
+                                                UInt32?                                                    InternalBufferSize                = null,
+                                                Boolean?                                                   UseHTTPPipelining                 = null,
+                                                HTTPModifiers?                                             OUT                               = null,
+                                                HTTPClientLogger?                                          HTTPLogger                        = null,
 
-                                            Boolean?                                                   DisableLogging                    = false,
-                                            String?                                                    LoggingPath                       = null,
-                                            String?                                                    LoggingContext                    = null,
-                                            OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
-                                            IDNSClient?                                                DNSClient                         = null)
+                                                Boolean?                                                   DisableLogging                    = false,
+                                                String?                                                    LoggingPath                       = null,
+                                                String?                                                    LoggingContext                    = null,
+                                                OCPILogfileCreatorDelegate?                                LogfileCreator                    = null,
+                                                IDNSClient?                                                DNSClient                         = null)
 
             => new (
 
@@ -4833,6 +4839,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
                    HTTPLogger,
 
                    DisableLogging,
@@ -5055,6 +5062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AccessToken                                                LocalAccessToken,
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = null,
@@ -5079,6 +5087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -5099,6 +5108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5123,6 +5133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -5188,6 +5199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -5230,6 +5242,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -5302,6 +5315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
@@ -5311,6 +5325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
@@ -5352,6 +5367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -5361,6 +5377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5517,6 +5534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       AccessToken                                                LocalAccessToken,
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = null,
@@ -5541,6 +5559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = null,
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -5554,11 +5573,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             if (remoteParties.TryGetValue(Id, out var existingRemoteParty))
+            {
+
+                if (RemoteCertificateValidator is not null)
+                    foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
+                        remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
                            "The remote party already exists!"
                        );
+
+            }
 
             var newRemoteParty = new RemoteParty(
 
@@ -5568,6 +5595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5592,6 +5620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -5657,6 +5686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
 
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -5675,11 +5705,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             if (remoteParties.TryGetValue(Id, out var existingRemoteParty))
+            {
+
+                if (RemoteCertificateValidator is not null)
+                    foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
+                        remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
                            "The remote party already exists!"
                        );
+
+            }
 
             var newRemoteParty = new RemoteParty(
 
@@ -5706,6 +5744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -5778,6 +5817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                       Version_Id?                                                SelectedVersionId                 = null,
@@ -5787,6 +5827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = false,
@@ -5802,11 +5843,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         {
 
             if (remoteParties.TryGetValue(Id, out var existingRemoteParty))
+            {
+
+                if (RemoteCertificateValidator is not null)
+                    foreach (var remoteAccessInfo in existingRemoteParty.RemoteAccessInfos)
+                        remoteAccessInfo.SetRemoteCertificateValidator(RemoteCertificateValidator);
+
                 return AddResult<RemoteParty>.NoOperation(
                            EventTracking_Id.New,
                            existingRemoteParty,
                            "The remote party already exists!"
                        );
+
+            }
 
             var newRemoteParty = new RemoteParty(
 
@@ -5835,6 +5884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -5844,6 +5894,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -6008,6 +6059,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    AccessToken                                                LocalAccessToken,
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = null,
@@ -6032,6 +6084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = null,
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -6052,6 +6105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -6076,6 +6130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -6151,6 +6206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
 
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -6193,6 +6249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -6275,6 +6332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                    Version_Id?                                                SelectedVersionId                 = null,
@@ -6284,6 +6342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = false,
@@ -6325,6 +6384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6334,6 +6394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -6511,6 +6572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               AccessToken                                                LocalAccessToken,
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = null,
@@ -6535,6 +6597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               RemoteAccessStatus?                                        RemoteStatus                      = null,
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -6555,6 +6618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -6579,6 +6643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -6645,6 +6710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
 
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -6687,6 +6753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -6760,6 +6827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                               Version_Id?                                                SelectedVersionId                 = null,
@@ -6769,6 +6837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = false,
@@ -6810,6 +6879,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6819,6 +6889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,

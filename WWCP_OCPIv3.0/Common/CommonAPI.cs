@@ -2956,6 +2956,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       null,                                                     // MaxNumberOfRetries
                       null,                                                     // InternalBufferSize
                       null,                                                     // UseHTTPPipelining
+                      null,                                                     // HTTP Modifiers
 
                       RemoteAccessStatus.ONLINE,                                // RemoteStatus
                       otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
@@ -2966,6 +2967,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                       null,                                                     // LocalAccessTokenBase64Encoding
                       null,                                                     // LocalTOTPConfig
+                      null,                                                     // HTTP Modifiers
                       null,                                                     // LocalAccessNotBefore
                       null,                                                     // LocalAccessNotAfter
                       null,                                                     // LocalAllowDowngrades
@@ -4531,6 +4533,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessToken                                                LocalAccessToken,
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = null,
@@ -4555,6 +4558,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = null,
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -4575,6 +4579,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -4599,6 +4604,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -4664,6 +4670,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
 
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -4706,6 +4713,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -4778,6 +4786,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UInt16?                                                    MaxNumberOfRetries                = null,
                            UInt32?                                                    InternalBufferSize                = null,
                            Boolean?                                                   UseHTTPPipelining                 = null,
+                           HTTPModifiers?                                             OUT                               = null,
                            RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                            IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                            Version_Id?                                                SelectedVersionId                 = null,
@@ -4787,6 +4796,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                            TOTPConfig?                                                LocalTOTPConfig                   = null,
+                           HTTPModifiers?                                             IN                                = null,
                            DateTimeOffset?                                            LocalAccessNotBefore              = null,
                            DateTimeOffset?                                            LocalAccessNotAfter               = null,
                            Boolean?                                                   LocalAllowDowngrades              = false,
@@ -4828,6 +4838,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -4837,6 +4848,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -4993,6 +5005,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       AccessToken                                                LocalAccessToken,
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = null,
@@ -5017,6 +5030,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = null,
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -5044,6 +5058,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5068,6 +5083,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -5133,6 +5149,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
 
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -5182,6 +5199,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -5254,6 +5272,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       UInt16?                                                    MaxNumberOfRetries                = null,
                                       UInt32?                                                    InternalBufferSize                = null,
                                       Boolean?                                                   UseHTTPPipelining                 = null,
+                                      HTTPModifiers?                                             OUT                               = null,
                                       RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                       IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                       Version_Id?                                                SelectedVersionId                 = null,
@@ -5263,6 +5282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                       Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                       TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                      HTTPModifiers?                                             IN                                = null,
                                       DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                       DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                       Boolean?                                                   LocalAllowDowngrades              = false,
@@ -5311,6 +5331,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -5320,6 +5341,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5484,6 +5506,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    AccessToken                                                LocalAccessToken,
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = null,
@@ -5508,6 +5531,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = null,
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -5528,6 +5552,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5552,6 +5577,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -5627,6 +5653,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
 
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -5669,6 +5696,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -5751,6 +5779,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    UInt16?                                                    MaxNumberOfRetries                = null,
                                    UInt32?                                                    InternalBufferSize                = null,
                                    Boolean?                                                   UseHTTPPipelining                 = null,
+                                   HTTPModifiers?                                             OUT                               = null,
                                    RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                                    IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                                    Version_Id?                                                SelectedVersionId                 = null,
@@ -5760,6 +5789,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                    Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                                    TOTPConfig?                                                LocalTOTPConfig                   = null,
+                                   HTTPModifiers?                                             IN                                = null,
                                    DateTimeOffset?                                            LocalAccessNotBefore              = null,
                                    DateTimeOffset?                                            LocalAccessNotAfter               = null,
                                    Boolean?                                                   LocalAllowDowngrades              = false,
@@ -5801,6 +5831,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -5810,6 +5841,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -5987,6 +6019,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               AccessToken                                                LocalAccessToken,
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = null,
@@ -6011,6 +6044,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               RemoteAccessStatus?                                        RemoteStatus                      = null,
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
@@ -6031,6 +6065,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessToken,
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,
@@ -6055,6 +6090,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteAllowDowngrades,
 
@@ -6121,6 +6157,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
 
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
@@ -6163,6 +6200,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
 
                                      RemoteStatus,
                                      RemoteVersionIds,
@@ -6236,6 +6274,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               UInt16?                                                    MaxNumberOfRetries                = null,
                               UInt32?                                                    InternalBufferSize                = null,
                               Boolean?                                                   UseHTTPPipelining                 = null,
+                              HTTPModifiers?                                             OUT                               = null,
                               RemoteAccessStatus?                                        RemoteStatus                      = RemoteAccessStatus.ONLINE,
                               IEnumerable<Version_Id>?                                   RemoteVersionIds                  = null,
                               Version_Id?                                                SelectedVersionId                 = null,
@@ -6245,6 +6284,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                               Boolean?                                                   LocalAccessTokenBase64Encoding    = null,
                               TOTPConfig?                                                LocalTOTPConfig                   = null,
+                              HTTPModifiers?                                             IN                                = null,
                               DateTimeOffset?                                            LocalAccessNotBefore              = null,
                               DateTimeOffset?                                            LocalAccessNotAfter               = null,
                               Boolean?                                                   LocalAllowDowngrades              = false,
@@ -6286,6 +6326,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      MaxNumberOfRetries,
                                      InternalBufferSize,
                                      UseHTTPPipelining,
+                                     OUT,
                                      RemoteStatus,
                                      RemoteVersionIds,
                                      SelectedVersionId,
@@ -6295,6 +6336,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                      LocalAccessTokenBase64Encoding,
                                      LocalTOTPConfig,
+                                     IN,
                                      LocalAccessNotBefore,
                                      LocalAccessNotAfter,
                                      LocalAllowDowngrades,

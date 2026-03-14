@@ -620,8 +620,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 }
 
-                if (RemoteParty.IN?.RequestModifier is not null)
-                    HTTPRequest = RemoteParty.IN.RequestModifier(HTTPRequest);
+                var requestModifier = RemoteParty?.LocalAccessInfos.FirstOrDefault()?.IN?.RequestModifier;
+                if (requestModifier is not null)
+                {
+                    try
+                    {
+                        HTTPRequest = requestModifier(HTTPRequest);
+                    }
+                    catch (Exception e)
+                    {
+                        //await CommonAPI.LogException(e);
+                    }
+                }
 
             }
 

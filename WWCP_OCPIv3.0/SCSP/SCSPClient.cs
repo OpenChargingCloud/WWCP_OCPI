@@ -31,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0;
 using System.Net.Security;
+using Org.BouncyCastle.Math.EC.Multiplier;
 
 #endregion
 
@@ -413,6 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.SCSP.HTTP
                           TransmissionRetryDelayDelegate?                            TransmissionRetryDelay            = null,
                           UInt16?                                                    MaxNumberOfRetries                = null,
                           UInt32?                                                    InternalBufferSize                = null,
+                          HTTPModifiers?                                             OUT                               = null,
                           Boolean                                                    UseHTTPPipelining                 = false,
                           HTTPClientLogger?                                          HTTPLogger                        = null,
                           Boolean                                                    AccessTokenBase64Encoding         = true,
@@ -449,6 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.SCSP.HTTP
                    MaxNumberOfRetries,
                    InternalBufferSize,
                    UseHTTPPipelining,
+                   OUT,
                    HTTPLogger,
 
                    DisableLogging,

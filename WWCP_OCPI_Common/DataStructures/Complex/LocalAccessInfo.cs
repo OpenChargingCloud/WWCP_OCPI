@@ -82,6 +82,11 @@ namespace cloud.charging.open.protocols.OCPI
         [Mandatory]
         public Boolean           AllowDowngrades               { get; }
 
+        /// <summary>
+        /// Optional incoming request and response modifiers.
+        /// </summary>
+        public HTTPModifiers?    IN                            { get; set; }
+
         #endregion
 
         #region Constructor(s)
@@ -101,6 +106,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                AccessStatus?    Status                       = AccessStatus.ALLOWED,
                                TOTPConfig?      TOTPConfig                   = null,
+                               HTTPModifiers?   IN                           = null,
                                DateTimeOffset?  NotBefore                    = null,
                                DateTimeOffset?  NotAfter                     = null,
                                Boolean?         AccessTokenIsBase64Encoded   = true,
@@ -111,6 +117,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.Status                      = Status                     ?? AccessStatus.ALLOWED;
 
             this.TOTPConfig                  = TOTPConfig;
+            this.IN                          = IN;
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
@@ -302,6 +309,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                       Status,
                                       totpConfig,
+                                      null,
                                       NotBefore,
                                       NotAfter,
                                       AccessTokenIsBase64Encoded,
@@ -382,6 +390,7 @@ namespace cloud.charging.open.protocols.OCPI
                    Status,
 
                    TOTPConfig?.Clone(),
+                   IN,
                    NotBefore,
                    NotAfter,
                    AccessTokenIsBase64Encoded,
