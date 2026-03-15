@@ -21,17 +21,17 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_2_1;
+using cloud.charging.open.protocols.OCPIv2_3_0;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP client.
+    /// The OCPI EMSP-2-CPO HTTP client.
     /// </summary>
-    public partial class EMSP2CPOClient : IHTTPClient
+    public partial class EMSP2CPO_HTTPClient : IHTTPClient
     {
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             /// <summary>
             /// The attached EMSP-2-CPO client.
             /// </summary>
-            public EMSP2CPOClient  EMSP2CPOClient    { get; }
+            public EMSP2CPO_HTTPClient  EMSP2CPOClient    { get; }
 
             #endregion
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public HTTPClientLogger(EMSP2CPOClient               EMSP2CPOClient,
+            public HTTPClientLogger(EMSP2CPO_HTTPClient               EMSP2CPOClient,
                                     String?                      LoggingPath,
                                     String?                      Context          = DefaultContext,
                                     OCPILogfileCreatorDelegate?  LogfileCreator   = null)

@@ -76,29 +76,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     RemotePartyToJSONDelegate?                          RemotePartyToJSON                  = null)
 
 
-            => RemoteParties?.Any() != true
+            => RemoteParties.Any()
 
-                   ? new JArray()
+                   ? [..
+                         RemoteParties.
+                             Where          (remoteParty => remoteParty is not null).
+                             OrderBy        (remoteParty => remoteParty.Id).
+                             SkipTakeFilter (Skip, Take).
+                             Select         (remoteParty => RemotePartyToJSON is not null
+                                                                ? RemotePartyToJSON (remoteParty,
+                                                                                     Embedded,
+                                                                                     CustomRemotePartySerializer,
+                                                                                     CustomBusinessDetailsSerializer,
+                                                                                     CustomImageSerializer,
+                                                                                     CustomLocalAccessInfoSerializer,
+                                                                                     CustomRemoteAccessInfoSerializer)
 
-                   : new JArray(RemoteParties.
-                                    Where         (remoteParty => remoteParty is not null).
-                                    OrderBy       (remoteParty => remoteParty.Id).
-                                    SkipTakeFilter(Skip, Take).
-                                    Select        (remoteParty => RemotePartyToJSON is not null
-                                                                      ? RemotePartyToJSON (remoteParty,
-                                                                                           Embedded,
-                                                                                           CustomRemotePartySerializer,
-                                                                                           CustomBusinessDetailsSerializer,
-                                                                                           CustomImageSerializer,
-                                                                                           CustomLocalAccessInfoSerializer,
-                                                                                           CustomRemoteAccessInfoSerializer)
+                                                                : remoteParty.ToJSON(Embedded,
+                                                                                     CustomRemotePartySerializer,
+                                                                                     CustomBusinessDetailsSerializer,
+                                                                                     CustomImageSerializer,
+                                                                                     CustomLocalAccessInfoSerializer,
+                                                                                     CustomRemoteAccessInfoSerializer))
+                     ]
 
-                                                                      : remoteParty.ToJSON(Embedded,
-                                                                                           CustomRemotePartySerializer,
-                                                                                           CustomBusinessDetailsSerializer,
-                                                                                           CustomImageSerializer,
-                                                                                           CustomLocalAccessInfoSerializer,
-                                                                                           CustomRemoteAccessInfoSerializer)));
+                   : [];
 
         #endregion
 
@@ -129,36 +131,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
         [Mandatory]
-        public CountryCode      CountryCode        { get; }
+        public CountryCode           CountryCode        { get; }
 
         /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id         PartyId            { get; }
+        public Party_Id              PartyId            { get; }
 
         /// <summary>
         /// The type of the role.
         /// </summary>
         [Mandatory]
-        public Role             Role               { get; }
+        public Role                  Role               { get; }
 
         /// <summary>
         /// Business details of this party.
         /// </summary>
         [Mandatory]
-        public BusinessDetails  BusinessDetails    { get; }
+        public BusinessDetails       BusinessDetails    { get; }
 
 
         /// <summary>
-        /// An optional persistent CPO to EMSP client.
+        /// An optional persistent CPO to EMSP HTTP client.
         /// </summary>
         public CPO2EMSP_HTTPClient?  CPO2EMSPClient     { get; set; }
 
         /// <summary>
-        /// An optional persistent EMSP to CPO client.
+        /// An optional persistent EMSP to CPO HTTP client.
         /// </summary>
-        public EMSP2CPOClient?  EMSP2CPOClient     { get; set; }
+        public EMSP2CPO_HTTPClient?  EMSP2CPOClient     { get; set; }
 
         #endregion
 

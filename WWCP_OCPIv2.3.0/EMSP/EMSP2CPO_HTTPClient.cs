@@ -35,9 +35,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP2CPO client.
+    /// The OCPI EMSP-2-CPO HTTP client.
     /// </summary>
-    public partial class EMSP2CPOClient : CommonHTTPClient
+    public partial class EMSP2CPO_HTTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -210,12 +210,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPOClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPO_HTTPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(EMSP2CPOClient);
+        public new const String  DefaultLoggingContext   = nameof(EMSP2CPO_HTTPClient);
 
         #endregion
 
@@ -809,7 +809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPOClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
+        public EMSP2CPO_HTTPClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
                               RemoteParty                                               RemoteParty,
                               HTTPHostname?                                             VirtualHostname   = null,
                               I18NString?                                               Description       = null,
@@ -4815,7 +4815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(EMSP2CPOClient),
+                   nameof(EMSP2CPO_HTTPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -4828,7 +4828,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region ToJSON()
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPOClient));
+            => base.ToJSON(nameof(EMSP2CPO_HTTPClient));
 
         #endregion
 

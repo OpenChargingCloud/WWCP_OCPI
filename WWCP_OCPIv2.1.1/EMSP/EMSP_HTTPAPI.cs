@@ -2650,12 +2650,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region EMSP-2-CPO Clients
 
-        private readonly ConcurrentDictionary<CPO_Id, EMSP2CPOClient> emsp2cpoClients = new();
+        private readonly ConcurrentDictionary<CPO_Id, EMSP2CPO_HTTPClient> emsp2cpoClients = new();
 
         /// <summary>
         /// Return an enumeration of all EMSP2CPO clients.
         /// </summary>
-        public IEnumerable<EMSP2CPOClient> EMSP2CPOClients
+        public IEnumerable<EMSP2CPO_HTTPClient> EMSP2CPOClients
             => emsp2cpoClients.Values;
 
 
@@ -2668,7 +2668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PartyId">The party identification of the remote CPO.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public EMSP2CPOClient? GetCPOClient(CountryCode  CountryCode,
+        public EMSP2CPO_HTTPClient? GetCPOClient(CountryCode  CountryCode,
                                             Party_Id     PartyId,
                                             I18NString?  Description          = null,
                                             Boolean      AllowCachedClients   = true)
@@ -2687,7 +2687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var emspClient = new EMSP2CPOClient(
+                var emspClient = new EMSP2CPO_HTTPClient(
                                      this,
                                      remoteParty,
                                      null,
@@ -2720,7 +2720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RemoteParty">A remote party.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
-        public EMSP2CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+        public EMSP2CPO_HTTPClient? GetCPOClient(RemoteParty  RemoteParty,
                                             I18NString?  Description          = null,
                                             Boolean      AllowCachedClients   = true)
         {
@@ -2736,7 +2736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var emspClient = new EMSP2CPOClient(
+                var emspClient = new EMSP2CPO_HTTPClient(
                                      this,
                                      RemoteParty,
                                      null,
@@ -2769,7 +2769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="RemotePartyId">A remote party identification.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
-        public EMSP2CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+        public EMSP2CPO_HTTPClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
                                             I18NString?     Description          = null,
                                             Boolean         AllowCachedClients   = true)
         {
@@ -2786,7 +2786,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var emspClient = new EMSP2CPOClient(
+                var emspClient = new EMSP2CPO_HTTPClient(
                                      this,
                                      remoteParty,
                                      null,

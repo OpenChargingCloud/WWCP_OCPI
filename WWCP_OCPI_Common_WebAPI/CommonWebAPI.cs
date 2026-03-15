@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         //public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly      HTTPEventSource_Id  DebugLogId           = HTTPEventSource_Id.Parse($"OCPI_debugLog");
+        public static readonly      HTTPEventSource_Id  DefaultDebugLogId    = HTTPEventSource_Id.Parse($"OCPI_debugLog");
 
         /// <summary>
         /// The default WebAPI logfile name.
@@ -291,6 +291,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                             I18NString?              Description            = null,
 
                             ServiceSettings?         UseHTTPSSE             = null,
+                            HTTPEventSource_Id?      DebugLogId             = null,
 
                             String?                  ExternalDNSName        = null,
                             String?                  HTTPServerName         = DefaultHTTPServerName,
@@ -333,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
             this.UseHTTPSSE            = UseHTTPSSE ?? ServiceSettings.Disabled;
 
             this.DebugLog              = HTTPBaseAPI.HTTPBaseAPI.AddJSONEventSource(
-                                             EventSourceId:            DebugLogId,
+                                             EventSourceId:            DebugLogId ?? DefaultDebugLogId,
                                              MaxNumberOfCachedEvents:  1000,
                                              RetryInterval :           TimeSpan.FromSeconds(5),
                                              EnableLogging:            true,

@@ -794,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                "Unknown error!"
                            );
 
-                var emspClient = new EMSP.HTTP.EMSP2CPOClient(
+                var emspClient = new EMSP.HTTP.EMSP2CPO_HTTPClient(
 
                                      EMSP_HTTPAPI,
                                      remoteParty,
@@ -810,7 +810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-                var emspClientLogger = new EMSP.HTTP.EMSP2CPOClient.HTTPClientLogger(
+                var emspClientLogger = new EMSP.HTTP.EMSP2CPO_HTTPClient.HTTPClientLogger(
                                            emspClient,
                                            ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                            ClientsLoggingContext ?? DefaultLoggingContext,

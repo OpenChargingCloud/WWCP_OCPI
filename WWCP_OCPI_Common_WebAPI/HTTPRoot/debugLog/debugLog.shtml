@@ -5,8 +5,58 @@
 <script type="text/javascript" src="{{basePath}}/webapi/js/date.format.js"></script>
 
 
+<div id="buttonsDiv">
+    <button id="filterHelpButton"  title="Help on filter expressions"><i class="fa-regular fa-circle-question"></i></button>
+    <button id="clearEventsButton" title="Remove all log entries"><i class="fa-regular fa-trash-can"></i></button>
+</div>
+
 <div id="eventsFilterDiv">
-    Events filter <input id="StreamFilter" />
+    <i class="fa-solid fa-filter"></i><input id="streamFilter" placeholder="filter logs..." />
+</div>
+
+<div id="filterHelpPanel">
+
+    <h3>Filter Expression Help</h3>
+
+    <div class="section">
+        <div class="section-title">Basics</div>
+        <table>
+            <tr><td>Prod</td><td>Match lines containing &quot;Prod&quot; (case-insensitive substring)</td></tr>
+            <tr><td>&quot;charging started&quot;</td><td>Quoted substring &mdash; useful if the term contains special characters</td></tr>
+            <tr><td>/E\\\\d{6}/</td><td>Regular expression match</td></tr>
+            <tr><td>/charging/i</td><td>Regex with flags (i&nbsp;=&nbsp;case-insensitive)</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Operators</div>
+        <table>
+            <tr><td>A &amp; B</td><td>AND &mdash; both A <em>and</em> B must match</td></tr>
+            <tr><td>A | B</td><td>OR &mdash; either A <em>or</em> B must match</td></tr>
+            <tr><td>!A</td><td>NOT &mdash; exclude lines matching A</td></tr>
+            <tr><td>( &hellip; )</td><td>Grouping &mdash; override default precedence</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Precedence</div>
+        <table>
+            <tr><td colspan="2">! (NOT) binds tightest, then &amp; (AND), then | (OR).</td></tr>
+            <tr><td>A | B &amp; C</td><td>is parsed as A | (B &amp; C)</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Examples</div>
+        <table>
+            <tr><td>Prod &amp; charging</td><td>Lines that contain both &quot;Prod&quot; and &quot;charging&quot;</td></tr>
+            <tr><td>Prod | QA</td><td>Lines with &quot;Prod&quot; or &quot;QA&quot;</td></tr>
+            <tr><td>Prod &amp; !charging</td><td>Lines with &quot;Prod&quot; but without &quot;charging&quot;</td></tr>
+            <tr><td>(Prod | QA) &amp; charging</td><td>&quot;Prod&quot; or &quot;QA&quot;, and also &quot;charging&quot;</td></tr>
+            <tr><td>Prod &amp; /E\\\\d{3,}/</td><td>&quot;Prod&quot; and an EVSE-id-like pattern</td></tr>
+        </table>
+    </div>
+
 </div>
 
 <div id="response">

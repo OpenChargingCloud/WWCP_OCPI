@@ -21,17 +21,17 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_1_1;
+using cloud.charging.open.protocols.OCPIv2_2_1;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP2CPO client.
+    /// The OCPI EMSP-2-CPO HTTP client.
     /// </summary>
-    public partial class EMSP2CPOClient : IHTTPClient
+    public partial class EMSP2CPO_HTTPClient : IHTTPClient
     {
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = $"OCPI{Version.String}_EMSP2CPOClient";
+            public new const String  DefaultContext   = $"OCPI{Version.String}_EMSP-2-CPOClient";
 
             #endregion
 
@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <summary>
             /// The attached EMSP-2-CPO client.
             /// </summary>
-            public EMSP2CPOClient  EMSP2CPOClient    { get; }
+            public EMSP2CPO_HTTPClient  EMSP2CPOClient    { get; }
 
             #endregion
 
@@ -63,11 +63,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <summary>
             /// Create a new EMSP-2-CPO client logger using the default logging delegates.
             /// </summary>
-            /// <param name="EMSP2CPOClient">A EMSP client.</param>
+            /// <param name="EMSP2CPOClient">An EMSP-2-CPO client.</param>
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public HTTPClientLogger(EMSP2CPOClient               EMSP2CPOClient,
+            public HTTPClientLogger(EMSP2CPO_HTTPClient               EMSP2CPOClient,
                                     String?                      LoggingPath,
                                     String?                      Context          = DefaultContext,
                                     OCPILogfileCreatorDelegate?  LogfileCreator   = null)
@@ -75,9 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 : base(EMSP2CPOClient,
                        LoggingPath,
                        Context ?? DefaultContext,
-                       LogfileCreator is not null
-                           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                           : null)
+                       LogfileCreator)
 
             {
 
@@ -114,9 +112,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                #endregion
-
-                #region EVSEs
 
                 RegisterEvent("GetEVSERequest",
                               handler => EMSP2CPOClient.OnGetEVSEHTTPRequest += handler,
@@ -132,9 +127,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                #endregion
-
-                #region Connectors
 
                 RegisterEvent("GetConnectorRequest",
                               handler => EMSP2CPOClient.OnGetConnectorHTTPRequest += handler,
