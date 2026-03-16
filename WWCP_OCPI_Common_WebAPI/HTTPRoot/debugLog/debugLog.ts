@@ -308,7 +308,7 @@ function StartDebugLog() {
 
     }
 
-    function CreateLogEntry(timestamp, roamingNetwork, eventTrackingId, from, to, command, message, connectionColorKey) {
+    function CreateLogEntry(timestamp, eventTrackingId, remotePartyId, from, to, direction, command, message, connectionColorKey) {
 
         const connectionColor = GetConnectionColors(connectionColorKey);
 
@@ -321,10 +321,11 @@ function StartDebugLog() {
         div.style.color       = "#" + connectionColor.textcolor;
         div.style.background  = "#" + connectionColor.background;
         div.innerHTML         = "<div class=\"timestamp\">"       + new Date(timestamp).format('dd.mm.yyyy HH:MM:ss') + "</div>" +
-                                "<div class=\"roamingNetwork\">"  + roamingNetwork  + "</div>" +
                                 "<div class=\"eventTrackingId\">" + eventTrackingId + "</div>" +
+                                "<div class=\"remotePartyId\">"   + remotePartyId   + "</div>" +
                                 "<div class=\"from\">"            + (from ?? "")    + "</div>" +
                                 "<div class=\"to\">"              + (to   ?? "")    + "</div>" +
+                                "<div class=\"direction\">"       + (direction == "in" ? "⇐" : direction == "out" ? "⇒" : "") + "</div>" +
                                 "<div class=\"command\">"         + command + "</div>" +
                                 "<div class=\"message\">"         + message.reduce(function (a: string, b: string) { return a + "<br />" + b; }) + "</div>" +
                                 "<div class=\"runtime\"></div>";
@@ -360,6 +361,35 @@ function StartDebugLog() {
 
     }
 
+
+
+    function multiLanguageTextToHTML(items: { language: string; text: string }[]): string
+    {
+
+        if (items.length === 0)
+            return "";
+
+        return `
+          <ul class="multilanguage">
+            ${items.map(item => `
+                <li lang="${item.language}">
+                  <strong>[${item.language.toUpperCase()}]</strong> 
+                  ${escapeHtml(item.text)}
+                </li>
+              `).join("\n")}
+          </ul>
+        `.trim();
+
+    }
+
+    function escapeHtml(unsafe: string): string {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
 
     const eventSource = window.EventSource !== undefined
@@ -403,6 +433,7 @@ function StartDebugLog() {
                     request.eventTrackingId ?? "",
                     "",
                     "",
+                    "",
                     "OnMessage",
                     container.outerHTML,
                     request.EVSEId ?? "" // ConnectionColorKey
@@ -420,52 +451,65 @@ function StartDebugLog() {
         };
 
 
+        // Server Events
 
-        eventSource.addEventListener('sub1', (event: MessageEvent) => {
+        eventSource.addEventListener('OnGetVersionDetailRequest', (event: MessageEvent<string>) => {
 
-            try
-            {
+            try {
 
-                const request         = JSON.parse(event.data);
+                const request = JSON.parse(event.data);
 
-                const entries         = Object.entries(request);
+                const entries = Object.entries(request);
                 if (entries.length === 0)
                     return;
 
-                const [key, value]    = entries[0];
-
-                const container       = document.createElement('div');
-                container.className   = 'sub1';
-
-                const keyDiv          = document.createElement('div');
-                keyDiv.className      = 'key';
-                keyDiv.textContent    = String(key);
-
-                const valueDiv        = document.createElement('div');
-                valueDiv.className    = 'value';
-                valueDiv.textContent  = value == null ? '' : String(value);
-
-                container.append(keyDiv, valueDiv);
-
-
                 CreateLogEntry(
-                    request.timestamp        ?? Date.now(),
-                    request.roamingNetworkId ?? "",
-                    request.eventTrackingId  ?? "",
-                    "",
-                    "",
-                    "sub1",
-                    container.outerHTML,
-                    request.EVSEId           ?? "" // ConnectionColorKey
+                    request.timestamp       ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnGetVersionDetailRequest",
+                    `${request.versionId}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
             catch (exception) {
-                console.error(exception);
+                ShowHTTPSSEError(
+                    'OnGetVersionDetailRequest',
+                    event.data,
+                    exception
+                );
             }
 
         }, false);
 
+        eventSource.addEventListener('OnGetVersionDetailResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnGetVersionDetailResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
 
 
 
@@ -480,14 +524,15 @@ function StartDebugLog() {
                     return;
 
                 CreateLogEntry(
-                    request.timestamp        ?? Date.now(),
-                    request.roamingNetworkId ?? "",
-                    request.eventTrackingId  ?? "",
+                    request.timestamp       ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
                     request.from,
                     request.to,
+                    "out",
                     "OnPatchEVSERequest",
-                    `${request.evseId} (${JSON.stringify(request.patch)}`,
-                    request.from ?? "" // ConnectionColorKey
+                    `EVSE ${request.evseId}: ${JSON.stringify(request.evsePatch)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
@@ -511,7 +556,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    `⇒ !`,
+                    ` ⇒ !`,
                     response.runtime
                 );
 
@@ -538,15 +583,21 @@ function StartDebugLog() {
                 if (entries.length === 0)
                     return;
 
+                const session = request.session;
+                const token   = session.cdr_token;
+
                 CreateLogEntry(
-                    request.timestamp ?? Date.now(),
-                    request.roamingNetworkId ?? "",
+                    request.timestamp       ?? Date.now(),
                     request.eventTrackingId ?? "",
+                    request.remotePartyId,
                     request.from,
                     request.to,
+                    "out",
                     "OnPutSessionRequest",
-                    `${request.id} (${request.status}, ${request.kwh}, ${request.total_cost} ${request.currency})`,
-                    request.from ?? "" // ConnectionColorKey
+                    `Session: ${session.country_code}-${session.party_id} ${session.id}: <b>${session.status}</b>, ${session.kwh} kWh, ${session.total_cost != null ? session.total_cost + " " + session.currency : ""}<br />` +
+                    `Location: ${session.location_id}, evse: ${session.evse_uid}, connector: ${session.connector_id}<br />` +
+                    `Token: ${token.country_code}-${token.party_id}-${token.uid} (${token.type}), contract: ${token.contract_id}, auth_ref: ${session.authorization_reference}<br />`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
@@ -571,7 +622,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    `⇒ !`,
+                    ` ⇒ !`,
                     response.runtime
                 );
 
@@ -598,14 +649,15 @@ function StartDebugLog() {
                     return;
 
                 CreateLogEntry(
-                    request.timestamp ?? Date.now(),
-                    request.roamingNetworkId ?? "",
+                    request.timestamp       ?? Date.now(),
                     request.eventTrackingId ?? "",
+                    request.remotePartyId,
                     request.from,
                     request.to,
+                    "out",
                     "OnPatchSessionRequest",
                     `${request.sessionId}`,
-                    request.from ?? "" // ConnectionColorKey
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
@@ -630,7 +682,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    `⇒ !`,
+                    ` ⇒ !`,
                     response.runtime
                 );
 
@@ -651,21 +703,30 @@ function StartDebugLog() {
             try
             {
 
-                const request = JSON.parse(event.data);
+                const request   = JSON.parse(event.data);
 
-                const entries = Object.entries(request);
+                const entries   = Object.entries(request);
                 if (entries.length === 0)
                     return;
 
+                const cdr       = request.cdr;
+                const token     = cdr.cdr_token;
+                const location  = cdr.cdr_location;
+
                 CreateLogEntry(
-                    request.timestamp        ?? Date.now(),
-                    request.roamingNetworkId ?? "",
-                    request.eventTrackingId  ?? "",
+                    request.timestamp       ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
                     request.from,
                     request.to,
+                    "out",
                     "OnPostCDRRequest",
-                    `${request.id} (${request.session_id}, ${request.cdr_token})`,
-                    request.from ?? "" // ConnectionColorKey
+                    `Id: ${cdr.country_code}-${cdr.party_id} ${cdr.id} ${cdr.session_id != null ? ` for session: ${cdr.session_id}` : ""}<br />` +
+                    `Start: ${cdr.start_date_time}, stop: ${cdr.end_date_time}<br />` +
+                    `${cdr.total_time} hours, ${cdr.total_energy} kWh, ${cdr.total_cost.excl_vat} ${cdr.currency}<br />` +
+                    `Location: ${location.id}, evse: ${location.evse_uid} (${location.evse_id}), connector: ${location.connector_id} (${location.connector_standard}/${location.connector_format}/${location.connector_power_type})<br />` +
+                    `Token: ${token.country_code}-${token.party_id}-${token.uid} (${token.type}), contract: ${token.contract_id}, auth: ${cdr.auth_method} / ${cdr.authorization_reference ?? "-"}<br />`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
@@ -690,7 +751,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    `⇒ ${response.cdrLocation}`,
+                    ` ⇒ ${response.cdrLocation}`,
                     response.runtime
                 );
 
@@ -718,14 +779,15 @@ function StartDebugLog() {
                     return;
 
                 CreateLogEntry(
-                    request.timestamp ?? Date.now(),
-                    request.roamingNetworkId ?? "",
+                    request.timestamp       ?? Date.now(),
                     request.eventTrackingId ?? "",
+                    request.remotePartyId,
                     request.from,
                     request.to,
+                    "out",
                     "OnPostTokenRequest",
                     `${request.tokenId} (${request.requestedTokenType})`,
-                    request.from ?? "" // ConnectionColorKey
+                    request.remotePartyId ?? "" // ConnectionColorKey
                 );
 
             }
@@ -750,7 +812,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    `⇒ ${response.result.allowed}`,
+                    ` ⇒ ${response.result.allowed}`,
                     response.runtime
                 );
 
@@ -758,6 +820,146 @@ function StartDebugLog() {
             catch (exception) {
                 ShowHTTPSSEError(
                     'OnPostTokenResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
+
+        // Client Events
+
+        eventSource.addEventListener('OnStartSessionRequest', (event: MessageEvent<string>) => {
+
+            try
+            {
+
+                const request   = JSON.parse(event.data);
+
+                const entries   = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                const token = request.token;
+
+                CreateLogEntry(
+                    request.timestamp       ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "in",
+                    "OnStartSessionRequest",
+                    `Token: ${token.country_code}-${token.party_id}-${token.uid} (${token.type}), contract: ${token.contract_id}, auth: ${request.authorizationReference ?? "-"}<br />` +
+                    `Location: ${request.locationId}, evse: ${request.evseUId ?? "-"}, connector: ${request.connectorId ?? "-"}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnStartSessionRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnStartSessionResponse', (event: MessageEvent<string>) => {
+
+            try
+            {
+
+                const response         = JSON.parse(event.data);
+
+                const ocpiResponse     = response.response;
+                const commandResponse  = ocpiResponse.data;
+                const commandResult    = commandResponse?.result ?? `Status code: ${ocpiResponse.status_code}${ocpiResponse.status_message != null ? `<br />"Status message: ${ocpiResponse.status_message}"` : ""}`;
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ ${commandResult}${multiLanguageTextToHTML(commandResponse?.message ?? [])}` +
+                    `${ocpiResponse.additionalInformation != null ? `<br />"Additional information: ${ocpiResponse.additionalInformation}"` : ""}`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnStartSessionResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
+
+
+        eventSource.addEventListener('OnStopSessionRequest', (event: MessageEvent<string>) => {
+
+            try
+            {
+
+                const request   = JSON.parse(event.data);
+
+                const entries   = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp       ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "in",
+                    "OnStopSessionRequest",
+                    `Stop session: ${request.sessionId}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnStopSessionRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnStopSessionResponse', (event: MessageEvent<string>) => {
+
+            try
+            {
+
+                const response         = JSON.parse(event.data);
+
+                const ocpiResponse     = response.response;
+                const commandResponse  = ocpiResponse.data;
+                const commandResult    = commandResponse?.result ?? `Status code: ${ocpiResponse.status_code}${ocpiResponse.status_message != null ? `<br />"Status message: ${ocpiResponse.status_message}"` : ""}`;
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ ${commandResult}${multiLanguageTextToHTML(commandResponse?.message ?? [])}` +
+                    `${ocpiResponse.additionalInformation != null ? `<br />"Additional information: ${ocpiResponse.additionalInformation}"` : ""}`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnStopSessionResponse',
                     event.data,
                     exception
                 );
@@ -779,6 +981,7 @@ function StartDebugLog() {
 
         CreateLogEntry(
             Date.now(),
+            "",
             "",
             "",
             "",

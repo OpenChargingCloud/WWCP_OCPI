@@ -1609,22 +1609,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  new JProperty("currency",                     Currency.                      ISOCode),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(true,
-                                                                                                                                                                             true,
-                                                                                                                                                                             CustomTariffSerializer,
-                                                                                                                                                                             CustomDisplayTextSerializer,
-                                                                                                                                                                             CustomPriceSerializer,
-                                                                                                                                                                             CustomTariffElementSerializer,
-                                                                                                                                                                             CustomPriceComponentSerializer,
-                                                                                                                                                                             CustomTariffRestrictionsSerializer,
-                                                                                                                                                                             CustomEnergyMixSerializer,
-                                                                                                                                                                             CustomEnergySourceSerializer,
-                                                                                                                                                                             CustomEnvironmentalImpactSerializer))))
+                               ? new JProperty("tariffs",                      new JArray(Tariffs.            Select(tariff               => tariff.              ToJSON(true,
+                                                                                                                                                                         true,
+                                                                                                                                                                         CustomTariffSerializer,
+                                                                                                                                                                         CustomDisplayTextSerializer,
+                                                                                                                                                                         CustomPriceSerializer,
+                                                                                                                                                                         CustomTariffElementSerializer,
+                                                                                                                                                                         CustomPriceComponentSerializer,
+                                                                                                                                                                         CustomTariffRestrictionsSerializer,
+                                                                                                                                                                         CustomEnergyMixSerializer,
+                                                                                                                                                                         CustomEnergySourceSerializer,
+                                                                                                                                                                         CustomEnvironmentalImpactSerializer))))
                                : null,
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",             new JArray(ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                                             CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",             new JArray(ChargingPeriods.    Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                         CustomCDRDimensionSerializer))))
                                : null,
 
                            SignedData is not null

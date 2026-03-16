@@ -470,36 +470,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("id",                    Id.                ToString()),
+                                 new JProperty("id",                    Id.                ToString()),
 
                            Name.IsNotNullOrEmpty()
-                               ? new JProperty("name",            Name)
+                               ? new JProperty("name",                  Name)
                                : null,
 
-                           new JProperty("address",               Address),
-                           new JProperty("city",                  City),
+                                 new JProperty("address",               Address),
+                                 new JProperty("city",                  City),
 
                            PostalCode.IsNotNullOrEmpty()
-                               ? new JProperty("postal_code",     PostalCode)
+                               ? new JProperty("postal_code",           PostalCode)
                                : null,
 
                            State.IsNotNullOrEmpty()
-                               ? new JProperty("state",           State)
+                               ? new JProperty("state",                 State)
                                : null,
 
-                           new JProperty("country",               Country.Alpha3Code),
+                                 new JProperty("country",               Country.Alpha3Code),
 
-                           new JProperty("coordinates",           new JObject(
-                                                                      new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                      new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
-                                                                  )),
+                                 new JProperty("coordinates",           new JObject(
+                                                                            new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                            new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                        )),
 
-                           new JProperty("evse_uid",              EVSEUId.           ToString()),
-                           new JProperty("evse_id",               EVSEId.            ToString()),
-                           new JProperty("connector_id",          ConnectorId.       ToString()),
-                           new JProperty("connector_standard",    ConnectorStandard. ToString()),
-                           new JProperty("connector_format",      ConnectorFormat.   ToString()),
-                           new JProperty("connector_power_type",  ConnectorPowerType.ToString())
+                                 new JProperty("evse_uid",              EVSEUId.           ToString()),
+                                 new JProperty("evse_id",               EVSEId.            ToString()),
+                                 new JProperty("connector_id",          ConnectorId.       ToString()),
+                                 new JProperty("connector_standard",    ConnectorStandard. ToString()),
+                                 new JProperty("connector_format",      ConnectorFormat.   ToString()),
+                                 new JProperty("connector_power_type",  ConnectorPowerType.ToString())
 
                        );
 

@@ -111,22 +111,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI          CommonAPI      { get; }
+        public CommonAPI              CommonAPI      { get; }
 
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty        RemoteParty    { get; }
+        public RemoteParty            RemoteParty    { get; }
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters  Counters       { get; }
+        public CommonAPICounters      Counters       { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new HTTPClientLogger?        HTTPLogger
+        public new HTTPClientLogger?  HTTPLogger
         {
             get
             {

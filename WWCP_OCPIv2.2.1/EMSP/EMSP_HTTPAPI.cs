@@ -45,10 +45,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutLocationRequestDelegate2 (DateTimeOffset       Timestamp,
                                                         EMSP_HTTPAPI         Sender,
                                                         EventTracking_Id     EventTrackingId,
-                                                        CountryCode?         From_CountryCode,
-                                                        Party_Id?            From_PartyId,
-                                                        CountryCode?         To_CountryCode,
-                                                        Party_Id?            To_PartyId,
+                                                        RemoteParty_Id       RemotePartyId,
+                                                        Party_Idv3?          From,
+                                                        Party_Idv3?          To,
 
                                                         Location             Location,
 
@@ -60,10 +59,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutLocationResponseDelegate2(DateTimeOffset       Timestamp,
                                                         EMSP_HTTPAPI         Sender,
                                                         EventTracking_Id     EventTrackingId,
-                                                        CountryCode?         From_CountryCode,
-                                                        Party_Id?            From_PartyId,
-                                                        CountryCode?         To_CountryCode,
-                                                        Party_Id?            To_PartyId,
+                                                        RemoteParty_Id       RemotePartyId,
+                                                        Party_Idv3?          From,
+                                                        Party_Idv3?          To,
 
                                                         Location             Location,
 
@@ -80,10 +78,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchLocationRequestDelegate2 (DateTimeOffset       Timestamp,
                                                           EMSP_HTTPAPI         Sender,
                                                           EventTracking_Id     EventTrackingId,
-                                                          CountryCode?         From_CountryCode,
-                                                          Party_Id?            From_PartyId,
-                                                          CountryCode?         To_CountryCode,
-                                                          Party_Id?            To_PartyId,
+                                                          RemoteParty_Id       RemotePartyId,
+                                                          Party_Idv3?          From,
+                                                          Party_Idv3?          To,
 
                                                           Location_Id          LocationId,
                                                           JObject              LocationPatch,
@@ -96,10 +93,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchLocationResponseDelegate2(DateTimeOffset       Timestamp,
                                                           EMSP_HTTPAPI         Sender,
                                                           EventTracking_Id     EventTrackingId,
-                                                          CountryCode?         From_CountryCode,
-                                                          Party_Id?            From_PartyId,
-                                                          CountryCode?         To_CountryCode,
-                                                          Party_Id?            To_PartyId,
+                                                          RemoteParty_Id       RemotePartyId,
+                                                          Party_Idv3?          From,
+                                                          Party_Idv3?          To,
 
                                                           Location_Id          LocationId,
                                                           JObject              LocationPatch,
@@ -117,10 +113,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutEVSERequestDelegate2 (DateTimeOffset       Timestamp,
                                                     EMSP_HTTPAPI         Sender,
                                                     EventTracking_Id     EventTrackingId,
-                                                    CountryCode?         From_CountryCode,
-                                                    Party_Id?            From_PartyId,
-                                                    CountryCode?         To_CountryCode,
-                                                    Party_Id?            To_PartyId,
+                                                    RemoteParty_Id       RemotePartyId,
+                                                    Party_Idv3?          From,
+                                                    Party_Idv3?          To,
 
                                                     EVSE                 EVSE,
 
@@ -132,10 +127,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutEVSEResponseDelegate2(DateTimeOffset       Timestamp,
                                                     EMSP_HTTPAPI         Sender,
                                                     EventTracking_Id     EventTrackingId,
-                                                    CountryCode?         From_CountryCode,
-                                                    Party_Id?            From_PartyId,
-                                                    CountryCode?         To_CountryCode,
-                                                    Party_Id?            To_PartyId,
+                                                    RemoteParty_Id       RemotePartyId,
+                                                    Party_Idv3?          From,
+                                                    Party_Idv3?          To,
 
                                                     EVSE                 EVSE,
 
@@ -152,10 +146,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchEVSERequestDelegate2 (DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       EVSE_UId             EVSEUId,
                                                       JObject              EVSEPatch,
@@ -168,10 +161,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchEVSEResponseDelegate2(DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       EVSE_UId             EVSEUId,
                                                       JObject              EVSEPatch,
@@ -189,10 +181,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutConnectorRequestDelegate2 (DateTimeOffset       Timestamp,
                                                          EMSP_HTTPAPI         Sender,
                                                          EventTracking_Id     EventTrackingId,
-                                                         CountryCode?         From_CountryCode,
-                                                         Party_Id?            From_PartyId,
-                                                         CountryCode?         To_CountryCode,
-                                                         Party_Id?            To_PartyId,
+                                                         RemoteParty_Id       RemotePartyId,
+                                                         Party_Idv3?          From,
+                                                         Party_Idv3?          To,
 
                                                          Connector            Connector,
 
@@ -204,10 +195,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutConnectorResponseDelegate2(DateTimeOffset       Timestamp,
                                                          EMSP_HTTPAPI         Sender,
                                                          EventTracking_Id     EventTrackingId,
-                                                         CountryCode?         From_CountryCode,
-                                                         Party_Id?            From_PartyId,
-                                                         CountryCode?         To_CountryCode,
-                                                         Party_Id?            To_PartyId,
+                                                         RemoteParty_Id       RemotePartyId,
+                                                         Party_Idv3?          From,
+                                                         Party_Idv3?          To,
 
                                                          Connector            Connector,
 
@@ -224,10 +214,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchConnectorRequestDelegate2 (DateTimeOffset       Timestamp,
                                                            EMSP_HTTPAPI         Sender,
                                                            EventTracking_Id     EventTrackingId,
-                                                           CountryCode?         From_CountryCode,
-                                                           Party_Id?            From_PartyId,
-                                                           CountryCode?         To_CountryCode,
-                                                           Party_Id?            To_PartyId,
+                                                           RemoteParty_Id       RemotePartyId,
+                                                           Party_Idv3?          From,
+                                                           Party_Idv3?          To,
 
                                                            Connector_Id         ConnectorId,
                                                            JObject              ConnectorPatch,
@@ -240,10 +229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchConnectorResponseDelegate2(DateTimeOffset       Timestamp,
                                                            EMSP_HTTPAPI         Sender,
                                                            EventTracking_Id     EventTrackingId,
-                                                           CountryCode?         From_CountryCode,
-                                                           Party_Id?            From_PartyId,
-                                                           CountryCode?         To_CountryCode,
-                                                           Party_Id?            To_PartyId,
+                                                           RemoteParty_Id       RemotePartyId,
+                                                           Party_Idv3?          From,
+                                                           Party_Idv3?          To,
 
                                                            Connector_Id         ConnectorId,
                                                            JObject              ConnectorPatch,
@@ -262,10 +250,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutTariffRequestDelegate2 (DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       Tariff               Tariff,
 
@@ -277,10 +264,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutTariffResponseDelegate2(DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       Tariff               Tariff,
 
@@ -298,10 +284,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutSessionRequestDelegate2 (DateTimeOffset       Timestamp,
                                                        EMSP_HTTPAPI         Sender,
                                                        EventTracking_Id     EventTrackingId,
-                                                       CountryCode?         From_CountryCode,
-                                                       Party_Id?            From_PartyId,
-                                                       CountryCode?         To_CountryCode,
-                                                       Party_Id?            To_PartyId,
+                                                       RemoteParty_Id       RemotePartyId,
+                                                       Party_Idv3?          From,
+                                                       Party_Idv3?          To,
 
                                                        Session              Session,
 
@@ -313,10 +298,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPutSessionResponseDelegate2(DateTimeOffset       Timestamp,
                                                        EMSP_HTTPAPI         Sender,
                                                        EventTracking_Id     EventTrackingId,
-                                                       CountryCode?         From_CountryCode,
-                                                       Party_Id?            From_PartyId,
-                                                       CountryCode?         To_CountryCode,
-                                                       Party_Id?            To_PartyId,
+                                                       RemoteParty_Id       RemotePartyId,
+                                                       Party_Idv3?          From,
+                                                       Party_Idv3?          To,
 
                                                        Session              Session,
 
@@ -333,10 +317,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchSessionRequestDelegate2 (DateTimeOffset       Timestamp,
                                                          EMSP_HTTPAPI         Sender,
                                                          EventTracking_Id     EventTrackingId,
-                                                         CountryCode?         From_CountryCode,
-                                                         Party_Id?            From_PartyId,
-                                                         CountryCode?         To_CountryCode,
-                                                         Party_Id?            To_PartyId,
+                                                         RemoteParty_Id       RemotePartyId,
+                                                         Party_Idv3?          From,
+                                                         Party_Idv3?          To,
 
                                                          Session_Id           SessionId,
                                                          JObject              SessionPatch,
@@ -349,10 +332,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPatchSessionResponseDelegate2(DateTimeOffset       Timestamp,
                                                          EMSP_HTTPAPI         Sender,
                                                          EventTracking_Id     EventTrackingId,
-                                                         CountryCode?         From_CountryCode,
-                                                         Party_Id?            From_PartyId,
-                                                         CountryCode?         To_CountryCode,
-                                                         Party_Id?            To_PartyId,
+                                                         RemoteParty_Id       RemotePartyId,
+                                                         Party_Idv3?          From,
+                                                         Party_Idv3?          To,
 
                                                          Session_Id           SessionId,
                                                          JObject              SessionPatch,
@@ -371,10 +353,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPostCDRRequestDelegate2 (DateTimeOffset       Timestamp,
                                                     EMSP_HTTPAPI         Sender,
                                                     EventTracking_Id     EventTrackingId,
-                                                    CountryCode?         From_CountryCode,
-                                                    Party_Id?            From_PartyId,
-                                                    CountryCode?         To_CountryCode,
-                                                    Party_Id?            To_PartyId,
+                                                    RemoteParty_Id       RemotePartyId,
+                                                    Party_Idv3?          From,
+                                                    Party_Idv3?          To,
 
                                                     CDR                  CDR,
 
@@ -386,14 +367,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPostCDRResponseDelegate2(DateTimeOffset       Timestamp,
                                                     EMSP_HTTPAPI         Sender,
                                                     EventTracking_Id     EventTrackingId,
-                                                    CountryCode?         From_CountryCode,
-                                                    Party_Id?            From_PartyId,
-                                                    CountryCode?         To_CountryCode,
-                                                    Party_Id?            To_PartyId,
+                                                    RemoteParty_Id       RemotePartyId,
+                                                    Party_Idv3?          From,
+                                                    Party_Idv3?          To,
 
                                                     CDR                  CDR,
-
                                                     Hermod.Location      CDRLocation,
+
                                                     TimeSpan             Runtime,
                                                     CancellationToken    CancellationToken);
 
@@ -408,10 +388,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPostTokenRequestDelegate2 (DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       Token_Id             TokenId,
                                                       TokenType?           RequestedTokenType,
@@ -424,10 +403,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate Task OnPostTokenResponseDelegate2(DateTimeOffset       Timestamp,
                                                       EMSP_HTTPAPI         Sender,
                                                       EventTracking_Id     EventTrackingId,
-                                                      CountryCode?         From_CountryCode,
-                                                      Party_Id?            From_PartyId,
-                                                      CountryCode?         To_CountryCode,
-                                                      Party_Id?            To_PartyId,
+                                                      RemoteParty_Id       RemotePartyId,
+                                                      Party_Idv3?          From,
+                                                      Party_Idv3?          To,
 
                                                       Token_Id             TokenId,
                                                       TokenType?           RequestedTokenType,
@@ -4736,15 +4714,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region EMSP-2-CPO Clients
+        #region EMSP-2-CPO HTTP Clients
 
-        private readonly ConcurrentDictionary<CPO_Id, EMSP2CPO_HTTPClient> emsp2cpoClients = new();
+        private readonly ConcurrentDictionary<CPO_Id, EMSP2CPO_HTTPClient> emsp2cpo_HTTPClients = [];
 
         /// <summary>
-        /// Return an enumeration of all EMSP2CPO clients.
+        /// Return an enumeration of all EMSP-2-CPO HTTP clients.
         /// </summary>
-        public IEnumerable<EMSP2CPO_HTTPClient> EMSP2CPOClients
-            => emsp2cpoClients.Values;
+        public IEnumerable<EMSP2CPO_HTTPClient> EMSP2CPO_HTTPClients
+            => emsp2cpo_HTTPClients.Values;
 
 
         #region GetCPOClient (CountryCode, PartyId,   Description = null, AllowCachedClients = true)
@@ -4757,9 +4735,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public EMSP2CPO_HTTPClient? GetCPOClient(CountryCode  CountryCode,
-                                            Party_Id     PartyId,
-                                            I18NString?  Description          = null,
-                                            Boolean      AllowCachedClients   = true)
+                                                 Party_Id     PartyId,
+                                                 I18NString?  Description          = null,
+                                                 Boolean      AllowCachedClients   = true)
 
             => GetCPOClient(
                    RemoteParty_Id.From(
@@ -4782,8 +4760,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public EMSP2CPO_HTTPClient? GetCPOClient(Party_Idv3   PartyId,
-                                            I18NString?  Description          = null,
-                                            Boolean      AllowCachedClients   = true)
+                                                 I18NString?  Description          = null,
+                                                 Boolean      AllowCachedClients   = true)
 
             => GetCPOClient(
                    RemoteParty_Id.From(
@@ -4805,14 +4783,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSP2CPO_HTTPClient? GetCPOClient(RemoteParty  RemoteParty,
-                                            I18NString?  Description          = null,
-                                            Boolean      AllowCachedClients   = true)
+                                                 I18NString?  Description          = null,
+                                                 Boolean      AllowCachedClients   = true)
         {
 
             var cpoId = CPO_Id.From(RemoteParty.Id);
 
             if (AllowCachedClients &&
-                emsp2cpoClients.TryGetValue(cpoId, out var cachedEMSPClient))
+                emsp2cpo_HTTPClients.TryGetValue(cpoId, out var cachedEMSPClient))
             {
                 return cachedEMSPClient;
             }
@@ -4833,7 +4811,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
 
-                emsp2cpoClients.TryAdd(cpoId, emsp2CPOClient);
+                emsp2cpo_HTTPClients.TryAdd(
+                    cpoId,
+                    emsp2CPOClient
+                );
 
                 return emsp2CPOClient;
 
@@ -4854,14 +4835,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSP2CPO_HTTPClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                            I18NString?     Description          = null,
-                                            Boolean         AllowCachedClients   = true)
+                                                 I18NString?     Description          = null,
+                                                 Boolean         AllowCachedClients   = true)
         {
 
             var cpoId = CPO_Id.From(RemotePartyId);
 
             if (AllowCachedClients &&
-                emsp2cpoClients.TryGetValue(cpoId, out var cachedEMSPClient))
+                emsp2cpo_HTTPClients.TryGetValue(cpoId, out var cachedEMSPClient))
             {
                 return cachedEMSPClient;
             }
@@ -4883,7 +4864,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
 
-                emsp2cpoClients.TryAdd(cpoId, emsp2CPOClient);
+                emsp2cpo_HTTPClients.TryAdd(
+                    cpoId,
+                    emsp2CPOClient
+                );
 
                 return emsp2CPOClient;
 
@@ -4902,12 +4886,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Task CloseAllClients()
         {
 
-            foreach (var client in emsp2cpoClients.Values)
+            foreach (var client in emsp2cpo_HTTPClients.Values)
             {
                 client.Close();
             }
 
-            emsp2cpoClients.Clear();
+            emsp2cpo_HTTPClients.Clear();
 
             return Task.CompletedTask;
 
@@ -10540,7 +10524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredLocations.
                                                               SkipTakeFilter(filters.Offset,
@@ -10630,7 +10614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
@@ -10719,7 +10703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = location.ToJSON(
                                                           request.EMSPId,
                                                           CustomLocationSerializer,
@@ -10766,7 +10750,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -10839,10 +10824,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedLocation,
 
@@ -10870,10 +10854,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedLocation,
 
@@ -10890,7 +10873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = locationData.ToJSON(
                                                               request.EMSPId,
                                                               CustomLocationSerializer,
@@ -10971,7 +10954,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11024,10 +11008,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   locationId.Value,
                                   locationPatch,
@@ -11062,10 +11045,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   locationId.Value,
                                   locationPatch,
@@ -11082,7 +11064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedLocation.IsSuccessAndDataNotNull(out var locationData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = locationData.ToJSON(
                                                                   request.EMSPId,
                                                                   CustomLocationSerializer,
@@ -11139,7 +11121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11178,7 +11161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = location.ToJSON(
                                                               request.EMSPId,
                                                               CustomLocationSerializer,
@@ -11291,7 +11274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = evse.ToJSON(
                                                           request.EMSPId,
                                                           CustomEVSESerializer,
@@ -11329,7 +11312,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11402,10 +11386,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedEVSE,
 
@@ -11434,10 +11417,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedEVSE,
 
@@ -11452,7 +11434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var evseData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = evseData.ToJSON(
                                                               request.EMSPId,
                                                               CustomEVSESerializer,
@@ -11514,7 +11496,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11569,10 +11552,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   evseUId.Value,
                                   evsePatch,
@@ -11602,10 +11584,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   evseUId.Value,
                                   evsePatch,
@@ -11622,7 +11603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedEVSE.IsSuccessAndDataNotNull(out var evseData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = evseData.ToJSON(
                                                                   request.EMSPId,
                                                                   CustomEVSESerializer,
@@ -11670,7 +11651,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11710,7 +11692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = existingEVSE.ToJSON(
                                                               request.EMSPId,
                                                               CustomEVSESerializer,
@@ -11751,7 +11733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.PUT, HTTPMethod.PATCH, HTTPMethod.DELETE ],
@@ -11818,7 +11800,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = connector.ToJSON(
                                                           true,
                                                           true,
@@ -11851,7 +11833,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -11926,10 +11909,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedConnector,
 
@@ -11959,10 +11941,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedConnector,
 
@@ -11978,7 +11959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var connectorData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = connectorData.ToJSON(
                                                               true,
                                                               true,
@@ -12031,7 +12012,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12088,10 +12070,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   connectorId.Value,
                                   connectorPatch,
@@ -12122,10 +12103,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   connectorId.Value,
                                   connectorPatch,
@@ -12142,7 +12122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedConnector.IsSuccessAndDataNotNull(out var connectorData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = connectorData.ToJSON(
                                                                   true,
                                                                   true,
@@ -12185,7 +12165,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12227,7 +12208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = existingConnector.ToJSON(
                                                               true,
                                                               true,
@@ -12288,7 +12269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12335,7 +12317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    //Data                 = newOrUpdatedEVSE.ToJSON(),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -12433,7 +12415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredTariffs.
                                                               SkipTakeFilter(filters.Offset,
@@ -12480,7 +12462,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12515,7 +12498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
@@ -12604,7 +12587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = tariff.ToJSON(
                                                           true,
                                                           true,
@@ -12644,7 +12627,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12717,10 +12701,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedTariff,
 
@@ -12748,10 +12731,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedTariff,
 
@@ -12766,7 +12748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var data))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = data.ToJSON(
                                                               true,
                                                               true,
@@ -12833,7 +12815,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12889,7 +12872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedTariff.IsSuccessAndDataNotNull(out var patchedData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = patchedData.ToJSON(),
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.OK,
@@ -12927,7 +12910,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -12966,7 +12950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (result.IsSuccessAndDataNotNull(out var tariffData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = existingTariff.ToJSON(
                                                               true,
                                                               true,
@@ -13096,7 +13080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredSessions.
                                                               SkipTakeFilter(filters.Offset,
@@ -13182,7 +13166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredSessions.
                                                               SkipTakeFilter(filters.Offset,
@@ -13223,7 +13207,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -13259,7 +13244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
@@ -13284,7 +13269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -13319,7 +13305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
@@ -13408,7 +13394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                             StatusCode           = 1000,
-                            StatusMessage        = "Hello world!",
+                            StatusMessage        = CommonAPI.DefaultStatusMessage,
                             Data                 = session.ToJSON(
                                                        CustomSessionSerializer,
                                                        CustomCDRTokenSerializer,
@@ -13442,7 +13428,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -13514,10 +13501,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedSession,
 
@@ -13545,10 +13531,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newOrUpdatedSession,
 
@@ -13563,7 +13548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var sessionData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = sessionData.ToJSON(
                                                               CustomSessionSerializer,
                                                               CustomCDRTokenSerializer,
@@ -13618,7 +13603,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -13671,10 +13657,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   existingSession.Id,
                                   sessionPatch,
@@ -13707,10 +13692,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   existingSession.Id,
                                   sessionPatch,
@@ -13727,7 +13711,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedSession.IsSuccessAndDataNotNull(out var patchedSessionData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = patchedSessionData.ToJSON(
                                                                   CustomSessionSerializer,
                                                                   CustomCDRTokenSerializer,
@@ -13771,7 +13755,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -13810,7 +13795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = existingSession.ToJSON(
                                                               CustomSessionSerializer,
                                                               CustomCDRTokenSerializer,
@@ -13917,7 +13902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredCDRs.
                                                               SkipTakeFilter(filters.Offset,
@@ -14015,7 +14000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredCDRs.
                                                               SkipTakeFilter(filters.Offset,
@@ -14069,7 +14054,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -14139,10 +14125,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newCDR,
 
@@ -14179,14 +14164,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.CPOId?.CountryCode,
-                                  request.CPOId?.PartyId,
-                                  request.To?.CountryCode,
-                                  request.To?.PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
 
                                   newCDR,
-
                                   cdrLocation,
+
                                   stopwatch.Elapsed,
                                   request.HTTPRequest.CancellationToken
                               )
@@ -14207,7 +14191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addResult.IsSuccess)
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = newCDR.ToJSON(
                                                               CustomCDRSerializer,
                                                               CustomCDRTokenSerializer,
@@ -14284,7 +14268,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -14309,7 +14294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
@@ -14334,7 +14319,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -14369,7 +14355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "DELETE" ],
@@ -14458,7 +14444,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = cdr.ToJSON(
                                                           CustomCDRSerializer,
                                                           CustomCDRTokenSerializer,
@@ -14505,7 +14491,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -14544,7 +14531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = existingCDR.ToJSON(
                                                           CustomCDRSerializer,
                                                           CustomCDRTokenSerializer,
@@ -14654,7 +14641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = new JArray(
                                                           filteredTokenStatus.SkipTakeFilter(filters.Offset,
                                                                                              filters.Limit).
@@ -14720,7 +14707,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                    if (request.RemoteParty is null ||
+                        request.LocalAccessInfo.IsNot(Role.CPO) ||
                         request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                     {
 
@@ -14802,13 +14790,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   startTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.From?.CountryCode ?? request.CPOId?.CountryCode,
-                                  request.From?.PartyId     ?? request.CPOId?.PartyId,
-                                  request.To?.  CountryCode,
-                                  request.To?.  PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
+
                                   tokenId.Value,
                                   requestedTokenType,
                                   locationReference,
+
                                   request.HTTPRequest.CancellationToken
                               )
                           );
@@ -15263,14 +15252,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   endTime,
                                   this,
                                   request.HTTPRequest.EventTrackingId,
-                                  request.From?.CountryCode ?? request.CPOId?.CountryCode,
-                                  request.From?.PartyId     ?? request.CPOId?.PartyId,
-                                  request.To?.  CountryCode,
-                                  request.To?.  PartyId,
+                                  request.RemoteParty.Id,
+                                  request.From,
+                                  request.To,
+
                                   tokenId.Value,
                                   requestedTokenType,
                                   locationReference,
                                   authorizationInfo2,
+
                                   stopwatch.Elapsed,
                                   request.HTTPRequest.CancellationToken
                               )
@@ -15281,7 +15271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = authorizationInfo2.ToJSON(
                                                           CustomAuthorizationInfoSerializer,
                                                           CustomTokenSerializer,
@@ -15905,47 +15895,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutLocationRequest += async (timestamp,
                                            sender,
                                            eventTrackingId,
-                                           from_CountryCode,
-                                           from_PartyId,
-                                           to_CountryCode,
-                                           to_PartyId,
+                                           remotePartyId,
+                                           from,
+                                           to,
 
                                            location,
+
                                            cancellationToken) => {
 
                 await Processor(
                     "OnPutLocationRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("location",   location.ToJSON(
-                                                              null, //EMSPId
-                                                              CustomLocationSerializer,
-                                                              CustomPublishTokenSerializer,
-                                                              CustomAdditionalGeoLocationSerializer,
-                                                              CustomEVSESerializer,
-                                                              CustomStatusScheduleSerializer,
-                                                              CustomConnectorSerializer,
-                                                              CustomLocationEnergyMeterSerializer,
-                                                              CustomEVSEEnergyMeterSerializer,
-                                                              CustomTransparencySoftwareStatusSerializer,
-                                                              CustomTransparencySoftwareSerializer,
-                                                              CustomDisplayTextSerializer,
-                                                              CustomBusinessDetailsSerializer,
-                                                              CustomHoursSerializer,
-                                                              CustomImageSerializer,
-                                                              CustomEnergyMixSerializer,
-                                                              CustomEnergySourceSerializer,
-                                                              CustomEnvironmentalImpactSerializer,
-                                                              true //IncludeCreatedTimestamp
-                                                          ))
+                              new JProperty("location",          location.ToJSON(
+                                                                     null, //EMSPId
+                                                                     CustomLocationSerializer,
+                                                                     CustomPublishTokenSerializer,
+                                                                     CustomAdditionalGeoLocationSerializer,
+                                                                     CustomEVSESerializer,
+                                                                     CustomStatusScheduleSerializer,
+                                                                     CustomConnectorSerializer,
+                                                                     CustomLocationEnergyMeterSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomBusinessDetailsSerializer,
+                                                                     CustomHoursSerializer,
+                                                                     CustomImageSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer,
+                                                                     true //IncludeCreatedTimestamp
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -15960,12 +15954,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutLocationResponse += async (timestamp,
                                             sender,
                                             eventTrackingId,
-                                            from_CountryCode,
-                                            from_PartyId,
-                                            to_CountryCode,
-                                            to_PartyId,
+                                            remotePartyId,
+                                            from,
+                                            to,
 
                                             location,
+
                                             runtime,
                                             cancellationToken) => {
 
@@ -15973,37 +15967,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPutLocationResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("location",   location.ToJSON(
-                                                              null, //EMSPId
-                                                              CustomLocationSerializer,
-                                                              CustomPublishTokenSerializer,
-                                                              CustomAdditionalGeoLocationSerializer,
-                                                              CustomEVSESerializer,
-                                                              CustomStatusScheduleSerializer,
-                                                              CustomConnectorSerializer,
-                                                              CustomLocationEnergyMeterSerializer,
-                                                              CustomEVSEEnergyMeterSerializer,
-                                                              CustomTransparencySoftwareStatusSerializer,
-                                                              CustomTransparencySoftwareSerializer,
-                                                              CustomDisplayTextSerializer,
-                                                              CustomBusinessDetailsSerializer,
-                                                              CustomHoursSerializer,
-                                                              CustomImageSerializer,
-                                                              CustomEnergyMixSerializer,
-                                                              CustomEnergySourceSerializer,
-                                                              CustomEnvironmentalImpactSerializer,
-                                                              true //IncludeCreatedTimestamp
-                                                         )),
+                              new JProperty("location",          location.ToJSON(
+                                                                     null, //EMSPId
+                                                                     CustomLocationSerializer,
+                                                                     CustomPublishTokenSerializer,
+                                                                     CustomAdditionalGeoLocationSerializer,
+                                                                     CustomEVSESerializer,
+                                                                     CustomStatusScheduleSerializer,
+                                                                     CustomConnectorSerializer,
+                                                                     CustomLocationEnergyMeterSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomBusinessDetailsSerializer,
+                                                                     CustomHoursSerializer,
+                                                                     CustomImageSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer,
+                                                                     true //IncludeCreatedTimestamp
+                                                                 )),
 
-                              new JProperty("runtime",   runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16018,29 +16016,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchLocationRequest += async (timestamp,
                                              sender,
                                              eventTrackingId,
-                                             from_CountryCode,
-                                             from_PartyId,
-                                             to_CountryCode,
-                                             to_PartyId,
+                                             remotePartyId,
+                                             from,
+                                             to,
 
                                              locationId,
                                              locationPatch,
+
                                              cancellationToken) => {
 
                 await Processor(
                     "OnPatchLocationRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",            $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",              $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("locationId",      locationId.ToString()),
-                              new JProperty("locationPatch",   locationPatch)
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("locationPatch",     locationPatch)
 
                     ),
                     cancellationToken
@@ -16055,13 +16057,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchLocationResponse += async (timestamp,
                                               sender,
                                               eventTrackingId,
-                                              from_CountryCode,
-                                              from_PartyId,
-                                              to_CountryCode,
-                                              to_PartyId,
+                                              remotePartyId,
+                                              from,
+                                              to,
 
                                               locationId,
                                               locationPatch,
+
                                               runtime,
                                               cancellationToken) => {
 
@@ -16069,18 +16071,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPatchLocationResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",            $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",              $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("locationId",      locationId.ToString()),
-                              new JProperty("locationPatch",   locationPatch),
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("locationPatch",     locationPatch),
 
-                              new JProperty("runtime",         runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16096,37 +16102,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutEVSERequest += async (timestamp,
                                        sender,
                                        eventTrackingId,
-                                       from_CountryCode,
-                                       from_PartyId,
-                                       to_CountryCode,
-                                       to_PartyId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
                                        evse,
+
                                        cancellationToken) => {
 
                 await Processor(
                     "OnPutEVSERequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",   $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",     $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("evse",   evse.ToJSON(
-                                                          null, //EMSPId
-                                                          CustomEVSESerializer,
-                                                          CustomStatusScheduleSerializer,
-                                                          CustomConnectorSerializer,
-                                                          CustomEVSEEnergyMeterSerializer,
-                                                          CustomTransparencySoftwareStatusSerializer,
-                                                          CustomTransparencySoftwareSerializer,
-                                                          CustomDisplayTextSerializer,
-                                                          CustomImageSerializer
-                                                      ))
+                              new JProperty("evse",              evse.ToJSON(
+                                                                     null, //EMSPId
+                                                                     CustomEVSESerializer,
+                                                                     CustomStatusScheduleSerializer,
+                                                                     CustomConnectorSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomImageSerializer
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -16141,12 +16151,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutEVSEResponse += async (timestamp,
                                         sender,
                                         eventTrackingId,
-                                        from_CountryCode,
-                                        from_PartyId,
-                                        to_CountryCode,
-                                        to_PartyId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
                                         evse,
+
                                         runtime,
                                         cancellationToken) => {
 
@@ -16154,27 +16164,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPutEVSEResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("evse",      evse.ToJSON(
-                                                             null, //EMSPId
-                                                             CustomEVSESerializer,
-                                                             CustomStatusScheduleSerializer,
-                                                             CustomConnectorSerializer,
-                                                             CustomEVSEEnergyMeterSerializer,
-                                                             CustomTransparencySoftwareStatusSerializer,
-                                                             CustomTransparencySoftwareSerializer,
-                                                             CustomDisplayTextSerializer,
-                                                             CustomImageSerializer
-                                                         )),
+                              new JProperty("evse",              evse.ToJSON(
+                                                                     null, //EMSPId
+                                                                     CustomEVSESerializer,
+                                                                     CustomStatusScheduleSerializer,
+                                                                     CustomConnectorSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomImageSerializer
+                                                                 )),
 
-                              new JProperty("runtime",   runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16186,78 +16200,82 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnPatchEVSERequest
 
-            OnPatchEVSERequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         from_CountryCode,
-                                         from_PartyId,
-                                         to_CountryCode,
-                                         to_PartyId,
+            OnPatchEVSERequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
-                                         evseId,
-                                         evsePatch,
-                                         cancellationToken) => {
+                                   evseId,
+                                   evsePatch,
 
-                await Processor(
+                                   cancellationToken) =>
+
+                Processor(
                     "OnPatchEVSERequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("evseId",      evseId.ToString()),
-                              new JProperty("evsePatch",   evsePatch)
+                              new JProperty("evseId",            evseId.         ToString()),
+                              new JProperty("evsePatch",         evsePatch)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPatchEVSEResponse
 
-            OnPatchEVSEResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          from_CountryCode,
-                                          from_PartyId,
-                                          to_CountryCode,
-                                          to_PartyId,
+            OnPatchEVSEResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
-                                          evseId,
-                                          evsePatch,
-                                          runtime,
-                                          cancellationToken) => {
+                                    evseId,
+                                    evsePatch,
 
-                await Processor(
+                                    runtime,
+                                    cancellationToken) =>
+
+                Processor(
                     "OnPatchEVSEResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("evseId",      evseId.ToString()),
-                              new JProperty("evsePatch",   evsePatch),
+                              new JProperty("evseId",            evseId.         ToString()),
+                              new JProperty("evsePatch",         evsePatch),
 
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
@@ -16267,32 +16285,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutConnectorRequest += async (timestamp,
                                             sender,
                                             eventTrackingId,
-                                            from_CountryCode,
-                                            from_PartyId,
-                                            to_CountryCode,
-                                            to_PartyId,
+                                            remotePartyId,
+                                            from,
+                                            to,
 
                                             connector,
+
                                             cancellationToken) => {
 
                 await Processor(
                     "OnPutConnectorRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("connector",   connector.ToJSON(
-                                                               true, //IncludeCreatedTimestamp
-                                                               true, //IncludeExtensions
-                                                               null, //EMSPId
-                                                               CustomConnectorSerializer
-                                                           ))
+                              new JProperty("connector",         connector.ToJSON(
+                                                                     true, //IncludeCreatedTimestamp
+                                                                     true, //IncludeExtensions
+                                                                     null, //EMSPId
+                                                                     CustomConnectorSerializer
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -16307,12 +16329,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutConnectorResponse += async (timestamp,
                                              sender,
                                              eventTrackingId,
-                                             from_CountryCode,
-                                             from_PartyId,
-                                             to_CountryCode,
-                                             to_PartyId,
+                                             remotePartyId,
+                                             from,
+                                             to,
 
                                              connector,
+
                                              runtime,
                                              cancellationToken) => {
 
@@ -16320,22 +16342,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPutConnectorResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",        $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",          $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("connector",   connector.ToJSON(
-                                                               true, //IncludeCreatedTimestamp
-                                                               true, //IncludeExtensions
-                                                               null, //EMSPId
-                                                               CustomConnectorSerializer
-                                                           )),
+                              new JProperty("connector",         connector.ToJSON(
+                                                                     true, //IncludeCreatedTimestamp
+                                                                     true, //IncludeExtensions
+                                                                     null, //EMSPId
+                                                                     CustomConnectorSerializer
+                                                                 )),
 
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16350,29 +16376,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchConnectorRequest += async (timestamp,
                                               sender,
                                               eventTrackingId,
-                                              from_CountryCode,
-                                              from_PartyId,
-                                              to_CountryCode,
-                                              to_PartyId,
+                                              remotePartyId,
+                                              from,
+                                              to,
 
                                               connectorId,
                                               connectorPatch,
+
                                               cancellationToken) => {
 
                 await Processor(
                     "OnPatchConnectorRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",             $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",               $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("connectorId",      connectorId.ToString()),
-                              new JProperty("connectorPatch",   connectorPatch)
+                              new JProperty("connectorId",       connectorId.    ToString()),
+                              new JProperty("connectorPatch",    connectorPatch)
 
                     ),
                     cancellationToken
@@ -16387,13 +16417,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchConnectorResponse += async (timestamp,
                                                sender,
                                                eventTrackingId,
-                                               from_CountryCode,
-                                               from_PartyId,
-                                               to_CountryCode,
-                                               to_PartyId,
+                                               remotePartyId,
+                                               from,
+                                               to,
 
                                                connectorId,
                                                connectorPatch,
+
                                                runtime,
                                                cancellationToken) => {
 
@@ -16401,18 +16431,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPatchConnectorResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",             $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",               $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("connectorId",      connectorId.ToString()),
-                              new JProperty("connectorPatch",   connectorPatch),
+                              new JProperty("connectorId",       connectorId.    ToString()),
+                              new JProperty("connectorPatch",    connectorPatch),
 
-                              new JProperty("runtime",          runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16428,39 +16462,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutTariffRequest += async (timestamp,
                                          sender,
                                          eventTrackingId,
-                                         from_CountryCode,
-                                         from_PartyId,
-                                         to_CountryCode,
-                                         to_PartyId,
+                                         remotePartyId,
+                                         from,
+                                         to,
 
                                          tariff,
+
                                          cancellationToken) => {
 
                 await Processor(
                     "OnPutTariffRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",     $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",       $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("tariff",   tariff.ToJSON(
-                                                            true, //IncludeOwnerInformation,
-                                                            true, //IncludeExtensions,
-                                                            CustomTariffSerializer,
-                                                            CustomDisplayTextSerializer,
-                                                            CustomPriceSerializer,
-                                                            CustomTariffElementSerializer,
-                                                            CustomPriceComponentSerializer,
-                                                            CustomTariffRestrictionsSerializer,
-                                                            CustomEnergyMixSerializer,
-                                                            CustomEnergySourceSerializer,
-                                                            CustomEnvironmentalImpactSerializer
-                                                        ))
+                              new JProperty("tariff",            tariff.ToJSON(
+                                                                     true, //IncludeOwnerInformation,
+                                                                     true, //IncludeExtensions,
+                                                                     CustomTariffSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomPriceSerializer,
+                                                                     CustomTariffElementSerializer,
+                                                                     CustomPriceComponentSerializer,
+                                                                     CustomTariffRestrictionsSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -16475,12 +16513,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutTariffResponse += async (timestamp,
                                           sender,
                                           eventTrackingId,
-                                          from_CountryCode,
-                                          from_PartyId,
-                                          to_CountryCode,
-                                          to_PartyId,
+                                          remotePartyId,
+                                          from,
+                                          to,
 
                                           tariff,
+
                                           runtime,
                                           cancellationToken) => {
 
@@ -16488,29 +16526,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPutTariffResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("tariff",    tariff.ToJSON(
-                                                             true, //IncludeOwnerInformation,
-                                                             true, //IncludeExtensions,
-                                                             CustomTariffSerializer,
-                                                             CustomDisplayTextSerializer,
-                                                             CustomPriceSerializer,
-                                                             CustomTariffElementSerializer,
-                                                             CustomPriceComponentSerializer,
-                                                             CustomTariffRestrictionsSerializer,
-                                                             CustomEnergyMixSerializer,
-                                                             CustomEnergySourceSerializer,
-                                                             CustomEnvironmentalImpactSerializer
-                                                         )),
+                              new JProperty("tariff",            tariff.ToJSON(
+                                                                     true, //IncludeOwnerInformation,
+                                                                     true, //IncludeExtensions,
+                                                                     CustomTariffSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomPriceSerializer,
+                                                                     CustomTariffElementSerializer,
+                                                                     CustomPriceComponentSerializer,
+                                                                     CustomTariffRestrictionsSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer
+                                                                 )),
 
-                              new JProperty("runtime",   runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16526,33 +16568,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutSessionRequest += async (timestamp,
                                           sender,
                                           eventTrackingId,
-                                          from_CountryCode,
-                                          from_PartyId,
-                                          to_CountryCode,
-                                          to_PartyId,
+                                          remotePartyId,
+                                          from,
+                                          to,
 
                                           session,
+
                                           cancellationToken) => {
 
                 await Processor(
                     "OnPutSessionRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("session",   session.ToJSON(
-                                                             CustomSessionSerializer,
-                                                             CustomCDRTokenSerializer,
-                                                             CustomChargingPeriodSerializer,
-                                                             CustomCDRDimensionSerializer,
-                                                             CustomPriceSerializer
-                                                         ))
+                              new JProperty("session",           session.ToJSON(
+                                                                     CustomSessionSerializer,
+                                                                     CustomCDRTokenSerializer,
+                                                                     CustomChargingPeriodSerializer,
+                                                                     CustomCDRDimensionSerializer,
+                                                                     CustomPriceSerializer
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -16567,12 +16613,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutSessionResponse += async (timestamp,
                                            sender,
                                            eventTrackingId,
-                                           from_CountryCode,
-                                           from_PartyId,
-                                           to_CountryCode,
-                                           to_PartyId,
+                                           remotePartyId,
+                                           from,
+                                           to,
 
                                            session,
+
                                            runtime,
                                            cancellationToken) => {
 
@@ -16580,23 +16626,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPutSessionResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",      $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",        $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("session",   session.ToJSON(
-                                                             CustomSessionSerializer,
-                                                             CustomCDRTokenSerializer,
-                                                             CustomChargingPeriodSerializer,
-                                                             CustomCDRDimensionSerializer,
-                                                             CustomPriceSerializer
-                                                         )),
+                              new JProperty("session",           session.ToJSON(
+                                                                     CustomSessionSerializer,
+                                                                     CustomCDRTokenSerializer,
+                                                                     CustomChargingPeriodSerializer,
+                                                                     CustomCDRDimensionSerializer,
+                                                                     CustomPriceSerializer
+                                                                 )),
 
-                              new JProperty("runtime",   runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16611,29 +16661,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchSessionRequest += async (timestamp,
                                             sender,
                                             eventTrackingId,
-                                            from_CountryCode,
-                                            from_PartyId,
-                                            to_CountryCode,
-                                            to_PartyId,
+                                            remotePartyId,
+                                            from,
+                                            to,
 
                                             sessionId,
                                             sessionPatch,
+
                                             cancellationToken) => {
 
                 await Processor(
                     "OnPatchSessionRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",           $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",             $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("sessionId",      sessionId.ToString()),
-                              new JProperty("sessionPatch",   sessionPatch)
+                              new JProperty("sessionId",         sessionId.      ToString()),
+                              new JProperty("sessionPatch",      sessionPatch)
 
                     ),
                     cancellationToken
@@ -16648,13 +16702,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchSessionResponse += async (timestamp,
                                              sender,
                                              eventTrackingId,
-                                             from_CountryCode,
-                                             from_PartyId,
-                                             to_CountryCode,
-                                             to_PartyId,
+                                             remotePartyId,
+                                             from,
+                                             to,
 
                                              sessionId,
                                              sessionPatch,
+
                                              runtime,
                                              cancellationToken) => {
 
@@ -16662,18 +16716,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPatchSessionResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",           $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",             $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("sessionId",      sessionId.ToString()),
-                              new JProperty("sessionPatch",   sessionPatch),
+                              new JProperty("sessionId",         sessionId.      ToString()),
+                              new JProperty("sessionPatch",      sessionPatch),
 
-                              new JProperty("runtime",        runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16689,46 +16747,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostCDRRequest += async (timestamp,
                                        sender,
                                        eventTrackingId,
-                                       from_CountryCode,
-                                       from_PartyId,
-                                       to_CountryCode,
-                                       to_PartyId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
                                        cdr,
+
                                        cancellationToken) => {
 
                 await Processor(
                     "OnPostCDRRequest",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",   $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",     $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("cdr",    cdr.ToJSON(
-                                                          CustomCDRSerializer,
-                                                          CustomCDRTokenSerializer,
-                                                          CustomCDRLocationSerializer,
-                                                          CustomEVSEEnergyMeterSerializer,
-                                                          CustomTransparencySoftwareSerializer,
-                                                          CustomTariffSerializer,
-                                                          CustomDisplayTextSerializer,
-                                                          CustomPriceSerializer,
-                                                          CustomTariffElementSerializer,
-                                                          CustomPriceComponentSerializer,
-                                                          CustomTariffRestrictionsSerializer,
-                                                          CustomEnergyMixSerializer,
-                                                          CustomEnergySourceSerializer,
-                                                          CustomEnvironmentalImpactSerializer,
-                                                          CustomChargingPeriodSerializer,
-                                                          CustomCDRDimensionSerializer,
-                                                          CustomSignedDataSerializer,
-                                                          CustomSignedValueSerializer
-                                                      ))
+                              new JProperty("cdr",               cdr.ToJSON(
+                                                                     CustomCDRSerializer,
+                                                                     CustomCDRTokenSerializer,
+                                                                     CustomCDRLocationSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomTariffSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomPriceSerializer,
+                                                                     CustomTariffElementSerializer,
+                                                                     CustomPriceComponentSerializer,
+                                                                     CustomTariffRestrictionsSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer,
+                                                                     CustomChargingPeriodSerializer,
+                                                                     CustomCDRDimensionSerializer,
+                                                                     CustomSignedDataSerializer,
+                                                                     CustomSignedValueSerializer
+                                                                 ))
 
                     ),
                     cancellationToken
@@ -16743,13 +16805,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostCDRResponse += async (timestamp,
                                         sender,
                                         eventTrackingId,
-                                        from_CountryCode,
-                                        from_PartyId,
-                                        to_CountryCode,
-                                        to_PartyId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
                                         cdr,
                                         cdrLocation,
+
                                         runtime,
                                         cancellationToken) => {
 
@@ -16757,38 +16819,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPostCDRResponse",
                     JSONObject.Create(
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",          $"{from_CountryCode}*{from_PartyId}")
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",            $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
                             : null,
 
-                              new JProperty("cdr",           cdr.ToJSON(
-                                                                 CustomCDRSerializer,
-                                                                 CustomCDRTokenSerializer,
-                                                                 CustomCDRLocationSerializer,
-                                                                 CustomEVSEEnergyMeterSerializer,
-                                                                 CustomTransparencySoftwareSerializer,
-                                                                 CustomTariffSerializer,
-                                                                 CustomDisplayTextSerializer,
-                                                                 CustomPriceSerializer,
-                                                                 CustomTariffElementSerializer,
-                                                                 CustomPriceComponentSerializer,
-                                                                 CustomTariffRestrictionsSerializer,
-                                                                 CustomEnergyMixSerializer,
-                                                                 CustomEnergySourceSerializer,
-                                                                 CustomEnvironmentalImpactSerializer,
-                                                                 CustomChargingPeriodSerializer,
-                                                                 CustomCDRDimensionSerializer,
-                                                                 CustomSignedDataSerializer,
-                                                                 CustomSignedValueSerializer
-                                                             )),
+                              new JProperty("cdr",               cdr.ToJSON(
+                                                                     CustomCDRSerializer,
+                                                                     CustomCDRTokenSerializer,
+                                                                     CustomCDRLocationSerializer,
+                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                     CustomTransparencySoftwareSerializer,
+                                                                     CustomTariffSerializer,
+                                                                     CustomDisplayTextSerializer,
+                                                                     CustomPriceSerializer,
+                                                                     CustomTariffElementSerializer,
+                                                                     CustomPriceComponentSerializer,
+                                                                     CustomTariffRestrictionsSerializer,
+                                                                     CustomEnergyMixSerializer,
+                                                                     CustomEnergySourceSerializer,
+                                                                     CustomEnvironmentalImpactSerializer,
+                                                                     CustomChargingPeriodSerializer,
+                                                                     CustomCDRDimensionSerializer,
+                                                                     CustomSignedDataSerializer,
+                                                                     CustomSignedValueSerializer
+                                                                 )),
 
-                              new JProperty("cdrLocation",   cdrLocation.ToString()),
+                              new JProperty("cdrLocation",       cdrLocation.    ToString()),
 
-                              new JProperty("runtime",       runtime.TotalSeconds)
+                              new JProperty("runtime",           runtime.        TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16804,38 +16870,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostTokenRequest += async (timestamp,
                                          sender,
                                          eventTrackingId,
-                                         from_CountryCode,
-                                         from_PartyId,
-                                         to_CountryCode,
-                                         to_PartyId,
+                                         remotePartyId,
+                                         from,
+                                         to,
 
                                          tokenId,
                                          requestedTokenType,
                                          locationReference,
+
                                          cancellationToken) => {
 
                 await Processor(
                     "OnPostTokenRequest",
                     JSONObject.Create(
 
-                              new JProperty("eventTrackingId",      eventTrackingId.ToString()),
+                              new JProperty("timestamp",            timestamp.               ToISO8601()),
+                              new JProperty("eventTrackingId",      eventTrackingId.         ToString()),
+                              new JProperty("remotePartyId",        remotePartyId.           ToString()),
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
+                        from.HasValue
+                            ? new JProperty("from",                 from.              Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",                   $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                   to.                Value.ToString())
                             : null,
 
-                              new JProperty("tokenId",              tokenId.ToString()),
+                              new JProperty("tokenId",              tokenId.                 ToString()),
 
                         requestedTokenType.HasValue
                             ? new JProperty("requestedTokenType",   requestedTokenType.Value.ToString())
                             : null,
 
                         locationReference.HasValue
-                            ? new JProperty("locationReference",    locationReference.Value.ToJSON(
+                            ? new JProperty("locationReference",    locationReference. Value.ToJSON(
                                                                         CustomLocationReferenceSerializer
                                                                     ))
                             : null
@@ -16853,15 +16921,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostTokenResponse += async (timestamp,
                                           sender,
                                           eventTrackingId,
-                                          from_CountryCode,
-                                          from_PartyId,
-                                          to_CountryCode,
-                                          to_PartyId,
+                                          remotePartyId,
+                                          from,
+                                          to,
 
                                           tokenId,
                                           requestedTokenType,
                                           locationReference,
-                                          result,
+                                          authorizationInfo,
+
                                           runtime,
                                           cancellationToken) => {
 
@@ -16869,36 +16937,278 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     "OnPostTokenResponse",
                     JSONObject.Create(
 
-                              new JProperty("eventTrackingId",      eventTrackingId.ToString()),
+                              new JProperty("timestamp",            timestamp.               ToISO8601()),
+                              new JProperty("eventTrackingId",      eventTrackingId.         ToString()),
+                              new JProperty("remotePartyId",        remotePartyId.           ToString()),
 
-                        from_CountryCode.HasValue && from_PartyId.HasValue
-                            ? new JProperty("from",                 $"{from_CountryCode}*{from_PartyId}")
+                        from.HasValue
+                            ? new JProperty("from",                 from.              Value.ToString())
                             : null,
 
-                        to_CountryCode.  HasValue && to_PartyId.  HasValue
-                            ? new JProperty("to",                   $"{to_CountryCode}*{to_PartyId}")
+                        to.  HasValue
+                            ? new JProperty("to",                   to.                Value.ToString())
                             : null,
 
-                              new JProperty("tokenId",              tokenId.ToString()),
+                              new JProperty("tokenId",              tokenId.                 ToString()),
 
                         requestedTokenType.HasValue
                             ? new JProperty("requestedTokenType",   requestedTokenType.Value.ToString())
                             : null,
 
                         locationReference. HasValue
-                            ? new JProperty("locationReference",    locationReference.Value.ToJSON(
+                            ? new JProperty("locationReference",    locationReference. Value.ToJSON(
                                                                         CustomLocationReferenceSerializer
                                                                     ))
                             : null,
 
-                              new JProperty("result",               result.ToJSON(
+                              new JProperty("authorizationInfo",    authorizationInfo.ToJSON(
                                                                         CustomAuthorizationInfoSerializer,
                                                                         CustomTokenSerializer,
                                                                         CustomLocationReferenceSerializer,
                                                                         CustomDisplayTextSerializer
                                                                     )),
 
-                              new JProperty("runtime",              runtime.TotalSeconds)
+                              new JProperty("runtime",              runtime.TotalMilliseconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+        }
+
+
+        public void LinkClientEventsToHTTPSSE(EMSP2CPO_HTTPClient       Client,
+                                              HTTPEventSource<JObject>  HTTPSSE)
+        {
+            ClientEventsToJSON(
+                Client,
+                HTTPSSE.SubmitEvent
+            );
+        }
+
+        public void ClientEventsToJSON(EMSP2CPO_HTTPClient                             Client,
+                                       Func<String, JObject, CancellationToken, Task>  Processor)
+        {
+
+            #region OnStartSessionRequest/-Response
+
+            Client.OnStartSessionRequest += async (timestamp,
+                                                   sender,
+                                                   eventTrackingId,
+                                                   remotePartyId,
+                                                   from,
+                                                   to,
+                                                   requestId,
+                                                   correlationId,
+                                                   requestTimeout,
+
+                                                   token,
+                                                   locationId,
+                                                   evseUId,
+                                                   connectorId,
+                                                   authorizationReference,
+
+                                                   cancellationToken) => {
+
+                await Processor(
+                    "OnStartSessionRequest",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",                timestamp.                   ToISO8601()),
+                              new JProperty("eventTrackingId",          eventTrackingId.             ToString()),
+                              new JProperty("remotePartyId",            remotePartyId.               ToString()),
+
+                        from.                  HasValue
+                            ? new JProperty("from",                     from.                  Value.ToString())
+                            : null,
+
+                        to.                    HasValue
+                            ? new JProperty("to",                       to.                    Value.ToString())
+                            : null,
+
+                              new JProperty("requestId",                requestId.                   ToString()),
+                              new JProperty("correlationId",            correlationId.               ToString()),
+                              new JProperty("requestTimeout",           requestTimeout.              TotalSeconds),
+
+                              new JProperty("token",                    token.                       ToJSON()),
+                              new JProperty("locationId",               locationId.                  ToString()),
+
+                        evseUId.               HasValue
+                            ? new JProperty("evseUId",                  evseUId.               Value.ToString())
+                            : null,
+
+                        connectorId.           HasValue
+                            ? new JProperty("connectorId",              connectorId.           Value.ToString())
+                            : null,
+
+                        authorizationReference.HasValue
+                            ? new JProperty("authorizationReference",   authorizationReference.Value.ToString())
+                            : null
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+
+            Client.OnStartSessionResponse += async (timestamp,
+                                                    sender,
+                                                    eventTrackingId,
+                                                    remotePartyId,
+                                                    from,
+                                                    to,
+                                                    requestId,
+                                                    correlationId,
+                                                    requestTimeout,
+
+                                                    token,
+                                                    locationId,
+                                                    evseUId,
+                                                    connectorId,
+                                                    authorizationReference,
+
+                                                    response,
+                                                    runtime,
+                                                    cancellationToken) => {
+
+                await Processor(
+                    "OnStartSessionResponse",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",                timestamp.                   ToISO8601()),
+                              new JProperty("eventTrackingId",          eventTrackingId.             ToString()),
+                              new JProperty("remotePartyId",            remotePartyId.               ToString()),
+
+                        from.                  HasValue
+                            ? new JProperty("from",                     from.                  Value.ToString())
+                            : null,
+
+                        to.                    HasValue
+                            ? new JProperty("to",                       to.                    Value.ToString())
+                            : null,
+
+                              new JProperty("requestId",                requestId.                   ToString()),
+                              new JProperty("correlationId",            correlationId.               ToString()),
+                              new JProperty("requestTimeout",           requestTimeout.              TotalSeconds),
+
+                              new JProperty("token",                    token.                       ToJSON()),
+                              new JProperty("locationId",               locationId.                  ToString()),
+
+                        evseUId.               HasValue
+                            ? new JProperty("evseUId",                  evseUId.               Value.ToString())
+                            : null,
+
+                        connectorId.           HasValue
+                            ? new JProperty("connectorId",              connectorId.           Value.ToString())
+                            : null,
+
+                        authorizationReference.HasValue
+                            ? new JProperty("authorizationReference",   authorizationReference.Value.ToString())
+                            : null,
+
+                              new JProperty("response",                 response.                    ToJSON(commandResponse => commandResponse.ToJSON())),
+
+                              new JProperty("runtime",                  runtime.                     TotalMilliseconds)
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+            #endregion
+
+            #region OnStopSessionRequest/-Response
+
+            Client.OnStopSessionRequest += async (timestamp,
+                                                  sender,
+                                                  eventTrackingId,
+                                                  remotePartyId,
+                                                  from,
+                                                  to,
+                                                  requestId,
+                                                  correlationId,
+                                                  requestTimeout,
+
+                                                  sessionId,
+
+                                                  cancellationToken) => {
+
+                await Processor(
+                    "OnStopSessionRequest",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",        timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",  eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",    remotePartyId.  ToString()),
+
+                        from.                  HasValue
+                            ? new JProperty("from",             from.     Value.ToString())
+                            : null,
+
+                        to.                    HasValue
+                            ? new JProperty("to",               to.       Value.ToString())
+                            : null,
+
+                              new JProperty("requestId",        requestId.      ToString()),
+                              new JProperty("correlationId",    correlationId.  ToString()),
+                              new JProperty("requestTimeout",   requestTimeout. TotalSeconds),
+
+                              new JProperty("sessionId",        sessionId.      ToString())
+
+                    ),
+                    cancellationToken
+                );
+
+            };
+
+
+            Client.OnStopSessionResponse += async (timestamp,
+                                                   sender,
+                                                   eventTrackingId,
+                                                   remotePartyId,
+                                                   from,
+                                                   to,
+                                                   requestId,
+                                                   correlationId,
+                                                   requestTimeout,
+
+                                                   sessionId,
+
+                                                   response,
+                                                   runtime,
+                                                   cancellationToken) => {
+
+                await Processor(
+                    "OnStopSessionResponse",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",        timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",  eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",    remotePartyId.  ToString()),
+
+                        from.                  HasValue
+                            ? new JProperty("from",             from.     Value.ToString())
+                            : null,
+
+                        to.                    HasValue
+                            ? new JProperty("to",               to.       Value.ToString())
+                            : null,
+
+                              new JProperty("requestId",        requestId.      ToString()),
+                              new JProperty("correlationId",    correlationId.  ToString()),
+                              new JProperty("requestTimeout",   requestTimeout. TotalSeconds),
+
+                              new JProperty("sessionId",        sessionId.      ToString()),
+
+                              new JProperty("response",         response.       ToJSON(commandResponse => commandResponse.ToJSON())),
+
+                              new JProperty("runtime",          runtime.        TotalMilliseconds)
 
                     ),
                     cancellationToken
@@ -16912,9 +17222,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
+
+
         public void LinkEventsToDebugText()
         {
-            EventsToText(
+            EventsToDebugText(
                 txt => {
                     DebugX.LogT(txt);
                     return Task.CompletedTask;
@@ -16922,7 +17234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             );
         }
 
-        public void EventsToText(Func<String, Task> Processor)
+        public void EventsToDebugText(Func<String, Task> Processor)
         {
 
             #region OnPutLocationRequest
@@ -16930,12 +17242,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutLocationRequest += (timestamp,
                                      sender,
                                      eventTrackingId,
-                                     from_CountryCode,
-                                     from_PartyId,
-                                     to_CountryCode,
-                                     to_PartyId,
+                                     remotePartyId,
+                                     from,
+                                     to,
 
                                      location,
+
                                      cancellationToken) =>
 
                 Processor(
@@ -16949,12 +17261,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutLocationResponse += (timestamp,
                                       sender,
                                       eventTrackingId,
-                                      from_CountryCode,
-                                      from_PartyId,
-                                      to_CountryCode,
-                                      to_PartyId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
                                       location,
+
                                       runtime,
                                       cancellationToken) =>
 
@@ -16973,10 +17285,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchLocationRequest += (timestamp,
                                        sender,
                                        eventTrackingId,
-                                       from_CountryCode,
-                                       from_PartyId,
-                                       to_CountryCode,
-                                       to_PartyId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
                                        locationId,
                                        locationPatch,
@@ -16996,13 +17307,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchLocationResponse += (timestamp,
                                         sender,
                                         eventTrackingId,
-                                        from_CountryCode,
-                                        from_PartyId,
-                                        to_CountryCode,
-                                        to_PartyId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
                                         locationId,
                                         locationPatch,
+
                                         runtime,
                                         cancellationToken) =>
 
@@ -17022,12 +17333,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutEVSERequest += (timestamp,
                                  sender,
                                  eventTrackingId,
-                                 from_CountryCode,
-                                 from_PartyId,
-                                 to_CountryCode,
-                                 to_PartyId,
+                                 remotePartyId,
+                                 from,
+                                 to,
 
                                  evse,
+
                                  cancellationToken) =>
 
                 Processor(
@@ -17043,12 +17354,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutEVSEResponse += (timestamp,
                                   sender,
                                   eventTrackingId,
-                                  from_CountryCode,
-                                  from_PartyId,
-                                  to_CountryCode,
-                                  to_PartyId,
+                                  remotePartyId,
+                                  from,
+                                  to,
 
                                   evse,
+
                                   runtime,
                                   cancellationToken) =>
 
@@ -17067,10 +17378,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchEVSERequest += (timestamp,
                                    sender,
                                    eventTrackingId,
-                                   from_CountryCode,
-                                   from_PartyId,
-                                   to_CountryCode,
-                                   to_PartyId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
                                    evseUId,
                                    evsePatch,
@@ -17089,10 +17399,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchEVSEResponse += (timestamp,
                                     sender,
                                     eventTrackingId,
-                                    from_CountryCode,
-                                    from_PartyId,
-                                    to_CountryCode,
-                                    to_PartyId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
                                     evseUId,
                                     evsePatch,
@@ -17115,12 +17424,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutConnectorRequest += (timestamp,
                                       sender,
                                       eventTrackingId,
-                                      from_CountryCode,
-                                      from_PartyId,
-                                      to_CountryCode,
-                                      to_PartyId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
                                       connector,
+
                                       cancellationToken) =>
 
                 Processor(
@@ -17136,12 +17445,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutConnectorResponse += (timestamp,
                                        sender,
                                        eventTrackingId,
-                                       from_CountryCode,
-                                       from_PartyId,
-                                       to_CountryCode,
-                                       to_PartyId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
                                        connector,
+
                                        runtime,
                                        cancellationToken) =>
 
@@ -17160,13 +17469,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchConnectorRequest += (timestamp,
                                         sender,
                                         eventTrackingId,
-                                        from_CountryCode,
-                                        from_PartyId,
-                                        to_CountryCode,
-                                        to_PartyId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
                                         connectorId,
                                         connectorPatch,
+
                                         cancellationToken) =>
 
                 Processor(
@@ -17182,13 +17491,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchConnectorResponse += (timestamp,
                                          sender,
                                          eventTrackingId,
-                                         from_CountryCode,
-                                         from_PartyId,
-                                         to_CountryCode,
-                                         to_PartyId,
+                                         remotePartyId,
+                                         from,
+                                         to,
 
                                          connectorId,
                                          connectorPatch,
+
                                          runtime,
                                          cancellationToken) =>
 
@@ -17208,12 +17517,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutTariffRequest += (timestamp,
                                    sender,
                                    eventTrackingId,
-                                   from_CountryCode,
-                                   from_PartyId,
-                                   to_CountryCode,
-                                   to_PartyId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
                                    tariff,
+
                                    cancellationToken) =>
 
                 Processor(
@@ -17229,12 +17538,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutTariffResponse += (timestamp,
                                     sender,
                                     eventTrackingId,
-                                    from_CountryCode,
-                                    from_PartyId,
-                                    to_CountryCode,
-                                    to_PartyId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
                                     tariff,
+
                                     runtime,
                                     cancellationToken) =>
 
@@ -17254,12 +17563,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutSessionRequest += (timestamp,
                                     sender,
                                     eventTrackingId,
-                                    from_CountryCode,
-                                    from_PartyId,
-                                    to_CountryCode,
-                                    to_PartyId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
                                     session,
+
                                     cancellationToken) =>
 
                 Processor(
@@ -17275,12 +17584,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPutSessionResponse += (timestamp,
                                      sender,
                                      eventTrackingId,
-                                     from_CountryCode,
-                                     from_PartyId,
-                                     to_CountryCode,
-                                     to_PartyId,
+                                     remotePartyId,
+                                     from,
+                                     to,
 
                                      session,
+
                                      runtime,
                                      cancellationToken) =>
 
@@ -17299,13 +17608,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchSessionRequest += (timestamp,
                                       sender,
                                       eventTrackingId,
-                                      from_CountryCode,
-                                      from_PartyId,
-                                      to_CountryCode,
-                                      to_PartyId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
                                       sessionId,
                                       sessionPatch,
+
                                       cancellationToken) =>
 
                 Processor(
@@ -17321,13 +17630,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPatchSessionResponse += (timestamp,
                                        sender,
                                        eventTrackingId,
-                                       from_CountryCode,
-                                       from_PartyId,
-                                       to_CountryCode,
-                                       to_PartyId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
                                        sessionId,
                                        sessionPatch,
+
                                        runtime,
                                        cancellationToken) =>
 
@@ -17347,12 +17656,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostCDRRequest += (timestamp,
                                  sender,
                                  eventTrackingId,
-                                 from_CountryCode,
-                                 from_PartyId,
-                                 to_CountryCode,
-                                 to_PartyId,
+                                 remotePartyId,
+                                 from,
+                                 to,
 
                                  cdr,
+
                                  cancellationToken) =>
 
                 Processor(
@@ -17368,13 +17677,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostCDRResponse += (timestamp,
                                   sender,
                                   eventTrackingId,
-                                  from_CountryCode,
-                                  from_PartyId,
-                                  to_CountryCode,
-                                  to_PartyId,
+                                  remotePartyId,
+                                  from,
+                                  to,
 
                                   cdr,
                                   cdrLocation,
+
                                   runtime,
                                   cancellationToken) =>
 
@@ -17394,14 +17703,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostTokenRequest += (timestamp,
                                    sender,
                                    eventTrackingId,
-                                   from_CountryCode,
-                                   from_PartyId,
-                                   to_CountryCode,
-                                   to_PartyId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
                                    tokenId,
                                    requestedTokenType,
                                    locationReference,
+
                                    cancellationToken) =>
 
                 Processor(
@@ -17423,15 +17732,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             OnPostTokenResponse += (timestamp,
                                     sender,
                                     eventTrackingId,
-                                    from_CountryCode,
-                                    from_PartyId,
-                                    to_CountryCode,
-                                    to_PartyId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
                                     tokenId,
                                     requestedTokenType,
                                     locationReference,
                                     result,
+
                                     runtime,
                                     cancellationToken) =>
 
@@ -17452,6 +17761,124 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #endregion
 
         }
+
+
+        public void LinkClientEventsToDebugText(EMSP2CPO_HTTPClient Client)
+        {
+            ClientEventsToDebugText(
+                Client,
+                txt => {
+                    DebugX.LogT(txt);
+                    return Task.CompletedTask;
+                }
+            );
+        }
+
+        public void ClientEventsToDebugText(EMSP2CPO_HTTPClient  Client,
+                                            Func<String, Task>   Processor)
+        {
+
+            #region OnStartSessionRequest/-Response
+
+            Client.OnStartSessionRequest += (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             remotePartyId,
+                                             from,
+                                             to,
+                                             requestId,
+                                             correlationId,
+                                             requestTimeout,
+
+                                             token,
+                                             locationId,
+                                             evseUId,
+                                             connectorId,
+                                             authorizationReference,
+
+                                             cancellationToken) =>
+
+                Processor(
+                    $"StartSession request request for '{token.ContractId} / {authorizationReference?.ToString() ?? "-"}' at '{locationId} / {evseUId?.ToString() ?? "-"} / {connectorId?.ToString() ?? "-"}'"
+                );
+
+
+            Client.OnStartSessionResponse += (timestamp,
+                                              sender,
+                                              eventTrackingId,
+                                              remotePartyId,
+                                              from,
+                                              to,
+                                              requestId,
+                                              correlationId,
+                                              requestTimeout,
+
+                                              token,
+                                              locationId,
+                                              evseUId,
+                                              connectorId,
+                                              authorizationReference,
+
+                                              response,
+                                              runtime,
+                                              cancellationToken) =>
+
+                Processor(
+                    $"StartSession response for '{token.ContractId} / {authorizationReference?.ToString() ?? "-"}' at '{locationId}' / {evseUId?.ToString() ?? "-"} / {connectorId?.ToString() ?? "-"}'" +
+                    $" => {response.StatusCode} [{runtime.TotalMilliseconds} ms]"
+                );
+
+            #endregion
+
+            #region OnStopSessionRequest/-Response
+
+            Client.OnStopSessionRequest += (timestamp,
+                                            sender,
+                                            eventTrackingId,
+                                            remotePartyId,
+                                            from,
+                                            to,
+                                            requestId,
+                                            correlationId,
+                                            requestTimeout,
+
+                                            sessionId,
+
+                                            cancellationToken) =>
+
+                Processor(
+                    $"StopSession request request for session '{sessionId}'"
+                );
+
+
+            Client.OnStopSessionResponse += (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             remotePartyId,
+                                             from,
+                                             to,
+                                             requestId,
+                                             correlationId,
+                                             requestTimeout,
+
+                                             sessionId,
+
+                                             response,
+                                             runtime,
+                                             cancellationToken) =>
+
+                Processor(
+                    $"StopSession response for session '{sessionId}'" +
+                    $" => {response.StatusCode} [{runtime.TotalMilliseconds} ms]"
+                );
+
+            #endregion
+
+        }
+
+
+
+
 
 
 

@@ -3147,7 +3147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                     var clients = new List<CommonHTTPClient>();
                     clients.AddRange(CPOAPI. CPO2EMSPClients);
-                    clients.AddRange(EMSPAPI.EMSP2CPOClients);
+                    clients.AddRange(EMSPAPI.EMSP2CPO_HTTPClients);
 
                     return Task.FromResult(
                         new HTTPResponse.Builder(request) {
@@ -3204,7 +3204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                         new HTTPResponse.Builder(request) {
                             HTTPStatusCode             = HTTPStatusCode.OK,
                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                            Content                    = new JArray(EMSPAPI.EMSP2CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                            Content                    = new JArray(EMSPAPI.EMSP2CPO_HTTPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                             AccessControlAllowHeaders  = [ "Authorization" ]
                             //LastModified               = Location.LastUpdated.ToISO8601(),

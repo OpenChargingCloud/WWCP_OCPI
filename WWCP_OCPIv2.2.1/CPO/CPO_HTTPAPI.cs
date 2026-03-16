@@ -2058,7 +2058,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    HTTPResponseBuilder  = httpResponseBuilder,
                                    Data                 = new JArray(
                                                               filteredLocations.
@@ -2094,7 +2094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 //    return Task.FromResult(
                 //        new OCPIResponse.Builder(Request) {
                 //                StatusCode           = 1000,
-                //                StatusMessage        = "Hello world!",
+                //                StatusMessage        = CommonAPI.DefaultStatusMessage,
                 //                Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                 //                                                                                   filters.Limit).
                 //                                                                    SafeSelect(location => location.ToJSON(Request.EMSPId,
@@ -2192,7 +2192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = location.ToJSON(
                                                           request.EMSPId ?? request.HUBId,
                                                           CustomLocationSerializer,
@@ -2306,7 +2306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = evse.ToJSON(
                                                           request.EMSPId ?? request.HUBId,
                                                           CustomEVSESerializer,
@@ -2413,7 +2413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = connector.ToJSON(
                                                           true,
                                                           true,
@@ -2555,7 +2555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    HTTPResponseBuilder  = httpResponseBuilder,
                                    Data                 = new JArray(
                                                               filteredTariffs.
@@ -2661,7 +2661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = tariff.ToJSON(
                                                           false, //IncludeOwnerInformation
                                                           false, //IncludeExtensions
@@ -2810,7 +2810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    HTTPResponseBuilder  = httpResponseBuilder,
                                    Data                 = new JArray(
                                                               filteredSessions.
@@ -2909,7 +2909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = session.ToJSON(
                                                           CustomSessionSerializer,
                                                           CustomCDRTokenSerializer,
@@ -3095,7 +3095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    HTTPResponseBuilder  = httpResponseBuilder,
                                    Data                 = new JArray(
                                                               filteredCDRs.
@@ -3206,7 +3206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = cdr.ToJSON(
                                                           CustomCDRSerializer,
                                                           CustomCDRTokenSerializer,
@@ -3368,7 +3368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    HTTPResponseBuilder  = httpResponseBuilder,
                                    Data                 = new JArray(
                                                               filteredTokens.
@@ -3435,7 +3435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
@@ -3529,7 +3529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = tokenStatus.Token.ToJSON(
                                                           CustomTokenSerializer,
                                                           CustomEnergyContractSerializer
@@ -3630,7 +3630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (addOrUpdateResult.IsSuccessAndDataNotNull(out var tokenData))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = tokenData.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
@@ -3737,7 +3737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (patchedToken.IsSuccessAndDataNotNull(out var tokenData))
                         return new OCPIResponse.Builder(request) {
                                        StatusCode           = 1000,
-                                       StatusMessage        = "Hello world!",
+                                       StatusMessage        = CommonAPI.DefaultStatusMessage,
                                        Data                 = tokenData.ToJSON(
                                                                   CustomTokenSerializer,
                                                                   CustomEnergyContractSerializer
@@ -3820,7 +3820,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (result.IsSuccessAndDataNotNull(out var tokenStatus))
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 1000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = tokenStatus.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
@@ -3836,7 +3836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     else
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = 2000,
-                                   StatusMessage        = "Hello world!",
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = existingTokenStatus.Token.ToJSON(
                                                               CustomTokenSerializer,
                                                               CustomEnergyContractSerializer
@@ -3960,7 +3960,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4079,7 +4079,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4198,7 +4198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4317,7 +4317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4436,7 +4436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4558,7 +4558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -4677,7 +4677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = 1000,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer

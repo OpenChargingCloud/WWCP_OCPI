@@ -73,30 +73,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Version(s)
 
             RegisterEvent("GetVersionsRequest",
-                          handler => CommonAPI.OnGetVersionsRequest += handler,
-                          handler => CommonAPI.OnGetVersionsRequest -= handler,
+                          handler => CommonAPI.OnGetVersionsHTTPRequest += handler,
+                          handler => CommonAPI.OnGetVersionsHTTPRequest -= handler,
                           "GetVersions", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetVersionsResponse",
-                          handler => CommonAPI.OnGetVersionsResponse += handler,
-                          handler => CommonAPI.OnGetVersionsResponse -= handler,
+                          handler => CommonAPI.OnGetVersionsHTTPResponse += handler,
+                          handler => CommonAPI.OnGetVersionsHTTPResponse -= handler,
                           "GetVersions", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("GetVersionRequest",
-                          handler => CommonAPI.OnGetVersionRequest += handler,
-                          handler => CommonAPI.OnGetVersionRequest -= handler,
+                          handler => CommonAPI.OnGetVersionHTTPRequest += handler,
+                          handler => CommonAPI.OnGetVersionHTTPRequest -= handler,
                           "GetVersion", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetVersionResponse",
-                          handler => CommonAPI.OnGetVersionResponse += handler,
-                          handler => CommonAPI.OnGetVersionResponse -= handler,
+                          handler => CommonAPI.OnGetVersionHTTPResponse += handler,
+                          handler => CommonAPI.OnGetVersionHTTPResponse -= handler,
                           "GetVersion", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
@@ -106,60 +106,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Credentials
 
             RegisterEvent("GetCredentialsRequest",
-                          handler => CommonAPI.OnGetCredentialsRequest += handler,
-                          handler => CommonAPI.OnGetCredentialsRequest -= handler,
+                          handler => CommonAPI.OnGetCredentialsHTTPRequest += handler,
+                          handler => CommonAPI.OnGetCredentialsHTTPRequest -= handler,
                           "GetCredentials", "Credentials", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("GetCredentialsResponse",
-                          handler => CommonAPI.OnGetCredentialsResponse += handler,
-                          handler => CommonAPI.OnGetCredentialsResponse -= handler,
+                          handler => CommonAPI.OnGetCredentialsHTTPResponse += handler,
+                          handler => CommonAPI.OnGetCredentialsHTTPResponse -= handler,
                           "GetCredentials", "Credentials", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PostCredentialsRequest",
-                          handler => CommonAPI.OnPostCredentialsRequest += handler,
-                          handler => CommonAPI.OnPostCredentialsRequest -= handler,
+                          handler => CommonAPI.OnPostCredentialsHTTPRequest += handler,
+                          handler => CommonAPI.OnPostCredentialsHTTPRequest -= handler,
                           "PostCredentials", "Credentials", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PostCredentialsResponse",
-                          handler => CommonAPI.OnPostCredentialsResponse += handler,
-                          handler => CommonAPI.OnPostCredentialsResponse -= handler,
+                          handler => CommonAPI.OnPostCredentialsHTTPResponse += handler,
+                          handler => CommonAPI.OnPostCredentialsHTTPResponse -= handler,
                           "PostCredentials", "Credentials", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("PutCredentialsRequest",
-                          handler => CommonAPI.OnPutCredentialsRequest += handler,
-                          handler => CommonAPI.OnPutCredentialsRequest -= handler,
+                          handler => CommonAPI.OnPutCredentialsHTTPRequest += handler,
+                          handler => CommonAPI.OnPutCredentialsHTTPRequest -= handler,
                           "PutCredentials", "Credentials", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutCredentialsResponse",
-                          handler => CommonAPI.OnPutCredentialsResponse += handler,
-                          handler => CommonAPI.OnPutCredentialsResponse -= handler,
+                          handler => CommonAPI.OnPutCredentialsHTTPResponse += handler,
+                          handler => CommonAPI.OnPutCredentialsHTTPResponse -= handler,
                           "PutCredentials", "Credentials", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
             RegisterEvent("DeleteCredentialsRequest",
-                          handler => CommonAPI.OnDeleteCredentialsRequest += handler,
-                          handler => CommonAPI.OnDeleteCredentialsRequest -= handler,
+                          handler => CommonAPI.OnDeleteCredentialsHTTPRequest += handler,
+                          handler => CommonAPI.OnDeleteCredentialsHTTPRequest -= handler,
                           "DeleteCredentials", "Credentials", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteCredentialsResponse",
-                          handler => CommonAPI.OnDeleteCredentialsResponse += handler,
-                          handler => CommonAPI.OnDeleteCredentialsResponse -= handler,
+                          handler => CommonAPI.OnDeleteCredentialsHTTPResponse += handler,
+                          handler => CommonAPI.OnDeleteCredentialsHTTPResponse -= handler,
                           "DeleteCredentials", "Credentials", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);

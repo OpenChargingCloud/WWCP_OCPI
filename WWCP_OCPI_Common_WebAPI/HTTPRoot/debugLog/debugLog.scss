@@ -181,7 +181,15 @@ body #page #workarea #bottom #right #text {
             white-space:                    nowrap;
         }
 
-        .roamingNetwork {
+        .eventTrackingId {
+            display:                        none;
+            vertical-align:                 top;
+            font-size:                      80%;
+            padding:                        4px 6px;
+            white-space:                    nowrap;
+        }
+
+        .remotePartyId {
             display:                        table-cell;
             vertical-align:                 top;
             font-size:                      80%;
@@ -189,8 +197,24 @@ body #page #workarea #bottom #right #text {
             white-space:                    nowrap;
         }
 
-        .eventTrackingId {
-            display:                        none;
+        .from {
+            display:                        table-cell;
+            vertical-align:                 top;
+            font-size:                      80%;
+            padding:                        4px 6px;
+            white-space:                    nowrap;
+        }
+
+        .to {
+            display:                        table-cell;
+            vertical-align:                 top;
+            font-size:                      80%;
+            padding:                        4px 6px;
+            white-space:                    nowrap;
+        }
+
+        .direction {
+            display:                        table-cell;
             vertical-align:                 top;
             font-size:                      80%;
             padding:                        4px 6px;

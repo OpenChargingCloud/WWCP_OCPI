@@ -1094,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            StatusMessage.IsNotNullOrEmpty()
                                ? new JProperty("status_message",          StatusMessage)
-                               :  null,
+                               : null,
 
                            AdditionalInformation.IsNotNullOrEmpty()
                                ? new JProperty("additionalInformation",   AdditionalInformation)
@@ -1109,7 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            HTTPLocation.HasValue
-                               ? new JProperty("httpLocation",            HTTPLocation.     Value.ToString())
+                               ? new JProperty("httpLocation",            HTTPLocation. Value.ToString())
                                : null,
 
                                  new JProperty("timestamp",               Timestamp.          ToISO8601())
