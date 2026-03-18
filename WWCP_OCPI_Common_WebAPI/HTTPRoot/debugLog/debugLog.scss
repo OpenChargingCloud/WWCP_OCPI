@@ -90,6 +90,24 @@ body #page #workarea #bottom #right #text {
         color:              #4a6998;
     }
 
+
+    #settingsButton {
+        flex:               0 0 auto;
+        padding:            5px 14px;
+        border:             1px solid rgba(255,255,255,0.25);
+        border-radius:      4px;
+        background:         rgba(0,0,0,0.1);
+        color:              #9d9d9d;
+        font-size:          13px;
+        cursor:             pointer;
+        transition:         background 0.2s, border-color 0.2s;
+    }
+
+    #settingsButton:hover {
+        background:         #b9d0f3;
+        color:              #4a6998;
+    }
+
 }
 
 
@@ -149,6 +167,64 @@ body #page #workarea #bottom #right #text {
 #filterHelpPanel.visible {
     display:            block;
 }
+
+
+
+
+#settingsPanel {
+
+    display:            none;
+    margin:             0 10px 6px 14px;
+    padding:            14px 18px;
+    background:         rgba(0,0,0,0.08);
+    border:             1px solid rgba(255,255,255,0.18);
+    border-radius:      6px;
+    color:              #555;
+    font-size:          13px;
+    line-height:        1.55;
+    font-family:        "Source Sans Pro", sans-serif;
+
+    h3 {
+        margin:             0 0 8px;
+        font-size:          14px;
+        font-weight:        600;
+        color:              #495d7b;
+    }
+
+    .settingsRow {
+        display:            flex;
+        align-items:        center;
+        gap:                10px;
+        margin:             8px 0;
+    }
+
+    label {
+        font-weight:        500;
+        color:              #495d7b;
+    }
+
+    input[type="number"] {
+        width:              80px;
+        padding:            4px 8px;
+        border:             1px solid rgba(0,0,0,0.2);
+        border-radius:      4px;
+        font-size:          13px;
+        background:         white;
+        color:              #333;
+    }
+
+    .settingsHint {
+        font-size:          11px;
+        color:              #888;
+        margin-top:         2px;
+    }
+
+}
+
+#settingsPanel.visible {
+    display:            block;
+}
+
 
 
 

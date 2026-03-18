@@ -7,6 +7,7 @@
 
 <div id="buttonsDiv">
     <button id="filterHelpButton"  title="Help on filter expressions"><i class="fa-regular fa-circle-question"></i></button>
+    <button id="settingsButton"    title="Settings"><i class="fa-solid fa-gear"></i></button>
     <button id="clearEventsButton" title="Remove all log entries"><i class="fa-regular fa-trash-can"></i></button>
 </div>
 
@@ -57,6 +58,17 @@
         </table>
     </div>
 
+</div>
+
+<div id="settingsPanel">
+    <h3>Settings</h3>
+    <div class="settingsRow">
+        <label for="maxEventsInput">Maximum number of events:</label>
+        <input type="number" id="maxEventsInput" min="25" max="10000" value="500">
+    </div>
+    <div class="settingsHint">
+    When new events arrive and the total exceeds this limit, the oldest events will be removed automatically. Filtered-out (hidden) events are removed first.
+    </div>
 </div>
 
 <div id="response">

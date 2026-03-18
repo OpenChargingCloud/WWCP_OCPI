@@ -278,6 +278,65 @@ function StartDebugLog() {
 
 
 
+    // ── Settings button & panel ─────────────────────────────────────
+    const settingsPanel       = document.getElementById('settingsPanel');
+    const settingsButton      = document.getElementById('settingsButton');
+    const maxEventsInput      = document.getElementById('maxEventsInput') as HTMLInputElement;
+
+    let max_number_of_events  = parseInt(localStorage.getItem('max_number_of_events')) || 500;
+    maxEventsInput.value      = max_number_of_events.toString();
+
+    settingsButton.onclick    = () => {
+        settingsPanel.classList.toggle('visible');
+    };
+
+    maxEventsInput.oninput = () => {
+
+        const val = parseInt(maxEventsInput.value);
+
+        if (!isNaN(val) && val >= 10) {
+            max_number_of_events = val;
+            localStorage.setItem('max_number_of_events', val.toString());
+            trimOldEvents();
+        }
+
+    };
+
+
+    function trimOldEvents() {
+
+        const logLines = eventsDiv.getElementsByClassName('logLine') as HTMLCollectionOf<HTMLDivElement>;
+
+        // First pass: remove oldest events that are currently hidden by the filter
+        if (logLines.length > max_number_of_events) {
+            for (let i = logLines.length - 1; i >= 0 && logLines.length > max_number_of_events; i--) {
+                if (logLines[i].style.display === 'none')
+                    eventsDiv.removeChild(logLines[i]);
+            }
+        }
+
+        // Second pass: if still over the limit, remove the oldest visible events
+        while (logLines.length > max_number_of_events) {
+            // New events are inserted at the top,
+            // so the oldest events are at the bottom
+            eventsDiv.removeChild(eventsDiv.lastElementChild);
+        }
+
+    }
+
+    const eventsObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0)
+                trimOldEvents();
+        }
+    });
+
+    eventsObserver.observe(
+        eventsDiv,
+        { childList: true }
+    );
+
+
 
 
 
