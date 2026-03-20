@@ -2118,8 +2118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
-        private Boolean SetupCPO2EMSPClient(RemoteParty                                            RemoteParty,
-                                            [NotNullWhen(true)] out CPO.HTTP.CPO2EMSP_HTTPClient?  CPO2EMSPClient)
+        public Boolean SetupCPO2EMSPClient(RemoteParty                                            RemoteParty,
+                                           [NotNullWhen(true)] out CPO.HTTP.CPO2EMSP_HTTPClient?  CPO2EMSPClient)
         {
 
             var remotePartyLoggingPath = Path.Combine(
