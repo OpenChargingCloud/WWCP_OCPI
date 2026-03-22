@@ -1869,8 +1869,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                              Work:                   async (remoteParty, cancellationToken) => {
 
-                                                                                          remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus = RemoteParty.Fie.Yes;
-
                                                                                           #region Check remote party configuration
 
                                                                                           if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.No)
@@ -1921,7 +1919,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                                     );
 
                                                                                               #endregion
-
 
                                                                                               if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
                                                                                               {
@@ -1986,15 +1983,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                               if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
                                                                                               {
 
-                                                                                                  var patchEVSEResponse = await cpoClient.PatchEVSE(
+                                                                                                  var patchEVSEResponse = await cpoClient.PostEVSEStatus(
 
                                                                                                                                     CountryCode:         countryCode.Value,
                                                                                                                                     PartyId:             partyId.    Value,
                                                                                                                                     LocationId:          locationId. Value,
                                                                                                                                     EVSEUId:             evse2.UId,
-                                                                                                                                    EVSEPatch:           JSONObject.Create(
-                                                                                                                                                             new JProperty("status",  evse2.Status.ToString())
-                                                                                                                                                         ),
+                                                                                                                                    EVSEStatus:          evse2.Status,
 
                                                                                                                                     //From:                fromChargingStationOperatorId,
                                                                                                                                     //To:                  toEMobilityProviderId,
@@ -2054,6 +2049,95 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                                     );
 
                                                                                               #endregion
+
+                                                                                              if (remoteParty.CPO2HUBRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
+                                                                                              {
+
+                                                                                                  var patchEVSEResponse = await cpoClient.PatchEVSE(
+
+                                                                                                                                    CountryCode:         countryCode.Value,
+                                                                                                                                    PartyId:             partyId.    Value,
+                                                                                                                                    LocationId:          locationId. Value,
+                                                                                                                                    EVSEUId:             evse2.UId,
+                                                                                                                                    EVSEPatch:           JSONObject.Create(
+                                                                                                                                                             new JProperty("status",  evse2.Status.ToString())
+                                                                                                                                                         ),
+
+                                                                                                                                    //From:                fromChargingStationOperatorId,
+                                                                                                                                    //To:                  toEMobilityProviderId,
+
+                                                                                                                                    RequestId:           null,
+                                                                                                                                    CorrelationId:       null,
+                                                                                                                                    VersionId:           null,
+
+                                                                                                                                    RequestTimestamp:    RequestTimestamp,
+                                                                                                                                    EventTrackingId:     EventTrackingId,
+                                                                                                                                    RequestTimeout:      null,
+                                                                                                                                    CancellationToken:   cancellationToken
+
+                                                                                                                                );
+
+                                                                                                  return patchEVSEResponse as Object;
+
+                                                                                              }
+
+                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                              {
+
+                                                                                                  var putEVSEResponse = await cpoClient.PutEVSE(
+
+                                                                                                                                  CountryCode:         countryCode.Value,
+                                                                                                                                  PartyId:             partyId.    Value,
+                                                                                                                                  LocationId:          locationId. Value,
+                                                                                                                                  EVSE:                evse2,
+                                                                                                                                  //EMSPId:              null,
+
+                                                                                                                                  //From:                fromChargingStationOperatorId,
+                                                                                                                                  //To:                  toEMobilityProviderId,
+
+                                                                                                                                  RequestId:           null,
+                                                                                                                                  CorrelationId:       null,
+                                                                                                                                  VersionId:           null,
+
+                                                                                                                                  RequestTimestamp:    RequestTimestamp,
+                                                                                                                                  EventTrackingId:     EventTrackingId,
+                                                                                                                                  RequestTimeout:      null,
+                                                                                                                                  CancellationToken:   cancellationToken
+
+                                                                                                                              );
+
+                                                                                                  return putEVSEResponse as Object;
+
+                                                                                              }
+
+                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
+                                                                                              {
+
+                                                                                                  var patchEVSEResponse = await cpoClient.PostEVSEStatus(
+
+                                                                                                                                    CountryCode:         countryCode.Value,
+                                                                                                                                    PartyId:             partyId.    Value,
+                                                                                                                                    LocationId:          locationId. Value,
+                                                                                                                                    EVSEUId:             evse2.UId,
+                                                                                                                                    EVSEStatus:          evse2.Status,
+
+                                                                                                                                    //From:                fromChargingStationOperatorId,
+                                                                                                                                    //To:                  toEMobilityProviderId,
+
+                                                                                                                                    RequestId:           null,
+                                                                                                                                    CorrelationId:       null,
+                                                                                                                                    VersionId:           null,
+
+                                                                                                                                    RequestTimestamp:    RequestTimestamp,
+                                                                                                                                    EventTrackingId:     EventTrackingId,
+                                                                                                                                    RequestTimeout:      null,
+                                                                                                                                    CancellationToken:   cancellationToken
+
+                                                                                                                                );
+
+                                                                                                  return patchEVSEResponse as Object;
+
+                                                                                              }
 
                                                                                           }
 

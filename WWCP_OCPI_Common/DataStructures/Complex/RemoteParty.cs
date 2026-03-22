@@ -81,7 +81,52 @@ namespace cloud.charging.open.protocols.OCPI
 
         }
 
+        public class CPO_2_HUB_Role
+        {
+
+            public Boolean  Send_PUT_Location        { get; set; } = true;
+            public Boolean  Send_PATCH_Location      { get; set; } = true;
+
+            public Boolean  Send_PUT_EVSE            { get; set; } = true;
+            public Tri      Send_PATCH_EVSE          { get; set; } = Tri.Yes;
+            public Fie      Send_PATCH_EVSEStatus    { get; set; } = Fie.Yes;
+
+            public Boolean  Send_PUT_Connector       { get; set; } = true;
+            public Tri      Send_PATCH_Connector     { get; set; } = Tri.Yes;
+
+            public Boolean  Send_PUT_Tariff          { get; set; } = true;
+            public Tri      Send_PATCH_Tariff        { get; set; } = Tri.Yes;
+
+            public Boolean  Send_PUT_Session         { get; set; } = true;
+            public Tri      Send_PATCH_Session       { get; set; } = Tri.Yes;
+
+            public Boolean  Send_POST_CDR            { get; set; } = true;
+
+            public Boolean  Send_POST_Token          { get; set; } = true;
+
+
+        }
+
+
         public class EMSP_2_CPO_Role
+        {
+
+            public Boolean  Send_PUT_Token                   { get; set; } = true;
+            public Boolean  Send_PATCH_Token                 { get; set; } = true;
+
+            public Boolean  Send_ReserveNow                  { get; set; } = true;
+            public Boolean  Send_CancelReservation           { get; set; } = true;
+            public Boolean  Send_StartSession                { get; set; } = true;
+            public Boolean  Send_StopSession                 { get; set; } = true;
+            public Boolean  Send_UnlockConnector             { get; set; } = true;
+
+            public Boolean  Send_NotifyWebPaymentsStarted    { get; set; } = true;
+            public Boolean  Send_NotifyWebPaymentsFailed     { get; set; } = true;
+
+
+        }
+
+        public class EMSP_2_HUB_Role
         {
 
             public Boolean  Send_PUT_Token                   { get; set; } = true;
@@ -167,8 +212,10 @@ namespace cloud.charging.open.protocols.OCPI
 
 
         public CPO_2_EMSP_Role               CPO2EMPRole     { get; } = new CPO_2_EMSP_Role();
+        public CPO_2_HUB_Role                CPO2HUBRole     { get; } = new CPO_2_HUB_Role();
 
         public EMSP_2_CPO_Role               EMSP2CPORole    { get; } = new EMSP_2_CPO_Role();
+        public EMSP_2_HUB_Role               EMSP2HUBRole    { get; } = new EMSP_2_HUB_Role();
 
         #endregion
 
