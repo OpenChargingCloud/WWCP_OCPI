@@ -1089,7 +1089,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("data",                    Serializer?.Invoke(Data)),
+                           Data is not null
+                               ? new JProperty("data",                    Serializer?.Invoke(Data))
+                               : null,
+
                                  new JProperty("status_code",             StatusCode),
 
                            StatusMessage.IsNotNullOrEmpty()

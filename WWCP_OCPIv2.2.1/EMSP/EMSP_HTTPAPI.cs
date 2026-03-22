@@ -12560,7 +12560,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "DELETE" },
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "DELETE" ],
                                     AccessControlAllowHeaders  = [ "Authorization" ]
                                 }
                             });
@@ -15892,18 +15892,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnPutLocationRequest
 
-            OnPutLocationRequest += async (timestamp,
-                                           sender,
-                                           eventTrackingId,
-                                           remotePartyId,
-                                           from,
-                                           to,
+            OnPutLocationRequest += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     remotePartyId,
+                                     from,
+                                     to,
 
-                                           location,
+                                     location,
 
-                                           cancellationToken) => {
+                                     cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutLocationRequest",
                     JSONObject.Create(
 
@@ -15945,25 +15945,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPutLocationResponse
 
-            OnPutLocationResponse += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            remotePartyId,
-                                            from,
-                                            to,
+            OnPutLocationResponse += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
-                                            location,
+                                      location,
 
-                                            runtime,
-                                            cancellationToken) => {
+                                      runtime,
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutLocationResponse",
                     JSONObject.Create(
 
@@ -16007,25 +16005,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchLocationRequest
 
-            OnPatchLocationRequest += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             remotePartyId,
-                                             from,
-                                             to,
+            OnPatchLocationRequest += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
-                                             locationId,
-                                             locationPatch,
+                                       locationId,
+                                       locationPatch,
 
-                                             cancellationToken) => {
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchLocationRequest",
                     JSONObject.Create(
 
@@ -16048,26 +16044,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchLocationResponse
 
-            OnPatchLocationResponse += async (timestamp,
-                                              sender,
-                                              eventTrackingId,
-                                              remotePartyId,
-                                              from,
-                                              to,
+            OnPatchLocationResponse += (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
-                                              locationId,
-                                              locationPatch,
+                                        locationId,
+                                        locationPatch,
 
-                                              runtime,
-                                              cancellationToken) => {
+                                        runtime,
+                                        cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchLocationResponse",
                     JSONObject.Create(
 
@@ -16092,25 +16086,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
 
             #region OnPutEVSERequest
 
-            OnPutEVSERequest += async (timestamp,
-                                       sender,
-                                       eventTrackingId,
-                                       remotePartyId,
-                                       from,
-                                       to,
+            OnPutEVSERequest += (timestamp,
+                                 sender,
+                                 eventTrackingId,
+                                 remotePartyId,
+                                 from,
+                                 to,
 
-                                       evse,
+                                 evse,
 
-                                       cancellationToken) => {
+                                 cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutEVSERequest",
                     JSONObject.Create(
 
@@ -16142,25 +16134,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPutEVSEResponse
 
-            OnPutEVSEResponse += async (timestamp,
-                                        sender,
-                                        eventTrackingId,
-                                        remotePartyId,
-                                        from,
-                                        to,
+            OnPutEVSEResponse += (timestamp,
+                                  sender,
+                                  eventTrackingId,
+                                  remotePartyId,
+                                  from,
+                                  to,
 
-                                        evse,
+                                  evse,
 
-                                        runtime,
-                                        cancellationToken) => {
+                                  runtime,
+                                  cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutEVSEResponse",
                     JSONObject.Create(
 
@@ -16193,8 +16183,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
@@ -16282,18 +16270,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnPutConnectorRequest
 
-            OnPutConnectorRequest += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            remotePartyId,
-                                            from,
-                                            to,
+            OnPutConnectorRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
-                                            connector,
+                                      connector,
 
-                                            cancellationToken) => {
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutConnectorRequest",
                     JSONObject.Create(
 
@@ -16320,25 +16308,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPutConnectorResponse
 
-            OnPutConnectorResponse += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             remotePartyId,
-                                             from,
-                                             to,
+            OnPutConnectorResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
-                                             connector,
+                                       connector,
 
-                                             runtime,
-                                             cancellationToken) => {
+                                       runtime,
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutConnectorResponse",
                     JSONObject.Create(
 
@@ -16367,25 +16353,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchConnectorRequest
 
-            OnPatchConnectorRequest += async (timestamp,
-                                              sender,
-                                              eventTrackingId,
-                                              remotePartyId,
-                                              from,
-                                              to,
+            OnPatchConnectorRequest += (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        remotePartyId,
+                                        from,
+                                        to,
 
-                                              connectorId,
-                                              connectorPatch,
+                                        connectorId,
+                                        connectorPatch,
 
-                                              cancellationToken) => {
+                                        cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchConnectorRequest",
                     JSONObject.Create(
 
@@ -16408,26 +16392,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchConnectorResponse
 
-            OnPatchConnectorResponse += async (timestamp,
-                                               sender,
-                                               eventTrackingId,
-                                               remotePartyId,
-                                               from,
-                                               to,
+            OnPatchConnectorResponse += (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         remotePartyId,
+                                         from,
+                                         to,
 
-                                               connectorId,
-                                               connectorPatch,
+                                         connectorId,
+                                         connectorPatch,
 
-                                               runtime,
-                                               cancellationToken) => {
+                                         runtime,
+                                         cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchConnectorResponse",
                     JSONObject.Create(
 
@@ -16452,25 +16434,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
 
             #region OnPutTariffRequest
 
-            OnPutTariffRequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         remotePartyId,
-                                         from,
-                                         to,
+            OnPutTariffRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
-                                         tariff,
+                                   tariff,
 
-                                         cancellationToken) => {
+                                   cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutTariffRequest",
                     JSONObject.Create(
 
@@ -16504,25 +16484,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPutTariffResponse
 
-            OnPutTariffResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          remotePartyId,
-                                          from,
-                                          to,
+            OnPutTariffResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
-                                          tariff,
+                                    tariff,
 
-                                          runtime,
-                                          cancellationToken) => {
+                                    runtime,
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutTariffResponse",
                     JSONObject.Create(
 
@@ -16558,25 +16536,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
 
             #region OnPutSessionRequest
 
-            OnPutSessionRequest += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          remotePartyId,
-                                          from,
-                                          to,
+            OnPutSessionRequest += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
-                                          session,
+                                    session,
 
-                                          cancellationToken) => {
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutSessionRequest",
                     JSONObject.Create(
 
@@ -16604,25 +16580,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPutSessionResponse
 
-            OnPutSessionResponse += async (timestamp,
-                                           sender,
-                                           eventTrackingId,
-                                           remotePartyId,
-                                           from,
-                                           to,
+            OnPutSessionResponse += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     remotePartyId,
+                                     from,
+                                     to,
 
-                                           session,
+                                     session,
 
-                                           runtime,
-                                           cancellationToken) => {
+                                     runtime,
+                                     cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutSessionResponse",
                     JSONObject.Create(
 
@@ -16652,25 +16626,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchSessionRequest
 
-            OnPatchSessionRequest += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            remotePartyId,
-                                            from,
-                                            to,
+            OnPatchSessionRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
 
-                                            sessionId,
-                                            sessionPatch,
+                                      sessionId,
+                                      sessionPatch,
 
-                                            cancellationToken) => {
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchSessionRequest",
                     JSONObject.Create(
 
@@ -16693,26 +16665,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPatchSessionResponse
 
-            OnPatchSessionResponse += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             remotePartyId,
-                                             from,
-                                             to,
+            OnPatchSessionResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
 
-                                             sessionId,
-                                             sessionPatch,
+                                       sessionId,
+                                       sessionPatch,
 
-                                             runtime,
-                                             cancellationToken) => {
+                                       runtime,
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchSessionResponse",
                     JSONObject.Create(
 
@@ -16737,25 +16707,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
 
             #region OnPostCDRRequest
 
-            OnPostCDRRequest += async (timestamp,
-                                       sender,
-                                       eventTrackingId,
-                                       remotePartyId,
-                                       from,
-                                       to,
+            OnPostCDRRequest += (timestamp,
+                                 sender,
+                                 eventTrackingId,
+                                 remotePartyId,
+                                 from,
+                                 to,
 
-                                       cdr,
+                                 cdr,
 
-                                       cancellationToken) => {
+                                 cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostCDRRequest",
                     JSONObject.Create(
 
@@ -16796,26 +16764,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPostCDRResponse
 
-            OnPostCDRResponse += async (timestamp,
-                                        sender,
-                                        eventTrackingId,
-                                        remotePartyId,
-                                        from,
-                                        to,
+            OnPostCDRResponse += (timestamp,
+                                  sender,
+                                  eventTrackingId,
+                                  remotePartyId,
+                                  from,
+                                  to,
 
-                                        cdr,
-                                        cdrLocation,
+                                  cdr,
+                                  cdrLocation,
 
-                                        runtime,
-                                        cancellationToken) => {
+                                  runtime,
+                                  cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostCDRResponse",
                     JSONObject.Create(
 
@@ -16860,27 +16826,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
 
             #region OnPostTokenRequest
 
-            OnPostTokenRequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         remotePartyId,
-                                         from,
-                                         to,
+            OnPostTokenRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   remotePartyId,
+                                   from,
+                                   to,
 
-                                         tokenId,
-                                         requestedTokenType,
-                                         locationReference,
+                                   tokenId,
+                                   requestedTokenType,
+                                   locationReference,
 
-                                         cancellationToken) => {
+                                   cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostTokenRequest",
                     JSONObject.Create(
 
@@ -16912,28 +16876,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPostTokenResponse
 
-            OnPostTokenResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          remotePartyId,
-                                          from,
-                                          to,
+            OnPostTokenResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
 
-                                          tokenId,
-                                          requestedTokenType,
-                                          locationReference,
-                                          authorizationInfo,
+                                    tokenId,
+                                    requestedTokenType,
+                                    locationReference,
+                                    authorizationInfo,
 
-                                          runtime,
-                                          cancellationToken) => {
+                                    runtime,
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostTokenResponse",
                     JSONObject.Create(
 
@@ -16974,8 +16936,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
         }
@@ -16996,25 +16956,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region OnStartSessionRequest/-Response
 
-            Client.OnStartSessionRequest += async (timestamp,
-                                                   sender,
-                                                   eventTrackingId,
-                                                   remotePartyId,
-                                                   from,
-                                                   to,
-                                                   requestId,
-                                                   correlationId,
-                                                   requestTimeout,
+            Client.OnStartSessionRequest += (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             remotePartyId,
+                                             from,
+                                             to,
+                                             requestId,
+                                             correlationId,
+                                             requestTimeout,
 
-                                                   token,
-                                                   locationId,
-                                                   evseUId,
-                                                   connectorId,
-                                                   authorizationReference,
+                                             token,
+                                             locationId,
+                                             evseUId,
+                                             connectorId,
+                                             authorizationReference,
 
-                                                   cancellationToken) => {
+                                             cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnStartSessionRequest",
                     JSONObject.Create(
 
@@ -17053,30 +17013,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
 
+            Client.OnStartSessionResponse += (timestamp,
+                                              sender,
+                                              eventTrackingId,
+                                              remotePartyId,
+                                              from,
+                                              to,
+                                              requestId,
+                                              correlationId,
+                                              requestTimeout,
 
-            Client.OnStartSessionResponse += async (timestamp,
-                                                    sender,
-                                                    eventTrackingId,
-                                                    remotePartyId,
-                                                    from,
-                                                    to,
-                                                    requestId,
-                                                    correlationId,
-                                                    requestTimeout,
+                                              token,
+                                              locationId,
+                                              evseUId,
+                                              connectorId,
+                                              authorizationReference,
 
-                                                    token,
-                                                    locationId,
-                                                    evseUId,
-                                                    connectorId,
-                                                    authorizationReference,
+                                              response,
+                                              runtime,
+                                              cancellationToken) =>
 
-                                                    response,
-                                                    runtime,
-                                                    cancellationToken) => {
-
-                await Processor(
+                Processor(
                     "OnStartSessionResponse",
                     JSONObject.Create(
 
@@ -17119,27 +17077,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnStopSessionRequest/-Response
 
-            Client.OnStopSessionRequest += async (timestamp,
-                                                  sender,
-                                                  eventTrackingId,
-                                                  remotePartyId,
-                                                  from,
-                                                  to,
-                                                  requestId,
-                                                  correlationId,
-                                                  requestTimeout,
+            Client.OnStopSessionRequest += (timestamp,
+                                            sender,
+                                            eventTrackingId,
+                                            remotePartyId,
+                                            from,
+                                            to,
+                                            requestId,
+                                            correlationId,
+                                            requestTimeout,
 
-                                                  sessionId,
+                                            sessionId,
 
-                                                  cancellationToken) => {
+                                            cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnStopSessionRequest",
                     JSONObject.Create(
 
@@ -17165,26 +17121,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     cancellationToken
                 );
 
-            };
 
+            Client.OnStopSessionResponse += (timestamp,
+                                             sender,
+                                             eventTrackingId,
+                                             remotePartyId,
+                                             from,
+                                             to,
+                                             requestId,
+                                             correlationId,
+                                             requestTimeout,
 
-            Client.OnStopSessionResponse += async (timestamp,
-                                                   sender,
-                                                   eventTrackingId,
-                                                   remotePartyId,
-                                                   from,
-                                                   to,
-                                                   requestId,
-                                                   correlationId,
-                                                   requestTimeout,
+                                             sessionId,
 
-                                                   sessionId,
+                                             response,
+                                             runtime,
+                                             cancellationToken) =>
 
-                                                   response,
-                                                   runtime,
-                                                   cancellationToken) => {
-
-                await Processor(
+                Processor(
                     "OnStopSessionResponse",
                     JSONObject.Create(
 
@@ -17213,8 +17167,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 

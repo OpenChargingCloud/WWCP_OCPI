@@ -42,117 +42,81 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
         #region (class) APICounters
 
-        public class APICounters : CommonAPICounters
+        public class APICounters(APICounterValues? GetVersions                = null,
+                                 APICounterValues? Register                   = null,
+
+                                 APICounterValues? GetLocations               = null,
+                                 APICounterValues? GetLocation                = null,
+                                 APICounterValues? GetEVSE                    = null,
+                                 APICounterValues? GetConnector               = null,
+
+                                 APICounterValues? GetTariffs                 = null,
+                                 APICounterValues? GetTariff                  = null,
+
+                                 APICounterValues? GetSessions                = null,
+                                 APICounterValues? GetSession                 = null,
+
+                                 APICounterValues? GetCDRs                    = null,
+                                 APICounterValues? GetCDR                     = null,
+
+                                 APICounterValues? GetToken                   = null,
+                                 APICounterValues? PutToken                   = null,
+                                 APICounterValues? PatchToken                 = null,
+
+                                 APICounterValues? ReserveNow                 = null,
+                                 APICounterValues? CancelReservation          = null,
+                                 APICounterValues? StartSession               = null,
+                                 APICounterValues? StopSession                = null,
+                                 APICounterValues? UnlockConnector            = null,
+                                 APICounterValues? SetChargingProfile         = null,
+
+                                 APICounterValues? NotifyWebPaymentsStarted   = null,
+                                 APICounterValues? NotifyWebPaymentsFailed    = null)
+
+            : CommonAPICounters(
+                  GetVersions,
+                  Register
+              )
+
         {
 
             #region Properties
 
-            public APICounterValues  GetLocations                { get; }
-            public APICounterValues  GetLocation                 { get; }
-            public APICounterValues  GetEVSE                     { get; }
-            public APICounterValues  GetConnector                { get; }
+            public APICounterValues GetLocations                { get; } = GetLocations             ?? new APICounterValues();
+            public APICounterValues GetLocation                 { get; } = GetLocation              ?? new APICounterValues();
+            public APICounterValues GetEVSE                     { get; } = GetEVSE                  ?? new APICounterValues();
+            public APICounterValues GetConnector                { get; } = GetConnector             ?? new APICounterValues();
 
 
-            public APICounterValues  GetTariffs                  { get; }
-            public APICounterValues  GetTariff                   { get; }
+            public APICounterValues GetTariffs                  { get; } = GetTariffs               ?? new APICounterValues();
+            public APICounterValues GetTariff                   { get; } = GetTariff                ?? new APICounterValues();
 
 
-            public APICounterValues  GetSessions                 { get; }
-            public APICounterValues  GetSession                  { get; }
+            public APICounterValues GetSessions                 { get; } = GetSessions              ?? new APICounterValues();
+            public APICounterValues GetSession                  { get; } = GetSession               ?? new APICounterValues();
 
 
-            public APICounterValues  GetCDRs                     { get; }
-            public APICounterValues  GetCDR                      { get; }
+            public APICounterValues GetCDRs                     { get; } = GetCDRs                  ?? new APICounterValues();
+            public APICounterValues GetCDR                      { get; } = GetCDR                   ?? new APICounterValues();
 
 
-            public APICounterValues  GetToken                    { get; }
-            public APICounterValues  PutToken                    { get; }
-            public APICounterValues  PatchToken                  { get; }
+            public APICounterValues GetToken                    { get; } = GetToken                 ?? new APICounterValues();
+            public APICounterValues PutToken                    { get; } = PutToken                 ?? new APICounterValues();
+            public APICounterValues PatchToken                  { get; } = PatchToken               ?? new APICounterValues();
 
-            public APICounterValues  ReserveNow                  { get; }
-            public APICounterValues  CancelReservation           { get; }
-            public APICounterValues  StartSession                { get; }
-            public APICounterValues  StopSession                 { get; }
-            public APICounterValues  UnlockConnector             { get; }
-            public APICounterValues  SetChargingProfile          { get; }
+            public APICounterValues ReserveNow                  { get; } = ReserveNow               ?? new APICounterValues();
+            public APICounterValues CancelReservation           { get; } = CancelReservation        ?? new APICounterValues();
+            public APICounterValues StartSession                { get; } = StartSession             ?? new APICounterValues();
+            public APICounterValues StopSession                 { get; } = StopSession              ?? new APICounterValues();
+            public APICounterValues UnlockConnector             { get; } = UnlockConnector          ?? new APICounterValues();
+            public APICounterValues SetChargingProfile          { get; } = SetChargingProfile       ?? new APICounterValues();
 
 
             // Open Charging Cloud Extensions
-            public APICounterValues  NotifyWebPaymentsStarted    { get; }
-            public APICounterValues  NotifyWebPaymentsFailed     { get; }
+            public APICounterValues NotifyWebPaymentsStarted    { get; } = NotifyWebPaymentsStarted ?? new APICounterValues();
+            public APICounterValues NotifyWebPaymentsFailed     { get; } = NotifyWebPaymentsFailed  ?? new APICounterValues();
 
             #endregion
-
-            #region Constructor(s)
-
-            public APICounters(APICounterValues?  GetVersions                = null,
-                               APICounterValues?  Register                   = null,
-
-                               APICounterValues?  GetLocations               = null,
-                               APICounterValues?  GetLocation                = null,
-                               APICounterValues?  GetEVSE                    = null,
-                               APICounterValues?  GetConnector               = null,
-
-                               APICounterValues?  GetTariffs                 = null,
-                               APICounterValues?  GetTariff                  = null,
-
-                               APICounterValues?  GetSessions                = null,
-                               APICounterValues?  GetSession                 = null,
-
-                               APICounterValues?  GetCDRs                    = null,
-                               APICounterValues?  GetCDR                     = null,
-
-                               APICounterValues?  GetToken                   = null,
-                               APICounterValues?  PutToken                   = null,
-                               APICounterValues?  PatchToken                 = null,
-
-                               APICounterValues?  ReserveNow                 = null,
-                               APICounterValues?  CancelReservation          = null,
-                               APICounterValues?  StartSession               = null,
-                               APICounterValues?  StopSession                = null,
-                               APICounterValues?  UnlockConnector            = null,
-                               APICounterValues?  SetChargingProfile         = null,
-
-                               APICounterValues?  NotifyWebPaymentsStarted   = null,
-                               APICounterValues?  NotifyWebPaymentsFailed    = null)
-
-                : base(GetVersions,
-                       Register)
-
-            {
-
-                this.GetLocations              = GetLocations             ?? new APICounterValues();
-                this.GetLocation               = GetLocation              ?? new APICounterValues();
-                this.GetEVSE                   = GetEVSE                  ?? new APICounterValues();
-                this.GetConnector              = GetConnector             ?? new APICounterValues();
-
-                this.GetTariffs                = GetTariffs               ?? new APICounterValues();
-                this.GetTariff                 = GetTariff                ?? new APICounterValues();
-
-                this.GetSessions               = GetSessions              ?? new APICounterValues();
-                this.GetSession                = GetSession               ?? new APICounterValues();
-
-                this.GetCDRs                   = GetCDRs                  ?? new APICounterValues();
-                this.GetCDR                    = GetCDR                   ?? new APICounterValues();
-
-                this.GetToken                  = GetToken                 ?? new APICounterValues();
-                this.PutToken                  = PutToken                 ?? new APICounterValues();
-                this.PatchToken                = PatchToken               ?? new APICounterValues();
-
-                this.ReserveNow                = ReserveNow               ?? new APICounterValues();
-                this.CancelReservation         = CancelReservation        ?? new APICounterValues();
-                this.StartSession              = StartSession             ?? new APICounterValues();
-                this.StopSession               = StopSession              ?? new APICounterValues();
-                this.UnlockConnector           = UnlockConnector          ?? new APICounterValues();
-                this.SetChargingProfile        = SetChargingProfile       ?? new APICounterValues();
-
-                this.NotifyWebPaymentsStarted  = NotifyWebPaymentsStarted ?? new APICounterValues();
-                this.NotifyWebPaymentsFailed   = NotifyWebPaymentsFailed  ?? new APICounterValues();
-
-            }
-
-            #endregion
-
 
             #region ToJSON()
 
@@ -823,14 +787,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
-            GetLocations(DateTimeOffset?    From                = null,
-                         DateTimeOffset?    To                  = null,
+            GetLocations(DateTimeOffset?    FromTimestamp       = null,
+                         DateTimeOffset?    ToTimestamp         = null,
                          UInt64?            Offset              = null,
                          UInt64?            Limit               = null,
 
-                         Version_Id?        VersionId           = null,
+                         Party_Idv3?        From                = null,
+                         Party_Idv3?        To                  = null,
                          Request_Id?        RequestId           = null,
                          Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
                          DateTimeOffset?    RequestTimestamp    = null,
                          EventTracking_Id?  EventTrackingId     = null,
@@ -864,12 +830,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -893,8 +862,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                     #region Upstream HTTP request...
 
                     var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
-                                                        From,
-                                                        To,
+                                                        FromTimestamp,
+                                                        ToTimestamp,
                                                         Offset,
                                                         Limit
                                                     );
@@ -953,15 +922,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -991,9 +962,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             GetLocation(Location_Id        LocationId,
 
-                        Version_Id?        VersionId           = null,
+                        Party_Idv3?        From                = null,
+                        Party_Idv3?        To                  = null,
                         Request_Id?        RequestId           = null,
                         Correlation_Id?    CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
 
                         DateTimeOffset?    RequestTimestamp    = null,
                         EventTracking_Id?  EventTrackingId     = null,
@@ -1027,14 +1000,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1111,17 +1087,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1153,9 +1131,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             GetEVSE(Location_Id        LocationId,
                     EVSE_UId           EVSEUId,
 
-                    Version_Id?        VersionId           = null,
+                    Party_Idv3?        From                = null,
+                    Party_Idv3?        To                  = null,
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
                     DateTimeOffset?    RequestTimestamp    = null,
                     EventTracking_Id?  EventTrackingId     = null,
@@ -1189,15 +1169,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1275,18 +1258,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1316,13 +1301,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            GetConnector(Location_Id         LocationId,
-                         EVSE_UId            EVSEUId,
-                         Connector_Id        ConnectorId,
+            GetConnector(Location_Id        LocationId,
+                         EVSE_UId           EVSEUId,
+                         Connector_Id       ConnectorId,
 
-                         Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                         Party_Idv3?        From                = null,
+                         Party_Idv3?        To                  = null,
+                         Request_Id?        RequestId           = null,
+                         Correlation_Id?    CorrelationId       = null,
+                         Version_Id?        VersionId           = null,
 
                          DateTimeOffset?    RequestTimestamp    = null,
                          EventTracking_Id?  EventTrackingId     = null,
@@ -1356,16 +1343,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1444,19 +1434,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1474,8 +1466,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <summary>
         /// Get all tariffs from the remote API.
         /// </summary>
-        /// <param name="From">An optional 'from' timestamp (inclusive).</param>
-        /// <param name="To">An optional 'to' timestamp (exclusive).</param>
+        /// <param name="FromTimestamp">An optional 'from' timestamp (inclusive).</param>
+        /// <param name="ToTimestamp">An optional 'to' timestamp (exclusive).</param>
         /// <param name="Offset">An optional 'offset' within the result set.</param>
         /// <param name="Limit">An optional 'limit' of the result set.</param>
         /// 
@@ -1488,14 +1480,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
-            GetTariffs(DateTimeOffset?    From                = null,
-                       DateTimeOffset?    To                  = null,
+            GetTariffs(DateTimeOffset?    FromTimestamp       = null,
+                       DateTimeOffset?    ToTimestamp         = null,
                        UInt64?            Offset              = null,
                        UInt64?            Limit               = null,
 
-                       Version_Id?        VersionId           = null,
+                       Party_Idv3?        From                = null,
+                       Party_Idv3?        To                  = null,
                        Request_Id?        RequestId           = null,
                        Correlation_Id?    CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
 
                        DateTimeOffset?    RequestTimestamp    = null,
                        EventTracking_Id?  EventTrackingId     = null,
@@ -1529,17 +1523,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
-                          requestId,
-                          correlationId,
-
+                          eventTrackingId,
+                          RemoteParty.Id,
                           From,
                           To,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          FromTimestamp,
+                          ToTimestamp,
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1563,8 +1560,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                     #region Upstream HTTP request...
 
                     var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
-                                                        From,
-                                                        To,
+                                                        FromTimestamp,
+                                                        ToTimestamp,
                                                         Offset,
                                                         Limit
                                                     );
@@ -1623,20 +1620,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
-                          requestId,
-                          correlationId,
-
+                          eventTrackingId,
+                          RemoteParty.Id,
                           From,
                           To,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          FromTimestamp,
+                          ToTimestamp,
                           Offset,
                           Limit,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1668,9 +1667,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       DateTimeOffset?    TariffTimestamp     = null,
                       TimeSpan?          Tolerance           = null,
 
-                      Version_Id?        VersionId           = null,
+                      Party_Idv3?        From                = null,
+                      Party_Idv3?        To                  = null,
                       Request_Id?        RequestId           = null,
                       Correlation_Id?    CorrelationId       = null,
+                      Version_Id?        VersionId           = null,
 
                       DateTimeOffset?    RequestTimestamp    = null,
                       EventTracking_Id?  EventTrackingId     = null,
@@ -1704,16 +1705,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TariffId,
                           TariffTimestamp,
                           Tolerance,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1790,19 +1794,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           TariffId,
                           TariffTimestamp,
                           Tolerance,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -1834,14 +1840,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
-            GetSessions(DateTimeOffset?    From                = null,
-                        DateTimeOffset?    To                  = null,
+            GetSessions(DateTimeOffset?    FromTimestamp       = null,
+                        DateTimeOffset?    ToTimestamp         = null,
                         UInt64?            Offset              = null,
                         UInt64?            Limit               = null,
 
-                        Version_Id?        VersionId           = null,
+                        Party_Idv3?        From                = null,
+                        Party_Idv3?        To                  = null,
                         Request_Id?        RequestId           = null,
                         Correlation_Id?    CorrelationId       = null,
+                        Version_Id?        VersionId           = null,
 
                         DateTimeOffset?    RequestTimestamp    = null,
                         EventTracking_Id?  EventTrackingId     = null,
@@ -1875,12 +1883,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -1904,8 +1915,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                     #region Upstream HTTP request...
 
                     var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
-                                                        From,
-                                                        To,
+                                                        FromTimestamp,
+                                                        ToTimestamp,
                                                         Offset,
                                                         Limit
                                                     );
@@ -1980,15 +1991,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2018,9 +2031,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             GetSession(Session_Id         SessionId,
 
-                       Version_Id?        VersionId           = null,
+                       Party_Idv3?        From                = null,
+                       Party_Idv3?        To                  = null,
                        Request_Id?        RequestId           = null,
                        Correlation_Id?    CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
 
                        DateTimeOffset?    RequestTimestamp    = null,
                        EventTracking_Id?  EventTrackingId     = null,
@@ -2054,14 +2069,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2140,17 +2158,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           SessionId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2184,14 +2204,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
-            GetCDRs(DateTimeOffset?    From                = null,
-                    DateTimeOffset?    To                  = null,
+            GetCDRs(DateTimeOffset?    FromTimestamp       = null,
+                    DateTimeOffset?    ToTimestamp         = null,
                     UInt64?            Offset              = null,
                     UInt64?            Limit               = null,
 
-                    Version_Id?        VersionId           = null,
+                    Party_Idv3?        From                = null,
+                    Party_Idv3?        To                  = null,
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
+                    Version_Id?        VersionId           = null,
 
                     DateTimeOffset?    RequestTimestamp    = null,
                     EventTracking_Id?  EventTrackingId     = null,
@@ -2225,12 +2247,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2254,8 +2279,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                     #region Upstream HTTP request...
 
                     var dateAndPaginationFilters  = new OCPIRequest.DateAndPaginationFilters(
-                                                        From,
-                                                        To,
+                                                        FromTimestamp,
+                                                        ToTimestamp,
                                                         Offset,
                                                         Limit
                                                     );
@@ -2314,15 +2339,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
-
-                          CancellationToken,
-                          eventTrackingId,
                           requestTimeout,
 
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2352,9 +2379,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             GetCDR(CDR_Id             CDRId,
 
-                   Version_Id?        VersionId           = null,
+                   Party_Idv3?        From                = null,
+                   Party_Idv3?        To                  = null,
                    Request_Id?        RequestId           = null,
                    Correlation_Id?    CorrelationId       = null,
+                   Version_Id?        VersionId           = null,
 
                    DateTimeOffset?    RequestTimestamp    = null,
                    EventTracking_Id?  EventTrackingId     = null,
@@ -2388,14 +2417,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDRId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2472,17 +2504,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CDRId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2509,6 +2543,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                      Party_Id           PartyId,
                      Token_Id           TokenId,
 
+                     Party_Idv3?        From                = null,
+                     Party_Idv3?        To                  = null,
                      Request_Id?        RequestId           = null,
                      Correlation_Id?    CorrelationId       = null,
                      Version_Id?        VersionId           = null,
@@ -2545,16 +2581,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TokenId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2635,19 +2674,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TokenId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2673,6 +2714,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
             PutToken(Token              Token,
 
+                     Party_Idv3?        From                = null,
+                     Party_Idv3?        To                  = null,
                      Request_Id?        RequestId           = null,
                      Correlation_Id?    CorrelationId       = null,
                      Version_Id?        VersionId           = null,
@@ -2709,14 +2752,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Token,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2796,17 +2842,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Token,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -2833,9 +2881,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                        Token_Id            TokenId,
                        JObject             TokenPatch,
 
-                       Version_Id?         VersionId           = null,
+                       Party_Idv3?         From                = null,
+                       Party_Idv3?         To                  = null,
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
+                       Version_Id?         VersionId           = null,
 
                        DateTimeOffset?     RequestTimestamp    = null,
                        EventTracking_Id?   EventTrackingId     = null,
@@ -2876,17 +2926,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TokenId,
                           TokenPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -2966,20 +3019,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           CountryCode,
                           PartyId,
                           TokenId,
                           TokenPatch,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3035,6 +3090,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                        EVSE_UId?                EVSEUId                  = null,
                        AuthorizationReference?  AuthorizationReference   = null,
 
+                       Party_Idv3?              From                     = null,
+                       Party_Idv3?              To                       = null,
                        Command_Id?              CommandId                = null,
                        Request_Id?              RequestId                = null,
                        Correlation_Id?          CorrelationId            = null,
@@ -3073,8 +3130,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Token,
                           ExpirationTimestamp,
@@ -3083,9 +3145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           EVSEUId,
                           AuthorizationReference,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3195,8 +3255,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           Token,
                           ExpirationTimestamp,
@@ -3205,12 +3270,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           EVSEUId,
                           AuthorizationReference,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3232,12 +3294,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<OCPIResponse<CancelReservationCommand, CommandResponse>>
 
-            CancelReservation(Reservation_Id      ReservationId,
+            CancelReservation(Reservation_Id     ReservationId,
 
-                              Command_Id?         CommandId           = null,
-                              Request_Id?         RequestId           = null,
-                              Correlation_Id?     CorrelationId       = null,
-                              Version_Id?         VersionId           = null,
+                              Party_Idv3?        From                = null,
+                              Party_Idv3?        To                  = null,
+                              Command_Id?        CommandId           = null,
+                              Request_Id?        RequestId           = null,
+                              Correlation_Id?    CorrelationId       = null,
+                              Version_Id?        VersionId           = null,
 
                               DateTimeOffset?    RequestTimestamp    = null,
                               EventTracking_Id?  EventTrackingId     = null,
@@ -3272,14 +3336,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           ReservationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3381,17 +3448,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           ReservationId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -3816,6 +3885,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                             EVSE_UId           EVSEUId,
                             Connector_Id       ConnectorId,
 
+                            Party_Idv3?        From                = null,
+                            Party_Idv3?        To                  = null,
                             Command_Id?        CommandId           = null,
                             Request_Id?        RequestId           = null,
                             Correlation_Id?    CorrelationId       = null,
@@ -3854,16 +3925,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -3968,19 +4042,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
                           ConnectorId,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4015,6 +4091,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                      TimeSpan?          Timeout             = null,
                                      JObject?           CustomData          = null,
 
+                                     Party_Idv3?        From                = null,
+                                     Party_Idv3?        To                  = null,
                                      Command_Id?        CommandId           = null,
                                      Request_Id?        RequestId           = null,
                                      Correlation_Id?    CorrelationId       = null,
@@ -4053,8 +4131,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
@@ -4063,9 +4146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           Timeout,
                           CustomData,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4177,8 +4258,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
@@ -4187,12 +4273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           Timeout,
                           CustomData,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
@@ -4221,6 +4304,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                     DisplayTexts?      ErrorMessage        = null,
                                     JObject?           CustomData          = null,
 
+                                    Party_Idv3?        From                = null,
+                                    Party_Idv3?        To                  = null,
                                     Command_Id?        CommandId           = null,
                                     Request_Id?        RequestId           = null,
                                     Correlation_Id?    CorrelationId       = null,
@@ -4259,8 +4344,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           startTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
@@ -4269,9 +4359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           ErrorMessage,
                           CustomData,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout
+                          CancellationToken
                       )
                   );
 
@@ -4383,8 +4471,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                       loggingDelegate => loggingDelegate.Invoke(
                           endTime,
                           this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
+                          requestTimeout,
 
                           LocationId,
                           EVSEUId,
@@ -4393,12 +4486,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                           ErrorMessage,
                           CustomData,
 
-                          CancellationToken,
-                          eventTrackingId,
-                          requestTimeout,
-
                           response,
-                          stopwatch.Elapsed
+                          stopwatch.Elapsed,
+                          CancellationToken
                       )
                   );
 
