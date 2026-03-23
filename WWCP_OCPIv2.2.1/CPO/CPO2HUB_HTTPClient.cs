@@ -42,123 +42,83 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
         #region (class) APICounters
 
-        public class APICounters : CommonAPICounters
+        public class APICounters(APICounterValues?  GetVersions          = null,
+                                 APICounterValues?  Register             = null,
+
+                                 APICounterValues?  GetLocation          = null,
+                                 APICounterValues?  PutLocation          = null,
+                                 APICounterValues?  PatchLocation        = null,
+
+                                 APICounterValues?  GetEVSE              = null,
+                                 APICounterValues?  PutEVSE              = null,
+                                 APICounterValues?  PatchEVSE            = null,
+
+                                 APICounterValues?  PostEVSEStatus       = null,
+
+                                 APICounterValues?  GetConnector         = null,
+                                 APICounterValues?  PutConnector         = null,
+                                 APICounterValues?  PatchConnector       = null,
+
+                                 APICounterValues?  GetTariff            = null,
+                                 APICounterValues?  PutTariff            = null,
+                                 APICounterValues?  PatchTariff          = null,
+                                 APICounterValues?  DeleteTariff         = null,
+
+                                 APICounterValues?  GetSession           = null,
+                                 APICounterValues?  PutSession           = null,
+                                 APICounterValues?  PatchSession         = null,
+                                 APICounterValues?  DeleteSession        = null,
+
+                                 APICounterValues?  PostCDR              = null,
+                                 APICounterValues?  GetCDR               = null,
+
+                                 APICounterValues?  GetTokens            = null,
+                                 APICounterValues?  PostToken            = null,
+
+                                 APICounterValues?  SetChargingProfile   = null)
+
+            : CommonAPICounters(
+                  GetVersions,
+                  Register
+              )
+
         {
 
             #region Properties
 
-            public APICounterValues  GetLocation           { get; }
-            public APICounterValues  PutLocation           { get; }
-            public APICounterValues  PatchLocation         { get; }
+            public APICounterValues  GetLocation           { get; } = GetLocation        ?? new APICounterValues();
+            public APICounterValues  PutLocation           { get; } = PutLocation        ?? new APICounterValues();
+            public APICounterValues  PatchLocation         { get; } = PatchLocation      ?? new APICounterValues();
 
-            public APICounterValues  GetEVSE               { get; }
-            public APICounterValues  PutEVSE               { get; }
-            public APICounterValues  PatchEVSE             { get; }
+            public APICounterValues  GetEVSE               { get; } = GetEVSE            ?? new APICounterValues();
+            public APICounterValues  PutEVSE               { get; } = PutEVSE            ?? new APICounterValues();
+            public APICounterValues  PatchEVSE             { get; } = PatchEVSE          ?? new APICounterValues();
 
-            public APICounterValues  PostEVSEStatus        { get; }
+            public APICounterValues  PostEVSEStatus        { get; } = PostEVSEStatus     ?? new APICounterValues();
 
-            public APICounterValues  GetConnector          { get; }
-            public APICounterValues  PutConnector          { get; }
-            public APICounterValues  PatchConnector        { get; }
+            public APICounterValues  GetConnector          { get; } = GetConnector       ?? new APICounterValues();
+            public APICounterValues  PutConnector          { get; } = PutConnector       ?? new APICounterValues();
+            public APICounterValues  PatchConnector        { get; } = PatchConnector     ?? new APICounterValues();
 
-            public APICounterValues  GetTariff             { get; }
-            public APICounterValues  PutTariff             { get; }
-            public APICounterValues  PatchTariff           { get; }
-            public APICounterValues  DeleteTariff          { get; }
+            public APICounterValues  GetTariff             { get; } = GetTariff          ?? new APICounterValues();
+            public APICounterValues  PutTariff             { get; } = PutTariff          ?? new APICounterValues();
+            public APICounterValues  PatchTariff           { get; } = PatchTariff        ?? new APICounterValues();
+            public APICounterValues  DeleteTariff          { get; } = DeleteTariff       ?? new APICounterValues();
 
-            public APICounterValues  GetSession            { get; }
-            public APICounterValues  PutSession            { get; }
-            public APICounterValues  PatchSession          { get; }
-            public APICounterValues  DeleteSession         { get; }
+            public APICounterValues  GetSession            { get; } = GetSession         ?? new APICounterValues();
+            public APICounterValues  PutSession            { get; } = PutSession         ?? new APICounterValues();
+            public APICounterValues  PatchSession          { get; } = PatchSession       ?? new APICounterValues();
+            public APICounterValues  DeleteSession         { get; } = DeleteSession      ?? new APICounterValues();
 
-            public APICounterValues  PostCDR               { get; }
-            public APICounterValues  GetCDR                { get; }
+            public APICounterValues  PostCDR               { get; } = PostCDR            ?? new APICounterValues();
+            public APICounterValues  GetCDR                { get; } = GetCDR             ?? new APICounterValues();
 
-            public APICounterValues  GetTokens             { get; }
-            public APICounterValues  PostToken             { get; }
+            public APICounterValues  GetTokens             { get; } = GetTokens          ?? new APICounterValues();
+            public APICounterValues  PostToken             { get; } = PostToken          ?? new APICounterValues();
 
-            public APICounterValues  SetChargingProfile    { get; }
-
-            #endregion
-
-            #region Constructor(s)
-
-            public APICounters(APICounterValues?  GetVersions          = null,
-                               APICounterValues?  Register             = null,
-
-                               APICounterValues?  GetLocation          = null,
-                               APICounterValues?  PutLocation          = null,
-                               APICounterValues?  PatchLocation        = null,
-
-                               APICounterValues?  GetEVSE              = null,
-                               APICounterValues?  PutEVSE              = null,
-                               APICounterValues?  PatchEVSE            = null,
-
-                               APICounterValues?  PostEVSEStatus       = null,
-
-                               APICounterValues?  GetConnector         = null,
-                               APICounterValues?  PutConnector         = null,
-                               APICounterValues?  PatchConnector       = null,
-
-                               APICounterValues?  GetTariff            = null,
-                               APICounterValues?  PutTariff            = null,
-                               APICounterValues?  PatchTariff          = null,
-                               APICounterValues?  DeleteTariff         = null,
-
-                               APICounterValues?  GetSession           = null,
-                               APICounterValues?  PutSession           = null,
-                               APICounterValues?  PatchSession         = null,
-                               APICounterValues?  DeleteSession        = null,
-
-                               APICounterValues?  PostCDR              = null,
-                               APICounterValues?  GetCDR               = null,
-
-                               APICounterValues?  GetTokens            = null,
-                               APICounterValues?  PostToken            = null,
-
-                               APICounterValues?  SetChargingProfile   = null)
-
-                : base(GetVersions,
-                       Register)
-
-            {
-
-                this.GetLocation         = GetLocation        ?? new APICounterValues();
-                this.PutLocation         = PutLocation        ?? new APICounterValues();
-                this.PatchLocation       = PatchLocation      ?? new APICounterValues();
-
-                this.GetEVSE             = GetEVSE            ?? new APICounterValues();
-                this.PutEVSE             = PutEVSE            ?? new APICounterValues();
-                this.PatchEVSE           = PatchEVSE          ?? new APICounterValues();
-
-                this.PostEVSEStatus      = PostEVSEStatus     ?? new APICounterValues();
-
-                this.GetConnector        = GetConnector       ?? new APICounterValues();
-                this.PutConnector        = PutConnector       ?? new APICounterValues();
-                this.PatchConnector      = PatchConnector     ?? new APICounterValues();
-
-                this.GetTariff           = GetTariff          ?? new APICounterValues();
-                this.PutTariff           = PutTariff          ?? new APICounterValues();
-                this.PatchTariff         = PatchTariff        ?? new APICounterValues();
-                this.DeleteTariff        = DeleteTariff       ?? new APICounterValues();
-
-                this.GetSession          = GetSession         ?? new APICounterValues();
-                this.PutSession          = PutSession         ?? new APICounterValues();
-                this.PatchSession        = PatchSession       ?? new APICounterValues();
-                this.DeleteSession       = DeleteSession      ?? new APICounterValues();
-
-                this.PostCDR             = PostCDR            ?? new APICounterValues();
-                this.GetCDR              = GetCDR             ?? new APICounterValues();
-
-                this.GetTokens           = GetTokens          ?? new APICounterValues();
-                this.PostToken           = PostToken          ?? new APICounterValues();
-
-                this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
-
-            }
+            public APICounterValues  SetChargingProfile    { get; } = SetChargingProfile ?? new APICounterValues();
 
             #endregion
-
 
             #region ToJSON()
 
@@ -1613,8 +1573,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE               EVSE,
-                    HUB_Id?           HUBId              = null,
+                    HUB_Id?            HUBId               = null,
 
+                    Party_Idv3?        From                = null,
+                    Party_Idv3?        To                  = null,
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
                     Version_Id?        VersionId           = null,
@@ -1637,6 +1599,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                              EVSE,
                              HUBId,
 
+                             From,
+                             To,
                              RequestId,
                              CorrelationId,
                              VersionId,
@@ -1671,8 +1635,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                     Party_Id           PartyId,
                     Location_Id        LocationId,
                     EVSE               EVSE,
-                    HUB_Id?           HUBId              = null,
+                    HUB_Id?            HUBId               = null,
 
+                    Party_Idv3?        From                = null,
+                    Party_Idv3?        To                  = null,
                     Request_Id?        RequestId           = null,
                     Correlation_Id?    CorrelationId       = null,
                     Version_Id?        VersionId           = null,
@@ -1710,6 +1676,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                           startTime,
                           this,
                           eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
                           requestTimeout,
@@ -1811,6 +1780,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                           endTime,
                           this,
                           eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
                           requestTimeout,
@@ -1850,6 +1822,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                       EVSE_UId           EVSEUId,
                       JObject            EVSEPatch,
 
+                      Party_Idv3?        From                = null,
+                      Party_Idv3?        To                  = null,
                       Request_Id?        RequestId           = null,
                       Correlation_Id?    CorrelationId       = null,
                       Version_Id?        VersionId           = null,
@@ -1894,6 +1868,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                           startTime,
                           this,
                           eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
                           requestTimeout,
@@ -1986,6 +1963,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                           endTime,
                           this,
                           eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
                           requestId,
                           correlationId,
                           requestTimeout,
