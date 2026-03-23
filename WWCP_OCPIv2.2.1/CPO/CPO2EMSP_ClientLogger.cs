@@ -50,171 +50,189 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region OnPutLocationRequest
 
-            OnPutLocationRequest += async (timestamp,
-                                           sender,
-                                           eventTrackingId,
-                                           requestId,
-                                           correlationId,
-                                           requestTimeout,
+            OnPutLocationRequest += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     remotePartyId,
+                                     from,
+                                     to,
+                                     requestId,
+                                     correlationId,
+                                     requestTimeout,
 
-                                           //countryCode,
-                                           //partyId,
-                                           location,
+                                     //countryCode,
+                                     //partyId,
+                                     location,
 
-                                           cancellationToken) => {
+                                     cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutLocationRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              //new JProperty("countryCode",     countryCode.ToString()),
-                              //new JProperty("partyId",         partyId.    ToString()),
-                              new JProperty("location",   location.ToJSON())
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              //new JProperty("countryCode",       countryCode.ToString()),
+                              //new JProperty("partyId",           partyId.    ToString()),
+                              new JProperty("location",          location.       ToJSON())
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPutLocationResponse
 
-            OnPutLocationResponse += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            requestId,
-                                            correlationId,
-                                            requestTimeout,
+            OnPutLocationResponse += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
+                                      requestId,
+                                      correlationId,
+                                      requestTimeout,
 
-                                            //countryCode,
-                                            //partyId,
-                                            location,
+                                      //countryCode,
+                                      //partyId,
+                                      location,
 
-                                            response,
-                                            runtime,
-                                            cancellationToken) => {
+                                      response,
+                                      runtime,
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutLocationResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              //new JProperty("countryCode",     countryCode.ToString()),
-                              //new JProperty("partyId",         partyId.    ToString()),
-                              new JProperty("location",    location.ToJSON()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",    response.ToJSON()),
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("location",          location.       ToJSON()),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPatchLocationRequest
 
-            OnPatchLocationRequest += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             requestId,
-                                             correlationId,
-                                             requestTimeout,
+            OnPatchLocationRequest += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
+                                       requestId,
+                                       correlationId,
+                                       requestTimeout,
 
-                                             //countryCode,
-                                             //partyId,
-                                             locationId,
-                                             locationPatch,
+                                       //countryCode,
+                                       //partyId,
+                                       locationId,
+                                       locationPatch,
 
-                                             cancellationToken) => {
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchLocationRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              //new JProperty("countryCode",     countryCode.ToString()),
-                              //new JProperty("partyId",         partyId.    ToString()),
-                              new JProperty("locationId",      locationId. ToString()),
-                              new JProperty("locationPatch",   locationPatch)
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              //new JProperty("countryCode",       countryCode.    ToString()),
+                              //new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("locationPatch",     locationPatch)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPatchLocationResponse
 
-            OnPatchLocationResponse += async (timestamp,
-                                              sender,
-                                              eventTrackingId,
-                                              requestId,
-                                              correlationId,
-                                              requestTimeout,
+            OnPatchLocationResponse += (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        remotePartyId,
+                                        from,
+                                        to,
+                                        requestId,
+                                        correlationId,
+                                        requestTimeout,
 
-                                              //countryCode,
-                                              //partyId,
-                                              locationId,
-                                              locationPatch,
+                                        //countryCode,
+                                        //partyId,
+                                        locationId,
+                                        locationPatch,
 
-                                              response,
-                                              runtime,
-                                              cancellationToken) => {
+                                        response,
+                                        runtime,
+                                        cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchLocationResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              //new JProperty("countryCode",     countryCode.ToString()),
-                              //new JProperty("partyId",         partyId.    ToString()),
-                              new JProperty("locationId",      locationId. ToString()),
-                              new JProperty("locationPatch",   locationPatch),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",        response.   ToJSON()),
-                              new JProperty("runtime",         runtime.TotalSeconds)
+                              //new JProperty("countryCode",       countryCode.    ToString()),
+                              //new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("locationPatch",     locationPatch),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
@@ -414,587 +432,658 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
             #region OnPutConnectorRequest
 
-            OnPutConnectorRequest += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            requestId,
-                                            correlationId,
-                                            requestTimeout,
+            OnPutConnectorRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
+                                      requestId,
+                                      correlationId,
+                                      requestTimeout,
 
-                                            connector,
-                                            //locationId,
-                                            //countryCode,
-                                            //partyId,
+                                      connector,
+                                      //locationId,
+                                      //countryCode,
+                                      //partyId,
 
-                                            cancellationToken) => {
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutConnectorRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("connector",   connector.ToJSON())
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              new JProperty("connector",         connector.      ToJSON())
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPutConnectorResponse
 
-            OnPutConnectorResponse += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             requestId,
-                                             correlationId,
-                                             requestTimeout,
+            OnPutConnectorResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
+                                       requestId,
+                                       correlationId,
+                                       requestTimeout,
 
-                                             connector,
-                                             //locationId,
-                                             //countryCode,
-                                             //partyId,
+                                       connector,
+                                       //locationId,
+                                       //countryCode,
+                                       //partyId,
 
-                                             response,
-                                             runtime,
-                                             cancellationToken) => {
+                                       response,
+                                       runtime,
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutConnectorResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("connector",        connector.    ToJSON()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",    response.ToJSON()),
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("connector",        connector.       ToJSON()),
 
-                    ),
-                    cancellationToken
-                );
-
-            };
-
-            #endregion
-
-            #region OnPatchConnectorRequest
-
-            OnPatchConnectorRequest += async (timestamp,
-                                              sender,
-                                              eventTrackingId,
-                                              requestId,
-                                              correlationId,
-                                              requestTimeout,
-
-                                              countryCode,
-                                              partyId,
-                                              locationId,
-                                              evseUId,
-                                              connectorId,
-                                              connectorPatch,
-
-                                              cancellationToken) => {
-
-                await Processor(
-                    "OnPatchConnectorRequest",
-                    JSONObject.Create(
-
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
-
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
-
-                              //new JProperty("countryCode",     countryCode.ToString()),
-                              //new JProperty("partyId",         partyId.    ToString()),
-                              new JProperty("locationId",       locationId. ToString()),
-                              new JProperty("connectorId",      connectorId.ToString()),
-                              new JProperty("connectorPatch",   connectorPatch)
-
-                    ),
-                    cancellationToken
-                );
-
-            };
-
-            #endregion
-
-            #region OnPatchConnectorResponse
-
-            OnPatchConnectorResponse += async (timestamp,
-                                               sender,
-                                               eventTrackingId,
-                                               requestId,
-                                               correlationId,
-                                               requestTimeout,
-
-                                               countryCode,
-                                               partyId,
-                                               locationId,
-                                               evseUId,
-                                               connectorId,
-                                               connectorPatch,
-
-                                               response,
-                                               runtime,
-                                               cancellationToken) => {
-
-                await Processor(
-                    "OnPatchConnectorResponse",
-                    JSONObject.Create(
-
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
-
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
-
-                              //new JProperty("countryCode",      countryCode.ToString()),
-                              //new JProperty("partyId",          partyId.    ToString()),
-                              new JProperty("locationId",       locationId. ToString()),
-                              new JProperty("evseUId",          evseUId.    ToString()),
-                              new JProperty("connectorId",      connectorId.ToString()),
-                              new JProperty("connectorPatch",   connectorPatch),
-
-                              new JProperty("response",         response.  ToJSON()),
+                              new JProperty("response",         response.        ToJSON()),
                               new JProperty("runtime",          runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
 
-            };
+            #endregion
+
+            #region OnPatchConnectorRequest
+
+            OnPatchConnectorRequest += (timestamp,
+                                        sender,
+                                        eventTrackingId,
+                                        remotePartyId,
+                                        from,
+                                        to,
+                                        requestId,
+                                        correlationId,
+                                        requestTimeout,
+
+                                        countryCode,
+                                        partyId,
+                                        locationId,
+                                        evseUId,
+                                        connectorId,
+                                        connectorPatch,
+
+                                        cancellationToken) =>
+
+                Processor(
+                    "OnPatchConnectorRequest",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
+
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              //new JProperty("countryCode",       countryCode.    ToString()),
+                              //new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("connectorId",       connectorId.    ToString()),
+                              new JProperty("connectorPatch",    connectorPatch)
+
+                    ),
+                    cancellationToken
+                );
+
+            #endregion
+
+            #region OnPatchConnectorResponse
+
+            OnPatchConnectorResponse += (timestamp,
+                                         sender,
+                                         eventTrackingId,
+                                         remotePartyId,
+                                         from,
+                                         to,
+                                         requestId,
+                                         correlationId,
+                                         requestTimeout,
+
+                                         countryCode,
+                                         partyId,
+                                         locationId,
+                                         evseUId,
+                                         connectorId,
+                                         connectorPatch,
+
+                                         response,
+                                         runtime,
+                                         cancellationToken) =>
+
+                Processor(
+                    "OnPatchConnectorResponse",
+                    JSONObject.Create(
+
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
+
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
+
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              //new JProperty("countryCode",       countryCode.    ToString()),
+                              //new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("locationId",        locationId.     ToString()),
+                              new JProperty("evseUId",           evseUId.        ToString()),
+                              new JProperty("connectorId",       connectorId.    ToString()),
+                              new JProperty("connectorPatch",    connectorPatch),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
+
+                    ),
+                    cancellationToken
+                );
 
             #endregion
 
 
             #region OnPutTariffRequest
 
-            OnPutTariffRequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         requestId,
-                                         correlationId,
-                                         requestTimeout,
+            OnPutTariffRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   remotePartyId,
+                                   from,
+                                   to,
+                                   requestId,
+                                   correlationId,
+                                   requestTimeout,
 
-                                         tariff,
+                                   tariff,
 
-                                         cancellationToken) => {
+                                   cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutTariffRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("tariff",   tariff.ToJSON())
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              new JProperty("tariff",            tariff.         ToJSON())
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPutTariffResponse
 
-            OnPutTariffResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          requestId,
-                                          correlationId,
-                                          requestTimeout,
+            OnPutTariffResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
+                                    requestId,
+                                    correlationId,
+                                    requestTimeout,
 
-                                          tariff,
+                                    tariff,
 
-                                          response,
-                                          runtime,
-                                          cancellationToken) => {
+                                    response,
+                                    runtime,
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutTariffResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("tariff",     tariff. ToJSON()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",   response.ToJSON()),
-                              new JProperty("runtime",    runtime.TotalSeconds)
+                              new JProperty("tariff",            tariff.         ToJSON()),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
 
             #region OnPutSessionRequest
 
-            OnPutSessionRequest += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          requestId,
-                                          correlationId,
-                                          requestTimeout,
+            OnPutSessionRequest += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
+                                    requestId,
+                                    correlationId,
+                                    requestTimeout,
 
-                                          session,
+                                    session,
 
-                                          cancellationToken) => {
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutSessionRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("session",   session.ToJSON())
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              new JProperty("session",           session.        ToJSON())
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPutSessionResponse
 
-            OnPutSessionResponse += async (timestamp,
-                                           sender,
-                                           eventTrackingId,
-                                           requestId,
-                                           correlationId,
-                                           requestTimeout,
+            OnPutSessionResponse += (timestamp,
+                                     sender,
+                                     eventTrackingId,
+                                     remotePartyId,
+                                     from,
+                                     to,
+                                     requestId,
+                                     correlationId,
+                                     requestTimeout,
 
-                                           session,
+                                     session,
 
-                                           response,
-                                           runtime,
-                                           cancellationToken) => {
+                                     response,
+                                     runtime,
+                                     cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPutSessionResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("session",     session. ToJSON()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",    response.ToJSON()),
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("session",           session.        ToJSON()),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPatchSessionRequest
 
-            OnPatchSessionRequest += async (timestamp,
-                                            sender,
-                                            eventTrackingId,
-                                            requestId,
-                                            correlationId,
-                                            requestTimeout,
+            OnPatchSessionRequest += (timestamp,
+                                      sender,
+                                      eventTrackingId,
+                                      remotePartyId,
+                                      from,
+                                      to,
+                                      requestId,
+                                      correlationId,
+                                      requestTimeout,
 
-                                            countryCode,
-                                            partyId,
-                                            sessionId,
-                                            sessionPatch,
+                                      countryCode,
+                                      partyId,
+                                      sessionId,
+                                      sessionPatch,
 
-                                            cancellationToken) => {
+                                      cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchSessionRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("countryCode",    countryCode.ToString()),
-                              new JProperty("partyId",        partyId.    ToString()),
-                              new JProperty("sessionId",      sessionId.  ToString()),
-                              new JProperty("sessionPatch",   sessionPatch)
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              new JProperty("countryCode",       countryCode.    ToString()),
+                              new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("sessionId",         sessionId.      ToString()),
+                              new JProperty("sessionPatch",      sessionPatch)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPatchSessionResponse
 
-            OnPatchSessionResponse += async (timestamp,
-                                             sender,
-                                             eventTrackingId,
-                                             requestId,
-                                             correlationId,
-                                             requestTimeout,
+            OnPatchSessionResponse += (timestamp,
+                                       sender,
+                                       eventTrackingId,
+                                       remotePartyId,
+                                       from,
+                                       to,
+                                       requestId,
+                                       correlationId,
+                                       requestTimeout,
 
-                                             countryCode,
-                                             partyId,
-                                             sessionId,
-                                             sessionPatch,
+                                       countryCode,
+                                       partyId,
+                                       sessionId,
+                                       sessionPatch,
 
-                                             response,
-                                             runtime,
-                                             cancellationToken) => {
+                                       response,
+                                       runtime,
+                                       cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPatchSessionResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("countryCode",    countryCode.ToString()),
-                              new JProperty("partyId",        partyId.    ToString()),
-                              new JProperty("sessionId",      sessionId.  ToString()),
-                              new JProperty("sessionPatch",   sessionPatch),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",       response.   ToJSON()),
-                              new JProperty("runtime",        runtime.TotalSeconds)
+                              new JProperty("countryCode",       countryCode.    ToString()),
+                              new JProperty("partyId",           partyId.        ToString()),
+                              new JProperty("sessionId",         sessionId.      ToString()),
+                              new JProperty("sessionPatch",      sessionPatch),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
 
             #region OnPostCDRRequest
 
-            OnPostCDRRequest += async (timestamp,
-                                       sender,
-                                       eventTrackingId,
-                                       requestId,
-                                       correlationId,
-                                       requestTimeout,
+            OnPostCDRRequest += (timestamp,
+                                 sender,
+                                 eventTrackingId,
+                                 remotePartyId,
+                                 from,
+                                 to,
+                                 requestId,
+                                 correlationId,
+                                 requestTimeout,
 
-                                       cdr,
+                                 cdr,
 
-                                       cancellationToken) => {
+                                 cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostCDRRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("cdr",   cdr.              ToJSON())
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
+
+                              new JProperty("cdr",               cdr.            ToJSON())
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
             #region OnPostCDRResponse
 
-            OnPostCDRResponse += async (timestamp,
-                                        sender,
-                                        eventTrackingId,
-                                        requestId,
-                                        correlationId,
-                                        requestTimeout,
+            OnPostCDRResponse += (timestamp,
+                                  sender,
+                                  eventTrackingId,
+                                  remotePartyId,
+                                  from,
+                                  to,
+                                  requestId,
+                                  correlationId,
+                                  requestTimeout,
 
-                                        cdr,
+                                  cdr,
 
-                                        response,
-                                        runtime,
-                                        cancellationToken) => {
+                                  response,
+                                  runtime,
+                                  cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostCDRResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.      ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.  ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.     Value.ToString())
+                            : null,
 
-                              new JProperty("cdr",         cdr.                    ToJSON()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.       Value.ToString())
+                            : null,
 
-                              new JProperty("response",    response.               ToJSON()),
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("cdr",               cdr.            ToJSON()),
+
+                              new JProperty("response",          response.       ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
-
-            };
 
             #endregion
 
 
             #region OnPostTokenRequest
 
-            OnPostTokenRequest += async (timestamp,
-                                         sender,
-                                         eventTrackingId,
-                                         requestId,
-                                         correlationId,
-                                         requestTimeout,
+            OnPostTokenRequest += (timestamp,
+                                   sender,
+                                   eventTrackingId,
+                                   remotePartyId,
+                                   from,
+                                   to,
+                                   requestId,
+                                   correlationId,
+                                   requestTimeout,
 
-                                         tokenId,
-                                         tokenType,
-                                         locationReference,
+                                   tokenId,
+                                   tokenType,
+                                   locationReference,
 
-                                         cancellationToken) => {
+                                   cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostTokenRequest",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.              ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.        ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.          ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.             Value.ToString())
+                            : null,
 
-                              new JProperty("tokenId",     tokenId.                ToString()),
-                              new JProperty("tokenType",   tokenType.              ToString()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.               Value.ToString())
+                            : null,
+
+                              new JProperty("tokenId",           tokenId.                ToString()),
+                              new JProperty("tokenType",         tokenType.              ToString()),
 
                         locationReference.HasValue
 
-                            ? new JProperty("tokenType",   locationReference.Value.ToJSON())
+                            ? new JProperty("tokenType",         locationReference.Value.ToJSON())
                             : null
 
                     ),
                     cancellationToken
                 );
 
-            };
-
             #endregion
 
             #region OnPostTokenResponse
 
-            OnPostTokenResponse += async (timestamp,
-                                          sender,
-                                          eventTrackingId,
-                                          requestId,
-                                          correlationId,
-                                          requestTimeout,
+            OnPostTokenResponse += (timestamp,
+                                    sender,
+                                    eventTrackingId,
+                                    remotePartyId,
+                                    from,
+                                    to,
+                                    requestId,
+                                    correlationId,
+                                    requestTimeout,
 
-                                          tokenId,
-                                          tokenType,
-                                          locationReference,
+                                    tokenId,
+                                    tokenType,
+                                    locationReference,
 
-                                          response,
-                                          runtime,
-                                          cancellationToken) => {
+                                    response,
+                                    runtime,
+                                    cancellationToken) =>
 
-                await Processor(
+                Processor(
                     "OnPostTokenResponse",
                     JSONObject.Create(
 
-                        //from_CountryCode.HasValue && from_PartyId.HasValue
-                        //    ? new JProperty("from",       $"{from_CountryCode}*{from_PartyId}")
-                        //    : null,
+                              new JProperty("timestamp",         timestamp.              ToISO8601()),
+                              new JProperty("eventTrackingId",   eventTrackingId.        ToString()),
+                              new JProperty("remotePartyId",     remotePartyId.          ToString()),
 
-                        //to_CountryCode.  HasValue && to_PartyId.  HasValue
-                        //    ? new JProperty("to",         $"{to_CountryCode}*{to_PartyId}")
-                        //    : null,
+                        from.HasValue
+                            ? new JProperty("from",              from.             Value.ToString())
+                            : null,
 
-                              new JProperty("tokenId",     tokenId.                ToString()),
-                              new JProperty("tokenType",   tokenType.              ToString()),
+                        to.  HasValue
+                            ? new JProperty("to",                to.               Value.ToString())
+                            : null,
+
+                              new JProperty("tokenId",           tokenId.                ToString()),
+                              new JProperty("tokenType",         tokenType.              ToString()),
 
                         locationReference.HasValue
 
-                            ? new JProperty("tokenType",   locationReference.Value.ToJSON(
-                                                               CustomLocationReferenceSerializer
-                                                           ))
+                            ? new JProperty("tokenType",         locationReference.Value.ToJSON(
+                                                                     CustomLocationReferenceSerializer
+                                                                 ))
                             : null,
 
-                              new JProperty("response",    response.               ToJSON()),
-                              new JProperty("runtime",     runtime.TotalSeconds)
+                              new JProperty("response",          response.               ToJSON()),
+                              new JProperty("runtime",           runtime.TotalSeconds)
 
                     ),
                     cancellationToken
                 );
 
-            };
-
             #endregion
+
 
         }
 
