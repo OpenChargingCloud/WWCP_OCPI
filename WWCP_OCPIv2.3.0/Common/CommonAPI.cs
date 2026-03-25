@@ -49,14 +49,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                    Location_Id?     LocationId       = null,
                                                                    EVSE_Id?         EVSEId           = null,
                                                                    Connector_Id?    ConnectorId      = null,
-                                                                   EMSP_Id?         EMSPId           = null);
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
 
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(Party_Idv3       CPOPartyId,
                                                                    Location_Id?     LocationId       = null,
                                                                    EVSE_Id?         EVSEId           = null,
                                                                    Connector_Id?    ConnectorId      = null,
-                                                                   EMSP_Id?         EMSPId           = null);
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
 
     public delegate Tariff?                 GetTariff2_Delegate   (Party_Idv3       CPOPartyId,
                                                                    Tariff_Id        TariffId,
@@ -12450,20 +12450,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region GetTariffIds         (PartyId?, LocationId?, EVSEId?, ConnectorId?, EMSPId?)
+        #region GetTariffIds         (PartyId?, LocationId?, EVSEId?, ConnectorId?, RemotePartyId?)
 
-        public IEnumerable<Tariff_Id> GetTariffIds(Party_Idv3     PartyId,
-                                                   Location_Id?   LocationId,
-                                                   EVSE_Id?       EVSEId,
-                                                   Connector_Id?  ConnectorId,
-                                                   EMSP_Id?       EMSPId)
+        public IEnumerable<Tariff_Id> GetTariffIds(Party_Idv3       PartyId,
+                                                   Location_Id?     LocationId,
+                                                   EVSE_Id?         EVSEId,
+                                                   Connector_Id?    ConnectorId,
+                                                   RemoteParty_Id?  RemotePartyId)
 
             => GetTariffIdsDelegate?.Invoke(
                    PartyId,
                    LocationId,
                    EVSEId,
                    ConnectorId,
-                   EMSPId
+                   RemotePartyId
                ) ?? [];
 
         #endregion

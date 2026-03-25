@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       DateTimeOffset?                                               Created                                      = null,
                       DateTimeOffset?                                               LastUpdated                                  = null,
 
-                      EMSP_Id?                                                      EMSPId                                       = null,
+                      RemoteParty_Id?                                               RemotePartyId                                = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 connector.ParentEVSE = this;
 
             this.ETag                  = CalcSHA256Hash(
-                                             EMSPId,
+                                             RemotePartyId,
                                              CustomEVSESerializer,
                                              CustomStatusScheduleSerializer,
                                              CustomConnectorSerializer,
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     DateTimeOffset?                                               Created                                      = null,
                     DateTimeOffset?                                               LastUpdated                                  = null,
 
-                    EMSP_Id?                                                      EMSPId                                       = null,
+                    RemoteParty_Id?                                               RemotePartyId                                = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Created,
                    LastUpdated,
 
-                   EMSPId,
+                   RemotePartyId,
                    CustomEVSESerializer,
                    CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
@@ -723,7 +723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
+        public JObject ToJSON(RemoteParty_Id?                                               RemotePartyId                                = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -756,14 +756,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("connectors",             new JArray(Connectors.         OrderBy(connector          => connector.Id).
                                                                                                         Select (connector          => connector.         ToJSON(true,
                                                                                                                                                                 true,
-                                                                                                                                                                EMSPId,
+                                                                                                                                                                RemotePartyId,
                                                                                                                                                                 CustomConnectorSerializer))))
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",           EnergyMeter. ToJSON(CustomEVSEEnergyMeterSerializer,
-                                                                                             CustomTransparencySoftwareStatusSerializer,
-                                                                                             CustomTransparencySoftwareSerializer))
+                               ? new JProperty("energy_meter",           EnergyMeter.ToJSON(
+                                                                             CustomEVSEEnergyMeterSerializer,
+                                                                             CustomTransparencySoftwareStatusSerializer,
+                                                                             CustomTransparencySoftwareSerializer
+                                                                         ))
                                : null,
                            FloorLevel.IsNotNullOrEmpty()
                                ? new JProperty("floor_level",            FloorLevel)
@@ -1032,12 +1034,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
-                                                     EMSP_Id?       EMSPId        = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?    ConnectorId     = null,
+                                                     RemoteParty_Id?  RemotePartyId   = null)
 
-            => ParentLocation?.GetTariffIds(EVSEId,
-                                            ConnectorId,
-                                            EMSPId) ?? [];
+            => ParentLocation?.GetTariffIds(
+                   EVSEId,
+                   ConnectorId,
+                   RemotePartyId
+               ) ?? [];
 
 
         #region (internal) UpdateConnector(Connector)
@@ -1074,7 +1078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
+        public String CalcSHA256Hash(RemoteParty_Id?                                               RemotePartyId                                = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -1087,7 +1091,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             ETag = SHA256.HashData(
                        ToJSON(
-                           EMSPId,
+                           RemotePartyId,
                            CustomEVSESerializer,
                            CustomStatusScheduleSerializer,
                            CustomConnectorSerializer,

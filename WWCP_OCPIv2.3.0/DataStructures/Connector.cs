@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         [Optional]
         public Watt?                             MaxElectricPower         { get; }
 
-        public EMSP_Id?                          EMSPId                   { get; }
+        public RemoteParty_Id?                   RemotePartyId            { get; }
 
         private readonly IEnumerable<Tariff_Id> tariffIds;
 
@@ -124,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (tariffIds.Any())
                     return tariffIds;
 
-                return ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+                return ParentEVSE?.GetTariffIds(Id, RemotePartyId) ?? [];
 
             }
         }
@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                          String?                                      ETag                        = null,
 
                          EVSE?                                        ParentEVSE                  = null,
-                         EMSP_Id?                                     EMSPId                      = null,
+                         RemoteParty_Id?                              RemotePartyId               = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                              ToJSON(
                                                                  true,
                                                                  true,
-                                                                 EMSPId,
+                                                                 RemotePartyId,
                                                                  CustomConnectorSerializer
                                                              ).ToUTF8Bytes()
                                                          ).ToBase64();
@@ -535,14 +535,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public JObject ToJSON(Boolean                                      IncludeCreatedTimestamp     = true,
                               Boolean                                      IncludeExtensions           = true,
-                              EMSP_Id?                                     EMSPId                      = null,
+                              RemoteParty_Id?                              RemotePartyId               = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
             var tariffIds  = this.tariffIds;
 
             if (!tariffIds.Any())
-                tariffIds  = GetTariffIds(EMSPId);
+                tariffIds  = GetTariffIds(RemotePartyId);
 
             var json       = JSONObject.Create(
 
@@ -743,11 +743,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// Returns the identification of the currently valid tariff.
         /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
         /// </summary>
-        /// <param name="EMSPId">An optional EMSP identification, e.g. for including the right tariff.</param>
-        public IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
+        /// <param name="RemotePartyId">An optional EMSP identification, e.g. for including the right tariff.</param>
+        public IEnumerable<Tariff_Id> GetTariffIds(RemoteParty_Id? RemotePartyId = null)
         {
 
-            var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+            var tariffIds = ParentEVSE?.GetTariffIds(Id, RemotePartyId) ?? [];
             //if (tariffIds.Any())
             //{
 

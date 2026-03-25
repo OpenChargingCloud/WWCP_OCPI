@@ -3407,7 +3407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                SkipTakeFilter(filters.Offset,
                                                                                filters.Limit).
                                                                Select(location => location.ToJSON(
-                                                                                      request.EMSPId,
+                                                                                      request.RemoteParty?.Id,
                                                                                       CustomLocationSerializer,
                                                                                       CustomPublishTokenSerializer,
                                                                                       CustomAdditionalGeoLocationSerializer,
@@ -3581,7 +3581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 1000,
                                 StatusMessage        = "Hello world!",
                                 Data                 = location.ToJSON(
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomLocationSerializer,
                                                            CustomPublishTokenSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
@@ -3753,7 +3753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     StatusCode           = 1000,
                                     StatusMessage        = "Hello world!",
                                     Data                 = data.ToJSON(
-                                                               request.EMSPId,
+                                                               request.RemoteParty?.Id,
                                                                CustomLocationSerializer,
                                                                CustomPublishTokenSerializer,
                                                                CustomAdditionalGeoLocationSerializer,
@@ -3791,7 +3791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 StatusCode           = 2000,
                                 StatusMessage        = addOrUpdateResult.ErrorResponse,
                                 Data                 = newOrUpdatedLocation.ToJSON(
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomLocationSerializer,
                                                            CustomPublishTokenSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
@@ -3948,7 +3948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         StatusCode           = 1000,
                                         StatusMessage        = "Hello world!",
                                         Data                 = data.ToJSON(
-                                                                   request.EMSPId,
+                                                                   request.RemoteParty?.Id,
                                                                    CustomLocationSerializer,
                                                                    CustomPublishTokenSerializer,
                                                                    CustomAdditionalGeoLocationSerializer,
@@ -4045,7 +4045,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    StatusCode           = 1000,
                                    StatusMessage        = "Hello world!",
                                    Data                 = location.ToJSON(
-                                                              request.EMSPId,
+                                                              request.RemoteParty?.Id,
                                                               CustomLocationSerializer,
                                                               CustomPublishTokenSerializer,
                                                               CustomAdditionalGeoLocationSerializer,
@@ -4162,7 +4162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                            true,
                                                            true,
                                                            true,
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
                                                            CustomConnectorSerializer,
@@ -4332,7 +4332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                true,
                                                                true,
                                                                true,
-                                                               request.EMSPId,
+                                                               request.RemoteParty?.Id,
                                                                CustomEVSESerializer,
                                                                CustomStatusScheduleSerializer,
                                                                CustomConnectorSerializer,
@@ -4361,7 +4361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                            true,
                                                            true,
                                                            true,
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
                                                            CustomConnectorSerializer,
@@ -4510,7 +4510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                    true,
                                                                    true,
                                                                    true,
-                                                                   request.EMSPId,
+                                                                   request.RemoteParty?.Id,
                                                                    CustomEVSESerializer,
                                                                    CustomStatusScheduleSerializer,
                                                                    CustomConnectorSerializer,
@@ -4601,7 +4601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                true,
                                                                true,
                                                                true,
-                                                               request.EMSPId,
+                                                               request.RemoteParty?.Id,
                                                                CustomEVSESerializer,
                                                                CustomStatusScheduleSerializer,
                                                                CustomConnectorSerializer,
@@ -4711,7 +4711,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 Data                 = connector.ToJSON(
                                                            true,
                                                            true,
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomConnectorSerializer
                                                        ),
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -4869,7 +4869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     Data                 = data.ToJSON(
                                                                true,
                                                                true,
-                                                               request.EMSPId,
+                                                               request.RemoteParty?.Id,
                                                                CustomConnectorSerializer
                                                            ),
                                     HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -4889,7 +4889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 Data                 = newOrUpdatedConnector.ToJSON(
                                                            true,
                                                            true,
-                                                           request.EMSPId,
+                                                           request.RemoteParty?.Id,
                                                            CustomConnectorSerializer
                                                        ),
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -5032,7 +5032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         Data                 = data.ToJSON(
                                                                    false, //IncludeCreatedTimestamp,
                                                                    false, //IncludeExtensions,
-                                                                   request.EMSPId,
+                                                                   request.RemoteParty?.Id,
                                                                    CustomConnectorSerializer
                                                                ),
                                         HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
@@ -5116,7 +5116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     Data                 = existingConnector.ToJSON(
                                                                true,
                                                                true,
-                                                               request.EMSPId,
+                                                               request.RemoteParty?.Id,
                                                                CustomConnectorSerializer
                                                            ),
                                     HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {

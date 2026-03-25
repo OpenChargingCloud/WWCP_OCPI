@@ -24,13 +24,13 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
 {
 
     /// <summary>
-    /// The CPO2EMSP client is used by CPOs to talk to EMSPs.
+    /// The CPO2HUB client is used by CPOs to talk to HUBs.
     /// </summary>
-    public partial class CPO2EMSP_HTTPClient : IHTTPClient
+    public partial class CPO2HUB_HTTPClient : IHTTPClient
     {
 
         public void LinkEventsToHTTPSSE(HTTPEventSource<JObject> HTTPSSE)

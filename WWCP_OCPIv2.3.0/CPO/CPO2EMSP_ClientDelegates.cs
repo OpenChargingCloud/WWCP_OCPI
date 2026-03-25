@@ -32,11 +32,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetLocationRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get location request will be send.
+    /// A delegate called whenever a GetLocation request will be send.
     /// </summary>
     public delegate Task OnGetLocationRequestDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -48,11 +51,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                       CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get location request had been received.
+    /// A delegate called whenever a response to a GetLocation request had been received.
     /// </summary>
     public delegate Task OnGetLocationResponseDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -70,11 +76,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPutLocationRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a put location request will be send.
+    /// A delegate called whenever a PutLocation request will be send.
     /// </summary>
     public delegate Task OnPutLocationRequestDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -84,11 +93,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                       CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a put location request had been received.
+    /// A delegate called whenever a response to a PutLocation request had been received.
     /// </summary>
     public delegate Task OnPutLocationResponseDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -104,11 +116,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPatchLocationRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a patch location request will be send.
+    /// A delegate called whenever a PatchLocation request will be send.
     /// </summary>
     public delegate Task OnPatchLocationRequestDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -119,11 +134,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                         CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a patch location request had been received.
+    /// A delegate called whenever a response to a PatchLocation request had been received.
     /// </summary>
     public delegate Task OnPatchLocationResponseDelegate(DateTimeOffset            LogTimestamp,
                                                          CPO2EMSP_HTTPClient       Sender,
                                                          EventTracking_Id          EventTrackingId,
+                                                         RemoteParty_Id            RemotePartyId,
+                                                         Party_Idv3?               From,
+                                                         Party_Idv3?               To,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
                                                          TimeSpan                  RequestTimeout,
@@ -141,11 +159,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetEVSERequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get EVSE request will be send.
+    /// A delegate called whenever a GetEVSE request will be send.
     /// </summary>
     public delegate Task OnGetEVSERequestDelegate(DateTimeOffset            LogTimestamp,
                                                   CPO2EMSP_HTTPClient       Sender,
                                                   EventTracking_Id          EventTrackingId,
+                                                  RemoteParty_Id            RemotePartyId,
+                                                  Party_Idv3?               From,
+                                                  Party_Idv3?               To,
                                                   Request_Id                RequestId,
                                                   Correlation_Id            CorrelationId,
                                                   TimeSpan                  RequestTimeout,
@@ -156,11 +177,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                   CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get EVSE request had been received.
+    /// A delegate called whenever a response to a GetEVSE request had been received.
     /// </summary>
     public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset            LogTimestamp,
                                                    CPO2EMSP_HTTPClient       Sender,
                                                    EventTracking_Id          EventTrackingId,
+                                                   RemoteParty_Id            RemotePartyId,
+                                                   Party_Idv3?               From,
+                                                   Party_Idv3?               To,
                                                    Request_Id                RequestId,
                                                    Correlation_Id            CorrelationId,
                                                    TimeSpan                  RequestTimeout,
@@ -177,11 +201,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPutEVSERequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a put EVSE request will be send.
+    /// A delegate called whenever a PutEVSE request will be send.
     /// </summary>
     public delegate Task OnPutEVSERequestDelegate(DateTimeOffset            LogTimestamp,
                                                   CPO2EMSP_HTTPClient       Sender,
                                                   EventTracking_Id          EventTrackingId,
+                                                  RemoteParty_Id            RemotePartyId,
+                                                  Party_Idv3?               From,
+                                                  Party_Idv3?               To,
                                                   Request_Id                RequestId,
                                                   Correlation_Id            CorrelationId,
                                                   TimeSpan                  RequestTimeout,
@@ -194,11 +221,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                   CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a put EVSE request had been received.
+    /// A delegate called whenever a response to a PutEVSE request had been received.
     /// </summary>
     public delegate Task OnPutEVSEResponseDelegate(DateTimeOffset            LogTimestamp,
                                                    CPO2EMSP_HTTPClient       Sender,
                                                    EventTracking_Id          EventTrackingId,
+                                                   RemoteParty_Id            RemotePartyId,
+                                                   Party_Idv3?               From,
+                                                   Party_Idv3?               To,
                                                    Request_Id                RequestId,
                                                    Correlation_Id            CorrelationId,
                                                    TimeSpan                  RequestTimeout,
@@ -217,11 +247,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPatchEVSERequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a patch EVSE request will be send.
+    /// A delegate called whenever a PatchEVSE request will be send.
     /// </summary>
     public delegate Task OnPatchEVSERequestDelegate(DateTimeOffset            LogTimestamp,
                                                     CPO2EMSP_HTTPClient       Sender,
                                                     EventTracking_Id          EventTrackingId,
+                                                    RemoteParty_Id            RemotePartyId,
+                                                    Party_Idv3?               From,
+                                                    Party_Idv3?               To,
                                                     Request_Id                RequestId,
                                                     Correlation_Id            CorrelationId,
                                                     TimeSpan                  RequestTimeout,
@@ -235,11 +268,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                     CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a patch EVSE request had been received.
+    /// A delegate called whenever a response to a PatchEVSE request had been received.
     /// </summary>
     public delegate Task OnPatchEVSEResponseDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -260,11 +296,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPostEVSEStatusRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a post EVSE status request will be send.
+    /// A delegate called whenever a PostEVSEStatus request will be send.
     /// </summary>
     public delegate Task OnPostEVSEStatusRequestDelegate(DateTimeOffset            LogTimestamp,
                                                          CPO2EMSP_HTTPClient       Sender,
                                                          EventTracking_Id          EventTrackingId,
+                                                         RemoteParty_Id            RemotePartyId,
+                                                         Party_Idv3?               From,
+                                                         Party_Idv3?               To,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
                                                          TimeSpan                  RequestTimeout,
@@ -278,11 +317,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                          CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a post EVSE status request had been received.
+    /// A delegate called whenever a response to a PostEVSEStatus request had been received.
     /// </summary>
     public delegate Task OnPostEVSEStatusResponseDelegate(DateTimeOffset            LogTimestamp,
                                                           CPO2EMSP_HTTPClient       Sender,
                                                           EventTracking_Id          EventTrackingId,
+                                                          RemoteParty_Id            RemotePartyId,
+                                                          Party_Idv3?               From,
+                                                          Party_Idv3?               To,
                                                           Request_Id                RequestId,
                                                           Correlation_Id            CorrelationId,
                                                           TimeSpan                  RequestTimeout,
@@ -303,11 +345,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetConnectorRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get connector request will be send.
+    /// A delegate called whenever a GetConnector request will be send.
     /// </summary>
     public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -321,11 +366,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                        CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get connector request had been received.
+    /// A delegate called whenever a response to a GetConnector request had been received.
     /// </summary>
     public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -345,11 +393,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPutConnectorRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a put connector request will be send.
+    /// A delegate called whenever a PutConnector request will be send.
     /// </summary>
     public delegate Task OnPutConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -359,11 +410,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                        CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a put connector request had been received.
+    /// A delegate called whenever a response to a PutConnector request had been received.
     /// </summary>
     public delegate Task OnPutConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -379,11 +433,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPatchConnectorRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a patch connector request will be send.
+    /// A delegate called whenever a PatchConnector request will be send.
     /// </summary>
     public delegate Task OnPatchConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
                                                          CPO2EMSP_HTTPClient       Sender,
                                                          EventTracking_Id          EventTrackingId,
+                                                         RemoteParty_Id            RemotePartyId,
+                                                         Party_Idv3?               From,
+                                                         Party_Idv3?               To,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
                                                          TimeSpan                  RequestTimeout,
@@ -398,11 +455,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                          CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a patch connector request had been received.
+    /// A delegate called whenever a response to a PatchConnector request had been received.
     /// </summary>
     public delegate Task OnPatchConnectorResponseDelegate(DateTimeOffset            LogTimestamp,
                                                           CPO2EMSP_HTTPClient       Sender,
                                                           EventTracking_Id          EventTrackingId,
+                                                          RemoteParty_Id            RemotePartyId,
+                                                          Party_Idv3?               From,
+                                                          Party_Idv3?               To,
                                                           Request_Id                RequestId,
                                                           Correlation_Id            CorrelationId,
                                                           TimeSpan                  RequestTimeout,
@@ -424,11 +484,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetTariffRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get tariff request will be send.
+    /// A delegate called whenever a GetTariff request will be send.
     /// </summary>
     public delegate Task OnGetTariffRequestDelegate(DateTimeOffset            LogTimestamp,
                                                     CPO2EMSP_HTTPClient       Sender,
                                                     EventTracking_Id          EventTrackingId,
+                                                    RemoteParty_Id            RemotePartyId,
+                                                    Party_Idv3?               From,
+                                                    Party_Idv3?               To,
                                                     Request_Id                RequestId,
                                                     Correlation_Id            CorrelationId,
                                                     TimeSpan                  RequestTimeout,
@@ -440,11 +503,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                     CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get tariff request had been received.
+    /// A delegate called whenever a response to a GetTariff request had been received.
     /// </summary>
     public delegate Task OnGetTariffResponseDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -462,11 +528,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPutTariffRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a put tariff request will be send.
+    /// A delegate called whenever a PutTariff request will be send.
     /// </summary>
     public delegate Task OnPutTariffRequestDelegate(DateTimeOffset            LogTimestamp,
                                                     CPO2EMSP_HTTPClient       Sender,
                                                     EventTracking_Id          EventTrackingId,
+                                                    RemoteParty_Id            RemotePartyId,
+                                                    Party_Idv3?               From,
+                                                    Party_Idv3?               To,
                                                     Request_Id                RequestId,
                                                     Correlation_Id            CorrelationId,
                                                     TimeSpan                  RequestTimeout,
@@ -476,11 +545,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                     CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a put tariff request had been received.
+    /// A delegate called whenever a response to a PutTariff request had been received.
     /// </summary>
     public delegate Task OnPutTariffResponseDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -496,11 +568,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPatchTariffRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a patch tariff request will be send.
+    /// A delegate called whenever a PatchTariff request will be send.
     /// </summary>
     public delegate Task OnPatchTariffRequestDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -513,11 +588,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                       CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a patch tariff request had been received.
+    /// A delegate called whenever a response to a PatchTariff request had been received.
     /// </summary>
     public delegate Task OnPatchTariffResponseDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -536,11 +614,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnDeleteTariffRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a delete tariff request will be send.
+    /// A delegate called whenever a DeleteTariff request will be send.
     /// </summary>
     public delegate Task OnDeleteTariffRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -552,11 +633,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                        CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a delete tariff request had been received.
+    /// A delegate called whenever a response to a DeleteTariff request had been received.
     /// </summary>
     public delegate Task OnDeleteTariffResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -575,11 +659,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetSessionRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get session request will be send.
+    /// A delegate called whenever a GetSession request will be send.
     /// </summary>
     public delegate Task OnGetSessionRequestDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -591,11 +678,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                      CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get session request had been received.
+    /// A delegate called whenever a response to a GetSession request had been received.
     /// </summary>
     public delegate Task OnGetSessionResponseDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -613,11 +703,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPutSessionRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a put session request will be send.
+    /// A delegate called whenever a PutSession request will be send.
     /// </summary>
     public delegate Task OnPutSessionRequestDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -627,11 +720,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                      CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a put session request had been received.
+    /// A delegate called whenever a response to a PutSession request had been received.
     /// </summary>
     public delegate Task OnPutSessionResponseDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -647,11 +743,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPatchSessionRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a patch session request will be send.
+    /// A delegate called whenever a PatchSession request will be send.
     /// </summary>
     public delegate Task OnPatchSessionRequestDelegate(DateTimeOffset            LogTimestamp,
                                                        CPO2EMSP_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
+                                                       RemoteParty_Id            RemotePartyId,
+                                                       Party_Idv3?               From,
+                                                       Party_Idv3?               To,
                                                        Request_Id                RequestId,
                                                        Correlation_Id            CorrelationId,
                                                        TimeSpan                  RequestTimeout,
@@ -664,11 +763,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                        CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a patch session request had been received.
+    /// A delegate called whenever a response to a PatchSession request had been received.
     /// </summary>
     public delegate Task OnPatchSessionResponseDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -687,11 +789,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnDeleteSessionRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a delete session request will be send.
+    /// A delegate called whenever a DeleteSession request will be send.
     /// </summary>
     public delegate Task OnDeleteSessionRequestDelegate(DateTimeOffset            LogTimestamp,
                                                         CPO2EMSP_HTTPClient       Sender,
                                                         EventTracking_Id          EventTrackingId,
+                                                        RemoteParty_Id            RemotePartyId,
+                                                        Party_Idv3?               From,
+                                                        Party_Idv3?               To,
                                                         Request_Id                RequestId,
                                                         Correlation_Id            CorrelationId,
                                                         TimeSpan                  RequestTimeout,
@@ -703,11 +808,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                         CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a delete session request had been received.
+    /// A delegate called whenever a response to a DeleteSession request had been received.
     /// </summary>
     public delegate Task OnDeleteSessionResponseDelegate(DateTimeOffset            LogTimestamp,
                                                          CPO2EMSP_HTTPClient       Sender,
                                                          EventTracking_Id          EventTrackingId,
+                                                         RemoteParty_Id            RemotePartyId,
+                                                         Party_Idv3?               From,
+                                                         Party_Idv3?               To,
                                                          Request_Id                RequestId,
                                                          Correlation_Id            CorrelationId,
                                                          TimeSpan                  RequestTimeout,
@@ -726,11 +834,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnGetCDRRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get charge detail record request will be send.
+    /// A delegate called whenever a GetCDR request will be send.
     /// </summary>
     public delegate Task OnGetCDRRequestDelegate(DateTimeOffset            LogTimestamp,
                                                  CPO2EMSP_HTTPClient       Sender,
                                                  EventTracking_Id          EventTrackingId,
+                                                 RemoteParty_Id            RemotePartyId,
+                                                 Party_Idv3?               From,
+                                                 Party_Idv3?               To,
                                                  Request_Id                RequestId,
                                                  Correlation_Id            CorrelationId,
                                                  TimeSpan                  RequestTimeout,
@@ -742,11 +853,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                  CancellationToken         CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get charge detail record request had been received.
+    /// A delegate called whenever a response to a GetCDR record request had been received.
     /// </summary>
     public delegate Task OnGetCDRResponseDelegate(DateTimeOffset            LogTimestamp,
                                                   CPO2EMSP_HTTPClient       Sender,
                                                   EventTracking_Id          EventTrackingId,
+                                                  RemoteParty_Id            RemotePartyId,
+                                                  Party_Idv3?               From,
+                                                  Party_Idv3?               To,
                                                   Request_Id                RequestId,
                                                   Correlation_Id            CorrelationId,
                                                   TimeSpan                  RequestTimeout,
@@ -764,11 +878,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPostCDRRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a post charge detail record request will be send.
+    /// A delegate called whenever a PostCDR request will be send.
     /// </summary>
     public delegate Task OnPostCDRRequestDelegate(DateTimeOffset                  LogTimestamp,
                                                   CPO2EMSP_HTTPClient             Sender,
                                                   EventTracking_Id                EventTrackingId,
+                                                  RemoteParty_Id                  RemotePartyId,
+                                                  Party_Idv3?                     From,
+                                                  Party_Idv3?                     To,
                                                   Request_Id                      RequestId,
                                                   Correlation_Id                  CorrelationId,
                                                   TimeSpan                        RequestTimeout,
@@ -778,11 +895,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                   CancellationToken               CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a post charge detail record request had been received.
+    /// A delegate called whenever a response to a PostCDR request had been received.
     /// </summary>
     public delegate Task OnPostCDRResponseDelegate(DateTimeOffset                 LogTimestamp,
                                                    CPO2EMSP_HTTPClient            Sender,
                                                    EventTracking_Id               EventTrackingId,
+                                                   RemoteParty_Id                 RemotePartyId,
+                                                   Party_Idv3?                    From,
+                                                   Party_Idv3?                    To,
                                                    Request_Id                     RequestId,
                                                    Correlation_Id                 CorrelationId,
                                                    TimeSpan                       RequestTimeout,
@@ -796,15 +916,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #endregion
 
 
-
     #region OnGetTokensRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a get tokens request will be send.
+    /// A delegate called whenever a GetTokens request will be send.
     /// </summary>
     public delegate Task OnGetTokensRequestDelegate(DateTimeOffset                     LogTimestamp,
                                                     CPO2EMSP_HTTPClient                Sender,
                                                     EventTracking_Id                   EventTrackingId,
+                                                    RemoteParty_Id                     RemotePartyId,
+                                                    Party_Idv3?                        From,
+                                                    Party_Idv3?                        To,
                                                     Request_Id                         RequestId,
                                                     Correlation_Id                     CorrelationId,
                                                     TimeSpan                           RequestTimeout,
@@ -815,11 +937,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                     CancellationToken                  CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a get tokens request had been received.
+    /// A delegate called whenever a response to a GetTokens request had been received.
     /// </summary>
     public delegate Task OnGetTokensResponseDelegate(DateTimeOffset                     LogTimestamp,
                                                      CPO2EMSP_HTTPClient                Sender,
                                                      EventTracking_Id                   EventTrackingId,
+                                                     RemoteParty_Id                     RemotePartyId,
+                                                     Party_Idv3?                        From,
+                                                     Party_Idv3?                        To,
                                                      Request_Id                         RequestId,
                                                      Correlation_Id                     CorrelationId,
                                                      TimeSpan                           RequestTimeout,
@@ -836,11 +961,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #region OnPostTokenRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a post token request will be send.
+    /// A delegate called whenever a PostToken request will be send.
     /// </summary>
     public delegate Task OnPostTokenRequestDelegate(DateTimeOffset                     LogTimestamp,
                                                     CPO2EMSP_HTTPClient                Sender,
                                                     EventTracking_Id                   EventTrackingId,
+                                                    RemoteParty_Id                     RemotePartyId,
+                                                    Party_Idv3?                        From,
+                                                    Party_Idv3?                        To,
                                                     Request_Id                         RequestId,
                                                     Correlation_Id                     CorrelationId,
                                                     TimeSpan                           RequestTimeout,
@@ -852,11 +980,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                     CancellationToken                  CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a post token request had been received.
+    /// A delegate called whenever a response to a PostToken request had been received.
     /// </summary>
     public delegate Task OnPostTokenResponseDelegate(DateTimeOffset                    LogTimestamp,
                                                      CPO2EMSP_HTTPClient               Sender,
                                                      EventTracking_Id                  EventTrackingId,
+                                                     RemoteParty_Id                    RemotePartyId,
+                                                     Party_Idv3?                       From,
+                                                     Party_Idv3?                       To,
                                                      Request_Id                        RequestId,
                                                      Correlation_Id                    CorrelationId,
                                                      TimeSpan                          RequestTimeout,
@@ -872,6 +1003,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #endregion
 
 
+
     #region OnPutBookingRequest/-Response
 
     /// <summary>
@@ -880,6 +1012,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     public delegate Task OnPutBookingRequestDelegate(DateTimeOffset            LogTimestamp,
                                                      CPO2EMSP_HTTPClient       Sender,
                                                      EventTracking_Id          EventTrackingId,
+                                                     RemoteParty_Id            RemotePartyId,
+                                                     Party_Idv3?               From,
+                                                     Party_Idv3?               To,
                                                      Request_Id                RequestId,
                                                      Correlation_Id            CorrelationId,
                                                      TimeSpan                  RequestTimeout,
@@ -894,6 +1029,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     public delegate Task OnPutBookingResponseDelegate(DateTimeOffset            LogTimestamp,
                                                       CPO2EMSP_HTTPClient       Sender,
                                                       EventTracking_Id          EventTrackingId,
+                                                      RemoteParty_Id            RemotePartyId,
+                                                      Party_Idv3?               From,
+                                                      Party_Idv3?               To,
                                                       Request_Id                RequestId,
                                                       Correlation_Id            CorrelationId,
                                                       TimeSpan                  RequestTimeout,
@@ -907,14 +1045,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     #endregion
 
 
+
     #region OnSetChargingProfileRequest/-Response
 
     /// <summary>
-    /// A delegate called whenever a set charging profile request will be send.
+    /// A delegate called whenever a SetChargingProfile request will be send.
     /// </summary>
     public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                          LogTimestamp,
                                                              CPO2EMSP_HTTPClient                     Sender,
                                                              EventTracking_Id                        EventTrackingId,
+                                                             RemoteParty_Id                          RemotePartyId,
+                                                             Party_Idv3?                             From,
+                                                             Party_Idv3?                             To,
                                                              Request_Id                              RequestId,
                                                              Correlation_Id                          CorrelationId,
                                                              TimeSpan                                RequestTimeout,
@@ -925,11 +1067,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                              CancellationToken                       CancellationToken);
 
     /// <summary>
-    /// A delegate called whenever a response to a set charging profile request had been received.
+    /// A delegate called whenever a response to a SetChargingProfile request had been received.
     /// </summary>
     public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                          LogTimestamp,
                                                               CPO2EMSP_HTTPClient                     Sender,
                                                               EventTracking_Id                        EventTrackingId,
+                                                              RemoteParty_Id                          RemotePartyId,
+                                                              Party_Idv3?                             From,
+                                                              Party_Idv3?                             To,
                                                               Request_Id                              RequestId,
                                                               Correlation_Id                          CorrelationId,
                                                               TimeSpan                                RequestTimeout,
@@ -942,5 +1087,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                                                               CancellationToken                       CancellationToken);
 
     #endregion
+
 
 }

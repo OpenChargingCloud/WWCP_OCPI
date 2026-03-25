@@ -1960,7 +1960,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                                                   PartyId:             partyId.    Value,
                                                                                                                                   LocationId:          locationId. Value,
                                                                                                                                   EVSE:                evse2,
-                                                                                                                                  EMSPId:              null,
+                                                                                                                                  RemotePartyId:       null,
 
                                                                                                                                   //From:                fromChargingStationOperatorId,
                                                                                                                                   //To:                  toEMobilityProviderId,
@@ -3326,7 +3326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         CustomEVSEIdConverter,
                                         cdrToken,
                                         CommonAPI.GetTariffIds,
-                                        EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                        RemoteParty_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
                                         CommonAPI.GetTariff,
                                         ref warnings
                                     );

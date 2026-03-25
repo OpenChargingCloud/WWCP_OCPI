@@ -367,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         DateTimeOffset?                                               Created                                      = null,
                         DateTimeOffset?                                               LastUpdated                                  = null,
-                        EMSP_Id?                                                      EMSPId                                       = null,
+                        RemoteParty_Id?                                               RemotePartyId                                = null,
 
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
@@ -421,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    Created     ?? LastUpdated,
                    LastUpdated ?? Created,
-                   EMSPId,
+                   RemotePartyId,
 
                    CustomLocationSerializer,
                    CustomPublishTokenSerializer,
@@ -523,7 +523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         BusinessDetails?                                              Operator                                     = null,
                         BusinessDetails?                                              SubOperator                                  = null,
                         BusinessDetails?                                              Owner                                        = null,
-                        IEnumerable<Facility>?                                      Facilities                                   = null,
+                        IEnumerable<Facility>?                                        Facilities                                   = null,
                         Hours?                                                        OpeningTimes                                 = null,
                         Boolean?                                                      ChargingWhenClosed                           = null,
                         IEnumerable<Image>?                                           Images                                       = null,
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         DateTimeOffset?                                               Created                                      = null,
                         DateTimeOffset?                                               LastUpdated                                  = null,
-                        EMSP_Id?                                                      EMSPId                                       = null,
+                        RemoteParty_Id?                                               RemotePartyId                                = null,
 
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
@@ -615,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             this.ETag                 = CalcSHA256Hash(
-                                            EMSPId,
+                                            RemotePartyId,
                                             CustomLocationSerializer,
                                             CustomPublishTokenSerializer,
                                             CustomAdditionalGeoLocationSerializer,
@@ -1235,7 +1235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
+        public JObject ToJSON(RemoteParty_Id?                                               RemotePartyId                                = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1300,15 +1300,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            EVSEs.Any()
                                ? new JProperty("evses",                  new JArray(EVSEs.           OrderBy(evse                  => evse.UId).
-                                                                                                     Select (evse                  => evse.ToJSON(EMSPId,
-                                                                                                                                                  CustomEVSESerializer,
-                                                                                                                                                  CustomStatusScheduleSerializer,
-                                                                                                                                                  CustomConnectorSerializer,
-                                                                                                                                                  CustomEVSEEnergyMeterSerializer,
-                                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                                  CustomTransparencySoftwareSerializer,
-                                                                                                                                                  CustomDisplayTextSerializer,
-                                                                                                                                                  CustomImageSerializer))))
+                                                                                                     Select (evse                  => evse.ToJSON(
+                                                                                                                                          RemotePartyId,
+                                                                                                                                          CustomEVSESerializer,
+                                                                                                                                          CustomStatusScheduleSerializer,
+                                                                                                                                          CustomConnectorSerializer,
+                                                                                                                                          CustomEVSEEnergyMeterSerializer,
+                                                                                                                                          CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                          CustomTransparencySoftwareSerializer,
+                                                                                                                                          CustomDisplayTextSerializer,
+                                                                                                                                          CustomImageSerializer
+                                                                                                                                      ))))
                                : null,
 
                            Directions.Any()
@@ -1625,9 +1627,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_Id?       EVSEId        = null,
-                                                     Connector_Id?  ConnectorId   = null,
-                                                     EMSP_Id?       EMSPId        = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_Id?         EVSEId          = null,
+                                                     Connector_Id?    ConnectorId     = null,
+                                                     RemoteParty_Id?  RemotePartyId   = null)
 
             => CommonAPI?.GetTariffIds(
                    Party_Idv3.From(
@@ -1637,7 +1639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Id,
                    EVSEId,
                    ConnectorId,
-                   EMSPId
+                   RemotePartyId
                ) ?? [];
 
 
@@ -1855,7 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
+        public String CalcSHA256Hash(RemoteParty_Id?                                               RemotePartyId                                = null,
                                      CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1877,7 +1879,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             ETag = SHA256.HashData(
                        ToJSON(
-                           EMSPId,
+                           RemotePartyId,
                            CustomLocationSerializer,
                            CustomPublishTokenSerializer,
                            CustomAdditionalGeoLocationSerializer,

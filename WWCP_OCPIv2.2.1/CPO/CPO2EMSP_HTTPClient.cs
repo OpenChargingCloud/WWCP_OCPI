@@ -1073,7 +1073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location           Location,
-                        EMSP_Id?           EMSPId              = null,
+                        RemoteParty_Id?    RemotePartyId       = null,
 
                         Party_Idv3?        From                = null,
                         Party_Idv3?        To                  = null,
@@ -1151,7 +1151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                                     Location.PartyId.    ToString() +
                                                                                                     Location.Id.         ToString(),
                                                  Content:               Location.ToJSON(
-                                                                            EMSPId,
+                                                                            RemotePartyId,
                                                                             CustomLocationSerializer,
                                                                             CustomPublishTokenSerializer,
                                                                             CustomAdditionalGeoLocationSerializer,
@@ -1605,7 +1605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE               EVSE,
-                    EMSP_Id?           EMSPId              = null,
+                    RemoteParty_Id?    RemotePartyId       = null,
 
                     Party_Idv3?        From                = null,
                     Party_Idv3?        To                  = null,
@@ -1629,7 +1629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                              EVSE.ParentLocation.PartyId,
                              EVSE.ParentLocation.Id,
                              EVSE,
-                             EMSPId,
+                             RemotePartyId,
 
                              From,
                              To,
@@ -1667,7 +1667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                     Party_Id           PartyId,
                     Location_Id        LocationId,
                     EVSE               EVSE,
-                    EMSP_Id?           EMSPId              = null,
+                    RemoteParty_Id?    RemotePartyId       = null,
 
                     Party_Idv3?        From                = null,
                     Party_Idv3?        To                  = null,
@@ -1749,7 +1749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                                     LocationId. ToString() +
                                                                                                     EVSE.UId.   ToString(),
                                                  Content:               EVSE.ToJSON(
-                                                                            EMSPId,
+                                                                            RemotePartyId,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
                                                                             CustomConnectorSerializer,
@@ -2394,7 +2394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector          Connector,
-                         EMSP_Id?           EMSPId              = null,
+                         RemoteParty_Id?    RemotePartyId       = null,
 
                          Party_Idv3?        From                = null,
                          Party_Idv3?        To                  = null,
@@ -2486,7 +2486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                  Content:               Connector.ToJSON(
                                                                             true,
                                                                             true,
-                                                                            EMSPId,
+                                                                            RemotePartyId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,

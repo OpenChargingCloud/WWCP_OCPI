@@ -31,7 +31,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
 {
 
     /// <summary>
@@ -42,83 +42,127 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
         #region (class) APICounters
 
-        public class APICounters(APICounterValues?  GetVersions          = null,
-                                 APICounterValues?  Register             = null,
-
-                                 APICounterValues?  GetLocation          = null,
-                                 APICounterValues?  PutLocation          = null,
-                                 APICounterValues?  PatchLocation        = null,
-
-                                 APICounterValues?  GetEVSE              = null,
-                                 APICounterValues?  PutEVSE              = null,
-                                 APICounterValues?  PatchEVSE            = null,
-
-                                 APICounterValues?  PostEVSEStatus       = null,
-
-                                 APICounterValues?  GetConnector         = null,
-                                 APICounterValues?  PutConnector         = null,
-                                 APICounterValues?  PatchConnector       = null,
-
-                                 APICounterValues?  GetTariff            = null,
-                                 APICounterValues?  PutTariff            = null,
-                                 APICounterValues?  PatchTariff          = null,
-                                 APICounterValues?  DeleteTariff         = null,
-
-                                 APICounterValues?  GetSession           = null,
-                                 APICounterValues?  PutSession           = null,
-                                 APICounterValues?  PatchSession         = null,
-                                 APICounterValues?  DeleteSession        = null,
-
-                                 APICounterValues?  PostCDR              = null,
-                                 APICounterValues?  GetCDR               = null,
-
-                                 APICounterValues?  GetTokens            = null,
-                                 APICounterValues?  PostToken            = null,
-
-                                 APICounterValues?  SetChargingProfile   = null)
-
-            : CommonAPICounters(
-                  GetVersions,
-                  Register
-              )
-
+        public class APICounters : CommonAPICounters
         {
 
             #region Properties
 
-            public APICounterValues  GetLocation           { get; } = GetLocation        ?? new APICounterValues();
-            public APICounterValues  PutLocation           { get; } = PutLocation        ?? new APICounterValues();
-            public APICounterValues  PatchLocation         { get; } = PatchLocation      ?? new APICounterValues();
+            public APICounterValues  GetLocation           { get; }
+            public APICounterValues  PutLocation           { get; }
+            public APICounterValues  PatchLocation         { get; }
 
-            public APICounterValues  GetEVSE               { get; } = GetEVSE            ?? new APICounterValues();
-            public APICounterValues  PutEVSE               { get; } = PutEVSE            ?? new APICounterValues();
-            public APICounterValues  PatchEVSE             { get; } = PatchEVSE          ?? new APICounterValues();
+            public APICounterValues  GetEVSE               { get; }
+            public APICounterValues  PutEVSE               { get; }
+            public APICounterValues  PatchEVSE             { get; }
 
-            public APICounterValues  PostEVSEStatus        { get; } = PostEVSEStatus     ?? new APICounterValues();
+            public APICounterValues  PostEVSEStatus        { get; }
 
-            public APICounterValues  GetConnector          { get; } = GetConnector       ?? new APICounterValues();
-            public APICounterValues  PutConnector          { get; } = PutConnector       ?? new APICounterValues();
-            public APICounterValues  PatchConnector        { get; } = PatchConnector     ?? new APICounterValues();
+            public APICounterValues  GetConnector          { get; }
+            public APICounterValues  PutConnector          { get; }
+            public APICounterValues  PatchConnector        { get; }
 
-            public APICounterValues  GetTariff             { get; } = GetTariff          ?? new APICounterValues();
-            public APICounterValues  PutTariff             { get; } = PutTariff          ?? new APICounterValues();
-            public APICounterValues  PatchTariff           { get; } = PatchTariff        ?? new APICounterValues();
-            public APICounterValues  DeleteTariff          { get; } = DeleteTariff       ?? new APICounterValues();
+            public APICounterValues  GetTariff             { get; }
+            public APICounterValues  PutTariff             { get; }
+            public APICounterValues  PatchTariff           { get; }
+            public APICounterValues  DeleteTariff          { get; }
 
-            public APICounterValues  GetSession            { get; } = GetSession         ?? new APICounterValues();
-            public APICounterValues  PutSession            { get; } = PutSession         ?? new APICounterValues();
-            public APICounterValues  PatchSession          { get; } = PatchSession       ?? new APICounterValues();
-            public APICounterValues  DeleteSession         { get; } = DeleteSession      ?? new APICounterValues();
+            public APICounterValues  GetSession            { get; }
+            public APICounterValues  PutSession            { get; }
+            public APICounterValues  PatchSession          { get; }
+            public APICounterValues  DeleteSession         { get; }
 
-            public APICounterValues  PostCDR               { get; } = PostCDR            ?? new APICounterValues();
-            public APICounterValues  GetCDR                { get; } = GetCDR             ?? new APICounterValues();
+            public APICounterValues  PostCDR               { get; }
+            public APICounterValues  GetCDR                { get; }
 
-            public APICounterValues  GetTokens             { get; } = GetTokens          ?? new APICounterValues();
-            public APICounterValues  PostToken             { get; } = PostToken          ?? new APICounterValues();
+            public APICounterValues  GetTokens             { get; }
+            public APICounterValues  PostToken             { get; }
 
-            public APICounterValues  SetChargingProfile    { get; } = SetChargingProfile ?? new APICounterValues();
+            public APICounterValues  PutBooking            { get; }
+
+            public APICounterValues  SetChargingProfile    { get; }
 
             #endregion
+
+            #region Constructor(s)
+
+            public APICounters(APICounterValues?  GetVersions          = null,
+                               APICounterValues?  Register             = null,
+
+                               APICounterValues?  GetLocation          = null,
+                               APICounterValues?  PutLocation          = null,
+                               APICounterValues?  PatchLocation        = null,
+
+                               APICounterValues?  GetEVSE              = null,
+                               APICounterValues?  PutEVSE              = null,
+                               APICounterValues?  PatchEVSE            = null,
+
+                               APICounterValues?  PostEVSEStatus       = null,
+
+                               APICounterValues?  GetConnector         = null,
+                               APICounterValues?  PutConnector         = null,
+                               APICounterValues?  PatchConnector       = null,
+
+                               APICounterValues?  GetTariff            = null,
+                               APICounterValues?  PutTariff            = null,
+                               APICounterValues?  PatchTariff          = null,
+                               APICounterValues?  DeleteTariff         = null,
+
+                               APICounterValues?  GetSession           = null,
+                               APICounterValues?  PutSession           = null,
+                               APICounterValues?  PatchSession         = null,
+                               APICounterValues?  DeleteSession        = null,
+
+                               APICounterValues?  PostCDR              = null,
+                               APICounterValues?  GetCDR               = null,
+
+                               APICounterValues?  GetTokens            = null,
+                               APICounterValues?  PostToken            = null,
+
+                               APICounterValues?  SetChargingProfile   = null)
+
+                : base(GetVersions,
+                       Register)
+
+            {
+
+                this.GetLocation         = GetLocation        ?? new APICounterValues();
+                this.PutLocation         = PutLocation        ?? new APICounterValues();
+                this.PatchLocation       = PatchLocation      ?? new APICounterValues();
+
+                this.GetEVSE             = GetEVSE            ?? new APICounterValues();
+                this.PutEVSE             = PutEVSE            ?? new APICounterValues();
+                this.PatchEVSE           = PatchEVSE          ?? new APICounterValues();
+
+                this.PostEVSEStatus      = PostEVSEStatus     ?? new APICounterValues();
+
+                this.GetConnector        = GetConnector       ?? new APICounterValues();
+                this.PutConnector        = PutConnector       ?? new APICounterValues();
+                this.PatchConnector      = PatchConnector     ?? new APICounterValues();
+
+                this.GetTariff           = GetTariff          ?? new APICounterValues();
+                this.PutTariff           = PutTariff          ?? new APICounterValues();
+                this.PatchTariff         = PatchTariff        ?? new APICounterValues();
+                this.DeleteTariff        = DeleteTariff       ?? new APICounterValues();
+
+                this.GetSession          = GetSession         ?? new APICounterValues();
+                this.PutSession          = PutSession         ?? new APICounterValues();
+                this.PatchSession        = PatchSession       ?? new APICounterValues();
+                this.DeleteSession       = DeleteSession      ?? new APICounterValues();
+
+                this.PostCDR             = PostCDR            ?? new APICounterValues();
+                this.GetCDR              = GetCDR             ?? new APICounterValues();
+
+                this.GetTokens           = GetTokens          ?? new APICounterValues();
+                this.PostToken           = PostToken          ?? new APICounterValues();
+
+                this.PutBooking          = PutBooking         ?? new APICounterValues();
+
+                this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
+
+            }
+
+            #endregion
+
 
             #region ToJSON()
 
@@ -157,6 +201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                 json.Add(new JProperty("getTokens",           GetTokens.         ToJSON()));
                 json.Add(new JProperty("postToken",           PostToken.         ToJSON()));
 
+                json.Add(new JProperty("putBooking",          PutBooking.        ToJSON()));
+
                 json.Add(new JProperty("setChargingProfile",  SetChargingProfile.ToJSON()));
 
                 return json;
@@ -187,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         #region Properties
 
         /// <summary>
-        /// The identification of the remote E-Mobility Service Provider.
+        /// The HUB identification of the remote party.
         /// </summary>
         public HUB_Id               RemoteHUBId    { get; }
 
@@ -234,14 +280,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
         public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
         public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
-        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<PriceLimit>?                  CustomPriceLimitSerializer                    { get; set; }
         public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
         public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
@@ -249,6 +297,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
         public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TaxAmount>?                   CustomTaxAmountSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
         public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
@@ -802,6 +852,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         #endregion
 
 
+
+        #region OnPutBookingRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a PUT ~/booking request will be send.
+        /// </summary>
+        public event OnPutBookingRequestDelegate?   OnPutBookingRequest;
+
+        /// <summary>
+        /// An event fired whenever a PUT ~/booking HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler?       OnPutBookingHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT ~/booking HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler?      OnPutBookingHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a PUT ~/booking request had been received.
+        /// </summary>
+        public event OnPutBookingResponseDelegate?  OnPutBookingResponse;
+
+        #endregion
+
+
+
         #region OnSetChargingProfileRequest/-Response
 
         /// <summary>
@@ -982,7 +1059,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     LocationId. ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1026,8 +1105,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnGetLocationResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetLocationResponse,
@@ -1162,15 +1241,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             CustomEVSEEnergyMeterSerializer,
                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                             CustomTransparencySoftwareSerializer,
+                                                                            CustomParkingSerializer,
                                                                             CustomDisplayTextSerializer,
                                                                             CustomBusinessDetailsSerializer,
                                                                             CustomHoursSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer,
                                                                             CustomEnergyMixSerializer,
                                                                             CustomEnergySourceSerializer,
                                                                             CustomEnvironmentalImpactSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1214,8 +1298,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPutLocationResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutLocationResponse,
@@ -1345,7 +1429,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     PartyId.    ToString() +
                                                                                                     LocationId. ToString(),
                                                  Content:               LocationPatch.ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1389,8 +1476,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPatchLocationResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchLocationResponse,
@@ -1515,7 +1602,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     PartyId.    ToString() +
                                                                                                     LocationId. ToString() +
                                                                                                     EVSEUId.    ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1559,8 +1648,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnGetEVSEResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetEVSEResponse,
@@ -1624,11 +1713,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                 return OCPIResponse<EVSE>.Error("The parent location of the given EVSE must not be null!");
 
             return await PutEVSE(
-
+                             EVSE,
                              EVSE.ParentLocation.CountryCode,
                              EVSE.ParentLocation.PartyId,
                              EVSE.ParentLocation.Id,
-                             EVSE,
                              RemotePartyId,
 
                              From,
@@ -1641,7 +1729,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                              EventTrackingId,
                              RequestTimeout,
                              CancellationToken
-
                          );
 
         }
@@ -1663,10 +1750,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PutEVSE(CountryCode        CountryCode,
+            PutEVSE(EVSE               EVSE,
+                    CountryCode        CountryCode,
                     Party_Id           PartyId,
                     Location_Id        LocationId,
-                    EVSE               EVSE,
                     RemoteParty_Id?    RemotePartyId       = null,
 
                     Party_Idv3?        From                = null,
@@ -1749,6 +1836,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     LocationId. ToString() +
                                                                                                     EVSE.UId.   ToString(),
                                                  Content:               EVSE.ToJSON(
+                                                                            true,
+                                                                            true,
+                                                                            true,
                                                                             RemotePartyId,
                                                                             CustomEVSESerializer,
                                                                             CustomStatusScheduleSerializer,
@@ -1757,9 +1847,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             CustomTransparencySoftwareStatusSerializer,
                                                                             CustomTransparencySoftwareSerializer,
                                                                             CustomDisplayTextSerializer,
+                                                                            CustomEVSEParkingSerializer,
                                                                             CustomImageSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -1803,8 +1897,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPutEVSEResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutEVSEResponse,
@@ -1941,18 +2035,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     PartyId.    ToString() +
                                                                                                     LocationId. ToString() +
                                                                                                     EVSEUId.    ToString(),
-                                                 Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
-                                                 Authentication:        TokenAuth,
-                                                 RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
-                                                                        },
-                                                 RequestLogDelegate:    OnPatchEVSEHTTPRequest,
-                                                 ResponseLogDelegate:   OnPatchEVSEHTTPResponse,
-                                                 EventTrackingId:       eventTrackingId,
-                                                 //NumberOfRetry:         transmissionRetry,
-                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
-                                                 CancellationToken:     CancellationToken).
+                                                   Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
+                                                   ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                   Accept:                ocpiAcceptTypes,
+                                                   Authentication:        TokenAuth,
+                                                   Connection:            ConnectionType.Close,
+                                                   RequestBuilder:        requestBuilder => {
+                                                                              requestBuilder.Set("X-Request-ID",     requestId);
+                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                          },
+                                                   RequestLogDelegate:    OnPatchEVSEHTTPRequest,
+                                                   ResponseLogDelegate:   OnPatchEVSEHTTPResponse,
+                                                   EventTrackingId:       eventTrackingId,
+                                                   //NumberOfRetry:         transmissionRetry,
+                                                   RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                   CancellationToken:     CancellationToken).
 
                                              ConfigureAwait(false);
 
@@ -1986,8 +2083,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPatchEVSEResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchEVSEResponse,
@@ -2301,7 +2398,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -2345,8 +2444,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnGetConnectorResponse,
@@ -2489,7 +2588,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             RemotePartyId,
                                                                             CustomConnectorSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -2533,8 +2635,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPutConnectorResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPutConnectorResponse,
@@ -2665,7 +2767,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
                                                  Content:               ConnectorPatch.ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -2709,8 +2814,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPatchConnectorResponse event
 
-            stopwatch.Stop();
             var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
             await LogEvent(
                       OnPatchConnectorResponse,
@@ -2838,7 +2943,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     TariffId.   ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3002,6 +3109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
+
                                                  Path:                  httpClient.RemoteURL.Path + Tariff.CountryCode.ToString() +
                                                                                                     Tariff.PartyId.    ToString() +
                                                                                                     Tariff.Id.         ToString(),
@@ -3010,7 +3118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             true,
                                                                             CustomTariffSerializer,
                                                                             CustomDisplayTextSerializer,
-                                                                            CustomPriceSerializer,
+                                                                            CustomPriceLimitSerializer,
                                                                             CustomTariffElementSerializer,
                                                                             CustomPriceComponentSerializer,
                                                                             CustomTariffRestrictionsSerializer,
@@ -3018,7 +3126,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             CustomEnergySourceSerializer,
                                                                             CustomEnvironmentalImpactSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3193,7 +3304,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     PartyId.    ToString() +
                                                                                                     TariffId.   ToString(),
                                                  Content:               TariffPatch.ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3363,7 +3477,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     TariffId.   ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3533,7 +3649,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     SessionId.  ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3705,9 +3823,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             CustomCDRTokenSerializer,
                                                                             CustomChargingPeriodSerializer,
                                                                             CustomCDRDimensionSerializer,
-                                                                            CustomPriceSerializer
+                                                                            CustomPriceSerializer,
+                                                                            CustomTaxAmountSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -3751,6 +3873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnPutSessionResponse event
 
+            stopwatch.Stop();
             var endTime = Timestamp.Now;
 
             await LogEvent(
@@ -3883,7 +4006,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                                                     PartyId.    ToString() +
                                                                                                     SessionId.  ToString(),
                                                  Content:               SessionPatch.ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -4053,7 +4179,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     SessionId.  ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -4097,6 +4225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
             #region Send OnDeleteSessionResponse event
 
+            stopwatch.Stop();
             var endTime = Timestamp.Now;
 
             await LogEvent(
@@ -4215,16 +4344,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                     #region Upstream HTTP request...
 
                     // The HUB Id of the CDR might be different from the remote party identification,
-                    // e.g. when the remote party is a hub!  POST /ocpi/v2.2.1/HUB/cdrs/DE/GEF/CDR0001
+                    // e.g. when the remote party is a hub!
                     var realHUBId    = HUB_Id.From(
                                             CDR.CountryCode,
                                             CDR.PartyId
                                         );
 
                     var httpResponse  = await httpClient.POST(
-                                                  Path:                  httpClient.RemoteURL.Path,//+ CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                   //  CDR.PartyId.    ToString() +
-                                                                                                   //  CDR.Id.         ToString(),
+                                                  Path:                  httpClient.RemoteURL.Path, //+ CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                                    //  CDR.PartyId.    ToString() +
+                                                                                                    //  CDR.Id.         ToString(),
                                                   Content:               CDR.ToJSON(
                                                                              CustomCDRSerializer,
                                                                              CustomCDRTokenSerializer,
@@ -4234,8 +4363,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                              CustomTariffSerializer,
                                                                              CustomDisplayTextSerializer,
                                                                              CustomPriceSerializer,
+                                                                             CustomPriceLimitSerializer,
                                                                              CustomTariffElementSerializer,
                                                                              CustomPriceComponentSerializer,
+                                                                             CustomTaxAmountSerializer,
                                                                              CustomTariffRestrictionsSerializer,
                                                                              CustomEnergyMixSerializer,
                                                                              CustomEnergySourceSerializer,
@@ -4245,7 +4376,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                              CustomSignedDataSerializer,
                                                                              CustomSignedValueSerializer
                                                                          ).ToUTF8Bytes(JSONFormatting),
+                                                  ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                  Accept:                ocpiAcceptTypes,
                                                   Authentication:        TokenAuth,
+                                                  Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
                                                                              requestBuilder.Set("X-Request-ID",     requestId);
                                                                              requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -4412,7 +4546,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CountryCode.ToString() +
                                                                                                     PartyId.    ToString() +
                                                                                                     CDRId.      ToString(),
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -4595,7 +4731,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
 
                     var httpResponse = await httpClient.GET(
                                                  Path:                  httpClient.RemoteURL.Path + offsetLimit,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -4779,7 +4917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             }
 
                                                                             if (TokenType.HasValue)
-                                                                                requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
+                                                                                requestBuilder.QueryString.Add("type",     TokenType.       Value.ToString());
 
                                                                             if (LocationReference.HasValue)
                                                                             {
@@ -4831,11 +4969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => AuthorizationInfo.Parse(
-                                               json,
-                                               RemoteParty,
-                                               RemoteHUBId.AsEMSPId()
-                                           )
+                                   json => AuthorizationInfo.Parse(json)
                                );
 
                     Counters.PostToken.IncResponses_OK();
@@ -4880,6 +5014,188 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                           TokenId,
                           TokenType,
                           LocationReference,
+
+                          response,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+
+        #region PutBooking         (Booking, ...)
+
+        /// <summary>
+        /// Put/store the given booking on/within the remote API.
+        /// </summary>
+        /// <param name="Booking">The booking to store/put at/onto the remote API.</param>
+        /// 
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
+        public async Task<OCPIResponse<Booking>>
+
+            PutBooking(Booking            Booking,
+
+                       Party_Idv3?        From                = null,
+                       Party_Idv3?        To                  = null,
+                       Request_Id?        RequestId           = null,
+                       Correlation_Id?    CorrelationId       = null,
+                       Version_Id?        VersionId           = null,
+
+                       DateTimeOffset?    RequestTimestamp    = null,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       TimeSpan?          RequestTimeout      = null,
+                       CancellationToken  CancellationToken   = default)
+
+        {
+
+            #region Init
+
+            var requestId         = RequestId        ?? Request_Id.    NewRandom();
+            var correlationId     = CorrelationId    ?? Correlation_Id.NewRandom();
+
+            var requestTimestamp  = RequestTimestamp ?? Timestamp.Now;
+            var eventTrackingId   = EventTrackingId  ?? EventTracking_Id.New;
+            var requestTimeout    = RequestTimeout   ?? this.RequestTimeout;
+
+            var startTime         = Timestamp.Now;
+            var stopwatch         = Stopwatch.StartNew();
+
+            Counters.PutBooking.IncRequests_OK();
+
+            OCPIResponse<Booking> response;
+
+            #endregion
+
+            #region Send OnPutBookingRequest event
+
+            await LogEvent(
+                      OnPutBookingRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          Booking,
+
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+
+            try
+            {
+
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Bookings,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
+
+                if (httpClient is not null)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var httpResponse = await httpClient.PUT(
+                                                 Path:                  httpClient.RemoteURL.Path + Booking.CountryCode.ToString() +
+                                                                        Booking.PartyId.    ToString() +
+                                                                        Booking.Id.         ToString(),
+                                                 Content:               Booking.ToJSON(
+                                                                            //true,
+                                                                            //true,
+                                                                            //CustomBookingSerializer,
+                                                                            //CustomDisplayTextSerializer,
+                                                                            //CustomPriceLimitSerializer,
+                                                                            //CustomBookingElementSerializer,
+                                                                            //CustomPriceComponentSerializer,
+                                                                            //CustomBookingRestrictionsSerializer,
+                                                                            //CustomEnergyMixSerializer,
+                                                                            //CustomEnergySourceSerializer,
+                                                                            //CustomEnvironmentalImpactSerializer
+                                                                        ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
+                                                 Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
+                                                 RequestBuilder:        requestBuilder => {
+                                                                            requestBuilder.Set("X-Request-ID",     requestId);
+                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                        },
+                                                 RequestLogDelegate:    OnPutBookingHTTPRequest,
+                                                 ResponseLogDelegate:   OnPutBookingHTTPResponse,
+                                                 EventTrackingId:       eventTrackingId,
+                                                 //NumberOfRetry:         transmissionRetry,
+                                                 RequestTimeout:        RequestTimeout ?? this.RequestTimeout,
+                                                 CancellationToken:     CancellationToken).
+
+                                             ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<Booking>.ParseJObject(
+                                   httpResponse,
+                                   requestId,
+                                   correlationId,
+                                   json => Booking.Parse(json)
+                               );
+
+                    Counters.PutBooking.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, Booking>.Error("No remote URL available!");
+                    Counters.PutBooking.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, Booking>.Exception(e);
+                Counters.PutBooking.IncResponses_Error();
+            }
+
+
+            #region Send OnPutBookingResponse event
+
+            stopwatch.Stop();
+            var endTime = Timestamp.Now;
+
+            await LogEvent(
+                      OnPutBookingResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          this,
+                          eventTrackingId,
+                          RemoteParty.Id,
+                          From,
+                          To,
+                          requestId,
+                          correlationId,
+                          requestTimeout,
+
+                          Booking,
 
                           response,
                           stopwatch.Elapsed,
@@ -4998,7 +5314,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
                                                                             CustomChargingProfileSerializer,
                                                                             CustomChargingProfilePeriodSerializer
                                                                         ).ToUTF8Bytes(JSONFormatting),
+                                                 ContentType:           HTTPContentType.Application.JSON_UTF8,
+                                                 Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
+                                                 Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set("X-Request-ID",     requestId);
                                                                             requestBuilder.Set("X-Correlation-ID", correlationId);
@@ -5076,7 +5395,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
         #endregion
 
 
-
         #region (private) LogEvent (Logger, LogHandler, ...)
 
         private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
@@ -5120,4 +5438,3 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP
     }
 
 }
-
