@@ -25,7 +25,7 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HUB.HTTP
 {
 
     #region OnGetLocationsRequest/-Response
@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetLocations request will be send.
     /// </summary>
     public delegate Task OnGetLocationsRequestDelegate(DateTimeOffset                        LogTimestamp,
-                                                       EMSP2CPO_HTTPClient                   Sender,
+                                                       EMSP2HUB_HTTPClient                   Sender,
                                                        EventTracking_Id                      EventTrackingId,
                                                        RemoteParty_Id                        RemotePartyId,
                                                        Party_Idv3?                           From,
@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetLocations request had been received.
     /// </summary>
     public delegate Task OnGetLocationsResponseDelegate(DateTimeOffset                       LogTimestamp,
-                                                        EMSP2CPO_HTTPClient                  Sender,
+                                                        EMSP2HUB_HTTPClient                  Sender,
                                                         EventTracking_Id                     EventTrackingId,
                                                         RemoteParty_Id                       RemotePartyId,
                                                         Party_Idv3?                          From,
@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetLocation by its identification request will be send.
     /// </summary>
     public delegate Task OnGetLocationRequestDelegate(DateTimeOffset           LogTimestamp,
-                                                      EMSP2CPO_HTTPClient      Sender,
+                                                      EMSP2HUB_HTTPClient      Sender,
                                                       EventTracking_Id         EventTrackingId,
                                                       RemoteParty_Id           RemotePartyId,
                                                       Party_Idv3?              From,
@@ -87,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetLocation by its identification request had been received.
     /// </summary>
     public delegate Task OnGetLocationResponseDelegate(DateTimeOffset          LogTimestamp,
-                                                       EMSP2CPO_HTTPClient     Sender,
+                                                       EMSP2HUB_HTTPClient     Sender,
                                                        EventTracking_Id        EventTrackingId,
                                                        RemoteParty_Id          RemotePartyId,
                                                        Party_Idv3?             From,
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetEVSE request will be send.
     /// </summary>
     public delegate Task OnGetEVSERequestDelegate(DateTimeOffset        LogTimestamp,
-                                                  EMSP2CPO_HTTPClient   Sender,
+                                                  EMSP2HUB_HTTPClient   Sender,
                                                   EventTracking_Id      EventTrackingId,
                                                   RemoteParty_Id        RemotePartyId,
                                                   Party_Idv3?           From,
@@ -128,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetEVSE request had been received.
     /// </summary>
     public delegate Task OnGetEVSEResponseDelegate(DateTimeOffset       LogTimestamp,
-                                                   EMSP2CPO_HTTPClient  Sender,
+                                                   EMSP2HUB_HTTPClient  Sender,
                                                    EventTracking_Id     EventTrackingId,
                                                    RemoteParty_Id       RemotePartyId,
                                                    Party_Idv3?          From,
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetConnector request will be send.
     /// </summary>
     public delegate Task OnGetConnectorRequestDelegate(DateTimeOffset            LogTimestamp,
-                                                       EMSP2CPO_HTTPClient       Sender,
+                                                       EMSP2HUB_HTTPClient       Sender,
                                                        EventTracking_Id          EventTrackingId,
                                                        RemoteParty_Id            RemotePartyId,
                                                        Party_Idv3?               From,
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetConnector request had been received.
     /// </summary>
     public delegate Task OnGetConnectorResponseDelegate(DateTimeOffset           LogTimestamp,
-                                                        EMSP2CPO_HTTPClient      Sender,
+                                                        EMSP2HUB_HTTPClient      Sender,
                                                         EventTracking_Id         EventTrackingId,
                                                         RemoteParty_Id           RemotePartyId,
                                                         Party_Idv3?              From,
@@ -197,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetTariffs request will be send.
     /// </summary>
     public delegate Task OnGetTariffsRequestDelegate(DateTimeOffset                      LogTimestamp,
-                                                     EMSP2CPO_HTTPClient                 Sender,
+                                                     EMSP2HUB_HTTPClient                 Sender,
                                                      EventTracking_Id                    EventTrackingId,
                                                      RemoteParty_Id                      RemotePartyId,
                                                      Party_Idv3?                         From,
@@ -217,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetTariffs request had been received.
     /// </summary>
     public delegate Task OnGetTariffsResponseDelegate(DateTimeOffset                     LogTimestamp,
-                                                      EMSP2CPO_HTTPClient                Sender,
+                                                      EMSP2HUB_HTTPClient                Sender,
                                                       EventTracking_Id                   EventTrackingId,
                                                       RemoteParty_Id                     RemotePartyId,
                                                       Party_Idv3?                        From,
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetTariff request will be send.
     /// </summary>
     public delegate Task OnGetTariffRequestDelegate(DateTimeOffset         LogTimestamp,
-                                                    EMSP2CPO_HTTPClient    Sender,
+                                                    EMSP2HUB_HTTPClient    Sender,
                                                     EventTracking_Id       EventTrackingId,
                                                     RemoteParty_Id         RemotePartyId,
                                                     Party_Idv3?            From,
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetTariff request had been received.
     /// </summary>
     public delegate Task OnGetTariffResponseDelegate(DateTimeOffset        LogTimestamp,
-                                                     EMSP2CPO_HTTPClient   Sender,
+                                                     EMSP2HUB_HTTPClient   Sender,
                                                      EventTracking_Id      EventTrackingId,
                                                      RemoteParty_Id        RemotePartyId,
                                                      Party_Idv3?           From,
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetSessions request will be send.
     /// </summary>
     public delegate Task OnGetSessionsRequestDelegate(DateTimeOffset                       LogTimestamp,
-                                                      EMSP2CPO_HTTPClient                  Sender,
+                                                      EMSP2HUB_HTTPClient                  Sender,
                                                       EventTracking_Id                     EventTrackingId,
                                                       RemoteParty_Id                       RemotePartyId,
                                                       Party_Idv3?                          From,
@@ -303,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetSessions request had been received.
     /// </summary>
     public delegate Task OnGetSessionsResponseDelegate(DateTimeOffset                      LogTimestamp,
-                                                       EMSP2CPO_HTTPClient                 Sender,
+                                                       EMSP2HUB_HTTPClient                 Sender,
                                                        EventTracking_Id                    EventTrackingId,
                                                        RemoteParty_Id                      RemotePartyId,
                                                        Party_Idv3?                         From,
@@ -324,7 +324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetSession request will be send.
     /// </summary>
     public delegate Task OnGetSessionRequestDelegate(DateTimeOffset          LogTimestamp,
-                                                     EMSP2CPO_HTTPClient     Sender,
+                                                     EMSP2HUB_HTTPClient     Sender,
                                                      EventTracking_Id        EventTrackingId,
                                                      RemoteParty_Id          RemotePartyId,
                                                      Party_Idv3?             From,
@@ -341,7 +341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetSession request had been received.
     /// </summary>
     public delegate Task OnGetSessionResponseDelegate(DateTimeOffset         LogTimestamp,
-                                                      EMSP2CPO_HTTPClient    Sender,
+                                                      EMSP2HUB_HTTPClient    Sender,
                                                       EventTracking_Id       EventTrackingId,
                                                       RemoteParty_Id         RemotePartyId,
                                                       Party_Idv3?            From,
@@ -365,7 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetCDRs request will be send.
     /// </summary>
     public delegate Task OnGetCDRsRequestDelegate(DateTimeOffset                   LogTimestamp,
-                                                  EMSP2CPO_HTTPClient              Sender,
+                                                  EMSP2HUB_HTTPClient              Sender,
                                                   EventTracking_Id                 EventTrackingId,
                                                   RemoteParty_Id                   RemotePartyId,
                                                   Party_Idv3?                      From,
@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetCDRs request had been received.
     /// </summary>
     public delegate Task OnGetCDRsResponseDelegate(DateTimeOffset                  LogTimestamp,
-                                                   EMSP2CPO_HTTPClient             Sender,
+                                                   EMSP2HUB_HTTPClient             Sender,
                                                    EventTracking_Id                EventTrackingId,
                                                    RemoteParty_Id                  RemotePartyId,
                                                    Party_Idv3?                     From,
@@ -401,7 +401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetCDR request will be send.
     /// </summary>
     public delegate Task OnGetCDRRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                 EMSP2CPO_HTTPClient   Sender,
+                                                 EMSP2HUB_HTTPClient   Sender,
                                                  EventTracking_Id      EventTrackingId,
                                                  RemoteParty_Id        RemotePartyId,
                                                  Party_Idv3?           From,
@@ -418,7 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetCDR request had been received.
     /// </summary>
     public delegate Task OnGetCDRResponseDelegate(DateTimeOffset       LogTimestamp,
-                                                  EMSP2CPO_HTTPClient  Sender,
+                                                  EMSP2HUB_HTTPClient  Sender,
                                                   EventTracking_Id     EventTrackingId,
                                                   RemoteParty_Id       RemotePartyId,
                                                   Party_Idv3?          From,
@@ -442,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a GetToken request will be send.
     /// </summary>
     public delegate Task OnGetTokenRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                   EMSP2CPO_HTTPClient   Sender,
+                                                   EMSP2HUB_HTTPClient   Sender,
                                                    EventTracking_Id      EventTrackingId,
                                                    RemoteParty_Id        RemotePartyId,
                                                    Party_Idv3?           From,
@@ -461,7 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a GetToken request had been received.
     /// </summary>
     public delegate Task OnGetTokenResponseDelegate(DateTimeOffset       LogTimestamp,
-                                                    EMSP2CPO_HTTPClient  Sender,
+                                                    EMSP2HUB_HTTPClient  Sender,
                                                     EventTracking_Id     EventTrackingId,
                                                     RemoteParty_Id       RemotePartyId,
                                                     Party_Idv3?          From,
@@ -486,7 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a PutToken request will be send.
     /// </summary>
     public delegate Task OnPutTokenRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                   EMSP2CPO_HTTPClient   Sender,
+                                                   EMSP2HUB_HTTPClient   Sender,
                                                    EventTracking_Id      EventTrackingId,
                                                    RemoteParty_Id        RemotePartyId,
                                                    Party_Idv3?           From,
@@ -503,7 +503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a PutToken request had been received.
     /// </summary>
     public delegate Task OnPutTokenResponseDelegate(DateTimeOffset       LogTimestamp,
-                                                    EMSP2CPO_HTTPClient  Sender,
+                                                    EMSP2HUB_HTTPClient  Sender,
                                                     EventTracking_Id     EventTrackingId,
                                                     RemoteParty_Id       RemotePartyId,
                                                     Party_Idv3?          From,
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a PatchToken request will be send.
     /// </summary>
     public delegate Task OnPatchTokenRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                     EMSP2CPO_HTTPClient   Sender,
+                                                     EMSP2HUB_HTTPClient   Sender,
                                                      EventTracking_Id      EventTrackingId,
                                                      RemoteParty_Id        RemotePartyId,
                                                      Party_Idv3?           From,
@@ -546,7 +546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a PatchToken request had been received.
     /// </summary>
     public delegate Task OnPatchTokenResponseDelegate(DateTimeOffset       LogTimestamp,
-                                                      EMSP2CPO_HTTPClient  Sender,
+                                                      EMSP2HUB_HTTPClient  Sender,
                                                       EventTracking_Id     EventTrackingId,
                                                       RemoteParty_Id       RemotePartyId,
                                                       Party_Idv3?          From,
@@ -572,23 +572,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a GET ~/bookings request will be send.
     /// </summary>
-    public delegate Task OnGetBookingsRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                      EMSP2CPO_HTTPClient   Sender,
-                                                      EventTracking_Id      EventTrackingId,
-                                                      RemoteParty_Id        RemotePartyId,
-                                                      Party_Idv3?           From,
-                                                      Party_Idv3?           To,
-                                                      Request_Id            RequestId,
-                                                      Correlation_Id        CorrelationId,
-                                                      TimeSpan              RequestTimeout,
+    public delegate Task OnGetBookingsRequestDelegate(DateTimeOffset                       LogTimestamp,
+                                                      EMSP2HUB_HTTPClient                  Sender,
+                                                      EventTracking_Id                     EventTrackingId,
+                                                      RemoteParty_Id                       RemotePartyId,
+                                                      Party_Idv3?                          From,
+                                                      Party_Idv3?                          To,
+                                                      Request_Id                           RequestId,
+                                                      Correlation_Id                       CorrelationId,
+                                                      TimeSpan                             RequestTimeout,
 
-                                                      CancellationToken     CancellationToken);
+                                                      CancellationToken                    CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a GET ~/bookings request had been received.
     /// </summary>
     public delegate Task OnGetBookingsResponseDelegate(DateTimeOffset                      LogTimestamp,
-                                                       EMSP2CPO_HTTPClient                 Sender,
+                                                       EMSP2HUB_HTTPClient                 Sender,
                                                        EventTracking_Id                    EventTrackingId,
                                                        RemoteParty_Id                      RemotePartyId,
                                                        Party_Idv3?                         From,
@@ -608,38 +608,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a POST ~/bookings request will be send.
     /// </summary>
-    public delegate Task OnPostBookingsRequestDelegate(DateTimeOffset        LogTimestamp,
-                                                       EMSP2CPO_HTTPClient   Sender,
-                                                       EventTracking_Id      EventTrackingId,
-                                                       RemoteParty_Id        RemotePartyId,
-                                                       Party_Idv3?           From,
-                                                       Party_Idv3?           To,
-                                                       Request_Id            RequestId,
-                                                       Correlation_Id        CorrelationId,
-                                                       TimeSpan              RequestTimeout,
+    public delegate Task OnPostBookingsRequestDelegate(DateTimeOffset                       LogTimestamp,
+                                                       EMSP2HUB_HTTPClient                  Sender,
+                                                       EventTracking_Id                     EventTrackingId,
+                                                       RemoteParty_Id                       RemotePartyId,
+                                                       Party_Idv3?                          From,
+                                                       Party_Idv3?                          To,
+                                                       Request_Id                           RequestId,
+                                                       Correlation_Id                       CorrelationId,
+                                                       TimeSpan                             RequestTimeout,
 
-                                                       BookingRequest        BookingRequest,
+                                                       BookingRequest                       BookingRequest,
 
-                                                       CancellationToken     CancellationToken);
+                                                       CancellationToken                    CancellationToken);
 
     /// <summary>
     /// A delegate called whenever a response to a POST ~/bookings request had been received.
     /// </summary>
-    public delegate Task OnPostBookingsResponseDelegate(DateTimeOffset         LogTimestamp,
-                                                        EMSP2CPO_HTTPClient    Sender,
-                                                        EventTracking_Id       EventTrackingId,
-                                                        RemoteParty_Id         RemotePartyId,
-                                                        Party_Idv3?            From,
-                                                        Party_Idv3?            To,
-                                                        Request_Id             RequestId,
-                                                        Correlation_Id         CorrelationId,
-                                                        TimeSpan               RequestTimeout,
+    public delegate Task OnPostBookingsResponseDelegate(DateTimeOffset                      LogTimestamp,
+                                                        EMSP2HUB_HTTPClient                 Sender,
+                                                        EventTracking_Id                    EventTrackingId,
+                                                        RemoteParty_Id                      RemotePartyId,
+                                                        Party_Idv3?                         From,
+                                                        Party_Idv3?                         To,
+                                                        Request_Id                          RequestId,
+                                                        Correlation_Id                      CorrelationId,
+                                                        TimeSpan                            RequestTimeout,
 
-                                                        BookingRequest         BookingRequest,
+                                                        BookingRequest                      BookingRequest,
 
-                                                        OCPIResponse<Booking>  Response,
-                                                        TimeSpan               Runtime,
-                                                        CancellationToken      CancellationToken);
+                                                        OCPIResponse<Booking>               Response,
+                                                        TimeSpan                            Runtime,
+                                                        CancellationToken                   CancellationToken);
 
     #endregion
 
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a ReserveNow command request will be send.
     /// </summary>
     public delegate Task OnReserveNowRequestDelegate(DateTimeOffset                                     LogTimestamp,
-                                                     EMSP2CPO_HTTPClient                                Sender,
+                                                     EMSP2HUB_HTTPClient                                Sender,
                                                      EventTracking_Id                                   EventTrackingId,
                                                      RemoteParty_Id                                     RemotePartyId,
                                                      Party_Idv3?                                        From,
@@ -672,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a ReserveNow command request had been received.
     /// </summary>
     public delegate Task OnReserveNowResponseDelegate(DateTimeOffset                                    LogTimestamp,
-                                                      EMSP2CPO_HTTPClient                               Sender,
+                                                      EMSP2HUB_HTTPClient                               Sender,
                                                       EventTracking_Id                                  EventTrackingId,
                                                       RemoteParty_Id                                    RemotePartyId,
                                                       Party_Idv3?                                       From,
@@ -700,7 +700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a CancelReservation command request will be send.
     /// </summary>
     public delegate Task OnCancelReservationRequestDelegate(DateTimeOffset                                            LogTimestamp,
-                                                            EMSP2CPO_HTTPClient                                       Sender,
+                                                            EMSP2HUB_HTTPClient                                       Sender,
                                                             EventTracking_Id                                          EventTrackingId,
                                                             RemoteParty_Id                                            RemotePartyId,
                                                             Party_Idv3?                                               From,
@@ -717,7 +717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a CancelReservation command request had been received.
     /// </summary>
     public delegate Task OnCancelReservationResponseDelegate(DateTimeOffset                                           LogTimestamp,
-                                                             EMSP2CPO_HTTPClient                                      Sender,
+                                                             EMSP2HUB_HTTPClient                                      Sender,
                                                              EventTracking_Id                                         EventTrackingId,
                                                              RemoteParty_Id                                           RemotePartyId,
                                                              Party_Idv3?                                              From,
@@ -740,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a StartSession command request will be send.
     /// </summary>
     public delegate Task OnStartSessionRequestDelegate(DateTimeOffset                                       LogTimestamp,
-                                                       EMSP2CPO_HTTPClient                                  Sender,
+                                                       EMSP2HUB_HTTPClient                                  Sender,
                                                        EventTracking_Id                                     EventTrackingId,
                                                        RemoteParty_Id                                       RemotePartyId,
                                                        Party_Idv3?                                          From,
@@ -761,7 +761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a StartSession command request had been received.
     /// </summary>
     public delegate Task OnStartSessionResponseDelegate(DateTimeOffset                                      LogTimestamp,
-                                                        EMSP2CPO_HTTPClient                                 Sender,
+                                                        EMSP2HUB_HTTPClient                                 Sender,
                                                         EventTracking_Id                                    EventTrackingId,
                                                         RemoteParty_Id                                      RemotePartyId,
                                                         Party_Idv3?                                         From,
@@ -788,7 +788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a StopSession command request will be send.
     /// </summary>
     public delegate Task OnStopSessionRequestDelegate(DateTimeOffset                                      LogTimestamp,
-                                                      EMSP2CPO_HTTPClient                                 Sender,
+                                                      EMSP2HUB_HTTPClient                                 Sender,
                                                       EventTracking_Id                                    EventTrackingId,
                                                       RemoteParty_Id                                      RemotePartyId,
                                                       Party_Idv3?                                         From,
@@ -805,7 +805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a StopSession command request had been received.
     /// </summary>
     public delegate Task OnStopSessionResponseDelegate(DateTimeOffset                                     LogTimestamp,
-                                                       EMSP2CPO_HTTPClient                                Sender,
+                                                       EMSP2HUB_HTTPClient                                Sender,
                                                        EventTracking_Id                                   EventTrackingId,
                                                        RemoteParty_Id                                     RemotePartyId,
                                                        Party_Idv3?                                        From,
@@ -828,7 +828,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever an UnlockConnector command request will be send.
     /// </summary>
     public delegate Task OnUnlockConnectorRequestDelegate(DateTimeOffset                                          LogTimestamp,
-                                                          EMSP2CPO_HTTPClient                                     Sender,
+                                                          EMSP2HUB_HTTPClient                                     Sender,
                                                           EventTracking_Id                                        EventTrackingId,
                                                           RemoteParty_Id                                          RemotePartyId,
                                                           Party_Idv3?                                             From,
@@ -847,7 +847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to an UnlockConnector command request had been received.
     /// </summary>
     public delegate Task OnUnlockConnectorResponseDelegate(DateTimeOffset                                         LogTimestamp,
-                                                           EMSP2CPO_HTTPClient                                    Sender,
+                                                           EMSP2HUB_HTTPClient                                    Sender,
                                                            EventTracking_Id                                       EventTrackingId,
                                                            RemoteParty_Id                                         RemotePartyId,
                                                            Party_Idv3?                                            From,
@@ -872,7 +872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a SetChargingProfile command request will be send.
     /// </summary>
     public delegate Task OnSetChargingProfileRequestDelegate(DateTimeOffset                                            LogTimestamp,
-                                                             EMSP2CPO_HTTPClient                                       Sender,
+                                                             EMSP2HUB_HTTPClient                                       Sender,
                                                              EventTracking_Id                                          EventTrackingId,
                                                              RemoteParty_Id                                            RemotePartyId,
                                                              Party_Idv3?                                               From,
@@ -889,7 +889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a SetChargingProfile command request had been received.
     /// </summary>
     public delegate Task OnSetChargingProfileResponseDelegate(DateTimeOffset                                            LogTimestamp,
-                                                              EMSP2CPO_HTTPClient                                       Sender,
+                                                              EMSP2HUB_HTTPClient                                       Sender,
                                                               EventTracking_Id                                          EventTrackingId,
                                                               RemoteParty_Id                                            RemotePartyId,
                                                               Party_Idv3?                                               From,
@@ -915,7 +915,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a NotifyWebPaymentsStarted command request will be send.
     /// </summary>
     public delegate Task OnNotifyWebPaymentsStartedRequestDelegate(DateTimeOffset                                                   LogTimestamp,
-                                                                   EMSP2CPO_HTTPClient                                              Sender,
+                                                                   EMSP2HUB_HTTPClient                                              Sender,
                                                                    EventTracking_Id                                                 EventTrackingId,
                                                                    RemoteParty_Id                                                   RemotePartyId,
                                                                    Party_Idv3?                                                      From,
@@ -937,7 +937,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a NotifyWebPaymentsStarted command request had been received.
     /// </summary>
     public delegate Task OnNotifyWebPaymentsStartedResponseDelegate(DateTimeOffset                                                  LogTimestamp,
-                                                                    EMSP2CPO_HTTPClient                                             Sender,
+                                                                    EMSP2HUB_HTTPClient                                             Sender,
                                                                     EventTracking_Id                                                EventTrackingId,
                                                                     RemoteParty_Id                                                  RemotePartyId,
                                                                     Party_Idv3?                                                     From,
@@ -965,7 +965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a NotifyWebPaymentsFailed command request will be send.
     /// </summary>
     public delegate Task OnNotifyWebPaymentsFailedRequestDelegate(DateTimeOffset                                                  LogTimestamp,
-                                                                  EMSP2CPO_HTTPClient                                             Sender,
+                                                                  EMSP2HUB_HTTPClient                                             Sender,
                                                                   EventTracking_Id                                                EventTrackingId,
                                                                   RemoteParty_Id                                                  RemotePartyId,
                                                                   Party_Idv3?                                                     From,
@@ -987,7 +987,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
     /// A delegate called whenever a response to a NotifyWebPaymentsFailed command request had been received.
     /// </summary>
     public delegate Task OnNotifyWebPaymentsFailedResponseDelegate(DateTimeOffset                                                 LogTimestamp,
-                                                                   EMSP2CPO_HTTPClient                                            Sender,
+                                                                   EMSP2HUB_HTTPClient                                            Sender,
                                                                    EventTracking_Id                                               EventTrackingId,
                                                                    RemoteParty_Id                                                 RemotePartyId,
                                                                    Party_Idv3?                                                    From,

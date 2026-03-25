@@ -31,15 +31,15 @@ using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HUB.HTTP
 {
 
     /// <summary>
-    /// The OCPI EMSP-2-CPO HTTP client.
+    /// The OCPI EMSP-2-HUB HTTP client.
     /// </summary>
-    public partial class EMSP2CPO_HTTPClient : CommonHTTPClient
+    public partial class EMSP2HUB_HTTPClient : CommonHTTPClient
     {
-
+        
         #region (class) APICounters
 
         public class APICounters : CommonAPICounters
@@ -210,21 +210,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2CPO_HTTPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(EMSP2HUB_HTTPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(EMSP2CPO_HTTPClient);
+        public new const String  DefaultLoggingContext   = nameof(EMSP2HUB_HTTPClient);
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The CPO identification of the remote party.
+        /// The HUB identification of the remote party.
         /// </summary>
-        public CPO_Id                RemoteCPOId     { get; }
+        public HUB_Id                RemoteHUBId     { get; }
 
         /// <summary>
         /// Our EMSP HTTP API.
@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         public new APICounters       Counters        { get; }
 
         /// <summary>
-        /// The EMSP2CPO client (HTTP client) logger.
+        /// The EMSP2HUB client (HTTP client) logger.
         /// </summary>
         public new HTTPClientLogger  HTTPLogger
         {
@@ -799,17 +799,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP2CPO HTTP client.
+        /// Create a new EMSP2HUB HTTP client.
         /// </summary>
         /// <param name="EMSP_HTTPAPI">The EMSP HTTP API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="Description">An optional description of this HUB client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
         /// <param name="LoggingPath">The logging path.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSP2CPO_HTTPClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
+        public EMSP2HUB_HTTPClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
                               RemoteParty                                               RemoteParty,
                               HTTPHostname?                                             VirtualHostname   = null,
                               I18NString?                                               Description       = null,
@@ -835,12 +835,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
 
         {
 
-            var cpoId          = RemoteParty.Id.AsCPOId();
+            var HUBId          = RemoteParty.Id.AsHUBId();
 
-            if (!cpoId.HasValue)
-                throw new ArgumentException("The given remote party identification is not a valid CPO identification!", nameof(RemoteParty));
+            if (!HUBId.HasValue)
+                throw new ArgumentException("The given remote party identification is not a valid HUB identification!", nameof(RemoteParty));
 
-            this.RemoteCPOId   = cpoId.Value;
+            this.RemoteHUBId   = HUBId.Value;
             this.EMSP_HTTPAPI  = EMSP_HTTPAPI;
             this.Counters      = new APICounters();
 
@@ -4969,7 +4969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(EMSP2CPO_HTTPClient),
+                   nameof(EMSP2HUB_HTTPClient),
                    Logger,
                    LogHandler,
                    EventName,
@@ -4982,7 +4982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         #region ToJSON()
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(EMSP2CPO_HTTPClient));
+            => base.ToJSON(nameof(EMSP2HUB_HTTPClient));
 
         #endregion
 
