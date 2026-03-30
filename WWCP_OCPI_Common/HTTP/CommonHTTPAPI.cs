@@ -792,6 +792,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -837,6 +838,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -907,6 +909,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -949,6 +952,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1028,6 +1032,7 @@ namespace cloud.charging.open.protocols.OCPI
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -1079,6 +1084,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1121,12 +1127,13 @@ namespace cloud.charging.open.protocols.OCPI
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus?                   Status            = null,
+                           PartyStatus?                   Status              = null,
+                           IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                           DateTimeOffset?                Created           = null,
-                           DateTimeOffset?                LastUpdated       = null,
-                           EventTracking_Id?              EventTrackingId   = null,
-                           User_Id?                       CurrentUserId     = null)
+                           DateTimeOffset?                Created             = null,
+                           DateTimeOffset?                LastUpdated         = null,
+                           EventTracking_Id?              EventTrackingId     = null,
+                           User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -1138,6 +1145,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1255,6 +1263,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -1307,6 +1316,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1377,6 +1387,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -1426,6 +1437,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1505,6 +1517,7 @@ namespace cloud.charging.open.protocols.OCPI
                                       AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -1563,6 +1576,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1606,12 +1620,13 @@ namespace cloud.charging.open.protocols.OCPI
                                       IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                                      PartyStatus?                   Status            = null,
+                                      PartyStatus?                   Status              = null,
+                                      IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                                      DateTimeOffset?                Created           = null,
-                                      DateTimeOffset?                LastUpdated       = null,
-                                      EventTracking_Id?              EventTrackingId   = null,
-                                      User_Id?                       CurrentUserId     = null)
+                                      DateTimeOffset?                Created             = null,
+                                      DateTimeOffset?                LastUpdated         = null,
+                                      EventTracking_Id?              EventTrackingId     = null,
+                                      User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -1630,6 +1645,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1747,6 +1763,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -1792,6 +1809,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -1872,6 +1890,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -1914,6 +1933,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2003,6 +2023,7 @@ namespace cloud.charging.open.protocols.OCPI
                                    AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -2054,6 +2075,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2107,12 +2129,13 @@ namespace cloud.charging.open.protocols.OCPI
                                    IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                    IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                                   PartyStatus?                   Status            = null,
+                                   PartyStatus?                   Status              = null,
+                                   IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                                   DateTimeOffset?                Created           = null,
-                                   DateTimeOffset?                LastUpdated       = null,
-                                   EventTracking_Id?              EventTrackingId   = null,
-                                   User_Id?                       CurrentUserId     = null)
+                                   DateTimeOffset?                Created             = null,
+                                   DateTimeOffset?                LastUpdated         = null,
+                                   EventTracking_Id?              EventTrackingId     = null,
+                                   User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -2124,6 +2147,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2252,6 +2276,7 @@ namespace cloud.charging.open.protocols.OCPI
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -2297,6 +2322,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2368,6 +2394,7 @@ namespace cloud.charging.open.protocols.OCPI
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -2410,6 +2437,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2490,6 +2518,7 @@ namespace cloud.charging.open.protocols.OCPI
                               AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -2541,6 +2570,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -2585,12 +2615,13 @@ namespace cloud.charging.open.protocols.OCPI
                               IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                               IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                              PartyStatus?                   Status            = null,
+                              PartyStatus?                   Status              = null,
+                              IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                              DateTimeOffset?                Created           = null,
-                              DateTimeOffset?                LastUpdated       = null,
-                              EventTracking_Id?              EventTrackingId   = null,
-                              User_Id?                       CurrentUserId     = null)
+                              DateTimeOffset?                Created             = null,
+                              DateTimeOffset?                LastUpdated         = null,
+                              EventTracking_Id?              EventTrackingId     = null,
+                              User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -2602,6 +2633,7 @@ namespace cloud.charging.open.protocols.OCPI
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -3094,126 +3126,59 @@ namespace cloud.charging.open.protocols.OCPI
 
                 HTTPMethod.GET,
                 URLPathPrefix + "versions",
-                //HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetVersionsRequest,
                 OCPIResponseLogger:  GetVersionsResponse,
                 OCPIRequestHandler:  request => {
 
-                    var requestId        = request.HTTPRequest.TryParseHeaderStruct            ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
-                    var correlationId    = request.HTTPRequest.TryParseHeaderStruct            ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-                    var toCountryCode    = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.   TryParse);
-                    var toPartyId        = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-to-party-id",       Party_Id.      TryParse);
-                    var fromCountryCode  = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.   TryParse);
-                    var fromPartyId      = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-from-party-id",     Party_Id.      TryParse);
+                    //var requestId            = request.HTTPRequest.TryParseHeaderStruct            ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+                    //var correlationId        = request.HTTPRequest.TryParseHeaderStruct            ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+                    //var toCountryCode        = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.   TryParse);
+                    //var toPartyId            = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-to-party-id",       Party_Id.      TryParse);
+                    //var fromCountryCode      = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.   TryParse);
+                    //var fromPartyId          = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-from-party-id",     Party_Id.      TryParse);
 
+                    var versionInformations  = VersionInformations.ToList();
 
                     #region Check access token
 
-                    AccessToken? accessToken1 = null;
-
-                    if (request.HTTPRequest.Authorization is HTTPTokenAuthentication TokenAuth &&
-                        //TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
-                        AccessToken.TryParse(TokenAuth.Token, out var accessToken))
-                    {
-                        accessToken1 = accessToken;
-                    }
-
-                    else if (request.HTTPRequest.Authorization is HTTPBasicAuthentication BasicAuth &&
-                        AccessToken.TryParse(BasicAuth.Username, out accessToken))
-                    {
-                        accessToken1 = accessToken;
-                    }
-
-                    if (accessToken1.HasValue)
+                    if (request.AccessToken.HasValue)
                     {
 
-                        if (AccessTokenIsBlocked(accessToken1.Value))
-                        {
-
-                          //  var httpResponseBuilder2 =
-                          //      new HTTPResponse.Builder(request.HTTPRequest) {
-                          //          HTTPStatusCode             = HTTPStatusCode.OK,
-                          //          Server                     = HTTPServiceName,
-                          //          Date                       = Timestamp.Now,
-                          //          AccessControlAllowOrigin   = "*",
-                          //          AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                          //          Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                          //          AccessControlAllowHeaders  = [ "Authorization" ],
-                          //          ContentType                = HTTPContentType.Application.JSON_UTF8,
-                          //          Content                    = JSONObject.Create(
-                          //                                           new JProperty("status_code",     2000),
-                          //                                           new JProperty("status_message", "Invalid or blocked access token!")
-                          //                                       ).ToUTF8Bytes(),
-                          //          Connection                 = ConnectionType.KeepAlive,
-                          //          Vary                       = "Accept"
-                          //      };
-                          //
-                          //  httpResponseBuilder2.Set("X-Request-ID",      requestId);
-                          //  httpResponseBuilder2.Set("X-Correlation-ID",  correlationId);
-                          //
-                          //  return Task.FromResult(httpResponseBuilder2.AsImmutable);
-
+                        if (AccessTokenIsBlocked(request.AccessToken.Value))
                             return Task.FromResult(
-                                       new OCPIResponse.Builder(request) {
-                                           StatusCode           = 2000,
-                                           StatusMessage        = "Invalid or blocked access token!",
-                                           HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               Server                     = HTTPServiceName,
-                                               Date                       = Timestamp.Now,
-                                               AccessControlAllowOrigin   = "*",
-                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                               Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                               AccessControlAllowHeaders  = [ "Authorization" ],
-                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                               Connection                 = ConnectionType.KeepAlive,
-                                               Vary                       = "Accept"
-                                           }
-                                       }
-                                   );
+                                        new OCPIResponse.Builder(request) {
+                                            StatusCode           = StatusCodes.GenericClientError,
+                                            StatusMessage        = "Invalid or blocked access token!",
+                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                Server                     = HTTPServiceName,
+                                                Date                       = Timestamp.Now,
+                                                AccessControlAllowOrigin   = "*",
+                                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                                Connection                 = ConnectionType.KeepAlive,
+                                                Vary                       = "Accept"
+                                            }
+                                        }
+                                    );
 
-                        }
+                        // Filter the version information based on the remote party's visible version ids
+                        if (request.RemoteParty?.VisibleVersionIds.Count > 0)
+                            versionInformations = [.. versionInformations.Where(versionInformation => request.RemoteParty.VisibleVersionIds.Contains(versionInformation.Id))];
 
                     }
 
                     #endregion
 
 
-                    //var httpResponseBuilder =
-                    //    new HTTPResponse.Builder(request.HTTPRequest) {
-                    //        HTTPStatusCode             = HTTPStatusCode.OK,
-                    //        Server                     = HTTPServiceName,
-                    //        Date                       = Timestamp.Now,
-                    //        AccessControlAllowOrigin   = "*",
-                    //        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                    //        Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                    //        AccessControlAllowHeaders  = [ "Authorization" ],
-                    //        ContentType                = HTTPContentType.Application.JSON_UTF8,
-                    //        Content                    = JSONObject.Create(
-                    //                                         new JProperty("timestamp",        Timestamp.Now.ToISO8601()),
-                    //                                         new JProperty("status_code",      1000),
-                    //                                         new JProperty("status_message",  "Hello world!"),
-                    //                                         new JProperty("data",             new JArray(
-                    //                                                                               VersionInformations.
-                    //                                                                                   OrderBy(versionInformation => versionInformation.Id).
-                    //                                                                                   Select (versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
-                    //                                                                           ))
-                    //                                     ).ToUTF8Bytes(),
-                    //        Connection                 = ConnectionType.KeepAlive,
-                    //        Vary                       = "Accept"
-                    //    };
-
-                    //httpResponseBuilder.Set("X-Request-ID",      requestId);
-                    //httpResponseBuilder.Set("X-Correlation-ID",  correlationId);
-
-                    //return Task.FromResult(httpResponseBuilder.AsImmutable);
-
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
+                                   StatusCode           = StatusCodes.Success,
                                    StatusMessage        = "Hello world!",
                                    Data                 = new JArray(
-                                                              VersionInformations.
+                                                              versionInformations.
                                                                   OrderBy(versionInformation => versionInformation.Id).
                                                                   Select (versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
                                                           ),

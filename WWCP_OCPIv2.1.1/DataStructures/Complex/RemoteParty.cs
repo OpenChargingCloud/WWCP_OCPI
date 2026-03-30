@@ -172,24 +172,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create a new Remote Party with local access only.
         /// The remote party will start the OCPI registration process afterwards.
         /// </summary>
-        public RemoteParty(CountryCode      CountryCode,
-                           Party_Id         PartyId,
-                           Role             Role,
-                           BusinessDetails  BusinessDetails,
+        public RemoteParty(CountryCode               CountryCode,
+                           Party_Id                  PartyId,
+                           Role                      Role,
+                           BusinessDetails           BusinessDetails,
 
-                           AccessToken      LocalAccessToken,
-                           Boolean?         LocalAccessTokenBase64Encoding   = null,
-                           TOTPConfig?      LocalTOTPConfig                  = null,
-                           HTTPModifiers?   IN                               = null,
-                           DateTimeOffset?  LocalAccessNotBefore             = null,
-                           DateTimeOffset?  LocalAccessNotAfter              = null,
-                           Boolean?         LocalAllowDowngrades             = false,
-                           AccessStatus?    LocalAccessStatus                = AccessStatus.ALLOWED,
+                           AccessToken               LocalAccessToken,
+                           Boolean?                  LocalAccessTokenBase64Encoding   = null,
+                           TOTPConfig?               LocalTOTPConfig                  = null,
+                           HTTPModifiers?            IN                               = null,
+                           DateTimeOffset?           LocalAccessNotBefore             = null,
+                           DateTimeOffset?           LocalAccessNotAfter              = null,
+                           Boolean?                  LocalAllowDowngrades             = false,
+                           AccessStatus?             LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                           PartyStatus?     Status                           = PartyStatus.ENABLED,
+                           PartyStatus?              Status                           = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?  VisibleVersionIds                = null,
 
-                           DateTimeOffset?  Created                          = null,
-                           DateTimeOffset?  LastUpdated                      = null)
+                           DateTimeOffset?           Created                          = null,
+                           DateTimeOffset?           LastUpdated                      = null)
 
             : this(CountryCode,
                    PartyId,
@@ -209,7 +210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        )
                    ],
                    [],
+
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -259,6 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -304,7 +308,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        )
                    ],
+
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -359,6 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus?                                               Status                            = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -415,7 +422,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        )
                    ],
+
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -433,16 +442,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
-                           PartyStatus?                   Status        = PartyStatus.ENABLED,
 
-                           DateTimeOffset?                Created       = null,
-                           DateTimeOffset?                LastUpdated   = null)
+                           PartyStatus?                   Status              = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?       VisibleVersionIds   = null,
+
+                           DateTimeOffset?                Created             = null,
+                           DateTimeOffset?                LastUpdated         = null)
 
             : base(RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}"),
 
                    LocalAccessInfos,
                    RemoteAccessInfos,
+
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -457,16 +470,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                this.hashCode = Id.               GetHashCode()  * 29 ^
-                                CountryCode.      GetHashCode()  * 23 ^
-                                PartyId.          GetHashCode()  * 19 ^
-                                Role.             GetHashCode()  * 17 ^
-                                BusinessDetails.  GetHashCode()  * 13 ^
-                                Status.           GetHashCode()  * 11 ^
-                                LastUpdated.      GetHashCode()  *  7 ^
-                                ETag.             GetHashCode()  *  5 ^
-                                localAccessInfos. CalcHashCode() *  3 ^
-                                remoteAccessInfos.CalcHashCode();
+                this.hashCode = this.Id.               GetHashCode()  * 31 ^
+                                this.CountryCode.      GetHashCode()  * 29 ^
+                                this.PartyId.          GetHashCode()  * 13 ^
+                                this.Role.             GetHashCode()  * 19 ^
+                                this.BusinessDetails.  GetHashCode()  * 17 ^
+                                this.Status.           GetHashCode()  * 13 ^
+                                this.VisibleVersionIds.CalcHashCode() * 11 ^
+                                this.LastUpdated.      GetHashCode()  *  7 ^
+                                this.ETag.             GetHashCode()  *  5 ^
+                                this.localAccessInfos. CalcHashCode() *  3 ^
+                                this.remoteAccessInfos.CalcHashCode();
 
             }
 
@@ -534,7 +548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("countryCode",
                                          "country code",
                                          OCPI.CountryCode.TryParse,
-                                         out CountryCode CountryCode,
+                                         out CountryCode countryCode,
                                          out ErrorResponse))
                 {
                     return false;
@@ -547,7 +561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("partyId",
                                          "party identification",
                                          Party_Id.TryParse,
-                                         out Party_Id PartyId,
+                                         out Party_Id partyId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -560,7 +574,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("role",
                                          "party role",
                                          OCPI.Role.TryParse,
-                                         out Role Role,
+                                         out Role role,
                                          out ErrorResponse))
                 {
                     return false;
@@ -573,9 +587,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatoryJSON("businessDetails",
                                              "business details",
                                              OCPI.BusinessDetails.TryParse,
-                                             out BusinessDetails? BusinessDetails,
+                                             out BusinessDetails? businessDetails,
                                              out ErrorResponse) ||
-                    BusinessDetails is null)
+                    businessDetails is null)
                 {
                     return false;
                 }
@@ -587,7 +601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptionalJSON("localAccessInfos",
                                            "local access infos",
                                            LocalAccessInfo.TryParse,
-                                           out IEnumerable<LocalAccessInfo> LocalAccessInfos,
+                                           out IEnumerable<LocalAccessInfo> localAccessInfos,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -601,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptionalJSON("remoteAccessInfos",
                                            "remote access infos",
                                            RemoteAccessInfo.TryParse,
-                                           out IEnumerable<RemoteAccessInfo> RemoteAccessInfos,
+                                           out IEnumerable<RemoteAccessInfo> remoteAccessInfos,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -615,10 +629,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatory("partyStatus",
                                          "party status",
                                          PartyStatus.TryParse,
-                                         out PartyStatus Status,
+                                         out PartyStatus status,
                                          out ErrorResponse))
                 {
                     return false;
+                }
+
+                #endregion
+
+                #region Parse VisibleVersionIds    [optional]
+
+                if (JSON.ParseOptionalJSON("visibleVersionIds",
+                                           "visible version identifications",
+                                           Version_Id.TryParse,
+                                           out IEnumerable<Version_Id> visibleVersionIds,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -652,15 +680,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 RemoteParty = new RemoteParty(
 
-                                  CountryCode,
-                                  PartyId,
-                                  Role,
-                                  BusinessDetails,
+                                  countryCode,
+                                  partyId,
+                                  role,
+                                  businessDetails,
 
-                                  LocalAccessInfos,
-                                  RemoteAccessInfos,
+                                  localAccessInfos,
+                                  remoteAccessInfos,
 
-                                  Status,
+                                  status,
+                                  visibleVersionIds,
 
                                   created,
                                   lastUpdated
@@ -770,6 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessInfos. Select(localAccesssInfo  => localAccesssInfo. Clone()),
                    RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                    Status,
+                   VisibleVersionIds.Select(versionId         => versionId.        Clone()),
 
                    Created,
                    LastUpdated

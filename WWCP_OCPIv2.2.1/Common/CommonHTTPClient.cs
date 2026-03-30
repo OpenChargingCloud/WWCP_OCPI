@@ -2280,6 +2280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                           AccessStatus.ALLOWED,       // LocalAccessStatus
 
                                                                           PartyStatus.ENABLED,        // PartyStatus
+                                                                          null,                       // VisibleVersionIds
 
                                                                           this.RemoteParty.Created,   // Created
                                                                           Timestamp.Now,              // LastUpdated

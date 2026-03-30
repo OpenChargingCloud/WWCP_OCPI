@@ -609,6 +609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus?                                               PartyStatus                       = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -659,6 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    LocalAccessStatus,
 
                    PartyStatus,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -709,6 +711,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -753,6 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    RemoteAllowDowngrades,
 
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,

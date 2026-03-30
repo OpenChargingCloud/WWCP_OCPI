@@ -223,6 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -299,7 +300,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               )
                           ]
                         : [],
+
                    Status ?? PartyStatus.PRE_REMOTE_REGISTRATION,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -384,6 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -427,7 +431,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                        )
                    ],
+
                    Status ?? PartyStatus.PRE_LOCAL_REGISTRATION,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -525,6 +531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            AccessStatus?                                              LocalAccessStatus                 = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -579,7 +586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                        )
                    ],
+
                    Status ?? PartyStatus.ENABLED,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -596,17 +605,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus?                   Status        = null,
+                           PartyStatus?                   Status              = null,
+                           IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                           DateTimeOffset?                Created       = null,
-                           DateTimeOffset?                LastUpdated   = null)
+                           DateTimeOffset?                Created             = null,
+                           DateTimeOffset?                LastUpdated         = null)
 
             : base(Id,
 
                    Roles,
                    LocalAccessInfos,
                    RemoteAccessInfos,
+
                    Status ?? PartyStatus.ENABLED,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -618,13 +630,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             unchecked
             {
 
-                this.hashCode = Id.               GetHashCode()  * 17 ^
-                                Roles.            CalcHashCode() * 13 ^
-                                Status.           GetHashCode()  * 11 ^
-                                LastUpdated.      GetHashCode()  *  7 ^
-                                ETag.             GetHashCode()  *  5 ^
-                                localAccessInfos. CalcHashCode() *  3 ^
-                                remoteAccessInfos.CalcHashCode();
+                this.hashCode = this.Id.               GetHashCode()  * 19 ^
+                                this.Roles.            CalcHashCode() * 17 ^
+                                this.Status.           GetHashCode()  * 13 ^
+                                this.VisibleVersionIds.CalcHashCode() * 11 ^
+                                this.LastUpdated.      GetHashCode()  *  7 ^
+                                this.ETag.             GetHashCode()  *  5 ^
+                                this.localAccessInfos. CalcHashCode() *  3 ^
+                                this.remoteAccessInfos.CalcHashCode();
 
             }
 
@@ -754,6 +767,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse VisibleVersionIds    [optional]
+
+                if (JSON.ParseOptionalJSON("visibleVersionIds",
+                                           "visible version identifications",
+                                           Version_Id.TryParse,
+                                           out IEnumerable<Version_Id> visibleVersionIds,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created              [optional, NonStandard]
 
@@ -790,6 +817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   remoteAccessInfos,
 
                                   status,
+                                  visibleVersionIds,
 
                                   created,
                                   lastUpdated
@@ -877,6 +905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
 
                    Status,
+                   VisibleVersionIds.Select(versionId         => versionId.        Clone()),
 
                    Created,
                    LastUpdated

@@ -52,6 +52,7 @@ namespace cloud.charging.open.protocols.OCPI
                                IEnumerable<RemoteAccessInfo>                              RemoteAccessInfos,
 
                                PartyStatus?                                               Status                       = PartyStatus.ENABLED,
+                               IEnumerable<Version_Id>?                                   VisibleVersionIds            = null,
 
                                DateTimeOffset?                                            Created                      = null,
                                DateTimeOffset?                                            LastUpdated                  = null)
@@ -60,7 +61,9 @@ namespace cloud.charging.open.protocols.OCPI
 
                    LocalAccessInfos,
                    RemoteAccessInfos,
+
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)

@@ -558,6 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus                                                PartyStatus                       = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -609,6 +610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessStatus,
 
                    PartyStatus,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -623,26 +625,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public Task<AddResult<RemoteParty>>
 
-            AddRemoteParty(CountryCode        CountryCode,
-                           Party_Id           PartyId,
-                           Role               Role,
-                           BusinessDetails    BusinessDetails,
+            AddRemoteParty(CountryCode               CountryCode,
+                           Party_Id                  PartyId,
+                           Role                      Role,
+                           BusinessDetails           BusinessDetails,
 
-                           AccessToken        LocalAccessToken,
-                           Boolean?           LocalAccessTokenBase64Encoding   = null,
-                           TOTPConfig?        LocalTOTPConfig                  = null,
-                           HTTPModifiers?     IN                               = null,
-                           DateTimeOffset?    LocalAccessNotBefore             = null,
-                           DateTimeOffset?    LocalAccessNotAfter              = null,
-                           Boolean?           LocalAllowDowngrades             = false,
-                           AccessStatus?      LocalAccessStatus                = AccessStatus.ALLOWED,
+                           AccessToken               LocalAccessToken,
+                           Boolean?                  LocalAccessTokenBase64Encoding   = null,
+                           TOTPConfig?               LocalTOTPConfig                  = null,
+                           HTTPModifiers?            IN                               = null,
+                           DateTimeOffset?           LocalAccessNotBefore             = null,
+                           DateTimeOffset?           LocalAccessNotAfter              = null,
+                           Boolean?                  LocalAllowDowngrades             = false,
+                           AccessStatus?             LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                           PartyStatus?       Status                           = PartyStatus.ENABLED,
+                           PartyStatus?              Status                           = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?  VisibleVersionIds                = null,
 
-                           DateTimeOffset?    Created                          = null,
-                           DateTimeOffset?    LastUpdated                      = null,
-                           EventTracking_Id?  EventTrackingId                  = null,
-                           User_Id?           CurrentUserId                    = null)
+                           DateTimeOffset?           Created                          = null,
+                           DateTimeOffset?           LastUpdated                      = null,
+                           EventTracking_Id?         EventTrackingId                  = null,
+                           User_Id?                  CurrentUserId                    = null)
 
             => CommonAPI.AddRemoteParty(
 
@@ -661,6 +664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessStatus,
 
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
