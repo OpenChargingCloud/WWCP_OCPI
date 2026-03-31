@@ -3147,7 +3147,7 @@ namespace cloud.charging.open.protocols.OCPI
                         if (AccessTokenIsBlocked(request.AccessToken.Value))
                             return Task.FromResult(
                                         new OCPIResponse.Builder(request) {
-                                            StatusCode           = StatusCodes.GenericClientError,
+                                            StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                             StatusMessage        = "Invalid or blocked access token!",
                                             HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                 HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3175,7 +3175,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCodes.Success,
+                                   StatusCode           = StatusCode.Success,
                                    StatusMessage        = "Hello world!",
                                    Data                 = new JArray(
                                                               versionInformations.

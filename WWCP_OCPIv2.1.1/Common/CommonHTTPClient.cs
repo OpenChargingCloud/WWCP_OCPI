@@ -661,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            )
                                );
 
-                    switch (response.StatusCode)
+                    switch (response.StatusCode.Value)
                     {
 
                         case 1000:
@@ -912,7 +912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    )
                                        );
 
-                            switch (response.StatusCode)
+                            switch (response.StatusCode.Value)
                             {
 
                                 case 1000:

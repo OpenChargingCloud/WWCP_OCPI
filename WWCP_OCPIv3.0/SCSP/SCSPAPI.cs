@@ -2568,7 +2568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                             return Task.FromResult(
                                                 new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = StatusCodes.GenericClientError,
+                                                    StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2604,7 +2604,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = StatusCodes.Success,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(
                                                                               filteredLocations.
@@ -2669,7 +2669,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.GenericClientError,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2699,7 +2699,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                                         return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = StatusCodes.Success,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -2764,7 +2764,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                             return Task.FromResult(
                                                 new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = StatusCodes.GenericClientError,
+                                                    StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2794,7 +2794,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = StatusCodes.Success,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = location.ToJSON(true,
                                                                                           true,
@@ -2852,7 +2852,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.GenericClientError,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2892,7 +2892,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
+                                                       StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                                                        StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2912,34 +2912,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.Success,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(true,
-                                                                                                            true,
-                                                                                                            true,
-                                                                                                            true,
-                                                                                                            CustomLocationSerializer,
-                                                                                                            CustomPublishTokenSerializer,
-                                                                                                            CustomAddressSerializer,
-                                                                                                            CustomAdditionalGeoLocationSerializer,
-                                                                                                            CustomChargingStationSerializer,
-                                                                                                            CustomEVSESerializer,
-                                                                                                            CustomParkingSerializer,
-                                                                                                            CustomParkingRestrictionSerializer,
-                                                                                                            CustomStatusScheduleSerializer,
-                                                                                                            CustomConnectorSerializer,
-                                                                                                            CustomLocationEnergyMeterSerializer,
-                                                                                                            CustomChargingStationEnergyMeterSerializer,
-                                                                                                            CustomEVSEEnergyMeterSerializer,
-                                                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                                                            CustomTransparencySoftwareSerializer,
-                                                                                                            CustomDisplayTextSerializer,
-                                                                                                            CustomBusinessDetailsSerializer,
-                                                                                                            CustomHoursSerializer,
-                                                                                                            CustomImageSerializer,
-                                                                                                            CustomEnergyMixSerializer,
-                                                                                                            CustomEnergySourceSerializer,
-                                                                                                            CustomEnvironmentalImpactSerializer),
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(
+                                                                                  true,
+                                                                                  true,
+                                                                                  true,
+                                                                                  true,
+                                                                                  CustomLocationSerializer,
+                                                                                  CustomPublishTokenSerializer,
+                                                                                  CustomAddressSerializer,
+                                                                                  CustomAdditionalGeoLocationSerializer,
+                                                                                  CustomChargingStationSerializer,
+                                                                                  CustomEVSESerializer,
+                                                                                  CustomParkingSerializer,
+                                                                                  CustomParkingRestrictionSerializer,
+                                                                                  CustomStatusScheduleSerializer,
+                                                                                  CustomConnectorSerializer,
+                                                                                  CustomLocationEnergyMeterSerializer,
+                                                                                  CustomChargingStationEnergyMeterSerializer,
+                                                                                  CustomEVSEEnergyMeterSerializer,
+                                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                                  CustomTransparencySoftwareSerializer,
+                                                                                  CustomDisplayTextSerializer,
+                                                                                  CustomBusinessDetailsSerializer,
+                                                                                  CustomHoursSerializer,
+                                                                                  CustomImageSerializer,
+                                                                                  CustomEnergyMixSerializer,
+                                                                                  CustomEnergySourceSerializer,
+                                                                                  CustomEnvironmentalImpactSerializer
+                                                                              ),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
@@ -2952,34 +2954,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                    };
 
                                         return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = StatusCodes.GenericClientError,
+                                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedLocation.ToJSON(true,
-                                                                                                      true,
-                                                                                                      true,
-                                                                                                      true,
-                                                                                                      CustomLocationSerializer,
-                                                                                                      CustomPublishTokenSerializer,
-                                                                                                      CustomAddressSerializer,
-                                                                                                      CustomAdditionalGeoLocationSerializer,
-                                                                                                      CustomChargingStationSerializer,
-                                                                                                      CustomEVSESerializer,
-                                                                                                      CustomParkingSerializer,
-                                                                                                      CustomParkingRestrictionSerializer,
-                                                                                                      CustomStatusScheduleSerializer,
-                                                                                                      CustomConnectorSerializer,
-                                                                                                      CustomLocationEnergyMeterSerializer,
-                                                                                                      CustomChargingStationEnergyMeterSerializer,
-                                                                                                      CustomEVSEEnergyMeterSerializer,
-                                                                                                      CustomTransparencySoftwareStatusSerializer,
-                                                                                                      CustomTransparencySoftwareSerializer,
-                                                                                                      CustomDisplayTextSerializer,
-                                                                                                      CustomBusinessDetailsSerializer,
-                                                                                                      CustomHoursSerializer,
-                                                                                                      CustomImageSerializer,
-                                                                                                      CustomEnergyMixSerializer,
-                                                                                                      CustomEnergySourceSerializer,
-                                                                                                      CustomEnvironmentalImpactSerializer),
+                                                   Data                 = newOrUpdatedLocation.ToJSON(
+                                                                              true,
+                                                                              true,
+                                                                              true,
+                                                                              true,
+                                                                              CustomLocationSerializer,
+                                                                              CustomPublishTokenSerializer,
+                                                                              CustomAddressSerializer,
+                                                                              CustomAdditionalGeoLocationSerializer,
+                                                                              CustomChargingStationSerializer,
+                                                                              CustomEVSESerializer,
+                                                                              CustomParkingSerializer,
+                                                                              CustomParkingRestrictionSerializer,
+                                                                              CustomStatusScheduleSerializer,
+                                                                              CustomConnectorSerializer,
+                                                                              CustomLocationEnergyMeterSerializer,
+                                                                              CustomChargingStationEnergyMeterSerializer,
+                                                                              CustomEVSEEnergyMeterSerializer,
+                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                              CustomTransparencySoftwareSerializer,
+                                                                              CustomDisplayTextSerializer,
+                                                                              CustomBusinessDetailsSerializer,
+                                                                              CustomHoursSerializer,
+                                                                              CustomImageSerializer,
+                                                                              CustomEnergyMixSerializer,
+                                                                              CustomEnergySourceSerializer,
+                                                                              CustomEnvironmentalImpactSerializer
+                                                                          ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3010,7 +3014,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.GenericClientError,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3057,7 +3061,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         //ToDo: Handle update errors!
                                         if (result.IsSuccessAndDataNotNull(out var patchedData))
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.Success,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = patchedData.ToJSON(
                                                                                   true,
@@ -3097,7 +3101,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                    };
 
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.GenericClientError,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = result.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3127,7 +3131,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.GenericClientError,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3159,7 +3163,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = StatusCodes.Success,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = location.ToJSON(true,
                                                                                               true,

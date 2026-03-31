@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public OCPIRequest?      Request                   { get; }
 
-        public Int32             StatusCode                { get; }
+        public StatusCode        StatusCode                { get; }
         public String            StatusMessage             { get; }
         public String?           AdditionalInformation     { get; }
         public DateTimeOffset    Timestamp                 { get; }
@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public OCPIResponse(OCPIRequest       Request,
 
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         }
 
-        public OCPIResponse(Int32             StatusCode,
+        public OCPIResponse(StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          Correlation_Id?  CorrelationId           = null)
 
             => new(null,
-                   -1,
+                   StatusCode.GenericError,
                    StatusMessage,
                    AdditionalInformation,
                    Timestamp,
@@ -158,7 +158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (static) Error     (StatusCode, StatusMessage, AdditionalInformation   = null, Timestamp = null, ...)
 
-        public static OCPIResponse Error(Int32            StatusCode,
+        public static OCPIResponse Error(StatusCode       StatusCode,
                                          String           StatusMessage,
                                          String?          AdditionalInformation   = null,
                                          DateTimeOffset?  Timestamp               = null,
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                              Correlation_Id?  CorrelationId           = null)
 
             => new(null,
-                   -1,
+                   StatusCode.GenericError,
                    Exception.Message,
                    Exception.StackTrace,
                    Timestamp,
@@ -247,44 +247,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                             timestamp  = timestamp.Value.ToUniversalTime();
 
-                        return new OCPIResponse(json["status_code"]?.   Value<Int32>()  ?? -1,
-                                                json["status_message"]?.Value<String>() ?? String.Empty,
-                                                json["data"]?.          Value<String>(),
-                                                timestamp,
-                                                Response,
-                                                RemoteRequestId,
-                                                RemoteCorrelationId,
-                                                location,
+                        return new OCPIResponse(
+                                   StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError,
+                                                       json["status_message"]?.Value<String>() ?? String.Empty,
+                                                       json["data"]?.          Value<String>(),
+                                   timestamp,
+                                   Response,
+                                   RemoteRequestId,
+                                   RemoteCorrelationId,
+                                   location,
 
-                                                fromCountryCode,
-                                                fromPartyId,
-                                                toCountryCode,
-                                                toPartyId);
+                                   fromCountryCode,
+                                   fromPartyId,
+                                   toCountryCode,
+                                   toPartyId
+                               );
 
                     }
 
                 }
 
-                result ??= new OCPIResponse(-1,
-                                            Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                            null,
-                                            Response.Timestamp,
+                result ??= new OCPIResponse(
+                               StatusCode.GenericError,
+                               Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                               null,
+                               Response.Timestamp,
 
-                                            Response,
-                                            RemoteRequestId,
-                                            RemoteCorrelationId);
+                               Response,
+                               RemoteRequestId,
+                               RemoteCorrelationId
+                           );
 
             }
             catch (Exception e)
             {
 
-                result = new OCPIResponse(-1,
-                                          e.Message,
-                                          e.StackTrace,
-                                          org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                                          Response,
-                                          RequestId,
-                                          CorrelationId);
+                result = new OCPIResponse(
+                             StatusCode.GenericError,
+                             e.Message,
+                             e.StackTrace,
+                             org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                             Response,
+                             RequestId,
+                             CorrelationId
+                         );
 
             }
 
@@ -302,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("status_code",             StatusCode),
+                                 new JProperty("status_code",             StatusCode.   Value),
 
                            StatusMessage.IsNotNullOrEmpty()
                                ? new JProperty("status_message",          StatusMessage)
@@ -343,7 +349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             public OCPIRequest?           Request                  { get; }
 
             public JToken?                Data                     { get; set; }
-            public Int32?                 StatusCode               { get; set; }
+            public StatusCode?            StatusCode               { get; set; }
             public String?                StatusMessage            { get; set; }
 
             public String?                AdditionalInformation    { get; set; }
@@ -360,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             #region Constructor(s)
 
             public Builder(OCPIRequest       Request,
-                           Int32?            StatusCode              = null,
+                           StatusCode?       StatusCode              = null,
                            String?           StatusMessage           = null,
                            String?           AdditionalInformation   = null,
                            DateTimeOffset?   Timestamp               = null,
@@ -415,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                   ? new JProperty("data",                    Data)
                                                                   : null,
 
-                                                                    new JProperty("status_code",             StatusCode ?? 2000),
+                                                                    new JProperty("status_code",            (StatusCode ?? OCPI.StatusCode.ClientErrors.GenericClientError).Value),
 
                                                               StatusMessage.IsNotNullOrEmpty()
                                                                   ? new JProperty("status_message",          StatusMessage)
@@ -464,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             public OCPIResponse ToImmutable
 
                 => new (Request,
-                        StatusCode ?? 3000,
+                        StatusCode ?? OCPI.StatusCode.ServerErrors.GenericServerError,
                         StatusMessage,
                         AdditionalInformation,
                         Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -491,7 +497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public OCPIResponse(TResponse?        Data,
 
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -525,7 +531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Data = Data;
         }
 
-        public OCPIResponse(Int32             StatusCode,
+        public OCPIResponse(StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -566,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
-                                     Int32                    StatusCode,
+                                     StatusCode               StatusCode,
                                      String                   StatusMessage,
                                      String?                  AdditionalInformation   = null,
                                      DateTimeOffset?          Timestamp               = null,
@@ -613,7 +619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         Correlation_Id?  CorrelationId           = null)
 
             => new(default,
-                   -1,
+                   StatusCode.GenericError,
                    StatusMessage,
                    AdditionalInformation,
                    Timestamp,
@@ -626,7 +632,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (static) Error     (                  StatusCode, StatusMessage, AdditionalInformation   = null, Timestamp = null, ...)
 
-        public new static OCPIResponse<TResponse> Error(Int32            StatusCode,
+        public new static OCPIResponse<TResponse> Error(StatusCode       StatusCode,
                                                         String           StatusMessage,
                                                         String?          AdditionalInformation   = null,
                                                         DateTimeOffset?  Timestamp               = null,
@@ -655,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                             Request_Id?      RequestId               = null,
                                                             Correlation_Id?  CorrelationId           = null)
 
-            => new(-1,
+            => new(StatusCode.GenericError,
                    Exception.Message,
                    Exception.StackTrace,
                    Timestamp,
@@ -705,9 +711,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #endregion
 
-                    var statusCode     = json["status_code"]?.   Value<Int32>() ?? -1;
-                    var statusMessage  = json["status_message"]?.Value<String>();
-                    var timestamp      = json["timestamp"]?.     Value<DateTime>();
+                    var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError;
+                    var statusMessage  =                     json["status_message"]?.Value<String>();
+                    var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                         timestamp      = timestamp.Value.ToUniversalTime();
 
@@ -749,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 else
                     result = new OCPIResponse<TResponse>(
                                  default,
-                                 -1,
+                                 StatusCode.GenericError,
                                  Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
                                  Response.EntirePDU,
                                  Response.Timestamp,
@@ -766,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 result = new OCPIResponse<TResponse>(
                              default,
-                             -1,
+                             StatusCode.GenericError,
                              e.Message,
                              e.StackTrace,
                              org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -839,9 +845,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         #endregion
 
-                        var statusCode     = json["status_code"]?.   Value<Int32>() ?? -1;
-                        var statusMessage  = json["status_message"]?.Value<String>();
-                        var timestamp      = json["timestamp"]?.     Value<DateTime>();
+                        var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError;
+                        var statusMessage  =                     json["status_message"]?.Value<String>();
+                        var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
                         if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                             timestamp      = timestamp.Value.ToUniversalTime();
 
@@ -867,40 +873,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 }
                             }
 
-                            result = new OCPIResponse<IEnumerable<TResponse>>(items,
-                                                                              statusCode,
-                                                                              statusMessage ?? String.Empty,
-                                                                              exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
-                                                                              timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                            result = new OCPIResponse<IEnumerable<TResponse>>(
+                                         items,
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
+                                         timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
 
-                                                                              Response,
-                                                                              remoteRequestId,
-                                                                              remoteCorrelationId,
-                                                                              remoteLocation,
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation,
 
-                                                                              fromCountryCode,
-                                                                              fromPartyId,
-                                                                              toCountryCode,
-                                                                              toPartyId);
+                                         fromCountryCode,
+                                         fromPartyId,
+                                         toCountryCode,
+                                         toPartyId
+                                     );
 
                         }
 
                         else
-                            result = new OCPIResponse<IEnumerable<TResponse>>(Array.Empty<TResponse>(),
-                                                                              statusCode,
-                                                                              statusMessage ?? String.Empty,
-                                                                              null,
-                                                                              timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                            result = new OCPIResponse<IEnumerable<TResponse>>(
+                                         [],
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         null,
+                                         timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
 
-                                                                              Response,
-                                                                              remoteRequestId,
-                                                                              remoteCorrelationId,
-                                                                              remoteLocation,
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation,
 
-                                                                              fromCountryCode,
-                                                                              fromPartyId,
-                                                                              toCountryCode,
-                                                                              toPartyId);
+                                         fromCountryCode,
+                                         fromPartyId,
+                                         toCountryCode,
+                                         toPartyId
+                                     );
 
                     }
 
@@ -908,7 +918,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 result ??= new OCPIResponse<IEnumerable<TResponse>>(
                                [],
-                               -1,
+                               StatusCode.GenericError,
                                Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
                                null,
                                Response.Timestamp,
@@ -928,14 +938,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             catch (Exception e)
             {
 
-                result = new OCPIResponse<IEnumerable<TResponse>>(Array.Empty<TResponse>(),
-                                                                  -1,
-                                                                  e.Message,
-                                                                  e.StackTrace,
-                                                                  org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                                                                  Response,
-                                                                  RequestId,
-                                                                  CorrelationId);
+                result = new OCPIResponse<IEnumerable<TResponse>>(
+                             Array.Empty<TResponse>(),
+                             StatusCode.GenericError,
+                             e.Message,
+                             e.StackTrace,
+                             org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                             Response,
+                             RequestId,
+                             CorrelationId
+                         );
 
             }
 
@@ -985,42 +997,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (json is not null)
                     {
 
-                        var statusCode     = json["status_code"]?.   Value<Int32>();
-                        var statusMessage  = json["status_message"]?.Value<String>();
-                        var timestamp      = json["timestamp"]?.     Value<DateTime>();
+                        var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError;
+                        var statusMessage  =                     json["status_message"]?.Value<String>();
+                        var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
                         if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                             timestamp      = timestamp.Value.ToUniversalTime();
 
                         if ((Response.HTTPStatusCode == HTTPStatusCode.OK ||
                              Response.HTTPStatusCode == HTTPStatusCode.Created) &&
-                            statusCode >= 1000 &&
-                            statusCode <  2000)
+                            statusCode.Value         >= 1000 &&
+                            statusCode.Value         <  2000)
                         {
 
                             if (json["data"] is JObject JSONObject)
                                 result = new OCPIResponse<TResponse>(
-                                                 Parser(JSONObject),
-                                                 statusCode    ?? 3000,
-                                                 statusMessage ?? String.Empty,
-                                                 null,
-                                                 timestamp,
-
-                                                 Response,
-                                                 remoteRequestId,
-                                                 remoteCorrelationId,
-                                                 remoteLocation,
-
-                                                 fromCountryCode,
-                                                 fromPartyId,
-                                                 toCountryCode,
-                                                 toPartyId
-                                             );
-
-                        }
-
-                        else
-                            result = new OCPIResponse<TResponse>(
-                                             statusCode    ?? 3000,
+                                             Parser(JSONObject),
+                                             statusCode,
                                              statusMessage ?? String.Empty,
                                              null,
                                              timestamp,
@@ -1036,43 +1028,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                              toPartyId
                                          );
 
+                        }
+
+                        else
+                            result = new OCPIResponse<TResponse>(
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         null,
+                                         timestamp,
+
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation,
+
+                                         fromCountryCode,
+                                         fromPartyId,
+                                         toCountryCode,
+                                         toPartyId
+                                     );
+
                     }
 
                 }
 
                 result ??= new OCPIResponse<TResponse>(
-                                   -1,
-                                   Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                   null,
-                                   Response.Timestamp,
+                               StatusCode.GenericError,
+                               Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                               null,
+                               Response.Timestamp,
 
-                                   Response,
-                                   remoteRequestId,
-                                   remoteCorrelationId,
-                                   remoteLocation,
+                               Response,
+                               remoteRequestId,
+                               remoteCorrelationId,
+                               remoteLocation,
 
-                                   fromCountryCode,
-                                   fromPartyId,
-                                   toCountryCode,
-                                   toPartyId
-                               );
+                               fromCountryCode,
+                               fromPartyId,
+                               toCountryCode,
+                               toPartyId
+                           );
 
             }
             catch (Exception e)
             {
 
                 result = new OCPIResponse<TResponse>(
-                                 -1,
-                                 e.Message,
-                                 e.StackTrace
-                             );
+                             StatusCode.GenericError,
+                             e.Message,
+                             e.StackTrace
+                         );
 
             }
 
             result ??= new OCPIResponse<TResponse>(
-                               -1,
-                               String.Empty
-                           );
+                           StatusCode.GenericError,
+                           String.Empty
+                       );
 
             return result;
 
@@ -1093,7 +1105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("data",                    Serializer?.Invoke(Data))
                                : null,
 
-                                 new JProperty("status_code",             StatusCode),
+                                 new JProperty("status_code",             StatusCode.Value),
 
                            StatusMessage.IsNotNullOrEmpty()
                                ? new JProperty("status_message",          StatusMessage)
@@ -1142,7 +1154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public OCPIResponse(TRequest          Request,
                             TResponse?        Data,
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -1185,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) Error     (Request, StatusCode, StatusMessage, AdditionalInformation = null, Timestamp = null, ...)
 
         public static OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
-                                                              Int32            StatusCode,
+                                                              StatusCode       StatusCode,
                                                               String           StatusMessage,
                                                               String?          AdditionalInformation   = null,
                                                               DateTimeOffset?  Timestamp               = null,
@@ -1220,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => new(Request,
                    default,
-                   -1,
+                   StatusCode.GenericError,
                    StatusMessage,
                    AdditionalInformation,
                    Timestamp,
@@ -1233,7 +1245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (static) Error     (StatusCode,          StatusMessage, AdditionalInformation = null, Timestamp = null, ...)
 
-        public static new OCPIResponse<TRequest, TResponse> Error(Int32            StatusCode,
+        public static new OCPIResponse<TRequest, TResponse> Error(StatusCode       StatusCode,
                                                                   String           StatusMessage,
                                                                   String?          AdditionalInformation   = null,
                                                                   DateTimeOffset?  Timestamp               = null,
@@ -1267,7 +1279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => new(default,
                    default,
-                   -1,
+                   StatusCode.GenericError,
                    StatusMessage,
                    AdditionalInformation,
                    Timestamp,
@@ -1289,7 +1301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => new(default,
                    default,
-                   -1,
+                   StatusCode.GenericError,
                    Exception.Message,
                    Exception.StackTrace,
                    Timestamp,

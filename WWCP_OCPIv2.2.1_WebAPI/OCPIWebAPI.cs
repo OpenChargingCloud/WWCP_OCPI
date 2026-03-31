@@ -966,7 +966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                      Content                    = OCPIResponse<JArray>.Create(
                                                                                       jsonResults,
                                                                                       xxx => xxx,
-                                                                                      1000,
+                                                                                      StatusCode.Success,
                                                                                       ""
                                                                                   ).ToUTF8Bytes(),
                                                      Connection                 = ConnectionType.KeepAlive,

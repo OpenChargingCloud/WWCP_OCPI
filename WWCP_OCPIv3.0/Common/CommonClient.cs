@@ -893,7 +893,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                             json => VersionInformation.Parse(json,
                                                                                                              CustomVersionInformationParser));
 
-                    switch (response.StatusCode)
+                    switch (response.StatusCode.Value)
                     {
 
                         case 1000:
@@ -1184,7 +1184,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                             json => VersionDetail.Parse(json,
                                                                                                                         CustomVersionDetailParser));
 
-                            switch (response.StatusCode)
+                            switch (response.StatusCode.Value)
                             {
 
                                 case 1000:

@@ -857,7 +857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       RequestTimeout:      RequestTimeout
                                                   );
 
-                if (response.StatusCode == 1000)
+                if (response.StatusCode == StatusCode.Success)
                     // The OCPI response is just a "command accepted" information!
                     // Yet we already create a charging session and merge it later with the CPO's session data!
                     return RemoteStartResult.AsyncOperation(

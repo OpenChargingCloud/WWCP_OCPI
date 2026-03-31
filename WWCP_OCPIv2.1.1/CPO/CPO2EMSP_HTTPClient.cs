@@ -1798,8 +1798,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             #region Initial checks
 
             if (!EVSEPatch.HasValues)
-                return OCPIResponse<EVSE>.Error(-1,
-                                                "The given EVSE patch must not be empty!");
+                return OCPIResponse<EVSE>.Error(
+                           StatusCode.GenericError,
+                           "The given EVSE patch must not be empty!"
+                       );
 
             #endregion
 

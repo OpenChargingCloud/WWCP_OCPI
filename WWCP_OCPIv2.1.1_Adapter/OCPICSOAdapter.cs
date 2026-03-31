@@ -3163,7 +3163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     if (response is not null)
                     {
 
-                        if (response.StatusCode == 1000)
+                        if (response.StatusCode == StatusCode.Success)
                             sendCDRResults.Add(
                                 WWCP.SendCDRResult.Success(
                                     Timestamp.Now,

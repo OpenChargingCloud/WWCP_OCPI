@@ -663,7 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            )
                                );
 
-                    switch (response.StatusCode)
+                    switch (response.StatusCode.Value)
                     {
 
                         case 1000:
@@ -819,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                         CancellationToken:  CancellationToken
                                                     ).ConfigureAwait(false);
 
-                    if (getVersionsResponse.StatusCode != 1000)
+                    if (getVersionsResponse.StatusCode != StatusCode.Success)
                         response = OCPIResponse<Version_Id, VersionDetail>.Error(
                                        getVersionsResponse.StatusCode,
                                        getVersionsResponse.StatusMessage,
@@ -935,7 +935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                        )
                                            );
 
-                                switch (response.StatusCode)
+                                switch (response.StatusCode.Value)
                                 {
 
                                     case 1000:
