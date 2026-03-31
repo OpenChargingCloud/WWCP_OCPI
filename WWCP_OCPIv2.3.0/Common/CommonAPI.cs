@@ -63,6 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                    DateTimeOffset?  StartTimestamp   = null,
                                                                    TimeSpan?        Tolerance        = null);
 
+
     /// <summary>
     /// Extension methods for the Common HTTP API.
     /// </summary>

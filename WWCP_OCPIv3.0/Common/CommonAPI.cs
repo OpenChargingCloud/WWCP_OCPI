@@ -42,17 +42,32 @@ using System.Net.Security;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
+    public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
+
+
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
+
+    public delegate Tariff?                 GetTariff2_Delegate   (Party_Idv3       CPOPartyId,
+                                                                   Tariff_Id        TariffId,
+                                                                   DateTimeOffset?  StartTimestamp   = null,
+                                                                   TimeSpan?        Tolerance        = null);
+
+
+
+
     /// <summary>
     /// A delegate for filtering remote parties.
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Idv3     CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
 
     public class PartyData(Party_Idv3       Id,
                            Role             Role,
@@ -8941,16 +8956,29 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Events
 
-        public delegate Task OnTariffAddedDelegate(Tariff Tariff);
+        public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
+        public delegate Task OnTariffChangedDelegate(Tariff               Tariff);
+        public delegate Task OnTariffRemovedDelegate(IEnumerable<Tariff>  Tariff);
 
-        public event OnTariffAddedDelegate? OnTariffAdded;
-
-
-        public delegate Task OnTariffChangedDelegate(Tariff Tariff);
-
-        public event OnTariffChangedDelegate? OnTariffChanged;
+        public event OnTariffAddedDelegate?    OnTariffAdded;
+        public event OnTariffChangedDelegate?  OnTariffChanged;
+        public event OnTariffRemovedDelegate?  OnTariffRemoved;
 
         #endregion
+
+
+        public GetTariffs2_Delegate?    GetTariffsDelegate      { get; set; }
+
+        public GetTariffIds2_Delegate?  GetTariffIdsDelegate    { get; set; }
+
+
+        public delegate Task<Tariff> OnTariffSlowStorageLookupDelegate(Party_Idv3       PartyId,
+                                                                       Tariff_Id        TariffId,
+                                                                       DateTimeOffset?  Timestamp,
+                                                                       TimeSpan?        Tolerance);
+
+        public event OnTariffSlowStorageLookupDelegate? OnTariffSlowStorageLookup;
+
 
 
         #region AddTariff            (Tariff,                                       SkipNotifications = false, ...)

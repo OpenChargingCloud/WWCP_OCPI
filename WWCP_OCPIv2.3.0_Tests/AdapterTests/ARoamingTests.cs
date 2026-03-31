@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 emsp2CommonAPI is not null)
             {
 
-                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_3_CSOAdapter(
+                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_3_0_CSOAdapter(
 
                                            Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.3_CSO_" + this.csoRoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.3 CSO"),

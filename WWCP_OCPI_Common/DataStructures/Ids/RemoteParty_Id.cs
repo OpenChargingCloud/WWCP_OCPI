@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// This remote party identification as a EMSP identification.
         /// </summary>
-        public static EMSP_Id? AsEMSPId(this RemoteParty_Id RemotePartyId)
+        public static EMSP_Id? AsEMSPId(this RemoteParty_Id  RemotePartyId)
             => RemotePartyId.Role == Role.EMSP
                    ? EMSP_Id.Parse($"{RemotePartyId.CountryCode}-{RemotePartyId.PartyId}")
                    : null;

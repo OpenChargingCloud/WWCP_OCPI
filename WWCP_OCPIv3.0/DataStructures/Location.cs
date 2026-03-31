@@ -58,9 +58,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/location");
 
-        private readonly ConcurrentDictionary<ChargingStation_Id, ChargingStation>        chargingPool = [];
+        private readonly ConcurrentDictionary<ChargingStation_Id, ChargingStation>        chargingStations  = [];
 
-        private readonly ConcurrentDictionary<EnergyMeter_Id,     EnergyMeter<Location>>  energyMeters = [];
+        private readonly ConcurrentDictionary<EnergyMeter_Id,     EnergyMeter<Location>>  energyMeters      = [];
 
         #endregion
 
@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         [Mandatory]
         public IEnumerable<ChargingStation>        ChargingPool
-            => chargingPool.Values;
+            => chargingStations.Values;
 
         /// <summary>
         /// The optional enumeration of human-readable directions on how to reach the location.
@@ -550,7 +550,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 chargingStation.ParentLocation = this;
 
-                chargingPool.TryAdd(
+                chargingStations.TryAdd(
                     chargingStation.Id,
                     chargingStation
                 );
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         internal void TryAddChargingStation(ChargingStation ChargingStation)
         {
 
-            if (chargingPool.TryAdd(ChargingStation.Id, ChargingStation))
+            if (chargingStations.TryAdd(ChargingStation.Id, ChargingStation))
             {
 
             }
@@ -1628,7 +1628,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ChargingStationId">A charging station identification.</param>
         public Boolean ChargingStationExists(ChargingStation_Id ChargingStationId)
 
-            => chargingPool.ContainsKey(ChargingStationId);
+            => chargingStations.ContainsKey(ChargingStationId);
 
         #endregion
 
@@ -1643,7 +1643,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                              [NotNullWhen(true)] out ChargingStation?  ChargingStation)
         {
 
-            if (chargingPool.TryGetValue(ChargingStationId, out ChargingStation))
+            if (chargingStations.TryGetValue(ChargingStationId, out ChargingStation))
             {
                 return true;
             }
@@ -1670,7 +1670,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         internal void RemoveChargingStation(ChargingStation ChargingStation)
         {
 
-            if (chargingPool.TryRemove(ChargingStation.Id, out _))
+            if (chargingStations.TryRemove(ChargingStation.Id, out _))
             {
 
             }
@@ -1687,7 +1687,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         internal void RemoveChargingStation(ChargingStation_Id ChargingStationId)
         {
 
-            if (chargingPool.TryRemove(ChargingStationId, out _))
+            if (chargingStations.TryRemove(ChargingStationId, out _))
             {
 
             }
@@ -1730,6 +1730,41 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
 
             EnergyMeter = null;
+            return false;
+
+        }
+
+        #endregion
+
+
+        #region TryGetEVSE(EVSEId, out EVSE)
+
+        /// <summary>
+        /// Try to return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEId">An EVSE identification.</param>
+        /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
+        public Boolean TryGetEVSE(EVSE_Id                        EVSEId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
+        {
+
+            lock (chargingStations)
+            {
+                foreach (var chargingStation in chargingStations.Values) {
+
+                    foreach (var evse in chargingStation.EVSEs)
+                    {
+                        if (evse.EVSEId == EVSEId)
+                        {
+                            EVSE = evse;
+                            return true;
+                        }
+                    }
+
+                }
+            }
+
+            EVSE = null;
             return false;
 
         }

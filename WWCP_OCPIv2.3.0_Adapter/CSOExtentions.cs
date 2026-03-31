@@ -46,8 +46,6 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="Id">The unique identification of the roaming provider.</param>
         /// <param name="Name">The official (multi-language) name of the roaming provider.</param>
         /// 
-        /// <param name="EVSE2EVSEDataRecord">A delegate to process an EVSE data record, e.g. before pushing it to the roaming provider.</param>
-        /// 
         /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
         /// <param name="ServiceCheckEvery">The service check interval.</param>
         /// <param name="StatusCheckEvery">The status check interval.</param>
@@ -61,62 +59,68 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
         public static OCPIv2_3_0.OCPICSOAdapter?
 
-            CreateOCPIv2_3_CSOAdapter(this IRoamingNetwork                                    RoamingNetwork,
-                                      CSORoamingProvider_Id                                   Id,
-                                      I18NString                                              Name,
-                                      I18NString                                              Description,
+            CreateOCPIv2_3_0_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
+                                        CSORoamingProvider_Id                                    Id,
+                                        I18NString                                               Name,
+                                        I18NString                                               Description,
 
-                                      OCPIv2_3_0.CommonAPI                                    CommonAPI,
+                                        OCPIv2_3_0.CommonAPI                                     CommonAPI,
 
-                                      OCPIv2_3_0.GetTariffIds_Delegate?                       GetTariffIds                        = null,
+                                        OCPIv2_3_0.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 
-                                                 ChargingPoolId_2_LocationId_Delegate?        CustomChargingPoolIdConverter       = null,
-                                                 WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter              = null,
-                                                 WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
-                                      OCPIv2_3_0.WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                 = null,
-                                      OCPIv2_3_0.WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter     = null,
-                                      OCPIv2_3_0.WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter   = null,
+                                                   ChargingPoolId_2_LocationId_Delegate?         CustomChargingPoolIdConverter        = null,
+                                                   LocationId_2_ChargingPoolId_Delegate?         CustomLocationIdConverter            = null,
+                                                   WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
+                                                   WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                                   EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEUId2Converter              = null,
+                                                   WWCPConnectorId_2_ConnectorId_Delegate?       CustomConnectorIdConverter           = null,
+                                                   ConnectorId_2_WWCPConnectorId_Delegate?       CustomConnectorId2Converter          = null,
 
-                                      IncludeEVSEIdDelegate?                                  IncludeEVSEIds                      = null,
-                                      IncludeEVSEDelegate?                                    IncludeEVSEs                        = null,
-                                      IncludeChargingStationIdDelegate?                       IncludeChargingStationIds           = null,
-                                      IncludeChargingStationDelegate?                         IncludeChargingStations             = null,
-                                      IncludeChargingPoolIdDelegate?                          IncludeChargingPoolIds              = null,
-                                      IncludeChargingPoolDelegate?                            IncludeChargingPools                = null,
-                                      IncludeChargingStationOperatorIdDelegate?               IncludeChargingStationOperatorIds   = null,
-                                      IncludeChargingStationOperatorDelegate?                 IncludeChargingStationOperators     = null,
-                                      ChargeDetailRecordFilterDelegate?                       ChargeDetailRecordFilter            = null,
 
-                                      TimeSpan?                                               ServiceCheckEvery                   = null,
-                                      TimeSpan?                                               StatusCheckEvery                    = null,
-                                      TimeSpan?                                               CDRCheckEvery                       = null,
+                                        OCPIv2_3_0.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
+                                        OCPIv2_3_0.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
+                                        OCPIv2_3_0.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
 
-                                      Boolean                                                 DisablePushData                     = false,
-                                      Boolean                                                 DisablePushStatus                   = false,
-                                      Boolean                                                 DisablePushAdminStatus              = false,
-                                      Boolean                                                 DisablePushEnergyStatus             = false,
-                                      Boolean                                                 DisableAuthentication               = false,
-                                      Boolean                                                 DisableSendChargeDetailRecords      = false,
+                                        IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
+                                        IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
+                                        IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
+                                        IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
+                                        IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
+                                        IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
+                                        IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
+                                        IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
+                                        ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
 
-                                      Action<OCPIv2_3_0.OCPICSOAdapter>?                      OCPIConfigurator                    = null,
-                                      Action<ICSORoamingProvider>?                            Configurator                        = null,
+                                        TimeSpan?                                                ServiceCheckEvery                    = null,
+                                        TimeSpan?                                                StatusCheckEvery                     = null,
+                                        TimeSpan?                                                CDRCheckEvery                        = null,
 
-                                      String                                                  EllipticCurve                       = "P-256",
-                                      ECPrivateKeyParameters?                                 PrivateKey                          = null,
-                                      PublicKeyCertificates?                                  PublicKeyCertificates               = null,
+                                        Boolean                                                  DisablePushData                      = false,
+                                        Boolean                                                  DisablePushStatus                    = false,
+                                        Boolean                                                  DisablePushAdminStatus               = false,
+                                        Boolean                                                  DisablePushEnergyStatus              = false,
+                                        Boolean                                                  DisableAuthentication                = false,
+                                        Boolean                                                  DisableSendChargeDetailRecords       = false,
 
-                                      Boolean?                                                IsDevelopment                       = null,
-                                      IEnumerable<String>?                                    DevelopmentServers                  = null,
-                                      Boolean?                                                DisableLogging                      = null,
-                                      String?                                                 LoggingPath                         = null,
-                                      String?                                                 LoggingContext                      = null,
-                                      String?                                                 LogfileName                         = null,
-                                      OCPILogfileCreatorDelegate?                             LogfileCreator                      = null,
+                                        Action<OCPIv2_3_0.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
+                                        Action<ICSORoamingProvider>?                             Configurator                         = null,
 
-                                      String?                                                 ClientsLoggingPath                  = null,
-                                      String?                                                 ClientsLoggingContext               = null,
-                                      OCPILogfileCreatorDelegate?                             ClientsLogfileCreator               = null,
-                                      IDNSClient?                                             DNSClient                           = null)
+                                        String                                                   EllipticCurve                        = "P-256",
+                                        ECPrivateKeyParameters?                                  PrivateKey                           = null,
+                                        PublicKeyCertificates?                                   PublicKeyCertificates                = null,
+
+                                        Boolean?                                                 IsDevelopment                        = null,
+                                        IEnumerable<String>?                                     DevelopmentServers                   = null,
+                                        Boolean?                                                 DisableLogging                       = null,
+                                        String?                                                  LoggingPath                          = null,
+                                        String?                                                  LoggingContext                       = null,
+                                        String?                                                  LogfileName                          = null,
+                                        OCPILogfileCreatorDelegate?                              LogfileCreator                       = null,
+
+                                        String?                                                  ClientsLoggingPath                   = null,
+                                        String?                                                  ClientsLoggingContext                = null,
+                                        OCPILogfileCreatorDelegate?                              ClientsLogfileCreator                = null,
+                                        IDNSClient?                                              DNSClient                            = null)
 
         {
 
@@ -139,9 +143,13 @@ namespace cloud.charging.open.protocols.WWCP
                                          GetTariffIds,
 
                                          CustomChargingPoolIdConverter,
+                                         CustomLocationIdConverter,
                                          CustomEVSEUIdConverter,
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,
+                                         CustomEVSEUId2Converter,
+                                         CustomConnectorIdConverter,
+                                         CustomConnectorId2Converter,
                                          CustomEVSEStatusUpdateConverter,
                                          CustomChargeDetailRecordConverter,
 

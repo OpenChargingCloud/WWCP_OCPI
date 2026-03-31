@@ -326,13 +326,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         locationId,
                                                         evseUId,
                                                         connectorId,
-                                                        empId) => {
+                                                        remotePartyId) => {
 
                     if (locationId. HasValue &&
                         evseUId.    HasValue &&
                         connectorId.HasValue &&
-                        CommonAPI.TryGetLocation(cpoPartyId, locationId.Value, out var location) &&
-                        location. TryGetEVSE    (evseUId.Value, out var evse) &&
+                        CommonAPI.TryGetLocation(cpoPartyId,    locationId.Value, out var location) &&
+                        location. TryGetEVSE    (evseUId.Value,                   out var evse) &&
                         evse.EVSEId.HasValue)
                     {
 
@@ -341,14 +341,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
                                    CustomLocationIdConverter is not null
                                        ? CustomLocationIdConverter(cpoPartyId, locationId.Value)
-                                       : WWCP.ChargingPool_Id.           Parse($"{cpoPartyId}*P{locationId.Value}"),
+                                       : WWCP.ChargingPool_Id.     Parse($"{cpoPartyId}*P{locationId.Value}"),
                                    null,
                                    CustomEVSEUId2Converter is not null
                                        ? CustomEVSEUId2Converter(evseUId.Value)
-                                       : WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
+                                       : WWCP.EVSE_Id.             Parse(evse.EVSEId.Value.ToString()),
                                    WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
-                                   empId.HasValue
-                                       ? WWCP.EMobilityProvider_Id.Parse(empId.      Value.ToString())
+                                   remotePartyId.HasValue
+                                       ? WWCP.EMobilityProvider_Id.Parse($"{remotePartyId.Value.CountryCode}-{remotePartyId.Value.PartyId}")
                                        : null
                                );
                     }

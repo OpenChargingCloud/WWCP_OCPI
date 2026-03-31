@@ -215,9 +215,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
                               ChargingPoolId_2_LocationId_Delegate?           CustomChargingPoolIdConverter       = null,
+                              LocationId_2_ChargingPoolId_Delegate?           CustomLocationIdConverter           = null,
                               WWCPEVSEId_2_EVSEUId_Delegate?                  CustomEVSEUIdConverter              = null,
                               WWCPEVSEId_2_EVSEId_Delegate?                   CustomEVSEIdConverter               = null,
                               WWCPEVSE_2_EVSE_Delegate?                       CustomEVSEConverter                 = null,
+                              EVSEId_2_WWCPEVSEId_Delegate?                   CustomEVSEUId2Converter             = null,
+                              WWCPConnectorId_2_ConnectorId_Delegate?         CustomConnectorIdConverter          = null,
+                              ConnectorId_2_WWCPConnectorId_Delegate?         CustomConnectorId2Converter         = null,
                               WWCPEVSEStatusUpdate_2_StatusType_Delegate?     CustomEVSEStatusUpdateConverter     = null,
                               WWCPChargeDetailRecord_2_CDR_Delegate?          CustomChargeDetailRecordConverter   = null,
 
@@ -323,25 +327,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                         locationId,
                                                         evseUId,
                                                         connectorId,
-                                                        empId) => {
+                                                        remotePartyId) => {
 
                     if (locationId. HasValue &&
                         evseUId.    HasValue &&
                         connectorId.HasValue &&
-                        CommonAPI.TryGetLocation(cpoPartyId, locationId.Value, out var location) &&
-                        location. TryGetEVSE    (evseUId.Value, out var evse) &&
+                        CommonAPI.TryGetLocation(cpoPartyId,    locationId.Value, out var location) &&
+                        location. TryGetEVSE    (evseUId.Value,                   out var evse) &&
                         evse.EVSEId.HasValue)
                     {
 
                         return this.GetTariffIds(
                                    this.RoamingNetwork.Id,
                                    WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
-                                   WWCP.ChargingPool_Id.           Parse($"{cpoPartyId}*P{locationId.Value}"),
+                                   CustomLocationIdConverter is not null
+                                       ? CustomLocationIdConverter(cpoPartyId, locationId.Value)
+                                       : WWCP.ChargingPool_Id.     Parse($"{cpoPartyId}*P{locationId.Value}"),
                                    null,
-                                   WWCP.EVSE_Id.                   Parse(evse.EVSEId.Value.ToString()),
+                                   CustomEVSEUId2Converter is not null
+                                       ? CustomEVSEUId2Converter(evseUId.Value)
+                                       : WWCP.EVSE_Id.             Parse(evse.EVSEId.Value.ToString()),
                                    WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
-                                   empId.HasValue
-                                       ? WWCP.EMobilityProvider_Id.Parse(empId.      Value.ToString())
+                                   remotePartyId.HasValue
+                                       ? WWCP.EMobilityProvider_Id.Parse($"{remotePartyId.Value.CountryCode}-{remotePartyId.Value.PartyId}")
                                        : null
                                );
                     }
