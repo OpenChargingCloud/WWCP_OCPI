@@ -33,10 +33,10 @@ namespace cloud.charging.open.protocols.OCPI
         public const String X_Request_ID            = "X-Request-ID";
         public const String X_Correlation_ID        = "X-Correlation-ID";
 
-        public const String OCPI_From_Country_Code  = "OCPI-from-country-code";
-        public const String OCPI_From_PartyId       = "OCPI-from-party-id";
-        public const String OCPI_To_Country_Code    = "OCPI-to-country-code";
-        public const String OCPI_To_PartyId         = "OCPI-to-party-id";
+        public const String OCPI_From_Country_Code  = "ocpi-from-country-code";
+        public const String OCPI_From_PartyId       = "ocpi-from-party-id";
+        public const String OCPI_To_Country_Code    = "ocpi-to-country-code";
+        public const String OCPI_To_PartyId         = "ocpi-to-party-id";
 
     }
 
