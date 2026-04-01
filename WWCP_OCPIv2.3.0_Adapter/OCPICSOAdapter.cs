@@ -2259,12 +2259,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             var remotes = new PriorityList<RemoteParty>();
             foreach (var remoteParty in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB))
             {
+                if (remoteParty.Status == PartyStatus.ENABLED)
+                {
 
-                var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                    var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
 
-                if (remoteAccessInfo is not null)
-                    remotes.Add(remoteParty);
+                    if (remoteAccessInfo is not null)
+                        remotes.Add(remoteParty);
 
+                }
             }
 
             #endregion
