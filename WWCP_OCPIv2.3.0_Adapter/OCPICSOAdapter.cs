@@ -2178,19 +2178,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region Convert ChargingLocation          into an OCPI location reference
 
-            var locationReference = ChargingLocation.ToOCPI();
+            //var locationReference = ChargingLocation.ToOCPI();
 
-            if (ChargingLocation  is not null &&
-                locationReference is null)
-            {
+            //if (ChargingLocation  is not null &&
+            //    locationReference is null)
+            //{
 
-                return new AuthorizationInfo(
-                           Allowed:  AllowedType.NOT_ALLOWED,
-                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
-                           Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
-                       );
+            //    return new AuthorizationInfo(
+            //               Allowed:  AllowedType.NOT_ALLOWED,
+            //               Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+            //               Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
+            //           );
 
-            }
+            //}
 
             #endregion
 
@@ -2313,7 +2313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                           var authorizationInfo = await cpoClient.PostToken(
                                                                                             TokenId:             tokenId.Value,
                                                                                             TokenType:           TokenType.RFID,
-                                                                                            LocationReference:   ChargingLocation.ToOCPI(),
+                                                                                            LocationReference:   null, //ChargingLocation.ToOCPI(),
                                                                                             From:                fromChargingStationOperatorId,
                                                                                             To:                  toEMobilityProviderId,
                                                                                             CancellationToken:   cancellationToken
