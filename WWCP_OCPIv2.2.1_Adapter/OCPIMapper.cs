@@ -1930,10 +1930,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (!locationId.HasValue)
                 return null;
 
-            var evseUId     = ChargingLocation.EVSEId?.ToOCPI_EVSEUId(CustomEVSEIdConverter);
+            var evseUIds = new List<EVSE_UId>();
+
+            if (ChargingLocation.EVSEId.HasValue)
+            {
+                var evseUId2 = ChargingLocation.EVSEId.Value.ToOCPI_EVSEUId(CustomEVSEIdConverter);
+                if (evseUId2.HasValue)
+                    evseUIds.Add(evseUId2.Value);
+            }
 
             return new LocationReference(
-                    //   LocationId:   
+                       LocationId:   locationId.Value,
+                       EVSEUIds:     ChargingLocation.EVSEId.HasValue
+                                         ? evseUIds
+                                         : null
                    );
 
         }

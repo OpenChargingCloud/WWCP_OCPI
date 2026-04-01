@@ -237,10 +237,10 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
-                                 new JProperty("location_id",  LocationId.ToString()),
+                                 new JProperty("location_id",   LocationId.ToString()),
 
-                           EVSEUIds.SafeAny()
-                               ? new JProperty("evse_uids",    EVSEUIds.Select(evseUId => evseUId.ToString()))
+                           EVSEUIds.Any()
+                               ? new JProperty("evse_uids",     EVSEUIds.Select(evseUId => evseUId.ToString()))
                                : null
 
                        );
