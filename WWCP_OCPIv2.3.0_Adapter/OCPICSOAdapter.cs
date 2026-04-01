@@ -2373,7 +2373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                TokenType:           TokenType.RFID,
                                                                                                LocationReference:   locationReference,
                                                                                                From:                fromChargingStationOperatorId,
-                                                                                               To:                  toEMobilityProviderId,
+                                                                                               To:                  remoteParty.Id.AsPartyId(),
                                                                                                CancellationToken:   cancellationToken
                                                                                            );
 
