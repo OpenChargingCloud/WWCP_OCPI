@@ -184,14 +184,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             try
             {
 
-                var RemoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",           Request_Id.     TryParse, RequestId);
-                var RemoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID",       Correlation_Id. TryParse, CorrelationId);
-                var location             = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
+                var RemoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,            Request_Id.     TryParse, RequestId);
+                var RemoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,        Correlation_Id. TryParse, CorrelationId);
+                var location             = Response.TryParseHeaderField<Hermod.Location>("Location",                          Hermod.Location.TryParse);
 
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-from-party-id",     Party_Id.       TryParse);
-                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-from-country-code", CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-to-party-id",       Party_Id.       TryParse);
-                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-to-country-code",   CountryCode.    TryParse);
+                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,       Party_Id.       TryParse);
+                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.    TryParse);
+                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,         Party_Id.       TryParse);
+                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.    TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
                 {
@@ -448,10 +448,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     }
 
                     if (Request.RequestId.    HasValue)
-                        HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId.    Value);
+                        HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,      Request.RequestId.    Value);
 
                     if (Request.CorrelationId.HasValue)
-                        HTTPResponseBuilder.Set("X-Correlation-ID",  Request.CorrelationId.Value);
+                        HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  Request.CorrelationId.Value);
 
                 }
 
@@ -685,8 +685,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
@@ -801,14 +801,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",           Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID",       Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,           Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,       Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
 
-                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-from-country-code", CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-from-party-id",     Party_Id.       TryParse);
-                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-to-country-code",   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-to-party-id",       Party_Id.       TryParse);
+                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code, CountryCode.    TryParse);
+                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,     Party_Id.       TryParse);
+                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,   CountryCode.    TryParse);
+                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,       Party_Id.       TryParse);
 
                 var text = "";
 
@@ -969,14 +969,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",           Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID",       Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,           Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,       Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
 
-                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-from-country-code", CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-from-party-id",     Party_Id.       TryParse);
-                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   ("OCPI-to-country-code",   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      ("OCPI-to-party-id",       Party_Id.       TryParse);
+                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code, CountryCode.    TryParse);
+                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,     Party_Id.       TryParse);
+                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,   CountryCode.    TryParse);
+                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,       Party_Id.       TryParse);
 
                 var text = "";
 

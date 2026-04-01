@@ -531,8 +531,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                      RequestLogDelegate:   OnGetLocationsHTTPRequest,
@@ -724,8 +724,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                    RequestLogDelegate:   OnGetLocationHTTPRequest,
@@ -922,8 +922,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                    RequestLogDelegate:   OnGetEVSEHTTPRequest,
@@ -1124,8 +1124,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                    RequestLogDelegate:   OnGetConnectorHTTPRequest,
@@ -1317,8 +1317,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                    RequestLogDelegate:   OnGetSessionsHTTPRequest,
@@ -1510,8 +1510,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.SCSP.HTTP
                                                                                         requestBuilder.Authorization  = TokenAuth;
                                                                                         requestBuilder.Connection     = ConnectionType.Close;
                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                        requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                        requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                        requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                     }),
 
                                                    RequestLogDelegate:   OnGetSessionHTTPRequest,

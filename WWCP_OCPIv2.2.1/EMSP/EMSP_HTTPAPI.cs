@@ -460,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -481,7 +481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -529,7 +529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.NotFound,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -582,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -603,7 +603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -624,7 +624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         HTTPStatusCode              = HTTPStatusCode.BadRequest,
                         AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                         AccessControlAllowHeaders   = [ "Authorization" ],
-                        AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID" ]
+                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
                     }
                 };
 
@@ -10461,7 +10461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -12352,7 +12352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -13024,7 +13024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -13837,7 +13837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.DELETE ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "POST", "DELETE"],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -14588,7 +14588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 

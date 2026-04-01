@@ -494,10 +494,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.HTTPRequest    = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI      = CommonAPI;
 
-            this.RequestId      = Request.TryParseHeaderStruct               ("X-Request-ID",       Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
-            this.CorrelationId  = Request.TryParseHeaderStruct               ("X-Correlation-ID",   Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-            this.ToPartyId      = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-to-party-id",   Party_Idv3.    TryParse);
-            this.FromPartyId    = Request.TryParseHeaderField<Party_Idv3>    ("OCPI-from-party-id", Party_Idv3.    TryParse);
+            this.RequestId      = Request.TryParseHeaderStruct               (HTTPHeaders.X_Request_ID,       Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId  = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID,   Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+            this.ToPartyId      = Request.TryParseHeaderField<Party_Idv3>    (HTTPHeaders.OCPI_To_PartyId,   Party_Idv3.    TryParse);
+            this.FromPartyId    = Request.TryParseHeaderField<Party_Idv3>    (HTTPHeaders.OCPI_From_PartyId, Party_Idv3.    TryParse);
             var  totp           = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",               TOTPHTTPHeader.TryParse);
 
             AccessToken?     accessTokenRAW     = null;
@@ -648,8 +648,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (httpResponseBuilder is not null)
             {
-                httpResponseBuilder.Set("X-Request-ID",      RequestId).
-                                    Set("X-Correlation-ID",  CorrelationId);
+                httpResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId).
+                                    Set(HTTPHeaders.X_Correlation_ID,  CorrelationId);
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
@@ -675,8 +675,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (HTTPResponseBuilder is not null)
             {
-                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
-                                    Set("X-Correlation-ID",  CorrelationId);
+                HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId).
+                                    Set(HTTPHeaders.X_Correlation_ID,  CorrelationId);
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {

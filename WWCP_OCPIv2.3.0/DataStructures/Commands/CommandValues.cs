@@ -20,6 +20,8 @@
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_3_0
@@ -97,8 +99,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                 requestBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
                                                                                                 requestBuilder.Content = result?.ToJSON().ToUTF8Bytes(Newtonsoft.Json.Formatting.None);
                                                                                                 requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                requestBuilder.Set("X-Request-ID", UpstreamCommand.RequestId);
-                                                                                                requestBuilder.Set("X-Correlation-ID", UpstreamCommand.CorrelationId);
+                                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,     UpstreamCommand.RequestId);
+                                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, UpstreamCommand.CorrelationId);
                                                                                             })
 
                                                             //RequestLogDelegate:   OnStartSessionHTTPRequest,

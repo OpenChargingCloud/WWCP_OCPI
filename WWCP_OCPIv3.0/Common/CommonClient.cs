@@ -858,8 +858,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                       requestBuilder.Authorization  = TokenAuth;
                                                                                       requestBuilder.Connection     = ConnectionType.Close;
                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                      requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                      requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                      requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                      requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                   }),
 
                                                  RequestLogDelegate:   OnGetVersionsHTTPRequest,
@@ -1110,8 +1110,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                 requestBuilder.Authorization = TokenAuth;
                                                                                                 requestBuilder.Connection = ConnectionType.Close;
                                                                                                 requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                requestBuilder.Set("X-Request-ID", requestId);
-                                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID, requestId);
+                                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                             }),
 
                                                            RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
@@ -1467,8 +1467,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                              requestBuilder.Authorization = TokenAuth;
                                                                                              requestBuilder.Connection    = ConnectionType.Close;
                                                                                              requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                          }),
 
                                                   RequestLogDelegate:   OnGetCredentialsHTTPRequest,
@@ -1687,8 +1687,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                              requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                              requestBuilder.Connection     = ConnectionType.Close;
                                                                                              requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                          }),
 
                                                   RequestLogDelegate:   OnPostCredentialsHTTPRequest,
@@ -1908,8 +1908,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                          requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                      }),
 
                                               RequestLogDelegate:   OnPutCredentialsHTTPRequest,
@@ -2189,8 +2189,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                          //requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                      }),
 
                                               RequestLogDelegate:   OnDeleteCredentialsHTTPRequest,
@@ -2427,8 +2427,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                          requestBuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,      requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnRegisterHTTPRequest,

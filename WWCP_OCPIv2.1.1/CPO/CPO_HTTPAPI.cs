@@ -1899,7 +1899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    //AccessControlAllowOrigin    = "*",
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -1933,7 +1933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     HTTPStatusCode              = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                     AccessControlAllowHeaders   = [ "Authorization" ],
-                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -1985,7 +1985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    Date                        = Timestamp.Now,
                                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                }.
 
                                                // The overall number of locations
@@ -2397,7 +2397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -2431,7 +2431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     HTTPStatusCode              = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                     AccessControlAllowHeaders   = [ "Authorization" ],
-                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -2471,7 +2471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                }.
 
                                                // The overall number of tariffs
@@ -2665,7 +2665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -2698,7 +2698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     HTTPStatusCode              = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                     AccessControlAllowHeaders   = [ "Authorization" ],
-                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -2724,7 +2724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    Date                        = Timestamp.Now,
                                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                }.
 
                                                // The overall number of sessions
@@ -2939,7 +2939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.PUT ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "PUT" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -2973,7 +2973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 
@@ -3006,7 +3006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     HTTPStatusCode              = HTTPStatusCode.Forbidden,
                                     AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
                                     AccessControlAllowHeaders   = [ "Authorization" ],
-                                    AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -3036,7 +3036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        Date                        = Timestamp.Now,
                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                                        AccessControlAllowHeaders   = [ "Authorization" ],
-                                                       AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                                       AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                    }.
 
                                                    // The overall number of CDRs
@@ -3268,7 +3268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE"],
                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                }
                         })
 

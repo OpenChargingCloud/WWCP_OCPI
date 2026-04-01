@@ -158,8 +158,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
                 var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
 
                 if (HTTPResponse.HTTPBody?.Length > 0)
@@ -242,9 +242,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
-                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
+                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
+                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",                   Hermod.Location.TryParse);
 
                 var httpBody             = HTTPResponse.HTTPBodyAsUTF8String;
 
@@ -480,10 +480,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     }
 
                     if (Request.RequestId.    HasValue)
-                        HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId.    Value);
+                        HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,      Request.RequestId.    Value);
 
                     if (Request.CorrelationId.HasValue)
-                        HTTPResponseBuilder.Set("X-Correlation-ID",  Request.CorrelationId.Value);
+                        HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  Request.CorrelationId.Value);
 
                 }
 
@@ -680,8 +680,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
@@ -796,8 +796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
@@ -930,8 +930,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var remoteRequestId      = Response.TryParseHeaderStruct                ("X-Request-ID",     Request_Id.     TryParse, RequestId);
-                var remoteCorrelationId  = Response.TryParseHeaderStruct                ("X-Correlation-ID", Correlation_Id. TryParse, CorrelationId);
+                var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
 
                 if (Response.HTTPBody?.Length > 0)

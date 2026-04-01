@@ -419,9 +419,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderStruct               ("X-Request-ID",     Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
-            this.CorrelationId    = Request.TryParseHeaderStruct               ("X-Correlation-ID", Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",             TOTPHTTPHeader.TryParse);
+            this.RequestId        = Request.TryParseHeaderStruct               (HTTPHeaders.X_Request_ID,     Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId    = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID, Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                       TOTPHTTPHeader.TryParse);
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                 OCPI.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
@@ -573,10 +573,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (RequestId.    HasValue)
-                    httpResponseBuilder.Set("X-Request-ID",      RequestId.    Value);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId.    Value);
 
                 if (CorrelationId.HasValue)
-                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId.Value);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  CorrelationId.Value);
 
             }
 
@@ -611,10 +611,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (RequestId.    HasValue)
-                    httpResponseBuilder.Set("X-Request-ID",      RequestId.    Value);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId.    Value);
 
                 if (CorrelationId.HasValue)
-                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId.Value);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  CorrelationId.Value);
 
             }
 

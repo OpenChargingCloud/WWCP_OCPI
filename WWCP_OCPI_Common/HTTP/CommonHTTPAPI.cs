@@ -3132,10 +3132,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                     //var requestId            = request.HTTPRequest.TryParseHeaderStruct            ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
                     //var correlationId        = request.HTTPRequest.TryParseHeaderStruct            ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-                    //var toCountryCode        = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.   TryParse);
-                    //var toPartyId            = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-to-party-id",       Party_Id.      TryParse);
-                    //var fromCountryCode      = request.HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.   TryParse);
-                    //var fromPartyId          = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  ("OCPI-from-party-id",     Party_Id.      TryParse);
+                    //var toCountryCode        = request.HTTPRequest.TryParseHeaderField<CountryCode>(HTTPHeaders.OCPI_To_Country_Code,   CountryCode.   TryParse);
+                    //var toPartyId            = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  (HTTPHeaders.OCPI_To_PartyId,       Party_Id.      TryParse);
+                    //var fromCountryCode      = request.HTTPRequest.TryParseHeaderField<CountryCode>(HTTPHeaders.OCPI_From_Country_Code, CountryCode.   TryParse);
+                    //var fromPartyId          = request.HTTPRequest.TryParseHeaderStruct<Party_Id>  (HTTPHeaders.OCPI_From_PartyId,     Party_Id.      TryParse);
 
                     var versionInformations  = VersionInformations.ToList();
 
