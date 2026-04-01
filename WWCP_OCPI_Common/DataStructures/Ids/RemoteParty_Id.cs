@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// This remote party identification as a party identification.
         /// </summary>
         public static Party_Idv3? AsPartyId(this RemoteParty_Id RemotePartyId)
-            => Party_Idv3.Parse($"{RemotePartyId.CountryCode}*{RemotePartyId.PartyId}");
+            => Party_Idv3.Parse($"{RemotePartyId.CountryCode}{RemotePartyId.PartyId}");
 
         /// <summary>
         /// This remote party identification as a party identification.
