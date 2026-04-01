@@ -2288,7 +2288,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Convert ChargingLocation          into an OCPI location reference
 
-            var locationReference = ChargingLocation.ToOCPI();
+            var locationReference = ChargingLocation.ToOCPI(
+                                        CustomChargingPoolIdConverter,
+                                        CustomEVSEUIdConverter
+                                    );
 
             if (ChargingLocation  is not null &&
                 locationReference is null)
