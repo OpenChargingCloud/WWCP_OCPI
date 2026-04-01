@@ -2288,19 +2288,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Convert ChargingLocation          into an OCPI location reference
 
-            //var locationReference = ChargingLocation.ToOCPI();
+            var locationReference = ChargingLocation.ToOCPI();
 
-            //if (ChargingLocation  is not null &&
-            //    locationReference is null)
-            //{
+            if (ChargingLocation  is not null &&
+                locationReference is null)
+            {
 
-            //    return new AuthorizationInfo(
-            //               Allowed:  AllowedType.NOT_ALLOWED,
-            //               Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
-            //               Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
-            //           );
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
+                       );
 
-            //}
+            }
 
             #endregion
 
@@ -2419,21 +2419,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                          );
 
 
-                                                              var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
-                                                                                        cpoClient,
-                                                                                        ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                        ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                        ClientsLogfileCreator
-                                                                                    );
+                                                              var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                                                         cpoClient,
+                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                         ClientsLogfileCreator
+                                                                                     );
 
-                                                              authorizationInfo  = await cpoClient.PostToken(
-                                                                                             TokenId:             tokenId.Value,
-                                                                                             TokenType:           TokenType.RFID,
-                                                                                             LocationReference:   null, //ChargingLocation.ToOCPI(),
-                                                                                             From:                fromChargingStationOperatorId,
-                                                                                             To:                  toEMobilityProviderId,
-                                                                                             CancellationToken:   cancellationToken
-                                                                                         );
+                                                              authorizationInfo    = await cpoClient.PostToken(
+                                                                                               TokenId:             tokenId.Value,
+                                                                                               TokenType:           TokenType.RFID,
+                                                                                               LocationReference:   null, //ChargingLocation.ToOCPI(),
+                                                                                               From:                fromChargingStationOperatorId,
+                                                                                               To:                  toEMobilityProviderId,
+                                                                                               CancellationToken:   cancellationToken
+                                                                                           );
                                                           }
 
                                                           #endregion
@@ -2468,21 +2468,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                          );
 
 
-                                                              var cpoClientLogger    = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
-                                                                                           cpoClient,
-                                                                                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                           ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                           ClientsLogfileCreator
-                                                                                       );
+                                                              var cpoClientLogger  = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
+                                                                                         cpoClient,
+                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                         ClientsLogfileCreator
+                                                                                     );
 
-                                                              authorizationInfo  = await cpoClient.PostToken(
-                                                                                             TokenId:             tokenId.Value,
-                                                                                             TokenType:           TokenType.RFID,
-                                                                                             LocationReference:   null, //ChargingLocation.ToOCPI(),
-                                                                                             From:                fromChargingStationOperatorId,
-                                                                                             To:                  toEMobilityProviderId,
-                                                                                             CancellationToken:   cancellationToken
-                                                                                         );
+                                                              authorizationInfo    = await cpoClient.PostToken(
+                                                                                               TokenId:             tokenId.Value,
+                                                                                               TokenType:           TokenType.RFID,
+                                                                                               LocationReference:   null, //ChargingLocation.ToOCPI(),
+                                                                                               From:                fromChargingStationOperatorId,
+                                                                                               To:                  toEMobilityProviderId,
+                                                                                               CancellationToken:   cancellationToken
+                                                                                           );
 
                                                           }
 
@@ -2503,7 +2503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                      : new AuthorizationInfo(
                                                                            Allowed:      AllowedType.NOT_ALLOWED,
                                                                            Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                           Info:         new DisplayText(Languages.en, authorizationInfo?.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
+                                                                           Info:         new DisplayText(Languages.en, authorizationInfo?.StatusMessage ?? $"No valid response from '{remoteParty.Id}'!"),
                                                                            RemoteParty:  remoteParty
                                                                        );
 
@@ -2519,7 +2519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                      Allowed:   AllowedType.NOT_ALLOWED,
                                                                      Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
                                                                      Location:  null,
-                                                                     Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                     Info:      new DisplayText(Languages.en, $"No authorization service ({remotes.Select(remote => remote.Id.ToString()).AggregateWith(", ")}) returned a positiv result!"),
                                                                      Runtime:   runtime
                                                                  ),
 

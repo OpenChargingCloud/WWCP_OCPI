@@ -2178,19 +2178,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region Convert ChargingLocation          into an OCPI location reference
 
-            //var locationReference = ChargingLocation.ToOCPI();
+            var locationReference = ChargingLocation.ToOCPI();
 
-            //if (ChargingLocation  is not null &&
-            //    locationReference is null)
-            //{
+            if (ChargingLocation  is not null &&
+                locationReference is null)
+            {
 
-            //    return new AuthorizationInfo(
-            //               Allowed:  AllowedType.NOT_ALLOWED,
-            //               Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
-            //               Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
-            //           );
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
+                       );
 
-            //}
+            }
 
             #endregion
 
@@ -2277,52 +2277,108 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                              Work:                   async (remoteParty, cancellationToken) => {
 
-                                                          #region Setup HTTP client
+                                                          OCPIResponse<AuthorizationInfo>? authorizationInfo = null;
 
-                                                          var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
+                                                          #region Setup HTTP client for EMSP
 
-                                                                              CPO_HTTPAPI,
-                                                                              remoteParty,
-                                                                              null, // VirtualHostname
-                                                                              null, // Description
-                                                                              null, // HTTPLogger
+                                                          if (remoteParty.Id.Role == Role.EMSP)
+                                                          {
 
-                                                                              DisableLogging,
-                                                                              ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
-                                                                              ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                              ClientsLogfileCreator,
-                                                                              DNSClient
+                                                              var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
-                                                                          );
+                                                                                  CPO_HTTPAPI,
+                                                                                  remoteParty,
+                                                                                  null, // VirtualHostname
+                                                                                  null, // Description
+                                                                                  null, // HTTPLogger
 
-                                                          if (cpoClient is null)
-                                                              return new AuthorizationInfo(
-                                                                         Allowed:      AllowedType.NOT_ALLOWED,
-                                                                         Token:        null,
-                                                                         Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
-                                                                         RemoteParty:  remoteParty
-                                                                     );
+                                                                                  DisableLogging,
+                                                                                  ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                  ClientsLogfileCreator,
+                                                                                  DNSClient
+
+                                                                              );
+
+                                                              if (cpoClient is null)
+                                                                  return new AuthorizationInfo(
+                                                                             Allowed:      AllowedType.NOT_ALLOWED,
+                                                                             Token:        null,
+                                                                             Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                             RemoteParty:  remoteParty
+                                                                         );
 
 
-                                                          var cpoClientLogger = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
-                                                                                    cpoClient,
-                                                                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                    ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                    ClientsLogfileCreator
-                                                                                );
+                                                              var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                                                         cpoClient,
+                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                         ClientsLogfileCreator
+                                                                                     );
+
+                                                              authorizationInfo    = await cpoClient.PostToken(
+                                                                                               TokenId:             tokenId.Value,
+                                                                                               TokenType:           TokenType.RFID,
+                                                                                               LocationReference:   null, //ChargingLocation.ToOCPI(),
+                                                                                               From:                fromChargingStationOperatorId,
+                                                                                               To:                  toEMobilityProviderId,
+                                                                                               CancellationToken:   cancellationToken
+                                                                                           );
+                                                          }
 
                                                           #endregion
 
-                                                          var authorizationInfo = await cpoClient.PostToken(
-                                                                                            TokenId:             tokenId.Value,
-                                                                                            TokenType:           TokenType.RFID,
-                                                                                            LocationReference:   null, //ChargingLocation.ToOCPI(),
-                                                                                            From:                fromChargingStationOperatorId,
-                                                                                            To:                  toEMobilityProviderId,
-                                                                                            CancellationToken:   cancellationToken
-                                                                                        );
+                                                          #region Setup HTTP client for HUB
 
-                                                          return authorizationInfo.Data is not null
+                                                          if (remoteParty.Id.Role == Role.HUB)
+                                                          {
+
+                                                              var cpoClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
+
+                                                                                  CPO_HTTPAPI,
+                                                                                  remoteParty,
+                                                                                  null, // VirtualHostname
+                                                                                  null, // Description
+                                                                                  null, // HTTPLogger
+
+                                                                                  DisableLogging,
+                                                                                  ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                  ClientsLogfileCreator,
+                                                                                  DNSClient
+
+                                                                              );
+
+                                                              if (cpoClient is null)
+                                                                  return new AuthorizationInfo(
+                                                                             Allowed:      AllowedType.NOT_ALLOWED,
+                                                                             Token:        null,
+                                                                             Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                                             RemoteParty:  remoteParty
+                                                                         );
+
+
+                                                              var cpoClientLogger  = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
+                                                                                         cpoClient,
+                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                         ClientsLogfileCreator
+                                                                                     );
+
+                                                              authorizationInfo    = await cpoClient.PostToken(
+                                                                                               TokenId:             tokenId.Value,
+                                                                                               TokenType:           TokenType.RFID,
+                                                                                               LocationReference:   null, //ChargingLocation.ToOCPI(),
+                                                                                               From:                fromChargingStationOperatorId,
+                                                                                               To:                  toEMobilityProviderId,
+                                                                                               CancellationToken:   cancellationToken
+                                                                                           );
+
+                                                          }
+
+                                                          #endregion
+
+                                                          return authorizationInfo?.Data is not null
 
                                                                      ? new AuthorizationInfo(
                                                                            authorizationInfo.Data.Allowed,
@@ -2337,7 +2393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                      : new AuthorizationInfo(
                                                                            Allowed:      AllowedType.NOT_ALLOWED,
                                                                            Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                           Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
+                                                                           Info:         new DisplayText(Languages.en, authorizationInfo?.StatusMessage ?? $"No valid response from '{remoteParty.Id}'!"),
                                                                            RemoteParty:  remoteParty
                                                                        );
 
@@ -2353,7 +2409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                      Allowed:   AllowedType.NOT_ALLOWED,
                                                                      Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
                                                                      Location:  null,
-                                                                     Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                     Info:      new DisplayText(Languages.en, $"No authorization service ({remotes.Select(remote => remote.Id.ToString()).AggregateWith(", ")}) returned a positiv result!"),
                                                                      Runtime:   runtime
                                                                  ),
 
