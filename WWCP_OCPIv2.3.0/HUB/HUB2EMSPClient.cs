@@ -4511,8 +4511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.HUB.HTTP
                                    correlationId,
                                    json => AuthorizationInfo.Parse(
                                                json,
-                                               RemoteParty,
-                                               RemoteEMSPId
+                                               RemoteParty
                                            )
                                );
 

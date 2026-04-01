@@ -14229,7 +14229,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                           responseText
                                                                                                       ),
                                                           authorizationInfo.RemoteParty,
-                                                          authorizationInfo.EMSPId,
                                                           authorizationInfo.Runtime
                                                       ).ToJSON(
                                                             CustomAuthorizationInfoSerializer,

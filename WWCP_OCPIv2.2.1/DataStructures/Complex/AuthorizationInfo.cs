@@ -80,12 +80,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public RemoteParty?             RemoteParty               { get; }
 
         /// <summary>
-        ///  The EMSP identification.
-        /// </summary>
-        [Optional, VendorExtension(VE.GraphDefined)]
-        public EMSP_Id?                 EMSPId                    { get; }
-
-        /// <summary>
         /// The runtime of the authorization.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined)]
@@ -104,7 +98,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="AuthorizationReference">An optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant charging session and/or charge detail record.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
         /// <param name="RemoteParty">The remote party.</param>
-        /// <param name="EMSPId">The EMSP identification.</param>
         /// <param name="Runtime">The runtime of the authorization.</param>
         public AuthorizationInfo(AllowedType              Allowed,
                                  Token?                   Token                    = null,
@@ -112,7 +105,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  AuthorizationReference?  AuthorizationReference   = null,
                                  DisplayText?             Info                     = null,
                                  RemoteParty?             RemoteParty              = null,
-                                 EMSP_Id?                 EMSPId                   = null,
                                  TimeSpan?                Runtime                  = null)
         {
 
@@ -122,19 +114,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.AuthorizationReference  = AuthorizationReference;
             this.Info                    = Info;
             this.RemoteParty             = RemoteParty;
-            this.EMSPId                  = EMSPId;
             this.Runtime                 = Runtime ?? TimeSpan.Zero;
 
             unchecked
             {
 
-                hashCode = Allowed.                GetHashCode()       * 19 ^
-                          (Token?.                 GetHashCode() ?? 0) * 17 ^
-                          (Location?.              GetHashCode() ?? 0) * 13 ^
-                          (AuthorizationReference?.GetHashCode() ?? 0) * 11 ^
-                          (Info?.                  GetHashCode() ?? 0) *  7 ^
-                          (RemoteParty?.           GetHashCode() ?? 0) *  5 ^
-                          (EMSPId?.                GetHashCode() ?? 0) *  3 ^
+                hashCode = Allowed.                GetHashCode()       * 17 ^
+                          (Token?.                 GetHashCode() ?? 0) * 13 ^
+                          (Location?.              GetHashCode() ?? 0) * 11 ^
+                          (AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
+                          (Info?.                  GetHashCode() ?? 0) *  5 ^
+                          (RemoteParty?.           GetHashCode() ?? 0) *  3 ^
                            Runtime.                GetHashCode();
 
             }
@@ -144,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (static) Parse   (JSON,                                           RemoteParty = null, EMSPId = null, ...)
+        #region (static) Parse   (JSON,                                           RemoteParty = null, ...)
 
         /// <summary>
         /// Parse the given JSON representation of an authorization information.
@@ -153,7 +143,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
         public static AuthorizationInfo Parse(JObject                                          JSON,
                                               RemoteParty?                                     RemoteParty                     = null,
-                                              EMSP_Id?                                         EMSPId                          = null,
                                               CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
@@ -161,7 +150,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var authorizationInfo,
                          out var errorResponse,
                          RemoteParty,
-                         EMSPId,
                          CustomAuthorizationInfoParser))
             {
                 return authorizationInfo;
@@ -174,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out AuthorizationInfo, out ErrorResponse, RemoteParty = null, EMSPId = null, ...)
+        #region (static) TryParse(JSON, out AuthorizationInfo, out ErrorResponse, RemoteParty = null, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -192,7 +180,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         out AuthorizationInfo,
                         out ErrorResponse,
                         null,
-                        null,
                         null);
 
 
@@ -207,7 +194,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        [NotNullWhen(true)]  out AuthorizationInfo?      AuthorizationInfo,
                                        [NotNullWhen(false)] out String?                 ErrorResponse,
                                        RemoteParty?                                     remoteParty                     = null,
-                                       EMSP_Id?                                         emspId                          = null,
                                        CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
@@ -298,8 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         locationReference,
                                         authorizationReference,
                                         info,
-                                        remoteParty,
-                                        emspId
+                                        remoteParty
                                     );
 
 
@@ -380,7 +365,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    AuthorizationReference?.Clone(),
                    Info?.                  Clone(),
                    RemoteParty,
-                   EMSPId,
                    Runtime
                );
 
