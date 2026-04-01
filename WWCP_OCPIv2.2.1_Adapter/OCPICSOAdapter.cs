@@ -2432,7 +2432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                               authorizationInfo    = await cpoClient.PostToken(
                                                                                                TokenId:             tokenId.Value,
                                                                                                TokenType:           TokenType.RFID,
-                                                                                               LocationReference:   ChargingLocation.ToOCPI(),
+                                                                                               LocationReference:   locationReference,
                                                                                                From:                fromChargingStationOperatorId,
                                                                                                To:                  toEMobilityProviderId,
                                                                                                CancellationToken:   cancellationToken
@@ -2481,7 +2481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                               authorizationInfo    = await cpoClient.PostToken(
                                                                                                TokenId:             tokenId.Value,
                                                                                                TokenType:           TokenType.RFID,
-                                                                                               LocationReference:   ChargingLocation.ToOCPI(),
+                                                                                               LocationReference:   locationReference,
                                                                                                From:                fromChargingStationOperatorId,
                                                                                                To:                  toEMobilityProviderId,
                                                                                                CancellationToken:   cancellationToken
