@@ -382,11 +382,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public Party_Idv3?           From                        { get; }
         public Party_Idv3?           To                          { get; }
-        //public CountryCode?          ToCountryCode               { get; }
-        //public Party_Id?             ToPartyId                   { get; }
-        //public CountryCode?          FromCountryCode             { get; }
-        //public Party_Id?             FromPartyId                 { get; }
-
         public AccessToken?          AccessToken                 { get; }
 
         public IEnumerable<String>   AccessTokenErrorMessages    { get; }

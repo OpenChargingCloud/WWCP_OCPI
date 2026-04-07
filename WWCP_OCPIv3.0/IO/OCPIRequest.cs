@@ -439,31 +439,35 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Properties
 
-        public CommonAPI             CommonAPI           { get; }
+        public CommonAPI             CommonAPI                   { get; }
 
-        public HTTPRequest           HTTPRequest         { get; }
+        public HTTPRequest           HTTPRequest                 { get; }
 
-        public Request_Id?           RequestId           { get; }
-        public Correlation_Id?       CorrelationId       { get; }
+        public Request_Id?           RequestId                   { get; }
+        public Correlation_Id?       CorrelationId               { get; }
 
-        public CountryCode?          ToCountryCode       { get; }
-        public Party_Idv3?           ToPartyId           { get; }
-        public CountryCode?          FromCountryCode     { get; }
-        public Party_Idv3?           FromPartyId         { get; }
+        public Party_Idv3?           From                        { get; }
+        public Party_Idv3?           To                          { get; }
 
-        public AccessToken?          AccessToken         { get; }
+        public AccessToken?          AccessToken                 { get; }
 
-        public LocalAccessInfo2?     LocalAccessInfo     { get; }
+        public IEnumerable<String>   AccessTokenErrorMessages    { get; }
 
-        public RemoteParty?          RemoteParty         { get; }
+        public LocalAccessInfo2?     LocalAccessInfo             { get; }
 
-        public IEnumerable<EMSP_Id>  EMSPIds             { get; } = [];
+        public RemoteParty?          RemoteParty                 { get; }
 
-        public IEnumerable<CPO_Id>   CPOIds              { get; } = [];
+        public IEnumerable<CPO_Id>   CPOIds                      { get; } = [];
 
-        public EMSP_Id?              EMSPId              { get; }
+        public IEnumerable<EMSP_Id>  EMSPIds                     { get; } = [];
 
-        public CPO_Id?               CPOId               { get; }
+        public IEnumerable<EMSP_Id>  HUBIds                      { get; } = [];
+
+        public CPO_Id?               CPOId                       { get; }
+
+        public EMSP_Id?              EMSPId                      { get; }
+
+        public EMSP_Id?              HUBId                       { get; }
 
 
         /// <summary>
@@ -491,19 +495,45 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               CommonAPI    CommonAPI)
         {
 
-            this.HTTPRequest    = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
-            this.CommonAPI      = CommonAPI;
+            this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
+            this.CommonAPI        = CommonAPI;
 
-            this.RequestId      = Request.TryParseHeaderStruct               (HTTPHeaders.X_Request_ID,       Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
-            this.CorrelationId  = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID,   Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
-            this.ToPartyId      = Request.TryParseHeaderField<Party_Idv3>    (HTTPHeaders.OCPI_To_PartyId,   Party_Idv3.    TryParse);
-            this.FromPartyId    = Request.TryParseHeaderField<Party_Idv3>    (HTTPHeaders.OCPI_From_PartyId, Party_Idv3.    TryParse);
-            var  totp           = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",               TOTPHTTPHeader.TryParse);
+            this.RequestId        = Request.TryParseHeaderStruct               (HTTPHeaders.X_Request_ID,            Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId    = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID,        Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
 
-            AccessToken?     accessTokenRAW     = null;
-            AccessToken?     accessTokenBASE64  = null;
+            var  ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.   TryParse);
+            var  ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     (HTTPHeaders.OCPI_To_PartyId,         Party_Id.      TryParse);
+            if (ToCountryCode.HasValue &&
+                ToPartyId.    HasValue)
+            {
+                To    = Party_Idv3.From(
+                           ToCountryCode.Value,
+                           ToPartyId.    Value
+                        );
+            }
 
-            LocalAccessInfo? localAccessInfo    = null;
+            var  FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.   TryParse);
+            var  FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     (HTTPHeaders.OCPI_From_PartyId,       Party_Id.      TryParse);
+            if (FromCountryCode.HasValue &&
+                FromPartyId.    HasValue)
+            {
+                From  = Party_Idv3.From(
+                           FromCountryCode.Value,
+                           FromPartyId.    Value
+                        );
+            }
+
+            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                   TOTPHTTPHeader.TryParse);
+
+
+            AccessToken?      accessTokenRAW                  = null;
+            String?           accessTokenErrorMessageRAW      = null;
+            AccessToken?      accessTokenBASE64               = null;
+            String?           accessTokenErrorMessageBASE64   = null;
+            LocalAccessInfo?  localAccessInfo                 = null;
+
+            var accessTokenErrorMessages   = new HashSet<String>();
+            this.AccessTokenErrorMessages  = accessTokenErrorMessages;
 
             if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
             {
@@ -529,11 +559,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             }
 
+            // RAW AcccessToken
             if (accessTokenRAW.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenRAW.Value,
                                               totp,
                                               null,
-                                              out var partiesAccessInfosRAW))
+                                              out var partiesAccessInfosRAW,
+                                              out     accessTokenErrorMessageRAW))
             {
                 var tuple = partiesAccessInfosRAW.FirstOrDefault();
                 if (tuple is not null)
@@ -547,11 +579,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 }
             }
 
+            // BASE64-encoded Acccess Token
             if (accessTokenBASE64.HasValue &&
                 CommonAPI.TryGetRemoteParties(accessTokenBASE64.Value,
                                               totp,
                                               null,
-                                              out var partiesAccessInfosBASE64))
+                                              out var partiesAccessInfosBASE64,
+                                              out     accessTokenErrorMessageBASE64))
             {
                 var tuple = partiesAccessInfosBASE64.FirstOrDefault();
                 if (tuple is not null)
@@ -574,8 +608,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        AccessToken.    Value,
                                        localAccessInfo.Status,
                                        RemoteParty.    Roles,
-                                       null,
-                                       null,
+                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotBefore,
+                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotAfter,
                                        RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                    );
 
@@ -587,18 +621,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                          Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
                                                          Distinct()];
 
+                HUBIds           = [.. RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Role.HUB).
+                                                         Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().PartyId.CountryCode}-{LocalAccessInfo.Roles.First().PartyId.PartyId}")).
+                                                         Distinct()];
+
                 if (FromCountryCode.HasValue &&
                     FromPartyId.    HasValue)
                 {
 
                     CPOId   = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
                     EMSPId  = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+                    HUBId   = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
 
                     if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
                         CPOId   = null;
 
                     if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
                         EMSPId  = null;
+
+                    if (HUBId. HasValue && !HUBIds. Contains(HUBId. Value))
+                        HUBId   = null;
 
                 }
 
@@ -611,6 +653,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     if (EMSPIds.Any())
                         EMSPId  = EMSPIds.First();
+
+                    if (HUBIds. Any())
+                        HUBId   = HUBIds. First();
 
                 }
 
@@ -626,6 +671,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         //await CommonAPI.LogException(e);
                     }
                 }
+
+            }
+
+            if (RemoteParty is null)
+            {
+
+                if (accessTokenErrorMessageRAW is not null)
+                    accessTokenErrorMessages.Add(accessTokenErrorMessageRAW);
+
+                if (accessTokenErrorMessageBASE64 is not null)
+                    accessTokenErrorMessages.Add(accessTokenErrorMessageBASE64);
+
+                if (accessTokenErrorMessages.Count > 1 &&
+                    accessTokenErrorMessages.Contains("Unknown access token!"))
+                {
+                    accessTokenErrorMessages.Remove("Unknown access token!");
+                }
+
+                if (CommonAPI.BaseAPI.LocationsAsOpenData && accessTokenErrorMessages.Contains("Unknown access token!"))
+                    accessTokenErrorMessages.Remove("Unknown access token!");
 
             }
 

@@ -6490,7 +6490,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ContainsRemoteParty(RemotePartyId)
+        #region ContainsRemoteParty       (RemotePartyId)
 
         /// <summary>
         /// Whether this API contains a remote party having the given unique identification.
@@ -6502,7 +6502,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParty     (RemotePartyId)
+        #region GetRemoteParty            (RemotePartyId)
 
         /// <summary>
         /// Get the remote party having the given unique identification.
@@ -6520,7 +6520,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region TryGetRemoteParty  (RemotePartyId, out RemoteParty)
+        #region TryGetRemoteParty         (RemotePartyId, out RemoteParty)
 
         /// <summary>
         /// Try to get the remote party having the given unique identification.
@@ -6537,7 +6537,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (IncludeFilter = null)
+        #region GetRemoteParties          (IncludeFilter = null)
 
         /// <summary>
         /// Get all remote parties machting the given optional filter.
@@ -6552,7 +6552,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId)
+        #region GetRemoteParties          (CountryCode, PartyId)
 
         /// <summary>
         /// Get all remote parties having the given country code and party identification.
@@ -6568,7 +6568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId, Role)
+        #region GetRemoteParties          (CountryCode, PartyId, Role)
 
         /// <summary>
         /// Get all remote parties having the given country code, party identification and role.
@@ -6587,20 +6587,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (Role)
+        #region GetRemoteParties          (Roles)
 
         /// <summary>
-        /// Get all remote parties having the given role.
+        /// Get all remote parties having one of the given roles.
         /// </summary>
-        /// <param name="Role">The role of the remote parties.</param>
-        public IEnumerable<RemoteParty> GetRemoteParties(Role Role)
+        /// <param name="Roles">An optional list of roles.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(params Role[] Roles)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Role));
+                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => Roles.Contains(credentialsRole.Role)));
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken)
+        #region GetRemoteParties          (AccessToken)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
 
@@ -6609,7 +6609,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, AccessStatus)
+        #region GetRemoteParties          (AccessToken, AccessStatus)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
                                                          AccessStatus  AccessStatus)
@@ -6620,12 +6620,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties)
+        #region TryGetRemoteParties       (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties, out ErrorMessage)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
                                            TOTPHTTPHeader?                                       TOTP,
                                            Byte[]?                                               TLSExporterMaterial,
-                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
+                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties,
+                                           [NotNullWhen(false)] out String?                      ErrorMessage)
         {
 
             var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
@@ -6635,39 +6636,59 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
 
-                    if (localAccessInfo.TOTPConfig is not null)
+                    if (localAccessInfo.AccessToken == AccessToken)
                     {
 
-                        //var accessToken  = AccessToken.ToString();
+                        if (localAccessInfo.TOTPConfig is not null)
+                        {
 
-                        var (previous,
-                             current,
-                             next,
-                             _,
-                             _) = TOTPGenerator.GenerateTOTPs(
-                                      localAccessInfo.TOTPConfig.SharedSecret,
-                                      localAccessInfo.TOTPConfig.ValidityTime,
-                                      localAccessInfo.TOTPConfig.Length,
-                                      localAccessInfo.TOTPConfig.Alphabet,
-                                      null,
-                                      TLSExporterMaterial
-                                  );
+                            var (previous,
+                                 current,
+                                 next,
+                                 _,
+                                 _) = TOTPGenerator.GenerateTOTPs(
+                                          localAccessInfo.TOTPConfig.SharedSecret,
+                                          localAccessInfo.TOTPConfig.ValidityTime,
+                                          localAccessInfo.TOTPConfig.Length,
+                                          localAccessInfo.TOTPConfig.Alphabet,
+                                          null,
+                                          TLSExporterMaterial
+                                      );
 
-                        if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
-                            remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
+                                remoteParties.Add(
+                                    new Tuple<RemoteParty, LocalAccessInfo>(
+                                        remoteParty,
+                                        localAccessInfo
+                                    )
+                                );
 
-                    }
+                            else
+                            {
+                                RemoteParties  = [];
+                                ErrorMessage   = "Invalid Time-based One-Time Password (TOTP)!";
+                                return false;
+                            }
 
-                    else
-                    {
-                        if (localAccessInfo.AccessToken == AccessToken)
-                            remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                        }
+
+                        else
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
+
                     }
 
                 }
             }
 
-            RemoteParties = remoteParties;
+            RemoteParties  = remoteParties;
+            ErrorMessage   = remoteParties.Count == 0
+                                 ? "Unknown access token!"
+                                 : null;
 
             return remoteParties.Count > 0;
 
@@ -6676,7 +6697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region RemoveRemoteParty(RemoteParty)
+        #region RemoveRemoteParty         (RemoteParty)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty        RemoteParty,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6703,7 +6724,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(RemotePartyId)
+        #region RemoveRemoteParty         (RemotePartyId)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty_Id     RemotePartyId,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6730,7 +6751,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, Role)
+        #region RemoveRemoteParty         (CountryCode, PartyId, Role)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6761,7 +6782,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, Role, AccessToken)
+        #region RemoveRemoteParty         (CountryCode, PartyId, Role, AccessToken)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6796,7 +6817,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveAllRemoteParties()
+        #region RemoveAllRemoteParties    ()
 
         public async Task RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
                                                  User_Id?           CurrentUserId     = null)

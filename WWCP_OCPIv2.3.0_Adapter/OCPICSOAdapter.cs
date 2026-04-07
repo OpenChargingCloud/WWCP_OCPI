@@ -2158,7 +2158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             PostToken(WWCP.LocalAuthentication          LocalAuthentication,
                       WWCP.ChargingLocation?            ChargingLocation            = null,
-                      WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                      //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
                       WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
                       DateTimeOffset?                   RequestTimestamp            = null,
@@ -2222,9 +2222,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #region Convert ChargingStationOperatorId into an OCPI party identification
 
-            var fromChargingStationOperatorId = ChargingStationOperatorId?.ToOCPI_PartyIdv3();
+            var fromChargingStationOperatorId = ChargingLocation?.ChargingStationOperatorId?.ToOCPI_PartyIdv3();
+                                                //ChargingStationOperatorId?.ToOCPI_PartyIdv3();
 
-            if (ChargingStationOperatorId.    HasValue &&
+            if (ChargingLocation?.ChargingStationOperatorId.HasValue == true &&
                !fromChargingStationOperatorId.HasValue)
             {
 
@@ -2447,8 +2448,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       WWCP.ChargingProduct?             ChargingProduct             = null,
                       WWCP.ChargingSession_Id?          SessionId                   = null,
                       WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                      WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                      //WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+                      //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
                       DateTimeOffset?                   RequestTimestamp            = null,
                       EventTracking_Id?                 EventTrackingId             = null,
@@ -2482,8 +2483,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           ChargingLocation,
                           ChargingProduct,
                           SessionId,
@@ -2511,8 +2513,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               LocalAuthentication,
                                               ChargingLocation,
 
-                                              ChargingStationOperatorId,
-                                              null,
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
 
                                               RequestTimestamp,
                                               EventTrackingId,
@@ -2622,8 +2624,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           ChargingLocation,
                           ChargingProduct,
                           SessionId,
@@ -2667,8 +2670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            WWCP.ChargingProduct?             ChargingProduct             = null,
                            WWCP.ChargingSession_Id?          SessionId                   = null,
                            WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                           WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                           //WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+                           //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                           WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
                            DateTimeOffset?                   RequestTimestamp            = null,
                            EventTracking_Id?                 EventTrackingId             = null,
@@ -2702,8 +2705,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           ChargingLocation,
                           ChargingProduct,
                           SessionId,
@@ -2732,8 +2736,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               LocalAuthentication,
                                               ChargingLocation,
 
-                                              ChargingStationOperatorId,
-                                              null,
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
 
                                               RequestTimestamp,
                                               EventTrackingId,
@@ -2839,8 +2843,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           ChargingLocation,
                           ChargingProduct,
                           SessionId,
@@ -2882,8 +2887,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           WWCP.LocalAuthentication          LocalAuthentication,
                           WWCP.ChargingLocation?            ChargingLocation            = null,
                           WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                          WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                          //WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+                          //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                          WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
                           DateTimeOffset?                   RequestTimestamp            = null,
                           EventTracking_Id?                 EventTrackingId             = null,
@@ -2917,11 +2922,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           ChargingLocation,
                           SessionId,
                           CPOPartnerSessionId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           RequestTimeout,
                           CancellationToken
                       )
@@ -2945,8 +2951,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               LocalAuthentication,
                                               ChargingLocation,
 
-                                              ChargingStationOperatorId,
-                                              null,
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
 
                                               RequestTimestamp,
                                               EventTrackingId,
@@ -3022,11 +3028,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          ChargingStationOperatorId,
+                          //ChargingStationOperatorId,
                           ChargingLocation,
                           SessionId,
                           CPOPartnerSessionId,
                           LocalAuthentication,
+                          EMobilityProviderId,
                           RequestTimeout,
                           authStopResult,
                           stopwatch.Elapsed,
