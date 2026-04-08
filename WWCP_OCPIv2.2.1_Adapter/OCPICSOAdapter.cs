@@ -2873,6 +2873,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ISendAuthorizeStartStop:   this,
                                       SessionId:                 SessionId,
                                       EMPPartnerSessionId:       null,
+                                      AuthorizationReference:    authorizationInfo.AuthorizationReference.HasValue
+                                                                     ? WWCP.AuthorizationReference.TryParse(authorizationInfo.AuthorizationReference.Value.ToString())
+                                                                     : null,
                                       ContractId:                authorizationInfo.Token?.ContractId.ToString(),
                                       PrintedNumber:             authorizationInfo.Token?.VisualNumber,
                                       UILanguage:                authorizationInfo.Token?.UILanguage,
@@ -2885,9 +2888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ListOfAuthStopPINs:        null,
                                       ProviderId:                //authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                                                  WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
-                                      //AuthorizationReference:    authorizationInfo?.AuthorizationReference,
 
-                                      // authorizationInfo.Token
                                       // authorizationInfo.Location
                                       // authorizationInfo.Info
 
