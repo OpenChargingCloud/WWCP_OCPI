@@ -2266,15 +2266,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         private async Task<AuthorizationInfo>
 
-            PostToken(WWCP.LocalAuthentication          LocalAuthentication,
-                      WWCP.ChargingLocation?            ChargingLocation            = null,
-                    //  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+            PostToken(WWCP.LocalAuthentication    LocalAuthentication,
+                      WWCP.ChargingLocation?      ChargingLocation      = null,
+                      WWCP.EMobilityProvider_Id?  EMobilityProviderId   = null,
 
-                      DateTimeOffset?                   RequestTimestamp            = null,
-                      EventTracking_Id?                 EventTrackingId             = null,
-                      TimeSpan?                         RequestTimeout              = null,
-                      CancellationToken                 CancellationToken           = default)
+                      DateTimeOffset?             RequestTimestamp      = null,
+                      EventTracking_Id?           EventTrackingId       = null,
+                      TimeSpan?                   RequestTimeout        = null,
+                      CancellationToken           CancellationToken     = default)
 
         {
 
@@ -2554,18 +2553,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.AuthStartResult>
 
-            Authorize(WWCP.LocalAuthentication          LocalAuthentication,
-                      WWCP.ChargingLocation?            ChargingLocation            = null,
-                      WWCP.ChargingProduct?             ChargingProduct             = null,
-                      WWCP.ChargingSession_Id?          SessionId                   = null,
-                      WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                      //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+            Authorize(WWCP.LocalAuthentication    LocalAuthentication,
+                      WWCP.ChargingLocation?      ChargingLocation      = null,
+                      WWCP.ChargingProduct?       ChargingProduct       = null,
+                      WWCP.ChargingSession_Id?    SessionId             = null,
+                      WWCP.ChargingSession_Id?    CPOPartnerSessionId   = null,
+                      WWCP.EMobilityProvider_Id?  EMobilityProviderId   = null,
 
-                      DateTimeOffset?                   RequestTimestamp            = null,
-                      EventTracking_Id?                 EventTrackingId             = null,
-                      TimeSpan?                         RequestTimeout              = null,
-                      CancellationToken                 CancellationToken           = default)
+                      DateTimeOffset?             RequestTimestamp      = null,
+                      EventTracking_Id?           EventTrackingId       = null,
+                      TimeSpan?                   RequestTimeout        = null,
+                      CancellationToken           CancellationToken     = default)
 
         {
 
@@ -2594,7 +2592,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           LocalAuthentication,
                           EMobilityProviderId,
                           ChargingLocation,
@@ -2623,8 +2620,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                               LocalAuthentication,
                                               ChargingLocation,
-
-                                              //ChargingStationOperatorId,
                                               EMobilityProviderId,
 
                                               RequestTimestamp,
@@ -2643,73 +2638,73 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           EMPPartnerSessionId:       null,
-                           ContractId:                null,
-                           PrintedNumber:             null,
-                           ExpiryDate:                null,
-                           MaxkW:                     null,
-                           MaxkWh:                    null,
-                           MaxDuration:               null,
-                           ChargingTariffs:           null,
-                           ListOfAuthStopTokens:      null,
-                           ListOfAuthStopPINs:        null,
-                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                      AuthorizatorId:            Id,
+                                      ISendAuthorizeStartStop:   this,
+                                      SessionId:                 SessionId,
+                                      EMPPartnerSessionId:       null,
+                                      ContractId:                null,
+                                      PrintedNumber:             null,
+                                      ExpiryDate:                null,
+                                      MaxkW:                     null,
+                                      MaxkWh:                    null,
+                                      MaxDuration:               null,
+                                      ChargingTariffs:           null,
+                                      ListOfAuthStopTokens:      null,
+                                      ListOfAuthStopPINs:        null,
+                                      ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                                      Description:               null,
+                                      AdditionalInfo:            null,
+                                      NumberOfRetries:           0,
+                                      Runtime:                   authorizationInfo.Runtime
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStartResult = WWCP.AuthStartResult.Blocked(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                      AuthorizatorId:            Id,
+                                      ISendAuthorizeStartStop:   this,
+                                      SessionId:                 SessionId,
+                                      ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                                      Description:               null,
+                                      AdditionalInfo:            null,
+                                      NumberOfRetries:           0,
+                                      Runtime:                   authorizationInfo.Runtime
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
                 authStartResult = WWCP.AuthStartResult.Expired(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                      AuthorizatorId:            Id,
+                                      ISendAuthorizeStartStop:   this,
+                                      SessionId:                 SessionId,
+                                      ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                                      Description:               null,
+                                      AdditionalInfo:            null,
+                                      NumberOfRetries:           0,
+                                      Runtime:                   authorizationInfo.Runtime
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
                 authStartResult = WWCP.AuthStartResult.NoCredit(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                      AuthorizatorId:            Id,
+                                      ISendAuthorizeStartStop:   this,
+                                      SessionId:                 SessionId,
+                                      ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                                      Description:               null,
+                                      AdditionalInfo:            null,
+                                      NumberOfRetries:           0,
+                                      Runtime:                   authorizationInfo.Runtime
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStartResult = WWCP.AuthStartResult.NotAuthorized(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                null,
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                      AuthorizatorId:            Id,
+                                      ISendAuthorizeStartStop:   this,
+                                      SessionId:                 SessionId,
+                                      ProviderId:                null,
+                                      Description:               null,
+                                      AdditionalInfo:            null,
+                                      NumberOfRetries:           0,
+                                      Runtime:                   authorizationInfo.Runtime
+                                  );
 
 
             authStartResult ??= WWCP.AuthStartResult.Error(
@@ -2735,7 +2730,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           LocalAuthentication,
                           EMobilityProviderId,
                           ChargingLocation,
@@ -2776,18 +2770,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.AuthStartResult>
 
-            AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
-                           WWCP.ChargingLocation?            ChargingLocation            = null,
-                           WWCP.ChargingProduct?             ChargingProduct             = null,
-                           WWCP.ChargingSession_Id?          SessionId                   = null,
-                           WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                           //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                           WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+            AuthorizeStart(WWCP.LocalAuthentication    LocalAuthentication,
+                           WWCP.ChargingLocation?      ChargingLocation      = null,
+                           WWCP.ChargingProduct?       ChargingProduct       = null,
+                           WWCP.ChargingSession_Id?    SessionId             = null,
+                           WWCP.ChargingSession_Id?    CPOPartnerSessionId   = null,
+                           WWCP.EMobilityProvider_Id?  EMobilityProviderId   = null,
 
-                           DateTimeOffset?                   RequestTimestamp            = null,
-                           EventTracking_Id?                 EventTrackingId             = null,
-                           TimeSpan?                         RequestTimeout              = null,
-                           CancellationToken                 CancellationToken           = default)
+                           DateTimeOffset?             RequestTimestamp      = null,
+                           EventTracking_Id?           EventTrackingId       = null,
+                           TimeSpan?                   RequestTimeout        = null,
+                           CancellationToken           CancellationToken     = default)
 
         {
 
@@ -2816,7 +2809,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           LocalAuthentication,
                           EMobilityProviderId,
                           ChargingLocation,
@@ -2846,8 +2838,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                               LocalAuthentication,
                                               ChargingLocation,
-
-                                              //ChargingStationOperatorId,
                                               EMobilityProviderId,
 
                                               RequestTimestamp,
@@ -2883,8 +2873,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ISendAuthorizeStartStop:   this,
                                       SessionId:                 SessionId,
                                       EMPPartnerSessionId:       null,
-                                      ContractId:                null,
-                                      PrintedNumber:             null,
+                                      ContractId:                authorizationInfo.Token?.ContractId.ToString(),
+                                      PrintedNumber:             authorizationInfo.Token?.VisualNumber,
+                                      UILanguage:                authorizationInfo.Token?.UILanguage,
                                       ExpiryDate:                null,
                                       MaxkW:                     null,
                                       MaxkWh:                    null,
@@ -2894,10 +2885,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ListOfAuthStopPINs:        null,
                                       ProviderId:                //authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                                                  WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
+                                      //AuthorizationReference:    authorizationInfo?.AuthorizationReference,
+
+                                      // authorizationInfo.Token
+                                      // authorizationInfo.Location
+                                      // authorizationInfo.Info
+
                                       Description:               null,
                                       AdditionalInfo:            null,
                                       NumberOfRetries:           0,
-                                      Runtime:                   null
+                                      Runtime:                   authorizationInfo.Runtime
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
@@ -2909,7 +2906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       Description:               null,
                                       AdditionalInfo:            null,
                                       NumberOfRetries:           0,
-                                      Runtime:                   null
+                                      Runtime:                   authorizationInfo.Runtime
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
@@ -2921,7 +2918,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       Description:               null,
                                       AdditionalInfo:            null,
                                       NumberOfRetries:           0,
-                                      Runtime:                   null
+                                      Runtime:                   authorizationInfo.Runtime
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
@@ -2933,7 +2930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       Description:               null,
                                       AdditionalInfo:            null,
                                       NumberOfRetries:           0,
-                                      Runtime:                   null
+                                      Runtime:                   authorizationInfo.Runtime
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
@@ -2945,7 +2942,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       Description:               null,
                                       AdditionalInfo:            null,
                                       NumberOfRetries:           0,
-                                      Runtime:                   null
+                                      Runtime:                   authorizationInfo.Runtime
                                   );
 
 
@@ -2972,7 +2969,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           LocalAuthentication,
                           EMobilityProviderId,
                           ChargingLocation,
@@ -3012,17 +3008,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<WWCP.AuthStopResult>
 
-            AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
-                          WWCP.LocalAuthentication          LocalAuthentication,
-                          WWCP.ChargingLocation?            ChargingLocation            = null,
-                          WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-                          //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-                          WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+            AuthorizeStop(WWCP.ChargingSession_Id     SessionId,
+                          WWCP.LocalAuthentication    LocalAuthentication,
+                          WWCP.ChargingLocation?      ChargingLocation      = null,
+                          WWCP.ChargingSession_Id?    CPOPartnerSessionId   = null,
+                          WWCP.EMobilityProvider_Id?  EMobilityProviderId   = null,
 
-                          DateTimeOffset?                   RequestTimestamp            = null,
-                          EventTracking_Id?                 EventTrackingId             = null,
-                          TimeSpan?                         RequestTimeout              = null,
-                          CancellationToken                 CancellationToken           = default)
+                          DateTimeOffset?             RequestTimestamp      = null,
+                          EventTracking_Id?           EventTrackingId       = null,
+                          TimeSpan?                   RequestTimeout        = null,
+                          CancellationToken           CancellationToken     = default)
 
         {
 
@@ -3051,7 +3046,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           ChargingLocation,
                           SessionId,
                           CPOPartnerSessionId,
@@ -3079,8 +3073,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                               LocalAuthentication,
                                               ChargingLocation,
-
-                                              //ChargingStationOperatorId,
                                               EMobilityProviderId,
 
                                               RequestTimestamp,
@@ -3112,39 +3104,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStopResult = WWCP.AuthStopResult.Authorized(
-                           AuthorizatorId:            authorizationInfo.RemoteParty.Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                     AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     ISendAuthorizeStartStop:   this,
+                                     SessionId:                 SessionId,
+                                     ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
+                                     Description:               null,
+                                     AdditionalInfo:            null,
+                                     NumberOfRetries:           0,
+                                     Runtime:                   authorizationInfo.Runtime
+                                 );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStopResult = WWCP.AuthStopResult.Blocked(
-                           AuthorizatorId:            authorizationInfo.RemoteParty.Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                     AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     ISendAuthorizeStartStop:   this,
+                                     SessionId:                 SessionId,
+                                     ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
+                                     Description:               null,
+                                     AdditionalInfo:            null,
+                                     NumberOfRetries:           0,
+                                     Runtime:                   authorizationInfo.Runtime
+                                 );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStopResult = WWCP.AuthStopResult.NotAuthorized(
-                           AuthorizatorId:            authorizationInfo.RemoteParty.Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                null,
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                     AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     ISendAuthorizeStartStop:   this,
+                                     SessionId:                 SessionId,
+                                     ProviderId:                null,
+                                     Description:               null,
+                                     AdditionalInfo:            null,
+                                     NumberOfRetries:           0,
+                                     Runtime:                   authorizationInfo.Runtime
+                                 );
 
 
             authStopResult ??= WWCP.AuthStopResult.Error(
@@ -3170,7 +3162,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           RoamingNetwork.Id,
                           null,
                           Id,
-                          //ChargingStationOperatorId,
                           ChargingLocation,
                           SessionId,
                           CPOPartnerSessionId,
