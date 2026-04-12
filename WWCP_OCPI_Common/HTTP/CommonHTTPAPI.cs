@@ -3011,6 +3011,7 @@ namespace cloud.charging.open.protocols.OCPI
             #region OPTIONS  ~/
 
             HTTPBaseAPI.AddHandler(
+
                 HTTPMethod.OPTIONS,
                 URLPathPrefix,
                 HTTPDelegate: request =>
@@ -3034,6 +3035,7 @@ namespace cloud.charging.open.protocols.OCPI
             #region GET      ~/
 
             HTTPBaseAPI.AddHandler(
+
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Text.PLAIN,
@@ -3057,7 +3059,9 @@ namespace cloud.charging.open.protocols.OCPI
 
             );
 
+
             HTTPBaseAPI.AddHandler(
+
                 HTTPMethod.GET,
                 URLPathPrefix,
                 HTTPContentType.Application.JSON_UTF8,
