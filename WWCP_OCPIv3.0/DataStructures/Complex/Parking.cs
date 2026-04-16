@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("max_vehicle_weight",
                                        "max vehicle weight",
-                                       Kilogram.TryParseKilogram,
+                                       Kilogram.TryParseKG,
                                        out Kilogram? MaxVehicleWeight,
                                        out ErrorResponse))
                 {
@@ -726,12 +726,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    RestrictedToType,
                    ReservationRequired,
 
-                   MaxVehicleWeight?.  Clone(),
-                   MaxVehicleHeight?.  Clone(),
-                   MaxVehicleLength?.  Clone(),
-                   MaxVehicleWidth?.   Clone(),
-                   ParkingBayLength?.  Clone(),
-                   ParkingBayWidth?.   Clone(),
+                   MaxVehicleWeight,
+                   MaxVehicleHeight,
+                   MaxVehicleLength,
+                   MaxVehicleWidth,
+                   ParkingBayLength,
+                   ParkingBayWidth,
                    DangerousGoodsAllowed,
                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction.Clone()),
                    TimeLimit,

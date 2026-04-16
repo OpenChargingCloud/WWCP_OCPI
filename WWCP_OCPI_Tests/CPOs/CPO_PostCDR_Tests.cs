@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              10.00M,
 
                                              // Total Energy
-                                             WattHour.ParseKWh(50.00M),
+                                             WattHour.FromKWh(50.00M),
 
                                              // Total time
                                              TimeSpan.FromMinutes(30),
@@ -372,7 +372,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              ),
 
                                              // Total Energy
-                                             WattHour.ParseKWh(50.00M),
+                                             WattHour.FromKWh(50.00M),
 
                                              // Total time
                                              TimeSpan.              FromMinutes(30),
@@ -691,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                              ),
 
                                              // Total Energy
-                                             WattHour.ParseKWh(50.00M),
+                                             WattHour.FromKWh(50.00M),
 
                                              // Total time
                                              TimeSpan.              FromMinutes(30),

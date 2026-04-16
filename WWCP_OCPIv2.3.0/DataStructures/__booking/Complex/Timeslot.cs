@@ -320,8 +320,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => new (
                    Start,
                    End,
-                   MinPower?.Clone(),
-                   MaxPower?.Clone(),
+                   MinPower,
+                   MaxPower,
                    GreenEnergySupport
                );
 

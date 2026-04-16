@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_weight",
                                        "max vehicle weight",
-                                       Kilogram.TryParseKilogram,
+                                       Kilogram.TryParseKG,
                                        out Kilogram? MaxVehicleWeight,
                                        out ErrorResponse))
                 {
@@ -828,27 +828,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => new (
 
                    Id.                 Clone(),
-                   VehicleTypes.       Select(vehicleType        => vehicleType.       Clone()),
+                   VehicleTypes.       Select(vehicleType => vehicleType.Clone()),
                    RestrictedToType,
                    ReservationRequired,
 
                    PhysicalReference?. CloneString(),
-                   MaxVehicleWeight?.  Clone(),
-                   MaxVehicleHeight?.  Clone(),
-                   MaxVehicleLength?.  Clone(),
-                   MaxVehicleWidth?.   Clone(),
-                   ParkingSpaceLength?.  Clone(),
-                   ParkingSpaceWidth?.   Clone(),
+                   MaxVehicleWeight,
+                   MaxVehicleHeight,
+                   MaxVehicleLength,
+                   MaxVehicleWidth,
+                   ParkingSpaceLength,
+                   ParkingSpaceWidth,
                    DangerousGoodsAllowed,
                    EVSEPosition?.      Clone(),
                    Direction?.         Clone(),
                    DriveThrough,
                    TimeLimit,
                    Roofed,
-                   Images.             Select(image              => image.             Clone()),
+                   Images.             Select(image       => image.      Clone()),
                    Lighting,
                    RefrigerationOutlet,
-                   Standards.          Select(standard           => standard.          Clone()),
+                   Standards.          Select(standard    => standard.   Clone()),
                    APDSReference?.     CloneString()
 
                );

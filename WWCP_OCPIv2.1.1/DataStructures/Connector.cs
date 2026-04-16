@@ -671,8 +671,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new JProperty("standard",               Standard.             ToString()),
                                         new JProperty("format",                 Format.               AsText()),
                                         new JProperty("power_type",             PowerType.            AsText()),
-                                        new JProperty("voltage",                Voltage.              IntegerValue),
-                                        new JProperty("amperage",               Amperage.             IntegerValue),
+                                        new JProperty("voltage",                Voltage.              RoundedIntegerValue),
+                                        new JProperty("amperage",               Amperage.             RoundedIntegerValue),
 
                                   tariffId.HasValue
                                       ? new JProperty("tariff_id",              tariffId.             Value.ToString())

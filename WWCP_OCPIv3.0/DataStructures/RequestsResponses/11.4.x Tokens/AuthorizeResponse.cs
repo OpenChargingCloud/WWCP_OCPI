@@ -576,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    AuthorizedUntil,
 
                    AuthorizationReference?.Clone(),
-                   MaxEnergy?.             Clone(),
+                   MaxEnergy,
                    MaxTime,
                    Info?.                  Clone(),
                    DisplayTariff?.         Clone()

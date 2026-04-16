@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                10.00M,
 
                                // Total Energy
-                               WattHour.              ParseKWh(50.00M),
+                               WattHour.              FromKWh(50.00M),
 
                                // Total time
                                TimeSpan.              FromMinutes(30),
@@ -519,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                     Plug:            ChargingPlugTypes.Type2Outlet,
                                                                     Lockable:        true,
                                                                     CableAttached:   true,
-                                                                    CableLength:     Meter.ParseM(4)
+                                                                    CableLength:     Meter.FromM(4)
                                                                 )
                                                             }
 
@@ -617,13 +617,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                   WWCP.EnergyMeter_Id.Parse("12345678")
                                                               ),
                               EnergyMeteringValues:           [
-                                                                  new EnergyMeteringValue(startTime,                             WattHour.ParseKWh( 0), EnergyMeteringValueTypes.Start),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),   WattHour.ParseKWh( 5), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  WattHour.ParseKWh(10), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  WattHour.ParseKWh(15), EnergyMeteringValueTypes.TariffChange),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  WattHour.ParseKWh(20), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), WattHour.ParseKWh(22), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(120), WattHour.ParseKWh(23), EnergyMeteringValueTypes.Stop)
+                                                                  new EnergyMeteringValue(startTime,                             WattHour.FromKWh( 0), EnergyMeteringValueTypes.Start),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),   WattHour.FromKWh( 5), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  WattHour.FromKWh(10), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  WattHour.FromKWh(15), EnergyMeteringValueTypes.TariffChange),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  WattHour.FromKWh(20), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), WattHour.FromKWh(22), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(120), WattHour.FromKWh(23), EnergyMeteringValueTypes.Stop)
                                                               ]
                               //ConsumedEnergy                // automagic!
                               //ConsumedEnergyFee
@@ -809,8 +809,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var stop1            = start1 + TimeSpan.FromHours(2);
 
             var meteringValues1  = new[] {
-                                       new Timestamped<WattHour>(start1, WattHour.ParseKWh( 1)),
-                                       new Timestamped<WattHour>(stop1,  WattHour.ParseKWh(11))
+                                       new Timestamped<WattHour>(start1, WattHour.FromKWh( 1)),
+                                       new Timestamped<WattHour>(stop1,  WattHour.FromKWh(11))
                                    };
 
             var cdr1             = new CDR(
@@ -836,7 +836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 ChargingPeriod.Create(
                                                                     start1,
-                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.FromKWh(1M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -852,8 +852,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var stop2            = start2 + TimeSpan.FromHours(3);
 
             var meteringValues2  = new[] {
-                                       new Timestamped<WattHour>(start2, WattHour.ParseKWh( 2)),
-                                       new Timestamped<WattHour>(stop2,  WattHour.ParseKWh(20))
+                                       new Timestamped<WattHour>(start2, WattHour.FromKWh( 2)),
+                                       new Timestamped<WattHour>(stop2,  WattHour.FromKWh(20))
                                    };
 
             var cdr2             = new CDR(
@@ -879,7 +879,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 ChargingPeriod.Create(
                                                                     start2,
-                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.FromKWh(2M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -895,8 +895,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var stop3            = start3 + TimeSpan.FromHours(7);
 
             var meteringValues3  = new[] {
-                                       new Timestamped<WattHour>(start3, WattHour.ParseKWh( 2)),
-                                       new Timestamped<WattHour>(stop3,  WattHour.ParseKWh(22))
+                                       new Timestamped<WattHour>(start3, WattHour.FromKWh( 2)),
+                                       new Timestamped<WattHour>(stop3,  WattHour.FromKWh(22))
                                    };
 
             var cdr3             = new CDR(
@@ -922,7 +922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ChargingPeriods:     [
                                                                 ChargingPeriod.Create(
                                                                     start3,
-                                                                    [ CDRDimension.ENERGY(WattHour.ParseKWh(2M)) ]
+                                                                    [ CDRDimension.ENERGY(WattHour.FromKWh(2M)) ]
                                                                 )
                                                             ],
                                        TotalCost:           0,
@@ -1657,8 +1657,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var stop1           = DateTime.Parse("2024-04-15T06:36:36.000Z");
 
             var meteringValues  = new[] {
-                                      new Timestamped<WattHour>(start1, WattHour.ParseKWh(    0m)),
-                                      new Timestamped<WattHour>(stop1,  WattHour.ParseKWh(59.51m))
+                                      new Timestamped<WattHour>(start1, WattHour.FromKWh(    0m)),
+                                      new Timestamped<WattHour>(stop1,  WattHour.FromKWh(59.51m))
                                   };
 
             var cdr             = new CDR(
@@ -1689,8 +1689,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                                              Standard:   ConnectorType.IEC_62196_T2,
                                                                                                              Format:     ConnectorFormats.SOCKET,
                                                                                                              PowerType:  PowerTypes.AC_3_PHASE,
-                                                                                                             Voltage:    Volt.  ParseV(230),
-                                                                                                             Amperage:   Ampere.ParseA(32)
+                                                                                                             Voltage:    Volt.  FromV(230),
+                                                                                                             Amperage:   Ampere.FromA(32)
                                                                                                          )
                                                                                                      ]
                                                                                    )
@@ -1700,7 +1700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       ChargingPeriods:     [
                                                                ChargingPeriod.Create(
                                                                    start1,
-                                                                   [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
+                                                                   [ CDRDimension.ENERGY(WattHour.FromKWh(1M)) ]
                                                                )
                                                            ],
                                       TotalCost:           0,
@@ -1780,8 +1780,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var sessionStop     = DateTime.Parse("2024-04-15T06:40:02.000Z");
 
             var meteringValues  = new[] {
-                                      new Timestamped<WattHour>(chargingStart, WattHour.ParseKWh(    0m)),
-                                      new Timestamped<WattHour>(chargingStop,  WattHour.ParseKWh(59.51m))
+                                      new Timestamped<WattHour>(chargingStart, WattHour.FromKWh(    0m)),
+                                      new Timestamped<WattHour>(chargingStop,  WattHour.FromKWh(59.51m))
                                   };
 
             var cdr             = new CDR(
@@ -1812,8 +1812,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                                              Standard:   ConnectorType.IEC_62196_T2,
                                                                                                              Format:     ConnectorFormats.SOCKET,
                                                                                                              PowerType:  PowerTypes.AC_3_PHASE,
-                                                                                                             Voltage:    Volt.  ParseV(230),
-                                                                                                             Amperage:   Ampere.ParseA(32)
+                                                                                                             Voltage:    Volt.  FromV(230),
+                                                                                                             Amperage:   Ampere.FromA(32)
                                                                                                          )
                                                                                                      ]
                                                                                    )
@@ -1823,7 +1823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       ChargingPeriods:     [
                                                                ChargingPeriod.Create(
                                                                    chargingStart,
-                                                                   [ CDRDimension.ENERGY(WattHour.ParseKWh(1M)) ]
+                                                                   [ CDRDimension.ENERGY(WattHour.FromKWh(1M)) ]
                                                                )
                                                            ],
                                       TotalCost:           0,
@@ -1886,12 +1886,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp1.StartTimestamp,                        Is.EqualTo(sessionStart));
             Assert.That(cp1.StopTimestamp,                         Is.EqualTo(chargingStart));
             Assert.That(cp1.StartMeteringValue,                    Is.Null);
-            Assert.That(cp1.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.ParseKWh(0m))));
+            Assert.That(cp1.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.FromKWh(0m))));
 
-            Assert.That(cp1.Energy,                                Is.EqualTo(WattHour.ParseKWh(0)));
+            Assert.That(cp1.Energy,                                Is.EqualTo(WattHour.FromKWh(0)));
             Assert.That(cp1.EnergyPrice,                           Is.EqualTo(0));
             Assert.That(cp1.EnergyStepSize,                        Is.EqualTo(0));
-            Assert.That(cp1.PowerAverage,                          Is.EqualTo(Watt.    ParseKW (0)));
+            Assert.That(cp1.PowerAverage,                          Is.EqualTo(Watt.    FromKW (0)));
 
             Assert.That(cp1.Duration,                              Is.EqualTo(chargingStart - sessionStart));
             Assert.That(cp1.TotalDuration,                         Is.EqualTo(chargingStart - sessionStart));
@@ -1911,14 +1911,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             Assert.That(cp2.StartTimestamp,                        Is.EqualTo(chargingStart));
             Assert.That(cp2.StopTimestamp,                         Is.EqualTo(sessionStart  + new TimeSpan(3, 00, 00)));
-            Assert.That(cp2.StartMeteringValue,                    Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.ParseKWh(0m))));
+            Assert.That(cp2.StartMeteringValue,                    Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.FromKWh(0m))));
             Assert.That(cp2.StopMeteringValue!.Value.Timestamp,    Is.EqualTo(chargingStart + new TimeSpan(2, 59, 25)));
-            Assert.That(cp2.StopMeteringValue!.Value.WattHours,    Is.EqualTo(WattHour.ParseWh(15929.608862144420131291028447M)));
+            Assert.That(cp2.StopMeteringValue!.Value.WattHours,    Is.EqualTo(WattHour.FromKWh(15929.608862144420131291028447M)));
 
-            Assert.That(cp2.Energy,                                Is.EqualTo(WattHour.ParseWh(15929.608862144420131291028447M)));
+            Assert.That(cp2.Energy,                                Is.EqualTo(WattHour.FromKWh(15929.608862144420131291028447M)));
             Assert.That(cp2.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp2.EnergyStepSize,                        Is.EqualTo(1000));
-            Assert.That(cp2.PowerAverage,                          Is.EqualTo(Watt.    ParseW (5327.1334792122498704672427971M)));
+            Assert.That(cp2.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122498704672427971M)));
 
             Assert.That(cp2.Duration,                              Is.EqualTo(new TimeSpan(2, 59, 25)));
             Assert.That(cp2.TotalDuration,                         Is.EqualTo(new TimeSpan(3, 00, 00)));
@@ -1942,14 +1942,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp3.StopTimestamp,                         Is.EqualTo(chargingStop));
             Assert.That(cp3.StartMeteringValue,                    Is.EqualTo(MeteringValue.Imputed(
                                                                                   chargingStart + new TimeSpan(2, 59, 25),
-                                                                                  WattHour.ParseWh(15929.608862144420131291028447M)
+                                                                                  WattHour.FromKWh(15929.608862144420131291028447M)
                                                                               )));
-            Assert.That(cp3.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStop, WattHour.ParseKWh(59.51m))));
+            Assert.That(cp3.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStop, WattHour.FromKWh(59.51m))));
 
-            Assert.That(cp3.Energy,                                Is.EqualTo(WattHour.ParseWh(43580.391137855579868708971553M)));
+            Assert.That(cp3.Energy,                                Is.EqualTo(WattHour.FromKWh(43580.391137855579868708971553M)));
             Assert.That(cp3.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp3.EnergyStepSize,                        Is.EqualTo(1000));
-            Assert.That(cp3.PowerAverage,                          Is.EqualTo(Watt.    ParseW (5327.1334792122494881718378492M)));
+            Assert.That(cp3.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122494881718378492M)));
 
             Assert.That(cp3.Duration,                              Is.EqualTo(new TimeSpan( 8, 10, 51)));
             Assert.That(cp3.TotalDuration,                         Is.EqualTo(new TimeSpan(11, 10, 51)));
@@ -1972,10 +1972,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             Assert.That(cp4.StartTimestamp,                        Is.EqualTo(chargingStop));
             Assert.That(cp4.StopTimestamp,                         Is.EqualTo(sessionStop));
-            Assert.That(cp4.StartMeteringValue,                    Is.EqualTo(MeteringValue.Measured(chargingStop, WattHour.ParseKWh(59.51m))));
+            Assert.That(cp4.StartMeteringValue,                    Is.EqualTo(MeteringValue.Measured(chargingStop, WattHour.FromKWh(59.51m))));
             Assert.That(cp4.StopMeteringValue,                     Is.Null);
 
-            Assert.That(cp4.Energy,                                Is.EqualTo(WattHour.ParseKWh(0)));
+            Assert.That(cp4.Energy,                                Is.EqualTo(WattHour.FromKWh(0)));
             Assert.That(cp4.EnergyPrice,                           Is.EqualTo(0));
             Assert.That(cp4.EnergyStepSize,                        Is.EqualTo(0));
             Assert.That(cp4.PowerAverage,                          Is.EqualTo(Watt.Zero));

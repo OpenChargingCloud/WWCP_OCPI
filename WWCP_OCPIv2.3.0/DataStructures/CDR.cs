@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         MeteringValues = [
                                              new Timestamped<WattHour>(CDR.Start, WattHour.Zero),
-                                             new Timestamped<WattHour>(CDR.End,   WattHour.ParseKWh(CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume))
+                                             new Timestamped<WattHour>(CDR.End,   WattHour.FromKWh(CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume))
                                          ];
 
                     }
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
                                                 ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
-                        var imputedValue  = WattHour.ParseWh((nextMV.WattHours - previousMV.Value.WattHours).Value /
+                        var imputedValue  = WattHour.FromWh((nextMV.WattHours - previousMV.Value.WattHours).Value /
                                                              Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Value.Timestamp).TotalSeconds) *
                                                              Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Value.Timestamp).TotalSeconds)) + previousMV.Value.WattHours;
 
@@ -240,7 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     {
 
                         chargingPeriod.Energy        = periodStopMeteringValue.Value.WattHours - periodStartMeteringValue.Value.WattHours;
-                        chargingPeriod.PowerAverage  = Watt.ParseW(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
+                        chargingPeriod.PowerAverage  = Watt.FromW(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
 
                         cdrCostDetails.      TotalEnergy   = cdrCostDetails.TotalEnergy + chargingPeriod.Energy;
 
@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 foreach (var energySums in cdrCostDetails.BilledEnergyElements)
                 {
 
-                    energySums.Value.BilledEnergy  = WattHour.ParseWh(Math.Ceiling(energySums.Value.Energy.Value / energySums.Value.StepSize) * energySums.Value.StepSize);
+                    energySums.Value.BilledEnergy  = WattHour.FromWh(Math.Ceiling(energySums.Value.Energy.Value / energySums.Value.StepSize) * energySums.Value.StepSize);
                     energySums.Value.EnergyCost    = energySums.Value.BilledEnergy.kWh * energySums.Value.Price;
 
                     cdrCostDetails.BilledEnergy         += energySums.Value.BilledEnergy;
