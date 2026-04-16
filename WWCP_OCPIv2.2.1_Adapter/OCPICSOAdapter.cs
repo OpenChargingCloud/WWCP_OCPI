@@ -2250,6 +2250,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         }
 
+        public Boolean SetupCPO2HUBClient(RemoteParty                                               RemoteParty,
+                                          [NotNullWhen(true)] out CPO.HUB.HTTP.CPO2HUB_HTTPClient?  CPO2HUBClient)
+        {
+
+            var remotePartyLoggingPath = Path.Combine(
+                                             ClientsLoggingPath,
+                                             RemoteParty.Id.ToString()
+                                         ) +
+                                         Path.DirectorySeparatorChar;
+
+            if (!Directory.Exists(remotePartyLoggingPath))
+                Directory.CreateDirectory(remotePartyLoggingPath);
+
+
+            if (RemoteParty.CPO2HUBClient is null)
+            {
+
+                RemoteParty.CPO2HUBClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
+
+                                                CPO_HTTPAPI,
+                                                RemoteParty,
+                                                null, // VirtualHostname
+                                                null, // Description
+                                                null, // HTTPLogger
+
+                                                DisableLogging,
+                                                remotePartyLoggingPath,
+                                                ClientsLoggingContext,
+                                                ClientsLogfileCreator,
+                                                DNSClient
+
+                                            );
+
+                //ToDo: Make client debugging more flexible!
+                RemoteParty.CPO2HUBClient.HTTPLogger.Debug("all", LogTargets.Disc);
+
+            }
+
+            CPO2HUBClient = RemoteParty.CPO2HUBClient;
+
+            return RemoteParty.CPO2HUBClient is not null;
+
+        }
+
+
+
+
+
+
+
+
+
 
         #region (private) PostToken     (LocalAuthentication, ...)
 
@@ -2397,46 +2449,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           if (remoteParty.Id.Role == Role.EMSP)
                                                           {
 
-                                                              var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
+                                                              //var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
 
-                                                                                  CPO_HTTPAPI,
-                                                                                  remoteParty,
-                                                                                  null, // VirtualHostname
-                                                                                  null, // Description
-                                                                                  null, // HTTPLogger
+                                                              //                    CPO_HTTPAPI,
+                                                              //                    remoteParty,
+                                                              //                    null, // VirtualHostname
+                                                              //                    null, // Description
+                                                              //                    null, // HTTPLogger
 
-                                                                                  DisableLogging,
-                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                  ClientsLogfileCreator,
-                                                                                  DNSClient
+                                                              //                    DisableLogging,
+                                                              //                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                              //                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                                              //                    ClientsLogfileCreator,
+                                                              //                    DNSClient
 
-                                                                              );
+                                                              //                );
 
-                                                              if (cpoClient is null)
+                                                              if (SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
+                                                              {
+
+                                                                  //var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                                  //                           cpoClient,
+                                                                  //                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                  //                           ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                  //                           ClientsLogfileCreator
+                                                                  //                       );
+
+                                                                  authorizationInfo    = await cpo2EMSPClient.PostToken(
+                                                                                                   TokenId:             tokenId.Value,
+                                                                                                   TokenType:           TokenType.RFID,
+                                                                                                   LocationReference:   locationReference,
+                                                                                                   From:                fromChargingStationOperatorId,
+                                                                                                   To:                  toEMobilityProviderId,
+                                                                                                   CancellationToken:   cancellationToken
+                                                                                               );
+
+                                                              }
+
+                                                              else
                                                                   return new AuthorizationInfo(
                                                                              Allowed:      AllowedType.NOT_ALLOWED,
                                                                              Token:        null,
                                                                              Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
                                                                              RemoteParty:  remoteParty
                                                                          );
-
-
-                                                              var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
-                                                                                         cpoClient,
-                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                         ClientsLogfileCreator
-                                                                                     );
-
-                                                              authorizationInfo    = await cpoClient.PostToken(
-                                                                                               TokenId:             tokenId.Value,
-                                                                                               TokenType:           TokenType.RFID,
-                                                                                               LocationReference:   locationReference,
-                                                                                               From:                fromChargingStationOperatorId,
-                                                                                               To:                  toEMobilityProviderId,
-                                                                                               CancellationToken:   cancellationToken
-                                                                                           );
 
                                                           }
 
@@ -2447,46 +2503,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           if (remoteParty.Id.Role == Role.HUB)
                                                           {
 
-                                                              var cpoClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
+                                                              if (SetupCPO2HUBClient(remoteParty, out var cpo2HUBClient))
+                                                                  authorizationInfo = await cpo2HUBClient.PostToken(
+                                                                                                TokenId:             tokenId.Value,
+                                                                                                TokenType:           TokenType.RFID,
+                                                                                                LocationReference:   locationReference,
+                                                                                                From:                fromChargingStationOperatorId,
+                                                                                                To:                  toEMobilityProviderId,
+                                                                                                CancellationToken:   cancellationToken
+                                                                                            );
 
-                                                                                  CPO_HTTPAPI,
-                                                                                  remoteParty,
-                                                                                  null, // VirtualHostname
-                                                                                  null, // Description
-                                                                                  null, // HTTPLogger
-
-                                                                                  DisableLogging,
-                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                  ClientsLogfileCreator,
-                                                                                  DNSClient
-
-                                                                              );
-
-                                                              if (cpoClient is null)
+                                                              else
                                                                   return new AuthorizationInfo(
                                                                              Allowed:      AllowedType.NOT_ALLOWED,
                                                                              Token:        null,
                                                                              Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
                                                                              RemoteParty:  remoteParty
                                                                          );
-
-
-                                                              var cpoClientLogger  = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
-                                                                                         cpoClient,
-                                                                                         ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                         ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                         ClientsLogfileCreator
-                                                                                     );
-
-                                                              authorizationInfo    = await cpoClient.PostToken(
-                                                                                               TokenId:             tokenId.Value,
-                                                                                               TokenType:           TokenType.RFID,
-                                                                                               LocationReference:   locationReference,
-                                                                                               From:                fromChargingStationOperatorId,
-                                                                                               To:                  remoteParty.Id.AsPartyId(),
-                                                                                               CancellationToken:   cancellationToken
-                                                                                           );
 
                                                           }
 

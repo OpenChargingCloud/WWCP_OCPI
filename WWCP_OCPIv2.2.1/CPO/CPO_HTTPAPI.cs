@@ -28,6 +28,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HUB.HTTP;
 
 #endregion
 
@@ -81,6 +82,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
         public Action<CPO2EMSP_HTTPClient>?  DefaultCPO2EMSP_HTTPClientConfigurator    { get; set; }
+
+        public Action<CPO2HUB_HTTPClient>?   DefaultCPO2HUB_HTTPClientConfigurator     { get; set; }
 
         #endregion
 
@@ -1889,6 +1892,175 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #endregion
+
+        #region CPO-2-HUB Clients
+
+        private readonly ConcurrentDictionary<HUB_Id, CPO2HUB_HTTPClient> cpo2hubClients = new();
+
+        /// <summary>
+        /// Return an enumeration of all CPO2HUB clients.
+        /// </summary>
+        public IEnumerable<CPO2HUB_HTTPClient> CPO2HUBClients
+            => cpo2hubClients.Values;
+
+
+        #region GetHUBClient (CountryCode, PartyId,   Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote HUB.</param>
+        /// <param name="PartyId">The party identification of the remote HUB.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(CountryCode  CountryCode,
+                                                Party_Id     PartyId,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetHUBClient(
+                   RemoteParty_Id.From(
+                       CountryCode,
+                       PartyId,
+                       Role.HUB
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetHUBClient (             PartyIdv3, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="v">The party identification of the remote HUB.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(Party_Idv3   PartyIdv3,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetHUBClient(
+                   RemoteParty_Id.From(
+                       PartyIdv3,
+                       Role.HUB
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetHUBClient (RemoteParty,            Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(RemoteParty  RemoteParty,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+        {
+
+            var hubId = HUB_Id.From(RemoteParty.Id);
+
+            if (AllowCachedClients &&
+                cpo2hubClients.TryGetValue(hubId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpo2HUBClient = new CPO2HUB_HTTPClient(
+                                         this,
+                                         RemoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
+
+                cpo2hubClients.TryAdd(hubId, cpo2HUBClient);
+
+                DefaultCPO2HUB_HTTPClientConfigurator?.Invoke(cpo2HUBClient);
+
+                return cpo2HUBClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetHUBClient (RemotePartyId,          Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(RemoteParty_Id  RemotePartyId,
+                                                I18NString?     Description          = null,
+                                                Boolean         AllowCachedClients   = true)
+        {
+
+            var hubId = HUB_Id.From(RemotePartyId);
+
+            if (AllowCachedClients &&
+                cpo2hubClients.TryGetValue(hubId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpo2HUBClient = new CPO2HUB_HTTPClient(
+                                         this,
+                                         remoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
+
+                cpo2hubClients.TryAdd(hubId, cpo2HUBClient);
+
+                DefaultCPO2HUB_HTTPClientConfigurator?.Invoke(cpo2HUBClient);
+
+                return cpo2HUBClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region CloseAllClients()
 
         public Task CloseAllClients()
         {
@@ -1899,6 +2071,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             cpo2emspClients.Clear();
+
+            foreach (var client in cpo2hubClients.Values)
+            {
+                client.Close();
+            }
+
+            cpo2hubClients.Clear();
 
             return Task.CompletedTask;
 
