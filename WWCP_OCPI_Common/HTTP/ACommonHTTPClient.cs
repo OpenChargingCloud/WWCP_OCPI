@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  HTTPHostname?                                              VirtualHostname              = null,
                                  I18NString?                                                Description                  = null,
                                  UInt16?                                                    MaxNumberOfPooledClients     = null,
-                                 Boolean?                                                   PreferIPv4                   = null,
+                                 IPVersionPreference?                                       PreferIPv4                   = null,
                                  RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                                  IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
