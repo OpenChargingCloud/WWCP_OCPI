@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public HTTPClientLogger(CommonHTTPClient                 CommonClient,
+            public HTTPClientLogger(CommonHTTPClient             CommonClient,
                                     String?                      LoggingPath,
                                     String?                      Context          = DefaultContext,
                                     OCPILogfileCreatorDelegate?  LogfileCreator   = null)
