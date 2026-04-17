@@ -2568,7 +2568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                             return Task.FromResult(
                                                 new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 2000,
+                                                    StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2604,7 +2604,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(
                                                                               filteredLocations.
@@ -2669,7 +2669,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2699,7 +2699,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                                         return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -2764,7 +2764,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                             return Task.FromResult(
                                                 new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 2000,
+                                                    StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2794,7 +2794,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
+                                                   StatusCode           = StatusCode.Success,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = location.ToJSON(true,
                                                                                           true,
@@ -2852,7 +2852,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2892,7 +2892,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
+                                                       StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                                                        StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2912,34 +2912,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(true,
-                                                                                                            true,
-                                                                                                            true,
-                                                                                                            true,
-                                                                                                            CustomLocationSerializer,
-                                                                                                            CustomPublishTokenSerializer,
-                                                                                                            CustomAddressSerializer,
-                                                                                                            CustomAdditionalGeoLocationSerializer,
-                                                                                                            CustomChargingStationSerializer,
-                                                                                                            CustomEVSESerializer,
-                                                                                                            CustomParkingSerializer,
-                                                                                                            CustomParkingRestrictionSerializer,
-                                                                                                            CustomStatusScheduleSerializer,
-                                                                                                            CustomConnectorSerializer,
-                                                                                                            CustomLocationEnergyMeterSerializer,
-                                                                                                            CustomChargingStationEnergyMeterSerializer,
-                                                                                                            CustomEVSEEnergyMeterSerializer,
-                                                                                                            CustomTransparencySoftwareStatusSerializer,
-                                                                                                            CustomTransparencySoftwareSerializer,
-                                                                                                            CustomDisplayTextSerializer,
-                                                                                                            CustomBusinessDetailsSerializer,
-                                                                                                            CustomHoursSerializer,
-                                                                                                            CustomImageSerializer,
-                                                                                                            CustomEnergyMixSerializer,
-                                                                                                            CustomEnergySourceSerializer,
-                                                                                                            CustomEnvironmentalImpactSerializer),
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(
+                                                                                  true,
+                                                                                  true,
+                                                                                  true,
+                                                                                  true,
+                                                                                  CustomLocationSerializer,
+                                                                                  CustomPublishTokenSerializer,
+                                                                                  CustomAddressSerializer,
+                                                                                  CustomAdditionalGeoLocationSerializer,
+                                                                                  CustomChargingStationSerializer,
+                                                                                  CustomEVSESerializer,
+                                                                                  CustomParkingSerializer,
+                                                                                  CustomParkingRestrictionSerializer,
+                                                                                  CustomStatusScheduleSerializer,
+                                                                                  CustomConnectorSerializer,
+                                                                                  CustomLocationEnergyMeterSerializer,
+                                                                                  CustomChargingStationEnergyMeterSerializer,
+                                                                                  CustomEVSEEnergyMeterSerializer,
+                                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                                  CustomTransparencySoftwareSerializer,
+                                                                                  CustomDisplayTextSerializer,
+                                                                                  CustomBusinessDetailsSerializer,
+                                                                                  CustomHoursSerializer,
+                                                                                  CustomImageSerializer,
+                                                                                  CustomEnergyMixSerializer,
+                                                                                  CustomEnergySourceSerializer,
+                                                                                  CustomEnvironmentalImpactSerializer
+                                                                              ),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
@@ -2952,34 +2954,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                    };
 
                                         return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
+                                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedLocation.ToJSON(true,
-                                                                                                      true,
-                                                                                                      true,
-                                                                                                      true,
-                                                                                                      CustomLocationSerializer,
-                                                                                                      CustomPublishTokenSerializer,
-                                                                                                      CustomAddressSerializer,
-                                                                                                      CustomAdditionalGeoLocationSerializer,
-                                                                                                      CustomChargingStationSerializer,
-                                                                                                      CustomEVSESerializer,
-                                                                                                      CustomParkingSerializer,
-                                                                                                      CustomParkingRestrictionSerializer,
-                                                                                                      CustomStatusScheduleSerializer,
-                                                                                                      CustomConnectorSerializer,
-                                                                                                      CustomLocationEnergyMeterSerializer,
-                                                                                                      CustomChargingStationEnergyMeterSerializer,
-                                                                                                      CustomEVSEEnergyMeterSerializer,
-                                                                                                      CustomTransparencySoftwareStatusSerializer,
-                                                                                                      CustomTransparencySoftwareSerializer,
-                                                                                                      CustomDisplayTextSerializer,
-                                                                                                      CustomBusinessDetailsSerializer,
-                                                                                                      CustomHoursSerializer,
-                                                                                                      CustomImageSerializer,
-                                                                                                      CustomEnergyMixSerializer,
-                                                                                                      CustomEnergySourceSerializer,
-                                                                                                      CustomEnvironmentalImpactSerializer),
+                                                   Data                 = newOrUpdatedLocation.ToJSON(
+                                                                              true,
+                                                                              true,
+                                                                              true,
+                                                                              true,
+                                                                              CustomLocationSerializer,
+                                                                              CustomPublishTokenSerializer,
+                                                                              CustomAddressSerializer,
+                                                                              CustomAdditionalGeoLocationSerializer,
+                                                                              CustomChargingStationSerializer,
+                                                                              CustomEVSESerializer,
+                                                                              CustomParkingSerializer,
+                                                                              CustomParkingRestrictionSerializer,
+                                                                              CustomStatusScheduleSerializer,
+                                                                              CustomConnectorSerializer,
+                                                                              CustomLocationEnergyMeterSerializer,
+                                                                              CustomChargingStationEnergyMeterSerializer,
+                                                                              CustomEVSEEnergyMeterSerializer,
+                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                              CustomTransparencySoftwareSerializer,
+                                                                              CustomDisplayTextSerializer,
+                                                                              CustomBusinessDetailsSerializer,
+                                                                              CustomHoursSerializer,
+                                                                              CustomImageSerializer,
+                                                                              CustomEnergyMixSerializer,
+                                                                              CustomEnergySourceSerializer,
+                                                                              CustomEnvironmentalImpactSerializer
+                                                                          ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
@@ -3010,7 +3014,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3057,7 +3061,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         //ToDo: Handle update errors!
                                         if (result.IsSuccessAndDataNotNull(out var patchedData))
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = patchedData.ToJSON(
                                                                                   true,
@@ -3097,7 +3101,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                    };
 
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = result.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3127,7 +3131,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
+                                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3159,7 +3163,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
+                                                       StatusCode           = StatusCode.Success,
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = location.ToJSON(true,
                                                                                               true,
@@ -3252,7 +3256,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                                return Task.FromResult(
             //                                    new OCPIResponse.Builder(Request) {
-            //                                        StatusCode           = 2000,
+            //                                        StatusCode           = StatusCodes.GenericClientError,
             //                                        StatusMessage        = "Invalid or blocked access token!",
             //                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3285,7 +3289,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       Data                 = evse.ToJSON(CustomEVSESerializer,
             //                                                                          CustomStatusScheduleSerializer,
@@ -3325,7 +3329,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ////                            {
 
             ////                                return new OCPIResponse.Builder(Request) {
-            ////                                           StatusCode           = 2000,
+            ////                                           StatusCode           = StatusCodes.GenericClientError,
             ////                                           StatusMessage        = "Invalid or blocked access token!",
             ////                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             ////                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3390,7 +3394,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             ////                            if (addOrUpdateResult.IsSuccess)
             ////                                return new OCPIResponse.Builder(Request) {
-            ////                                           StatusCode           = 1000,
+            ////                                           StatusCode           = StatusCodes.Success,
             ////                                           StatusMessage        = "Hello world!",
             ////                                           Data                 = addOrUpdateResult.Data.ToJSON(Request.EMSPId,
             ////                                                                                                CustomEVSESerializer,
@@ -3413,7 +3417,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ////                                       };
 
             ////                            return new OCPIResponse.Builder(Request) {
-            ////                                       StatusCode           = 2000,
+            ////                                       StatusCode           = StatusCodes.GenericClientError,
             ////                                       StatusMessage        = addOrUpdateResult.ErrorResponse,
             ////                                       Data                 = newOrUpdatedEVSE.ToJSON(Request.EMSPId,
             ////                                                                                      CustomEVSESerializer,
@@ -3454,7 +3458,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ////                            {
 
             ////                                return new OCPIResponse.Builder(Request) {
-            ////                                           StatusCode           = 2000,
+            ////                                           StatusCode           = StatusCodes.GenericClientError,
             ////                                           StatusMessage        = "Invalid or blocked access token!",
             ////                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             ////                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3501,7 +3505,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ////                            //ToDo: Handle update errors!
             ////                            if (patchedEVSE.IsSuccess)
             ////                                return new OCPIResponse.Builder(Request) {
-            ////                                               StatusCode           = 1000,
+            ////                                               StatusCode           = StatusCodes.Success,
             ////                                               StatusMessage        = "Hello world!",
             ////                                               Data                 = patchedEVSE.PatchedData.ToJSON(Request.EMSPId,
             ////                                                                                                     CustomEVSESerializer,
@@ -3522,7 +3526,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             ////                                           };
 
             ////                            return new OCPIResponse.Builder(Request) {
-            ////                                           StatusCode           = 2000,
+            ////                                           StatusCode           = StatusCodes.GenericClientError,
             ////                                           StatusMessage        = patchedEVSE.ErrorResponse,
             ////                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             ////                                               HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3552,7 +3556,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3587,7 +3591,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           Data                 = existingEVSE.ToJSON(CustomEVSESerializer,
             //                                                                                      CustomStatusScheduleSerializer,
@@ -3623,7 +3627,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3664,7 +3668,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                                return Task.FromResult(
             //                                    new OCPIResponse.Builder(Request) {
-            //                                        StatusCode           = 2000,
+            //                                        StatusCode           = StatusCodes.GenericClientError,
             //                                        StatusMessage        = "Invalid or blocked access token!",
             //                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3699,7 +3703,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       Data                 = connector.ToJSON(CustomConnectorSerializer),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3732,7 +3736,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3799,7 +3803,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            if (addOrUpdateResult.IsSuccess)
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           Data                 = addOrUpdateResult.Data.ToJSON(CustomConnectorSerializer),
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3814,7 +3818,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                                       };
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 2000,
+            //                                       StatusCode           = StatusCodes.GenericClientError,
             //                                       StatusMessage        = addOrUpdateResult.ErrorResponse,
             //                                       Data                 = newOrUpdatedConnector.ToJSON(CustomConnectorSerializer),
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3847,7 +3851,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3898,7 +3902,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            //ToDo: Handle update errors!
             //                            if (patchedConnector.IsSuccess)
             //                                return new OCPIResponse.Builder(Request) {
-            //                                               StatusCode           = 1000,
+            //                                               StatusCode           = StatusCodes.Success,
             //                                               StatusMessage        = "Hello world!",
             //                                               Data                 = patchedConnector.PatchedData.ToJSON(),
             //                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3911,7 +3915,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                                           };
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = patchedConnector.ErrorResponse,
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3941,7 +3945,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -3978,7 +3982,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           Data                 = existingConnector.ToJSON(CustomConnectorSerializer),
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -4043,7 +4047,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4103,7 +4107,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           //Data                 = newOrUpdatedEVSE.ToJSON(),
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -4164,7 +4168,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                                return Task.FromResult(
             //                                    new OCPIResponse.Builder(Request) {
-            //                                        StatusCode           = 2000,
+            //                                        StatusCode           = StatusCodes.GenericClientError,
             //                                        StatusMessage        = "Invalid or blocked access token!",
             //                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4191,7 +4195,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       Data                 = new JArray(
             //                                                                  filteredSessions.
@@ -4238,7 +4242,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                                return Task.FromResult(
             //                                    new OCPIResponse.Builder(Request) {
-            //                                        StatusCode           = 2000,
+            //                                        StatusCode           = StatusCodes.GenericClientError,
             //                                        StatusMessage        = "Invalid or blocked access token!",
             //                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4279,7 +4283,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       Data                 = new JArray(
             //                                                                  filteredSessions.
@@ -4324,7 +4328,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4358,7 +4362,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
@@ -4388,7 +4392,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4421,7 +4425,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 1000,
+            //                                       StatusCode           = StatusCodes.Success,
             //                                       StatusMessage        = "Hello world!",
             //                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                           HTTPStatusCode             = HTTPStatusCode.OK,
@@ -4486,7 +4490,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                                return Task.FromResult(
             //                                    new OCPIResponse.Builder(Request) {
-            //                                        StatusCode           = 2000,
+            //                                        StatusCode           = StatusCodes.GenericClientError,
             //                                        StatusMessage        = "Invalid or blocked access token!",
             //                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4518,7 +4522,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            return Task.FromResult(
             //                                new OCPIResponse.Builder(Request) {
-            //                                    StatusCode           = 1000,
+            //                                    StatusCode           = StatusCodes.Success,
             //                                    StatusMessage        = "Hello world!",
             //                                    Data                 = session.ToJSON(CustomSessionSerializer,
             //                                                                          CustomCDRTokenSerializer,
@@ -4555,7 +4559,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4618,7 +4622,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             //                            if (addOrUpdateResult.IsSuccess)
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           Data                 = addOrUpdateResult.Data.ToJSON(CustomSessionSerializer,
             //                                                                                                CustomCDRTokenSerializer,
@@ -4637,7 +4641,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                                       };
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                       StatusCode           = 2000,
+            //                                       StatusCode           = StatusCodes.GenericClientError,
             //                                       StatusMessage        = addOrUpdateResult.ErrorResponse,
             //                                       Data                 = newOrUpdatedSession.ToJSON(CustomSessionSerializer,
             //                                                                                         CustomCDRTokenSerializer,
@@ -4674,7 +4678,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4718,7 +4722,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            //ToDo: Handle update errors!
             //                            if (patchedSession.IsSuccess)
             //                                return new OCPIResponse.Builder(Request) {
-            //                                               StatusCode           = 1000,
+            //                                               StatusCode           = StatusCodes.Success,
             //                                               StatusMessage        = "Hello world!",
             //                                               Data                 = patchedSession.PatchedData.ToJSON(CustomSessionSerializer,
             //                                                                                                        CustomCDRTokenSerializer,
@@ -4735,7 +4739,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                                           };
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = patchedSession.ErrorResponse,
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.OK,
@@ -4765,7 +4769,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //                            {
 
             //                                return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 2000,
+            //                                           StatusCode           = StatusCodes.GenericClientError,
             //                                           StatusMessage        = "Invalid or blocked access token!",
             //                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -4800,7 +4804,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             //                            return new OCPIResponse.Builder(Request) {
-            //                                           StatusCode           = 1000,
+            //                                           StatusCode           = StatusCodes.Success,
             //                                           StatusMessage        = "Hello world!",
             //                                           Data                 = existingSession.ToJSON(CustomSessionSerializer,
             //                                                                                         CustomCDRTokenSerializer,

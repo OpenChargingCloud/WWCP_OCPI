@@ -243,24 +243,6 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
         #region Events
 
-        #region Generic HTTP server logging
-
-        ///// <summary>
-        ///// An event called whenever a HTTP request came in.
-        ///// </summary>
-        //public HTTPRequestLogEvent   RequestLog    = new HTTPRequestLogEvent();
-
-        ///// <summary>
-        ///// An event called whenever a HTTP request could successfully be processed.
-        ///// </summary>
-        //public HTTPResponseLogEvent  ResponseLog   = new HTTPResponseLogEvent();
-
-        ///// <summary>
-        ///// An event called whenever a HTTP request resulted in an error.
-        ///// </summary>
-        //public HTTPErrorLogEvent     ErrorLog      = new HTTPErrorLogEvent();
-
-        #endregion
 
         #endregion
 
@@ -452,129 +434,8 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #region GET ~/
 
-                #region Text
-
-                //CommonHTTPAPI.HTTPBaseAPI.AddHandler(
-                //    HTTPMethod.GET,
-                //    OverlayURLPathPrefix.Value,
-                //    HTTPContentType.Text.HTML_UTF8,
-                //    HTTPDelegate: request =>
-
-                //        Task.FromResult(
-                //            new HTTPResponse.Builder(request) {
-                //                HTTPStatusCode             = HTTPStatusCode.OK,
-                //                Server                     = HTTPServiceName,
-                //                Date                       = Timestamp.Now,
-                //                AccessControlAllowOrigin   = "*",
-                //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                //                AccessControlAllowHeaders  = [ "Authorization" ],
-                //                ContentType                = HTTPContentType.Text.PLAIN,
-                //                Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
-                //                Connection                 = ConnectionType.KeepAlive,
-                //                Vary                       = "Accept"
-                //            }.AsImmutable),
-
-                //    AllowReplacement: URLReplacement.Allow
-
-                //);
-
-
-                //// Just for convenience...
-                //if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                //    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
-                //        HTTPMethod.GET,
-                //        OverlayURLPathPrefix.Value + "/",
-                //        HTTPContentType.Text.HTML_UTF8,
-                //        HTTPDelegate: request =>
-
-                //            Task.FromResult(
-                //                new HTTPResponse.Builder(request) {
-                //                    HTTPStatusCode             = HTTPStatusCode.OK,
-                //                    Server                     = HTTPServiceName,
-                //                    Date                       = Timestamp.Now,
-                //                    AccessControlAllowOrigin   = "*",
-                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                //                    AccessControlAllowHeaders  = [ "Authorization" ],
-                //                    ContentType                = HTTPContentType.Text.PLAIN,
-                //                    Content                    = ("This is an Open Charge Point Interface v2.x HTTP service!" + Environment.NewLine + "Please check ~/ versions!").ToUTF8Bytes(),
-                //                    Connection                 = ConnectionType.KeepAlive,
-                //                    Vary                       = "Accept"
-                //                }.AsImmutable),
-
-                //        AllowReplacement: URLReplacement.Allow
-
-                //    );
-
-                #endregion
-
-                #region JSON
-
-                //CommonHTTPAPI.HTTPBaseAPI.AddHandler(
-                //    HTTPMethod.GET,
-                //    OverlayURLPathPrefix.Value,
-                //    HTTPContentType.Application.JSON_UTF8,
-                //    HTTPDelegate: request =>
-
-                //        Task.FromResult(
-                //            new HTTPResponse.Builder(request) {
-                //                HTTPStatusCode             = HTTPStatusCode.OK,
-                //                Server                     = HTTPServiceName,
-                //                Date                       = Timestamp.Now,
-                //                AccessControlAllowOrigin   = "*",
-                //                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                //                AccessControlAllowHeaders  = [ "Authorization" ],
-                //                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                //                Content                    = JSONObject.Create(
-                //                                                 new JProperty(
-                //                                                     "message",
-                //                                                     "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
-                //                                                 )
-                //                                             ).ToUTF8Bytes(),
-                //                Connection                 = ConnectionType.KeepAlive,
-                //                Vary                       = "Accept"
-                //            }.AsImmutable),
-
-                //    AllowReplacement: URLReplacement.Allow
-
-                //);
-
-
-                //// Just for convenience...
-                //if (OverlayURLPathPrefix.Value != HTTPPath.Root)
-                //    CommonHTTPAPI.HTTPBaseAPI.AddHandler(
-                //        HTTPMethod.GET,
-                //        OverlayURLPathPrefix.Value + "/",
-                //        HTTPContentType.Text.HTML_UTF8,
-                //        HTTPDelegate: request =>
-
-                //            Task.FromResult(
-                //                new HTTPResponse.Builder(request) {
-                //                    HTTPStatusCode             = HTTPStatusCode.OK,
-                //                    Server                     = HTTPServiceName,
-                //                    Date                       = Timestamp.Now,
-                //                    AccessControlAllowOrigin   = "*",
-                //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                //                    AccessControlAllowHeaders  = [ "Authorization" ],
-                //                    ContentType                = HTTPContentType.Application.JSON_UTF8,
-                //                    Content                    = JSONObject.Create(
-                //                                                     new JProperty(
-                //                                                         "message",
-                //                                                         "This is an Open Charge Point Interface v2.x HTTP service! Please check ~/ versions!"
-                //                                                     )
-                //                                                 ).ToUTF8Bytes(),
-                //                    Connection                 = ConnectionType.KeepAlive,
-                //                    Vary                       = "Accept"
-                //                }.AsImmutable),
-
-                //        AllowReplacement: URLReplacement.Allow
-
-                //    );
-
-                #endregion
-
-                #region HTML
-
                 CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value,
                     HTTPContentType.Text.HTML_UTF8,
@@ -633,11 +494,10 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                 #endregion
 
-                #endregion
-
                 #region GET ~/versions
 
                 CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+
                     HTTPMethod.GET,
                     OverlayURLPathPrefix.Value + "versions",
                     HTTPContentType.Text.HTML_UTF8,
@@ -677,6 +537,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
                     );
 
                     CommonHTTPAPI.HTTPBaseAPI.AddHandler(
+
                         HTTPMethod.GET,
                         OverlayURLPathPrefix.Value + "debug",
                         HTTPContentType.Text.HTML_UTF8,

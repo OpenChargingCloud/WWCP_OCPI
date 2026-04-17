@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                            Content                    = new OCPIResponse(
                                                                            ocpiRequest,
-                                                                           2000,
+                                                                           StatusCode.ClientErrors.GenericClientError,
                                                                            ocpiRequest.AccessTokenErrorMessages.First(),
                                                                            ocpiRequest.AccessTokenErrorMessages.Count() > 1
                                                                                ? ocpiRequest.AccessTokenErrorMessages.Skip(1).AggregateWith(", ")
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                             httpResponseBuilder.SubprotocolResponse = new OCPIResponse(
                                                                           ocpiResponseBuilder.Request,
-                                                                          ocpiResponseBuilder.StatusCode    ?? 3000,
+                                                                          ocpiResponseBuilder.StatusCode    ?? StatusCode.ServerErrors.GenericServerError,
                                                                           ocpiResponseBuilder.StatusMessage ?? "error!",
                                                                           ocpiResponseBuilder.AdditionalInformation,
                                                                           ocpiResponseBuilder.Timestamp     ?? Timestamp.Now,
@@ -190,14 +190,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         }
 
                         var ocpiResponseBuilderX  = new OCPIResponse.Builder(httpRequest.SubprotocolRequest as OCPIRequest) {
-                                                        StatusCode    = 2001,
+                                                        StatusCode    = StatusCode.ClientErrors.InvalidOrMissingParameters,
                                                         StatusMessage = "Invalid OCPI request!"
                                                     };
                         var httpResponseBuilderX  = new HTTPResponse.Builder();
 
                         httpResponseBuilderX.SubprotocolResponse = new OCPIResponse(
                                                                        ocpiResponseBuilderX.Request,
-                                                                       ocpiResponseBuilderX.StatusCode    ?? 3000,
+                                                                       ocpiResponseBuilderX.StatusCode    ?? StatusCode.ServerErrors.GenericServerError,
                                                                        ocpiResponseBuilderX.StatusMessage ?? "error!",
                                                                        ocpiResponseBuilderX.AdditionalInformation,
                                                                        ocpiResponseBuilderX.Timestamp     ?? Timestamp.Now,
@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                              new JProperty("source",       e.TargetSite?.Module.Name),
                                                              new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
                                                          ),
-                                                         2000,
+                                                         StatusCode.ClientErrors.GenericClientError,
                                                          e.Message,
                                                          null,
                                                          Timestamp.Now,
@@ -262,13 +262,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    ocpiRequest,
                                    (httpResponse.SubprotocolResponse as OCPIResponse)
                                        ?? new OCPIResponse(
-                                                  ocpiRequest,
-                                                  2000,
-                                                  "OCPIResponse is null!",
-                                                  httpResponse.HTTPBodyAsUTF8String,
-                                                  httpResponse.Timestamp,
-                                                  httpResponse
-                                              ),
+                                              ocpiRequest,
+                                              StatusCode.ClientErrors.GenericClientError,
+                                              "OCPIResponse is null!",
+                                              httpResponse.HTTPBodyAsUTF8String,
+                                              httpResponse.Timestamp,
+                                              httpResponse
+                                          ),
                                    ct
                                ) ?? Task.CompletedTask;
 
@@ -462,11 +462,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderStruct               ("X-Request-ID",           Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
-            this.CorrelationId    = Request.TryParseHeaderStruct               ("X-Correlation-ID",       Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
+            this.RequestId        = Request.TryParseHeaderStruct               (HTTPHeaders.X_Request_ID,            Request_Id.    TryParse, Request_Id.    NewRandom(IsLocal: true));
+            this.CorrelationId    = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID,        Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
 
-            var  ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-to-country-code",   CountryCode.   TryParse);
-            var  ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-to-party-id",       Party_Id.      TryParse);
+            var  ToCountryCode    = Request.TryParseHeaderStruct<CountryCode>  (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.   TryParse);
+            var  ToPartyId        = Request.TryParseHeaderStruct<Party_Id>     (HTTPHeaders.OCPI_To_PartyId,         Party_Id.      TryParse);
             if (ToCountryCode.HasValue &&
                 ToPartyId.    HasValue)
             {
@@ -476,8 +476,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         );
             }
 
-            var  FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  ("OCPI-from-country-code", CountryCode.   TryParse);
-            var  FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     ("OCPI-from-party-id",     Party_Id.      TryParse);
+            var  FromCountryCode  = Request.TryParseHeaderStruct<CountryCode>  (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.   TryParse);
+            var  FromPartyId      = Request.TryParseHeaderStruct<Party_Id>     (HTTPHeaders.OCPI_From_PartyId,       Party_Id.      TryParse);
             if (FromCountryCode.HasValue &&
                 FromPartyId.    HasValue)
             {
@@ -487,7 +487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         );
             }
 
-            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                   TOTPHTTPHeader.TryParse);
+            var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                              TOTPHTTPHeader.TryParse);
 
             AccessToken?      accessTokenRAW                  = null;
             String?           accessTokenErrorMessageRAW      = null;
@@ -687,16 +687,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 if (RequestId.    HasValue)
-                    httpResponseBuilder.Set("X-Request-ID",      RequestId);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId);
 
                 if (CorrelationId.HasValue)
-                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  CorrelationId);
 
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
-                                      StatusCode           = result ? 1000 : 2001,
-                                      StatusMessage        = result ? ""   : "Could not parse JSON object in OCPI HTTP request body!",
+                                      StatusCode           = result ? StatusCode.Success : StatusCode.ClientErrors.InvalidOrMissingParameters,
+                                      StatusMessage        = result ? ""                 : "Could not parse JSON object in OCPI HTTP request body!",
                                       HTTPResponseBuilder  = httpResponseBuilder
                                   };
 
@@ -725,16 +725,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 if (RequestId.    HasValue)
-                    httpResponseBuilder.Set("X-Request-ID",      RequestId);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Request_ID,      RequestId);
 
                 if (CorrelationId.HasValue)
-                    httpResponseBuilder.Set("X-Correlation-ID",  CorrelationId);
+                    httpResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,  CorrelationId);
 
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
-                                      StatusCode           = result ? 1000 : 2001,
-                                      StatusMessage        = result ? ""   : "Could not parse JSON array in OCPI HTTP request body!",
+                                      StatusCode           = result ? StatusCode.Success : StatusCode.ClientErrors.InvalidOrMissingParameters,
+                                      StatusMessage        = result ? ""                 : "Could not parse JSON array in OCPI HTTP request body!",
                                       HTTPResponseBuilder  = httpResponseBuilder
                                   };
 

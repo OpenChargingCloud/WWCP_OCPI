@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Party_Id.   Parse("GEF"),  // Note: The party identification is just internal!
                                Session_Id. Parse("Session0001"),
                                DateTime.   Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
-                               WattHour.   ParseKWh(1.11M),
+                               WattHour.   FromKWh(1.11M),
                                Auth_Id.    Parse("1234"),
                                AuthMethods.AUTH_REQUEST,
 

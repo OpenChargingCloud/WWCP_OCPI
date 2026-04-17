@@ -61,13 +61,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     ConnectorType.IEC_62196_T2,
                                     ConnectorFormats.SOCKET,
                                     PowerTypes.AC_3_PHASE,
-                                    Volt.  ParseV(400),
-                                    Ampere.ParseA(30),
-                                    Watt.  ParseW(12),
-                                    new[] {
+                                    Volt.  FromV(400),
+                                    Ampere.FromA(30),
+                                    Watt.  FromW(12),
+                                    [
                                         Tariff_Id.Parse("DE*GEF*T0001"),
                                         Tariff_Id.Parse("DE*GEF*T0002")
-                                    },
+                                    ],
                                     URL.Parse("https://open.charging.cloud/terms"),
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 ),
@@ -76,13 +76,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     ConnectorType.IEC_62196_T2_COMBO,
                                     ConnectorFormats.CABLE,
                                     PowerTypes.AC_3_PHASE,
-                                    Volt.  ParseV(400),
-                                    Ampere.ParseA(20),
-                                    Watt.  ParseW(8),
-                                    new[] {
+                                    Volt.  FromV(400),
+                                    Ampere.FromA(20),
+                                    Watt.  FromW(8),
+                                    [
                                         Tariff_Id.Parse("DE*GEF*T0003"),
                                         Tariff_Id.Parse("DE*GEF*T0004")
-                                    },
+                                    ],
                                     URL.Parse("https://open.charging.cloud/terms"),
                                     DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 )

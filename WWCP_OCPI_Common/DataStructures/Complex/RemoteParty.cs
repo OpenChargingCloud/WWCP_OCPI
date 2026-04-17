@@ -152,31 +152,37 @@ namespace cloud.charging.open.protocols.OCPI
         /// (country code + party identification + role).
         /// </summary>
         [Mandatory]
-        public RemoteParty_Id  Id             { get; }
+        public RemoteParty_Id       Id                   { get; }
 
         /// <summary>
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        public PartyStatus     Status         { get; }
+        public PartyStatus          Status               { get; }
+
+        /// <summary>
+        /// Only the given enumberation of versionIds are visible
+        /// to this remote party.
+        /// </summary>
+        public HashSet<Version_Id>  VisibleVersionIds    { get; }
 
         /// <summary>
         /// The timestamp when this remote party was created.
         /// </summary>
         [Mandatory, VendorExtension(VE.GraphDefined, VE.Pagination)]
-        public DateTimeOffset  Created        { get; }
+        public DateTimeOffset       Created              { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTimeOffset  LastUpdated    { get; }
+        public DateTimeOffset       LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        public String          ETag           { get; protected set; } = String.Empty;
+        public String               ETag                 { get; protected set; } = String.Empty;
 
 
 
@@ -228,36 +234,23 @@ namespace cloud.charging.open.protocols.OCPI
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus?                   Status        = PartyStatus.ENABLED,
+                           PartyStatus?                   Status              = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                           DateTimeOffset?                Created       = null,
-                           DateTimeOffset?                LastUpdated   = null)
+                           DateTimeOffset?                Created             = null,
+                           DateTimeOffset?                LastUpdated         = null)
 
         {
 
             this.Id                 = Id;
             this.Status             = Status                     ?? PartyStatus.ENABLED;
+            this.VisibleVersionIds  = VisibleVersionIds?.IsNeitherNullNorEmpty() == true ? [.. VisibleVersionIds] : [];
 
             this.Created            = Created     ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated        = LastUpdated ?? Created     ?? Timestamp.Now;
 
-            this.localAccessInfos   = LocalAccessInfos. IsNeitherNullNorEmpty() ? [.. LocalAccessInfos]  : [];
-            this.remoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? [.. RemoteAccessInfos] : [];
-
-            //this.ETag  = CalcSHA256Hash();
-
-            //unchecked
-            //{
-
-            //    this.hashCode = Id.               GetHashCode()  * 17 ^
-            //                    //Roles.            CalcHashCode() * 13 ^
-            //                    Status.           GetHashCode()  * 11 ^
-            //                    LastUpdated.      GetHashCode()  *  7 ^
-            //                    ETag.             GetHashCode()  *  5 ^
-            //                    localAccessInfos. CalcHashCode() *  3 ^
-            //                    remoteAccessInfos.CalcHashCode();
-
-            //}
+            this.localAccessInfos   = LocalAccessInfos. IsNeitherNullNorEmpty()          ? [.. LocalAccessInfos]  : [];
+            this.remoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty()          ? [.. RemoteAccessInfos] : [];
 
         }
 
@@ -320,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPI
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
                            DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                            DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -340,6 +333,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -411,6 +405,7 @@ namespace cloud.charging.open.protocols.OCPI
                           ]
                         : [],
                    Status ?? PartyStatus.PRE_REMOTE_REGISTRATION,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -467,7 +462,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -493,6 +488,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -536,6 +532,7 @@ namespace cloud.charging.open.protocols.OCPI
                        )
                    ],
                    Status ?? PartyStatus.PRE_LOCAL_REGISTRATION,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -599,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPI
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -631,6 +628,7 @@ namespace cloud.charging.open.protocols.OCPI
                            AccessStatus?                                              LocalAccessStatus                 = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null)
@@ -685,6 +683,7 @@ namespace cloud.charging.open.protocols.OCPI
                        )
                    ],
                    Status ?? PartyStatus.ENABLED,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated)
@@ -815,6 +814,20 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
+                #region Parse VisibleVersionIds    [optional]
+
+                if (JSON.ParseOptionalJSON("visibleVersionIds",
+                                           "visible version identifications",
+                                           Version_Id.TryParse,
+                                           out IEnumerable<Version_Id> visibleVersionIds,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created              [optional, NonStandard]
 
@@ -851,6 +864,7 @@ namespace cloud.charging.open.protocols.OCPI
                                   remoteAccessInfos,
 
                                   status,
+                                  visibleVersionIds,
 
                                   created,
                                   lastUpdated
@@ -912,17 +926,22 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("partyStatus",         Status.       AsText()),
 
                            localAccessInfos. Count != 0
-                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo.  ToJSON(
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos.  Select(localAccessInfo   => localAccessInfo. ToJSON(
                                                                                                                                     CustomLocalAccessInfoSerializer,
                                                                                                                                     CustomTOTPConfigSerializerDelegate
                                                                                                                                 ))))
                                : null,
 
                            remoteAccessInfos.Count != 0
-                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos. Select(remoteAccessInfo  => remoteAccessInfo.ToJSON(
                                                                                                                                     CustomRemoteAccessInfoSerializer,
                                                                                                                                     CustomTOTPConfigSerializerDelegate
                                                                                                                                 ))))
+                               : null,
+
+                           VisibleVersionIds.Count != 0
+                               ? new JProperty("visibleVersionIds",   new JArray(VisibleVersionIds. Order().
+                                                                                                    Select(versionId         => versionId.       ToString())))
                                : null,
 
                                  new JProperty("created",             Created.      ToISO8601()),

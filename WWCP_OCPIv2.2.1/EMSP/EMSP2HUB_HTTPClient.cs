@@ -872,8 +872,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Authentication:        TokenAuth,
                                                               RequestBuilder:        requestBuilder => {
-                                                                                         requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                      },
                                                               RequestLogDelegate:    OnGetLocationsHTTPRequest,
                                                               ResponseLogDelegate:   OnGetLocationsHTTPResponse,
@@ -1037,8 +1037,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetLocationHTTPRequest,
                                                  ResponseLogDelegate:   OnGetLocationHTTPResponse,
@@ -1208,8 +1208,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                                                     EVSEUId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetEVSEHTTPRequest,
                                                  ResponseLogDelegate:   OnGetEVSEHTTPResponse,
@@ -1384,8 +1384,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                                                     ConnectorId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetConnectorHTTPRequest,
                                                  ResponseLogDelegate:   OnGetConnectorHTTPResponse,
@@ -1570,8 +1570,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Authentication:        TokenAuth,
                                                               RequestBuilder:        requestBuilder => {
-                                                                                         requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                      },
                                                               RequestLogDelegate:    OnGetTariffsHTTPRequest,
                                                               ResponseLogDelegate:   OnGetTariffsHTTPResponse,
@@ -1744,8 +1744,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + TariffId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetTariffHTTPRequest,
                                                  ResponseLogDelegate:   OnGetTariffHTTPResponse,
@@ -1925,8 +1925,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                               Path:                  httpClient.RemoteURL.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Authentication:        TokenAuth,
                                                               RequestBuilder:        requestBuilder => {
-                                                                                         requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                      },
                                                               RequestLogDelegate:    OnGetSessionsHTTPRequest,
                                                               ResponseLogDelegate:   OnGetSessionsHTTPResponse,
@@ -2108,8 +2108,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetSessionHTTPRequest,
                                                  ResponseLogDelegate:   OnGetSessionHTTPResponse,
@@ -2289,8 +2289,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                               Path:                  remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
                                                               Authentication:        TokenAuth,
                                                               RequestBuilder:        requestBuilder => {
-                                                                                         requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                         requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                         requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                      },
                                                               RequestLogDelegate:    OnGetCDRsHTTPRequest,
                                                               ResponseLogDelegate:   OnGetCDRsHTTPResponse,
@@ -2454,8 +2454,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetCDRHTTPRequest,
                                                  ResponseLogDelegate:   OnGetCDRHTTPResponse,
@@ -2624,8 +2624,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetTokenHTTPRequest,
                                                  ResponseLogDelegate:   OnGetTokenHTTPResponse,
@@ -2792,8 +2792,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnPutTokenHTTPRequest,
                                                  ResponseLogDelegate:   OnPutTokenHTTPResponse,
@@ -2969,8 +2969,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                  Content:               TokenPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnPatchTokenHTTPRequest,
                                                  ResponseLogDelegate:   OnPatchTokenHTTPResponse,
@@ -3056,17 +3056,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
         {
 
             if (From.HasValue) {
-                requestBuilder.Set("OCPI-from-country-code",  From.Value.CountryCode);
-                requestBuilder.Set("OCPI-from-party-id",      From.Value.PartyId);
+                requestBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  From.Value.CountryCode);
+                requestBuilder.Set(HTTPHeaders.OCPI_From_PartyId,      From.Value.PartyId);
             }
 
             if (To.  HasValue) {
-                requestBuilder.Set("OCPI-to-country-code",    To.  Value.CountryCode);
-                requestBuilder.Set("OCPI-to-party-id",        To.  Value.PartyId);
+                requestBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    To.  Value.CountryCode);
+                requestBuilder.Set(HTTPHeaders.OCPI_To_PartyId,        To.  Value.PartyId);
             }
 
-                requestBuilder.Set("X-Request-ID",            RequestId);
-                requestBuilder.Set("X-Correlation-ID",        CorrelationId);
+                requestBuilder.Set(HTTPHeaders.X_Request_ID,            RequestId);
+                requestBuilder.Set(HTTPHeaders.X_Correlation_ID,        CorrelationId);
 
         }
 
@@ -3200,8 +3200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnReserveNowHTTPRequest,
                                                  ResponseLogDelegate:   OnReserveNowHTTPResponse,
@@ -3393,8 +3393,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnCancelReservationHTTPRequest,
                                                  ResponseLogDelegate:   OnCancelReservationHTTPResponse,
@@ -3792,8 +3792,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnStopSessionHTTPRequest,
                                                  ResponseLogDelegate:   OnStopSessionHTTPResponse,
@@ -3987,8 +3987,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnUnlockConnectorHTTPRequest,
                                                  ResponseLogDelegate:   OnUnlockConnectorHTTPResponse,
@@ -4203,8 +4203,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnNotifyWebPaymentsStartedHTTPRequest,
                                                  ResponseLogDelegate:   OnNotifyWebPaymentsStartedHTTPResponse,
@@ -4416,8 +4416,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HUB.HTTP
                                                                         ).ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnNotifyWebPaymentsFailedHTTPRequest,
                                                  ResponseLogDelegate:   OnNotifyWebPaymentsFailedHTTPResponse,

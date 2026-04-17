@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -328,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -361,7 +361,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 

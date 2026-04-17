@@ -1026,7 +1026,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    VersionId,
 
                    Start,
-                   Energy.                 Clone(),
+                   Energy,
                    CDRToken.               Clone(),
                    AuthMethod.             Clone(),
                    LocationId.             Clone(),
@@ -1038,11 +1038,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    End,
                    AuthorizationReference?.Clone(),
                    Connector?.             Clone(),
-                   ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                   ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      Clone()),
                    TotalCosts?.            Clone(),
-                   EnergyMeterId?.               Clone(),
+                   EnergyMeterId?.         Clone(),
                    EnergyMeter?.           Clone(),
-                   TransparencySoftware.  Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                   TransparencySoftware.   Select(transparencySoftware => transparencySoftware.Clone()),
 
                    Created,
                    LastUpdated

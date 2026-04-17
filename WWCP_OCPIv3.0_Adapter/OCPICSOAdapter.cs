@@ -17,9 +17,11 @@
 
 #region Usings
 
+using System.Diagnostics;
 using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 using Org.BouncyCastle.Crypto.Parameters;
 
@@ -36,14 +38,13 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
-
-    public delegate IEnumerable<OCPI.Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                       WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                       WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                       WWCP.EVSE_Id?                     EVSEId,
-                                                                       WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                       WWCP.EMobilityProvider_Id?        EMobilityProviderId);
-
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
+                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
+                                                                  WWCP.EVSE_Id?                     EVSEId,
+                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
+                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
 
 
     /// <summary>
@@ -86,10 +87,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         public CPOAPI                                               CPOAPI                               { get; }
 
-
         public GetTariffIds_Delegate?                               GetTariffIds                         { get; }
 
-
+        public ChargingPoolId_2_LocationId_Delegate?                CustomChargingPoolIdConverter        { get; }
         public WWCPChargingStationId_2_ChargingStationId_Delegate?  CustomChargingStationIdConverter     { get; }
         public WWCPEVSEId_2_EVSEUId_Delegate?                       CustomEVSEUIdConverter               { get; }
         public WWCPEVSEId_2_EVSEId_Delegate?                        CustomEVSEIdConverter                { get; }
@@ -112,8 +112,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         public event WWCP.OnNewChargingSessionDelegate?          OnNewChargingSession;
 
-        public event WWCP.OnChargeDetailRecordsRequestDelegate?             OnChargeDetailRecordRequest;
-        public event WWCP.OnChargeDetailRecordsResponseDelegate?            OnChargeDetailRecordResponse;
+        public event WWCP.OnChargeDetailRecordsRequestDelegate?  OnChargeDetailRecordRequest;
+        public event WWCP.OnChargeDetailRecordsResponseDelegate? OnChargeDetailRecordResponse;
         public event WWCP.OnNewChargeDetailRecordDelegate?       OnNewChargeDetailRecord;
 
 
@@ -203,9 +203,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
+                              ChargingPoolId_2_LocationId_Delegate?           CustomChargingPoolIdConverter       = null,
+                              LocationId_2_ChargingPoolId_Delegate?           CustomLocationIdConverter           = null,
                               WWCPEVSEId_2_EVSEUId_Delegate?                  CustomEVSEUIdConverter              = null,
                               WWCPEVSEId_2_EVSEId_Delegate?                   CustomEVSEIdConverter               = null,
                               WWCPEVSE_2_EVSE_Delegate?                       CustomEVSEConverter                 = null,
+                              EVSEId_2_WWCPEVSEId_Delegate?                   CustomEVSEUId2Converter             = null,
+                              WWCPConnectorId_2_ConnectorId_Delegate?         CustomConnectorIdConverter          = null,
+                              ConnectorId_2_WWCPConnectorId_Delegate?         CustomConnectorId2Converter         = null,
                               WWCPEVSEStatusUpdate_2_StatusType_Delegate?     CustomEVSEStatusUpdateConverter     = null,
                               WWCPChargeDetailRecord_2_CDR_Delegate?          CustomChargeDetailRecordConverter   = null,
 
@@ -299,27 +304,48 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         {
 
-            this.CommonAPI                          = CommonAPI;
+            this.CommonAPI                           = CommonAPI;
 
-            this.GetTariffIds                       = GetTariffIds;
+            this.GetTariffIds                        = GetTariffIds;
 
-            //if (this.GetTariffIds is not null) {
+            if (this.GetTariffIds is not null) {
 
-            //    this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
-            //                                            cpoPartyId,
-            //                                            locationId,
-            //                                            evseUId,
-            //                                            connectorId,
-            //                                            empId) =>
+                this.CommonAPI.GetTariffIdsDelegate += (cpoPartyId,
+                                                        locationId,
+                                                        evseUId,
+                                                        connectorId,
+                                                        remotePartyId) => {
 
-            //        this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-            //                          locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-            //                          null,
-            //                          evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
-            //                          connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-            //                          empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+                    if (locationId. HasValue &&
+                        evseUId.    HasValue &&
+                        connectorId.HasValue &&
+                        CommonAPI.TryGetLocation(cpoPartyId,    locationId.Value, out var location) &&
+                        location. TryGetEVSE    (evseUId.Value,                   out var evse) &&
+                        evse.EVSEId.HasValue)
+                    {
 
-            //}
+                        return this.GetTariffIds(
+                                   this.RoamingNetwork.Id,
+                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
+                                   CustomLocationIdConverter is not null
+                                       ? CustomLocationIdConverter(cpoPartyId, locationId.Value)
+                                       : WWCP.ChargingPool_Id.     Parse($"{cpoPartyId}*P{locationId.Value}"),
+                                   null,
+                                   CustomEVSEUId2Converter is not null
+                                       ? CustomEVSEUId2Converter(evseUId.Value)
+                                       : WWCP.EVSE_Id.             Parse(evse.EVSEId.Value.ToString()),
+                                   WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
+                                   remotePartyId.HasValue
+                                       ? WWCP.EMobilityProvider_Id.Parse($"{remotePartyId.Value.CountryCode}-{remotePartyId.Value.PartyId}")
+                                       : null
+                               );
+                    }
+
+                    return [];
+
+                };
+
+            }
 
             this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
@@ -397,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -429,6 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus?                                               PartyStatus                       = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -479,6 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    LocalAccessStatus,
 
                    PartyStatus,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -509,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
                            DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                            DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -529,6 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -573,6 +602,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    RemoteAllowDowngrades,
 
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -1859,42 +1889,326 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-
-        #region AuthorizeStart(LocalAuthentication, ...)
+        #region (private) PostToken     (LocalAuthentication, ...)
 
         /// <summary>
-        /// Create an authorize start request at the given charging location.
+        /// Create a PostToken request at the given charging location.
         /// </summary>
-        /// <param name="LocalAuthentication">An user identification.</param>
-        /// <param name="ChargingLocation">The charging location.</param>
-        /// <param name="ChargingProduct">An optional charging product.</param>
-        /// <param name="SessionId">An optional session identification.</param>
-        /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
-        /// <param name="OperatorId">An optional charging station operator identification.</param>
+        /// <param name="LocalAuthentication">A local authentication.</param>
+        /// <param name="ChargingStationOperatorId">An optional charging station operator identification (from: ...).</param>
+        /// <param name="EMobilityProviderId">An optional e-mobility service provider identification (to: ...).</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<WWCP.AuthStartResult>
+        private async Task<AuthorizationInfo>
 
-            AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
-                           WWCP.ChargingLocation?            ChargingLocation      = null,
-                           WWCP.ChargingProduct?             ChargingProduct       = null,
-                           WWCP.ChargingSession_Id?          SessionId             = null,
-                           WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                           WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+            PostToken(WWCP.LocalAuthentication          LocalAuthentication,
+                      WWCP.ChargingLocation?            ChargingLocation            = null,
+                    //  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
-                           DateTimeOffset?                   Timestamp             = null,
-                           EventTracking_Id?                 EventTrackingId       = null,
-                           TimeSpan?                         RequestTimeout        = null,
-                           CancellationToken                 CancellationToken     = default)
+                      DateTimeOffset?                   RequestTimestamp            = null,
+                      EventTracking_Id?                 EventTrackingId             = null,
+                      TimeSpan?                         RequestTimeout              = null,
+                      CancellationToken                 CancellationToken           = default)
 
         {
 
             #region Initial checks
 
-            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            RequestTimestamp ??= Timestamp.Now;
+            EventTrackingId  ??= EventTracking_Id.New;
+            RequestTimeout   ??= this.RequestTimeout;
+
+            #endregion
+
+            #region Convert ChargingLocation          into an OCPI location reference
+
+            var locationReference = ChargingLocation.ToOCPI(
+                                        CustomChargingPoolIdConverter,
+                                        CustomEVSEUIdConverter
+                                    );
+
+            if (ChargingLocation  is not null &&
+                locationReference is null)
+            {
+
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The given charging location could not be converted into an OCPI location reference!")
+                       );
+
+            }
+
+            #endregion
+
+            #region Convert LocalAuthentication       into an OCPI token identification
+
+            var authToken        = LocalAuthentication.AuthToken?.ToString();
+
+            if (authToken is null)
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The local authentication must not be null!")
+                       );
+
+
+            var tokenId = Token_Id.TryParse(authToken);
+
+            if (!tokenId.HasValue)
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The token identification is invalid!")
+                       );
+
+            #endregion
+
+            #region Convert ChargingStationOperatorId into an OCPI party identification
+
+            var fromChargingStationOperatorId = //ChargingStationOperatorId?.ToOCPI_PartyIdv3() ??
+                                                ChargingLocation?.ChargingStationOperatorId?.ToOCPI_PartyIdv3();
+
+            if (ChargingLocation?.ChargingStationOperatorId.HasValue == true &&
+               !fromChargingStationOperatorId.HasValue)
+            {
+
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The given charging station operator identification could not be converted into an OCPI party identification!")
+                       );
+
+            }
+
+            #endregion
+
+            #region Convert EMobilityProviderId       into an OCPI party identification
+
+            var toEMobilityProviderId = EMobilityProviderId?.ToOCPI_PartyIdv3();
+
+            if (EMobilityProviderId.  HasValue &&
+               !toEMobilityProviderId.HasValue)
+            {
+
+                return new AuthorizationInfo(
+                           Allowed:  AllowedType.NOT_ALLOWED,
+                           Token:    null, //ToDo: Token should be optional within AuthorizationInfo!
+                           Info:     new DisplayText(Languages.en, $"The given e-mobility provider identification could not be converted into an OCPI party identification!")
+                       );
+
+            }
+
+            #endregion
+
+
+            #region Get all remote parties with online access
+
+            var remotes = new PriorityList<RemoteParty>();
+            foreach (var remoteParty in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB))
+            {
+                if (remoteParty.Status == PartyStatus.ENABLED)
+                {
+
+                    var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+
+                    if ( remoteAccessInfo is not null)
+                        remotes.Add(remoteParty);
+
+                }
+            }
+
+            #endregion
+
+
+            return await remotes.WhenFirst(
+
+                             Work:                   async (remoteParty, cancellationToken) => {
+
+                                                          OCPIResponse<AuthorizationInfo>? authorizationInfo = null;
+
+                                                          #region Setup HTTP client for EMSP
+
+                                                          if (remoteParty.Id.Role == Role.EMSP)
+                                                          {
+
+                                                              //var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
+
+                                                              //                    CPO_HTTPAPI,
+                                                              //                    remoteParty,
+                                                              //                    null, // VirtualHostname
+                                                              //                    null, // Description
+                                                              //                    null, // HTTPLogger
+
+                                                              //                    DisableLogging,
+                                                              //                    ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                              //                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                                              //                    ClientsLogfileCreator,
+                                                              //                    DNSClient
+
+                                                              //                );
+
+                                                              //if (cpoClient is null)
+                                                              //    return new AuthorizationInfo(
+                                                              //               Allowed:      AllowedType.NOT_ALLOWED,
+                                                              //               Token:        null,
+                                                              //               Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                              //               RemoteParty:  remoteParty
+                                                              //           );
+
+
+                                                              //var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
+                                                              //                           cpoClient,
+                                                              //                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                              //                           ClientsLoggingContext ?? DefaultLoggingContext,
+                                                              //                           ClientsLogfileCreator
+                                                              //                       );
+
+                                                              //authorizationInfo    = await cpoClient.PostToken(
+                                                              //                                 TokenId:             tokenId.Value,
+                                                              //                                 TokenType:           TokenType.RFID,
+                                                              //                                 LocationReference:   locationReference,
+                                                              //                                 From:                fromChargingStationOperatorId,
+                                                              //                                 To:                  toEMobilityProviderId,
+                                                              //                                 CancellationToken:   cancellationToken
+                                                              //                             );
+
+                                                          }
+
+                                                          #endregion
+
+                                                          #region Setup HTTP client for HUB
+
+                                                          if (remoteParty.Id.Role == Role.HUB)
+                                                          {
+
+                                                              //var cpoClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
+
+                                                              //                    CPO_HTTPAPI,
+                                                              //                    remoteParty,
+                                                              //                    null, // VirtualHostname
+                                                              //                    null, // Description
+                                                              //                    null, // HTTPLogger
+
+                                                              //                    DisableLogging,
+                                                              //                    ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                              //                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                                              //                    ClientsLogfileCreator,
+                                                              //                    DNSClient
+
+                                                              //                );
+
+                                                              //if (cpoClient is null)
+                                                              //    return new AuthorizationInfo(
+                                                              //               Allowed:      AllowedType.NOT_ALLOWED,
+                                                              //               Token:        null,
+                                                              //               Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
+                                                              //               RemoteParty:  remoteParty
+                                                              //           );
+
+
+                                                              //var cpoClientLogger  = new CPO.HUB.HTTP.CPO2HUB_HTTPClient.HTTPClientLogger(
+                                                              //                           cpoClient,
+                                                              //                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                              //                           ClientsLoggingContext ?? DefaultLoggingContext,
+                                                              //                           ClientsLogfileCreator
+                                                              //                       );
+
+                                                              //authorizationInfo    = await cpoClient.PostToken(
+                                                              //                                 TokenId:             tokenId.Value,
+                                                              //                                 TokenType:           TokenType.RFID,
+                                                              //                                 LocationReference:   locationReference,
+                                                              //                                 From:                fromChargingStationOperatorId,
+                                                              //                                 To:                  remoteParty.Id.AsPartyId(),
+                                                              //                                 CancellationToken:   cancellationToken
+                                                              //                             );
+
+                                                          }
+
+                                                          #endregion
+
+                                                          return authorizationInfo?.Data is not null
+
+                                                                     ? new AuthorizationInfo(
+                                                                           authorizationInfo.Data.Allowed,
+                                                                           authorizationInfo.Data.Token,
+                                                                           authorizationInfo.Data.Location,
+                                                                           authorizationInfo.Data.AuthorizationReference,
+                                                                           authorizationInfo.Data.Info,
+                                                                           remoteParty,
+                                                                           authorizationInfo.Data.Runtime
+                                                                       )
+
+                                                                     : new AuthorizationInfo(
+                                                                           Allowed:      AllowedType.NOT_ALLOWED,
+                                                                           Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                           Info:         new DisplayText(Languages.en, authorizationInfo?.StatusMessage ?? $"No valid response from '{remoteParty.Id}'!"),
+                                                                           RemoteParty:  remoteParty
+                                                                       );
+
+                                                     },
+
+                             VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED,
+
+                             Timeout:                RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                             ExceptionHandler:       null,
+
+                             DefaultResult:          runtime  => new AuthorizationInfo(
+                                                                     Allowed:   AllowedType.NOT_ALLOWED,
+                                                                     Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                     Location:  null,
+                                                                     Info:      new DisplayText(Languages.en, $"No authorization service ({remotes.Select(remote => remote.Id.ToString()).AggregateWith(", ")}) returned a positiv result!"),
+                                                                     Runtime:   runtime
+                                                                 ),
+
+                             ExternalCancellation:   CancellationToken
+
+                         ).ConfigureAwait(false);
+
+        }
+
+        #endregion
+
+        #region Authorize               (LocalAuthentication, ...)
+
+        /// <summary>
+        /// Create an authorize start request at the given charging location.
+        /// </summary>
+        /// <param name="LocalAuthentication">A local authentication.</param>
+        /// <param name="ChargingLocation">The charging location.</param>
+        /// <param name="ChargingProduct">An optional charging product.</param>
+        /// <param name="SessionId">An optional session identification.</param>
+        /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
+        /// <param name="ChargingStationOperatorId">An optional charging station operator identification.</param>
+        /// 
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<WWCP.AuthStartResult>
+
+            Authorize(WWCP.LocalAuthentication          LocalAuthentication,
+                      WWCP.ChargingLocation?            ChargingLocation            = null,
+                      WWCP.ChargingProduct?             ChargingProduct             = null,
+                      WWCP.ChargingSession_Id?          SessionId                   = null,
+                      WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
+                      //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+
+                      DateTimeOffset?                   RequestTimestamp            = null,
+                      EventTracking_Id?                 EventTrackingId             = null,
+                      TimeSpan?                         RequestTimeout              = null,
+                      CancellationToken                 CancellationToken           = default)
+
+        {
+
+            #region Initial checks
+
             EventTrackingId ??= EventTracking_Id.New;
             RequestTimeout  ??= this.RequestTimeout;
 
@@ -1902,179 +2216,64 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnAuthorizeStartRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
 
-            try
-            {
+            RequestTimestamp ??= startTime;
 
-                OnAuthorizeStartRequest?.Invoke(startTime,
-                                                Timestamp.Value,
-                                                this,
-                                                Id.ToString(),
-                                                EventTrackingId,
-                                                RoamingNetwork.Id,
-                                                null,
-                                                Id,
-                                                OperatorId,
-                                                LocalAuthentication,
-                                                ChargingLocation,
-                                                ChargingProduct,
-                                                SessionId,
-                                                CPOPartnerSessionId,
-                                                Array.Empty<WWCP.ISendAuthorizeStartStop>(),
-                                                RequestTimeout,
-                                                CancellationToken);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartRequest));
-            }
+            await LogEvent(
+                      OnAuthorizeStartRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
 
             if (DisableAuthorization)
                 return WWCP.AuthStartResult.AdminDown(
-                           AuthorizatorId:           Id,
-                           ISendAuthorizeStartStop:  this,
-                           SessionId:                SessionId,
-                           Description:              I18NString.Create("Authentication is disabled!"),
-                           Runtime:                  TimeSpan.Zero
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           Description:               I18NString.Create("Authentication is disabled!"),
+                           Runtime:                   TimeSpan.Zero
                        );
 
+            var authorizationInfo = await PostToken(
 
-            var remotes = new PriorityList<RemoteParty>();
-            foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Role.EMSP))
-                remotes.Add(remote);
+                                              LocalAuthentication,
+                                              ChargingLocation,
 
-            var authorizationInfo = await remotes.WhenFirst(
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
 
-                                              Work:                   async (remoteParty, ct) => {
-
-                                                                          #region Initial checks
-
-                                                                          var authToken        = LocalAuthentication.AuthToken?.ToString();
-
-                                                                          if (authToken is null)
-                                                                              return new AuthorizationInfo(
-                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
-                                                                                         RemoteParty:  remoteParty
-                                                                                     );
-
-
-                                                                          var tokenId = OCPI.Token_Id.TryParse(authToken);
-
-                                                                          if (!tokenId.HasValue)
-                                                                              return new AuthorizationInfo(
-                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
-                                                                                         RemoteParty:  remoteParty
-                                                                                     );
-
-
-                                                                          var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
-
-                                                                          if (remoteAccessInfo is null)
-                                                                              return new AuthorizationInfo(
-                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
-                                                                                         RemoteParty:  remoteParty
-                                                                                     );
-
-
-                                                                          var cpoClient = new CPO.HTTP.CPO2EMSPClient(
-
-                                                                                              CPOAPI,
-                                                                                              remoteParty,
-                                                                                              null, // VirtualHostname
-                                                                                              null, // Description
-                                                                                              null, // HTTPLogger
-
-                                                                                              DisableLogging,
-                                                                                              ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
-                                                                                              ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                              ClientsLogfileCreator,
-                                                                                              DNSClient
-
-                                                                                          );
-
-                                                                          if (cpoClient is null)
-                                                                              return new AuthorizationInfo(
-                                                                                         Allowed:      OCPI.AllowedType.NOT_ALLOWED,
-                                                                                         Token:        null,
-                                                                                         Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
-                                                                                         RemoteParty:  remoteParty
-                                                                                     );
-
-
-                                                                          var cpoClientLogger = new CPO.HTTP.CPO2EMSPClient.Logger(
-                                                                                                    cpoClient,
-                                                                                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                    ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                    ClientsLogfileCreator
-                                                                                                );
-
-                                                                          #endregion
-
-                                                                          var authorizationInfo = await cpoClient.PostToken(
-                                                                                                            TokenId:            tokenId.Value,
-                                                                                                            TokenType:          TokenType.RFID,
-                                                                                                            LocationReference:  null,
-                                                                                                            CancellationToken:  ct
-                                                                                                        );
-
-                                                                          return authorizationInfo.Data is not null
-
-                                                                                     ? new AuthorizationInfo(
-                                                                                           authorizationInfo.Data.Allowed,
-                                                                                           authorizationInfo.Data.Token,
-                                                                                           authorizationInfo.Data.Location,
-                                                                                           null, // AuthReference
-                                                                                           authorizationInfo.Data.Info,
-                                                                                           remoteParty,
-                                                                                           EMSP_Id.TryParse(
-                                                                                               //authorizationInfo.FromCountryCode,
-                                                                                               authorizationInfo.FromPartyId.ToString()
-                                                                                           ),
-                                                                                           authorizationInfo.Data.Runtime
-                                                                                       )
-
-                                                                                     : new AuthorizationInfo(
-                                                                                           Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                           Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                           Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
-                                                                                           RemoteParty:  remoteParty
-                                                                                       );
-
-                                                                      },
-
-                                              VerifyResult:           result  => result.Allowed == AllowedType.ALLOWED,
-
-                                              Timeout:                RequestTimeout ?? TimeSpan.FromSeconds(10),
-
-                                              ExceptionHandler:            null,
-
-                                              DefaultResult:          runtime  => new AuthorizationInfo(
-                                                                                      Allowed:   AllowedType.NOT_ALLOWED,
-                                                                                      Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                      Location:  null,
-                                                                                      Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
-                                                                                      Runtime:   runtime
-                                                                                  ),
-
-                                              ExternalCancellation:   CancellationToken
+                                              RequestTimestamp,
+                                              EventTrackingId,
+                                              RequestTimeout,
+                                              CancellationToken
 
                                           ).ConfigureAwait(false);
 
 
-            DateTimeOffset         endtime;
-            TimeSpan               runtime;
-            WWCP.AuthStartResult?  authStartResult   = null;
+            WWCP.AuthStartResult? authStartResult = null;
 
 
             if (authorizationInfo is null)
@@ -2095,7 +2294,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            ChargingTariffs:           null,
                            ListOfAuthStopTokens:      null,
                            ListOfAuthStopPINs:        null,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -2107,7 +2306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -2119,7 +2318,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -2131,7 +2330,230 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                authStartResult = WWCP.AuthStartResult.NotAuthorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                null,
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+
+            authStartResult ??= WWCP.AuthStartResult.Error(
+                                    Id,
+                                    this,
+                                    SessionId
+                                );
+
+
+            #region Send OnAuthorizeStartResponse event
+
+            var endTime = Timestamp.Now;
+            stopwatch.Stop();
+
+            await LogEvent(
+                      OnAuthorizeStartResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          authStartResult,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+            return authStartResult;
+
+        }
+
+        #endregion
+
+        #region AuthorizeStart          (LocalAuthentication, ...)
+
+        /// <summary>
+        /// Create an authorize start request at the given charging location.
+        /// </summary>
+        /// <param name="LocalAuthentication">A local authentication.</param>
+        /// <param name="ChargingLocation">The charging location.</param>
+        /// <param name="ChargingProduct">An optional charging product.</param>
+        /// <param name="SessionId">An optional session identification.</param>
+        /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
+        /// <param name="ChargingStationOperatorId">An optional charging station operator identification.</param>
+        /// 
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<WWCP.AuthStartResult>
+
+            AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
+                           WWCP.ChargingLocation?            ChargingLocation            = null,
+                           WWCP.ChargingProduct?             ChargingProduct             = null,
+                           WWCP.ChargingSession_Id?          SessionId                   = null,
+                           WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
+                           //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                           WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+
+                           DateTimeOffset?                   RequestTimestamp            = null,
+                           EventTracking_Id?                 EventTrackingId             = null,
+                           TimeSpan?                         RequestTimeout              = null,
+                           CancellationToken                 CancellationToken           = default)
+
+        {
+
+            #region Initial checks
+
+            EventTrackingId ??= EventTracking_Id.New;
+            RequestTimeout  ??= this.RequestTimeout;
+
+            #endregion
+
+            #region Send OnAuthorizeStartRequest event
+
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
+
+            RequestTimestamp ??= startTime;
+
+            await LogEvent(
+                      OnAuthorizeStartRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          CancellationToken
+                      )
+                  );
+
+            #endregion
+
+
+            if (DisableAuthorization)
+                return WWCP.AuthStartResult.AdminDown(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           Description:               I18NString.Create("Authentication is disabled!"),
+                           Runtime:                   TimeSpan.Zero
+                       );
+
+
+            var authorizationInfo = await PostToken(
+
+                                              LocalAuthentication,
+                                              ChargingLocation,
+
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
+
+                                              RequestTimestamp,
+                                              EventTrackingId,
+                                              RequestTimeout,
+                                              CancellationToken
+
+                                          ).ConfigureAwait(false);
+
+
+            WWCP.AuthStartResult? authStartResult = null;
+
+
+            if (authorizationInfo is null)
+                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+
+            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                authStartResult = WWCP.AuthStartResult.Authorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           EMPPartnerSessionId:       null,
+                           ContractId:                null,
+                           PrintedNumber:             null,
+                           ExpiryDate:                null,
+                           MaxkW:                     null,
+                           MaxkWh:                    null,
+                           MaxDuration:               null,
+                           ChargingTariffs:           null,
+                           ListOfAuthStopTokens:      null,
+                           ListOfAuthStopPINs:        null,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                authStartResult = WWCP.AuthStartResult.Blocked(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                authStartResult = WWCP.AuthStartResult.Expired(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                authStartResult = WWCP.AuthStartResult.NoCredit(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -2156,37 +2578,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnAuthorizeStartResponse event
 
-            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            runtime = endtime - startTime;
+            var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
-            try
-            {
-
-                OnAuthorizeStartResponse?.Invoke(endtime,
-                                                 Timestamp.Value,
-                                                 this,
-                                                 Id.ToString(),
-                                                 EventTrackingId,
-                                                 RoamingNetwork.Id,
-                                                 null,
-                                                 Id,
-                                                 OperatorId,
-                                                 LocalAuthentication,
-                                                 ChargingLocation,
-                                                 ChargingProduct,
-                                                 SessionId,
-                                                 CPOPartnerSessionId,
-                                                 [],
-                                                 RequestTimeout,
-                                                 authStartResult,
-                                                 runtime,
-                                                 CancellationToken);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartResponse));
-            }
+            await LogEvent(
+                      OnAuthorizeStartResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          authStartResult,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -2196,7 +2615,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region AuthorizeStop (SessionId, LocalAuthentication, 
+        #region AuthorizeStop           (SessionId, LocalAuthentication, ...)
 
         /// <summary>
         /// Create an authorize stop request at the given charging location.
@@ -2205,30 +2624,30 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="LocalAuthentication">A local user identification.</param>
         /// <param name="ChargingLocation">The charging location.</param>
         /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
-        /// <param name="OperatorId">An optional charging station operator identification.</param>
+        /// <param name="ChargingStationOperatorId">An optional charging station operator identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public Task<WWCP.AuthStopResult>
+        public async Task<WWCP.AuthStopResult>
 
             AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
                           WWCP.LocalAuthentication          LocalAuthentication,
-                          WWCP.ChargingLocation?            ChargingLocation      = null,
-                          WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                          WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+                          WWCP.ChargingLocation?            ChargingLocation            = null,
+                          WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
+                          //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+                          WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
-                          DateTimeOffset?                   Timestamp             = null,
-                          EventTracking_Id?                 EventTrackingId       = null,
-                          TimeSpan?                         RequestTimeout        = null,
-                          CancellationToken                 CancellationToken     = default)
+                          DateTimeOffset?                   RequestTimestamp            = null,
+                          EventTracking_Id?                 EventTrackingId             = null,
+                          TimeSpan?                         RequestTimeout              = null,
+                          CancellationToken                 CancellationToken           = default)
 
         {
 
             #region Initial checks
 
-            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             EventTrackingId ??= EventTracking_Id.New;
             RequestTimeout  ??= this.RequestTimeout;
 
@@ -2236,91 +2655,149 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region Send OnAuthorizeStopRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
 
-            try
-            {
+            RequestTimestamp ??= startTime;
 
-                OnAuthorizeStopRequest?.Invoke(startTime,
-                                               Timestamp.Value,
-                                               this,
-                                               Id.ToString(),
-                                               EventTrackingId,
-                                               RoamingNetwork.Id,
-                                               null,
-                                               Id,
-                                               OperatorId,
-                                               ChargingLocation,
-                                               SessionId,
-                                               CPOPartnerSessionId,
-                                               LocalAuthentication,
-                                               RequestTimeout,
-                                               CancellationToken);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopRequest));
-            }
+            await LogEvent(
+                      OnAuthorizeStopRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          ChargingLocation,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          RequestTimeout,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
-
-            DateTimeOffset        endtime;
-            TimeSpan              runtime;
-            WWCP.AuthStopResult?  authStopResult   = null;
 
             if (DisableAuthorization)
-                authStopResult = WWCP.AuthStopResult.AdminDown(
-                                     AuthorizatorId:           Id,
-                                     ISendAuthorizeStartStop:  this,
-                                     SessionId:                SessionId,
-                                     Description:              I18NString.Create("Authentication is disabled!"),
-                                     Runtime:                  TimeSpan.Zero
-                                 );
-
-            authStopResult ??= WWCP.AuthStopResult.NotAuthorized(Id, this);
+                return WWCP.AuthStopResult.AdminDown(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           Description:               I18NString.Create("Authentication is disabled!"),
+                           Runtime:                   TimeSpan.Zero
+                       );
 
 
-            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            runtime = endtime - startTime;
+            var authorizationInfo = await PostToken(
 
-            #region Send OnAuthorizeStopResponse event
+                                              LocalAuthentication,
+                                              ChargingLocation,
 
-            try
-            {
+                                              //ChargingStationOperatorId,
+                                              EMobilityProviderId,
 
-                OnAuthorizeStopResponse?.Invoke(endtime,
-                                                Timestamp.Value,
-                                                this,
-                                                Id.ToString(),
-                                                EventTrackingId,
-                                                RoamingNetwork.Id,
-                                                null,
-                                                Id,
-                                                OperatorId,
-                                                ChargingLocation,
-                                                SessionId,
-                                                CPOPartnerSessionId,
-                                                LocalAuthentication,
-                                                RequestTimeout,
-                                                authStopResult,
-                                                runtime,
-                                                CancellationToken);
+                                              RequestTimestamp,
+                                              EventTrackingId,
+                                              RequestTimeout,
+                                              CancellationToken
 
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopResponse));
-            }
+                                          ).ConfigureAwait(false);
+
+
+            WWCP.AuthStopResult? authStopResult = null;
+
+
+            if (authorizationInfo is null)
+                authStopResult = WWCP.AuthStopResult.CommunicationTimeout(Id, this, SessionId);
+
+            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                authStopResult = WWCP.AuthStopResult.Authorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                authStopResult = WWCP.AuthStopResult.Blocked(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                authStopResult = WWCP.AuthStopResult.NotAuthorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                null,
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+
+            authStopResult ??= WWCP.AuthStopResult.Error(
+                                   Id,
+                                   this,
+                                   SessionId
+                               );
+
+
+            #region Send OnAuthorizeStartResponse event
+
+            var endTime = Timestamp.Now;
+            stopwatch.Stop();
+
+            await LogEvent(
+                      OnAuthorizeStopResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          ChargingLocation,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          RequestTimeout,
+                          authStopResult,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
-            return Task.FromResult(authStopResult);
+            return authStopResult;
 
         }
 
         #endregion
+
 
 
         #region SendChargeDetailRecord (ChargeDetailRecord,  TransmissionType = Enqueue, ...)
@@ -2525,6 +3002,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         {
             
         }
+
+        #endregion
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OICPCommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(OCPICSOAdapter),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OICPCommand
+               );
 
         #endregion
 

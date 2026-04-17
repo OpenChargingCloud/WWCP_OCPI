@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         public OCPIRequest?      Request                   { get; }
 
-        public Int32             StatusCode                { get; }
+        public StatusCode        StatusCode                { get; }
         public String            StatusMessage             { get; }
         public String?           AdditionalInformation     { get; }
         public DateTimeOffset    Timestamp                 { get; }
@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         public OCPIResponse(OCPIRequest       Request,
 
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         }
 
-        public OCPIResponse(Int32             StatusCode,
+        public OCPIResponse(StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
-                                 new JProperty("status_code",             StatusCode),
+                                 new JProperty("status_code",             StatusCode.Value),
 
                            StatusMessage.IsNotNullOrEmpty()
                                ? new JProperty("status_message",          StatusMessage)
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPI
                         timestamp  = timestamp.Value.ToUniversalTime();
 
                     return new OCPIResponse(
-                               json["status_code"]?.   Value<Int32>()  ?? -1,
+                               StatusCode.TryParse(json["status_code"]?.Value<Int32>()) ?? StatusCode.GenericError,
                                json["status_message"]?.Value<String>() ?? String.Empty,
                                json["data"]?.ToString(),
                                timestamp,
@@ -195,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 else
                     result = new OCPIResponse(
-                                 -1,
+                                 StatusCode.GenericError,
                                  HTTPResponse.HTTPStatusCode.Code + " - " + HTTPResponse.HTTPStatusCode.Description,
                                  HTTPResponse.EntirePDU,
                                  HTTPResponse.Timestamp,
@@ -210,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPI
             {
 
                 result = new OCPIResponse(
-                             -1,
+                             StatusCode.GenericError,
                              e.Message,
                              e.StackTrace,
                              org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPI
             }
 
             result ??= new OCPIResponse(
-                           -1,
+                           StatusCode.GenericError,
                            String.Empty
                        );
 
@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPI
                         timestamp  = timestamp.Value.ToUniversalTime();
 
                     OCPIResponse = new OCPIResponse(
-                                       json["status_code"]?.   Value<Int32>()  ?? -1,
+                                       StatusCode.TryParse(json["status_code"]?.Value<Int32>()) ?? StatusCode.GenericError,
                                        json["status_message"]?.Value<String>() ?? String.Empty,
                                        json["data"]?.ToString(),
                                        timestamp,
@@ -283,7 +283,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 else
                     OCPIResponse = new OCPIResponse(
-                                       -1,
+                                       StatusCode.GenericError,
                                        $"{HTTPResponse.HTTPStatusCode.Code} - {HTTPResponse.HTTPStatusCode.Description}",
                                        HTTPResponse.EntirePDU,
                                        HTTPResponse.Timestamp,
@@ -298,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPI
             {
 
                 OCPIResponse = new OCPIResponse(
-                                   -1,
+                                   StatusCode.GenericError,
                                    e.Message,
                                    e.StackTrace,
                                    org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPI
             }
 
             OCPIResponse ??= new OCPIResponse(
-                                 -1,
+                                 StatusCode.GenericError,
                                  String.Empty
                              );
 
@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPI
                                          Request_Id?      RequestId               = null,
                                          Correlation_Id?  CorrelationId           = null)
 
-            => new(-1,
+            => new(StatusCode.GenericError,
                    StatusMessage,
                    AdditionalInformation,
                    Timestamp,
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPI
                    RequestId,
                    CorrelationId);
 
-        public static OCPIResponse Error(Int32            StatusCode,
+        public static OCPIResponse Error(StatusCode       StatusCode,
                                          String           StatusMessage,
                                          String?          AdditionalInformation   = null,
                                          DateTimeOffset?  Timestamp               = null,
@@ -361,7 +361,7 @@ namespace cloud.charging.open.protocols.OCPI
                                              Request_Id?      RequestId       = null,
                                              Correlation_Id?  CorrelationId   = null)
 
-            => new(-1,
+            => new(StatusCode.GenericError,
                    Exception.Message,
                    Exception.StackTrace,
                    Timestamp,
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPI
             public OCPIRequest?           Request                  { get; }
 
             public JToken?                Data                     { get; set; }
-            public Int32?                 StatusCode               { get; set; }
+            public StatusCode?            StatusCode               { get; set; }
             public String?                StatusMessage            { get; set; }
 
             public String?                AdditionalInformation    { get; set; }
@@ -397,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPI
             #region Constructor(s)
 
             public Builder(OCPIRequest      Request,
-                           Int32?           StatusCode              = null,
+                           StatusCode?      StatusCode              = null,
                            String?          StatusMessage           = null,
                            String?          AdditionalInformation   = null,
                            DateTimeOffset?  Timestamp               = null,
@@ -450,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                   ? new JProperty("data",                    Data)
                                                                   : null,
 
-                                                                    new JProperty("status_code",             StatusCode ?? 2000),
+                                                                    new JProperty("status_code",             (StatusCode ?? OCPI.StatusCode.ClientErrors.GenericClientError).Value),
 
                                                               StatusMessage.IsNotNullOrEmpty()
                                                                   ? new JProperty("status_message",          StatusMessage)
@@ -496,7 +496,7 @@ namespace cloud.charging.open.protocols.OCPI
             public OCPIResponse ToImmutable
 
                 => new (Request,
-                        StatusCode ?? 3000,
+                        StatusCode ?? OCPI.StatusCode.ServerErrors.GenericServerError,
                         StatusMessage,
                         AdditionalInformation,
                         Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -525,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region Constructor(s)
 
         public OCPIResponse(TResponse?        Data,
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -551,7 +551,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         }
 
-        public OCPIResponse(Int32             StatusCode,
+        public OCPIResponse(StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -585,7 +585,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                         Request_Id?      RequestId               = null,
                                                         Correlation_Id?  CorrelationId           = null)
 
-            => new (-1,
+            => new (StatusCode.GenericError,
                     StatusMessage,
                     AdditionalInformation,
                     Timestamp,
@@ -594,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPI
                     RequestId,
                     CorrelationId);
 
-        public new static OCPIResponse<TResponse> Error(Int32            StatusCode,
+        public new static OCPIResponse<TResponse> Error(StatusCode       StatusCode,
                                                         String           StatusMessage,
                                                         String?          AdditionalInformation   = null,
                                                         DateTimeOffset?  Timestamp               = null,
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                             Request_Id?      RequestId               = null,
                                                             Correlation_Id?  CorrelationId           = null)
 
-            => new (-1,
+            => new (StatusCode.GenericError,
                     Exception.Message,
                     Exception.StackTrace,
                     Timestamp,
@@ -632,7 +632,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
-                                     Int32                    StatusCode,
+                                     StatusCode               StatusCode,
                                      String                   StatusMessage,
                                      String?                  AdditionalInformation   = null,
                                      DateTimeOffset?          Timestamp               = null,
@@ -677,7 +677,7 @@ namespace cloud.charging.open.protocols.OCPI
             var json = JSONObject.Create(
 
                                  new JProperty("data",                    Serializer?.Invoke(Data)),
-                                 new JProperty("status_code",             StatusCode),
+                                 new JProperty("status_code",             StatusCode.   Value),
 
                            StatusMessage.IsNotNullOrEmpty()
                                ? new JProperty("status_message",          StatusMessage)
@@ -744,9 +744,9 @@ namespace cloud.charging.open.protocols.OCPI
 
                     #endregion
 
-                    var statusCode     = json["status_code"]?.   Value<Int32>() ?? -1;
-                    var statusMessage  = json["status_message"]?.Value<String>();
-                    var timestamp      = json["timestamp"]?.     Value<DateTime>();
+                    var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>() ?? -1) ?? StatusCode.GenericError;
+                    var statusMessage  =                     json["status_message"]?.Value<String>();
+                    var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                         timestamp      = timestamp.Value.ToUniversalTime();
 
@@ -806,7 +806,7 @@ namespace cloud.charging.open.protocols.OCPI
                 else
                     result = new OCPIResponse<IEnumerable<TResponse>>(
                                  [],
-                                 -1,
+                                 StatusCode.GenericError,
                                  Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
                                  Response.EntirePDU,
                                  Response.Timestamp,
@@ -823,7 +823,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 result = new OCPIResponse<IEnumerable<TResponse>>(
                              [],
-                             -1,
+                             StatusCode.GenericError,
                              e.Message,
                              e.StackTrace,
                              org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
@@ -859,7 +859,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                     var json           = JObject.Parse(Response.HTTPBodyAsUTF8String);
 
-                    var statusCode     = json["status_code"]?.   Value<Int32>();
+                    var statusCode     = StatusCode.TryParse(json["status_code"]?.Value<Int32>()) ?? StatusCode.ServerErrors.GenericServerError;
                     var statusMessage  = json["status_message"]?.Value<String>();
                     var timestamp      = json["timestamp"]?.     Value<DateTime>();
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
@@ -867,54 +867,60 @@ namespace cloud.charging.open.protocols.OCPI
 
                     if ((Response.HTTPStatusCode == HTTPStatusCode.OK ||
                          Response.HTTPStatusCode == HTTPStatusCode.Created) &&
-                        statusCode >= 1000 &&
-                        statusCode <  2000)
+                        statusCode.Value         >= 1000 &&
+                        statusCode.Value         <  2000)
                     {
 
                         if (json["data"] is JObject JSONObject)
-                            result = new OCPIResponse<TResponse>(Parser(JSONObject),
-                                                                 statusCode    ?? 3000,
-                                                                 statusMessage ?? String.Empty,
-                                                                 null,
-                                                                 timestamp,
+                            result = new OCPIResponse<TResponse>(
+                                         Parser(JSONObject),
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         null,
+                                         timestamp,
 
-                                                                 Response,
-                                                                 remoteRequestId,
-                                                                 remoteCorrelationId,
-                                                                 remoteLocation);
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation
+                                     );
 
                     }
 
                     else
-                        result = new OCPIResponse<TResponse>(statusCode    ?? 3000,
-                                                             statusMessage ?? String.Empty,
-                                                             Response.EntirePDU,
-                                                             timestamp,
+                        result = new OCPIResponse<TResponse>(
+                                     statusCode,
+                                     statusMessage ?? String.Empty,
+                                     Response.EntirePDU,
+                                     timestamp,
 
-                                                             Response,
-                                                             remoteRequestId,
-                                                             remoteCorrelationId,
-                                                             remoteLocation);
+                                     Response,
+                                     remoteRequestId,
+                                     remoteCorrelationId,
+                                     remoteLocation
+                                 );
 
                 }
 
                 else
-                    result = new OCPIResponse<TResponse>(-1,
-                                                         Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                         Response.EntirePDU,
-                                                         Response.Timestamp,
+                    result = new OCPIResponse<TResponse>(
+                                 StatusCode.GenericError,
+                                 Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                                 Response.EntirePDU,
+                                 Response.Timestamp,
 
-                                                         Response,
-                                                         remoteRequestId,
-                                                         remoteCorrelationId,
-                                                         remoteLocation);
+                                 Response,
+                                 remoteRequestId,
+                                 remoteCorrelationId,
+                                 remoteLocation
+                             );
 
             }
             catch (Exception e)
             {
 
                 result = new OCPIResponse<TResponse>(
-                             -1,
+                             StatusCode.GenericError,
                              e.Message,
                              e.StackTrace
                          );
@@ -922,7 +928,7 @@ namespace cloud.charging.open.protocols.OCPI
             }
 
             result ??= new OCPIResponse<TResponse>(
-                           -1,
+                           StatusCode.GenericError,
                            String.Empty
                        );
 
@@ -950,7 +956,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         public OCPIResponse(TRequest          Request,
                             TResponse?        Data,
-                            Int32             StatusCode,
+                            StatusCode        StatusCode,
                             String            StatusMessage,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
@@ -981,114 +987,127 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
-        public static OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
-                                                              Int32            StatusCode,
-                                                              String           StatusMessage,
-                                                              String?          AdditionalInformation   = null,
-                                                              DateTimeOffset?  Timestamp               = null,
+        public static OCPIResponse<TRequest, TResponse>
 
-                                                              HTTPResponse?    HTTPResponse            = null,
-                                                              Request_Id?      RequestId               = null,
-                                                              Correlation_Id?  CorrelationId           = null)
+            Error(TRequest         Request,
+                  StatusCode       StatusCode,
+                  String           StatusMessage,
+                  String?          AdditionalInformation   = null,
+                  DateTimeOffset?  Timestamp               = null,
 
-            => new (Request,
-                    null,
-                    StatusCode,
-                    StatusMessage,
-                    AdditionalInformation,
-                    Timestamp,
+                  HTTPResponse?    HTTPResponse            = null,
+                  Request_Id?      RequestId               = null,
+                  Correlation_Id?  CorrelationId           = null)
 
-                    HTTPResponse,
-                    RequestId,
-                    CorrelationId);
+                => new (Request,
+                        null,
+                        StatusCode,
+                        StatusMessage,
+                        AdditionalInformation,
+                        Timestamp,
 
-
-        public static OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
-                                                              String           StatusMessage,
-                                                              String?          AdditionalInformation   = null,
-                                                              DateTimeOffset?  Timestamp               = null,
-
-                                                              HTTPResponse?    HTTPResponse            = null,
-                                                              Request_Id?      RequestId               = null,
-                                                              Correlation_Id?  CorrelationId           = null)
-
-            => new (Request,
-                    null,
-                    -1,
-                    StatusMessage,
-                    AdditionalInformation,
-                    Timestamp,
-
-                    HTTPResponse,
-                    RequestId,
-                    CorrelationId);
+                        HTTPResponse,
+                        RequestId,
+                        CorrelationId);
 
 
-        public static new OCPIResponse<TRequest, TResponse> Error(Int32            StatusCode,
-                                                                  String           StatusMessage,
-                                                                  String?          AdditionalInformation   = null,
-                                                                  DateTimeOffset?  Timestamp               = null,
+        public static OCPIResponse<TRequest, TResponse>
 
-                                                                  HTTPResponse?    HTTPResponse            = null,
-                                                                  Request_Id?      RequestId               = null,
-                                                                  Correlation_Id?  CorrelationId           = null)
+            Error(TRequest         Request,
+                  String           StatusMessage,
+                  String?          AdditionalInformation   = null,
+                  DateTimeOffset?  Timestamp               = null,
 
-            => new (default,
-                    null,
-                    StatusCode,
-                    StatusMessage,
-                    AdditionalInformation,
-                    Timestamp,
+                  HTTPResponse?    HTTPResponse            = null,
+                  Request_Id?      RequestId               = null,
+                  Correlation_Id?  CorrelationId           = null)
 
-                    HTTPResponse,
-                    RequestId,
-                    CorrelationId);
+                => new (Request,
+                        null,
+                        StatusCode.GenericError,
+                        StatusMessage,
+                        AdditionalInformation,
+                        Timestamp,
 
-
-        public static new OCPIResponse<TRequest, TResponse> Error(String           StatusMessage,
-                                                                  String?          AdditionalInformation   = null,
-                                                                  DateTimeOffset?  Timestamp               = null,
-
-                                                                  HTTPResponse?    HTTPResponse            = null,
-                                                                  Request_Id?      RequestId               = null,
-                                                                  Correlation_Id?  CorrelationId           = null)
-
-            => new (default,
-                    null,
-                    -1,
-                    StatusMessage,
-                    AdditionalInformation,
-                    Timestamp,
-
-                    HTTPResponse,
-                    RequestId,
-                    CorrelationId);
+                        HTTPResponse,
+                        RequestId,
+                        CorrelationId);
 
 
-        public static new OCPIResponse<TRequest, TResponse> Exception(Exception        Exception,
-                                                                      DateTimeOffset?  Timestamp       = null,
+        public static new OCPIResponse<TRequest, TResponse>
 
-                                                                      HTTPResponse?    HTTPResponse    = null,
-                                                                      Request_Id?      RequestId       = null,
-                                                                      Correlation_Id?  CorrelationId   = null)
+            Error(StatusCode       StatusCode,
+                  String           StatusMessage,
+                  String?          AdditionalInformation   = null,
+                  DateTimeOffset?  Timestamp               = null,
 
-            => new (default,
-                    null,
-                    -1,
-                    Exception.Message,
-                    Exception.StackTrace,
-                    Timestamp,
+                  HTTPResponse?    HTTPResponse            = null,
+                  Request_Id?      RequestId               = null,
+                  Correlation_Id?  CorrelationId           = null)
 
-                    HTTPResponse,
-                    RequestId,
-                    CorrelationId);
+                => new (default,
+                        null,
+                        StatusCode,
+                        StatusMessage,
+                        AdditionalInformation,
+                        Timestamp,
+
+                        HTTPResponse,
+                        RequestId,
+                        CorrelationId);
 
 
-        public static OCPIResponse<TRequest, IEnumerable<TResponse>> ParseJArray(TRequest                  Request,
-                                                                                 Request_Id                RequestId,
-                                                                                 Correlation_Id            CorrelationId,
-                                                                                 HTTPResponse              Response,
-                                                                                 Func<JObject, TResponse>  Parser)
+        public static new OCPIResponse<TRequest, TResponse>
+
+            Error(String           StatusMessage,
+                  String?          AdditionalInformation   = null,
+                  DateTimeOffset?  Timestamp               = null,
+
+                  HTTPResponse?    HTTPResponse            = null,
+                  Request_Id?      RequestId               = null,
+                  Correlation_Id?  CorrelationId           = null)
+
+                => new (default,
+                        null,
+                        StatusCode.GenericError,
+                        StatusMessage,
+                        AdditionalInformation,
+                        Timestamp,
+
+                        HTTPResponse,
+                        RequestId,
+                        CorrelationId);
+
+
+        public static new OCPIResponse<TRequest, TResponse>
+
+            Exception(Exception        Exception,
+                      DateTimeOffset?  Timestamp       = null,
+
+                      HTTPResponse?    HTTPResponse    = null,
+                      Request_Id?      RequestId       = null,
+                      Correlation_Id?  CorrelationId   = null)
+
+                => new (default,
+                        null,
+                        StatusCode.GenericError,
+                        Exception.Message,
+                        Exception.StackTrace,
+                        Timestamp,
+
+                        HTTPResponse,
+                        RequestId,
+                        CorrelationId);
+
+
+        public static OCPIResponse<TRequest, IEnumerable<TResponse>>
+
+            ParseJArray(TRequest                  Request,
+                        Request_Id                RequestId,
+                        Correlation_Id            CorrelationId,
+                        HTTPResponse              Response,
+                        Func<JObject, TResponse>  Parser)
+
         {
 
             var r = ParseJArray(
@@ -1115,11 +1134,14 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        public static OCPIResponse<TRequest, TResponse> ParseJObject(TRequest                  Request,
-                                                                     HTTPResponse              Response,
-                                                                     Request_Id                RequestId,
-                                                                     Correlation_Id            CorrelationId,
-                                                                     Func<JObject, TResponse>  Parser)
+        public static OCPIResponse<TRequest, TResponse>
+
+            ParseJObject(TRequest                  Request,
+                         HTTPResponse              Response,
+                         Request_Id                RequestId,
+                         Correlation_Id            CorrelationId,
+                         Func<JObject, TResponse>  Parser)
+
         {
 
             var r = ParseJObject(

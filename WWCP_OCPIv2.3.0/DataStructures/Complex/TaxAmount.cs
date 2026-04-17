@@ -287,12 +287,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => new (
                    Name.Clone(),
                    Amount,
-                   AccountNumber is not null
-                       ? new String(AccountNumber.ToCharArray())
-                       : null,
-                   Percentage.HasValue
-                       ? Percentage.Value.Clone()
-                       : null
+                   AccountNumber?.CloneNullableString(),
+                   Percentage
                );
 
         #endregion

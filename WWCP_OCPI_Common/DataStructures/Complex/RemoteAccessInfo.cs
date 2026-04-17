@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Prefer IPv4 instead of IPv6.
         /// </summary>
-        public Boolean?                                                   PreferIPv4                    { get; }
+        public IPVersionPreference?                                       PreferIPv4                    { get; }
 
 
         public UInt16?                                                    MaxNumberOfPooledClients      { get; }
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPI
                                 Boolean?                                                   AccessTokenIsBase64Encoded   = null,
                                 TOTPConfig?                                                TOTPConfig                   = null,
 
-                                Boolean?                                                   PreferIPv4                   = null,
+                                IPVersionPreference?                                       PreferIPv4                   = null,
                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                                 LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                                 IEnumerable<X509Certificate2>?                             ClientCertificates           = null,

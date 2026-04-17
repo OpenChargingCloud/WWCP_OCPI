@@ -69,8 +69,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2,
                                    ConnectorFormats.SOCKET,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(30),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (30),
                                    Tariff_Id.Parse("DE*GEF*T0001"),
                                    URL.Parse("https://open.charging.cloud/terms"),
                                    DateTime.Parse("2020-09-21")
@@ -80,8 +80,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2_COMBO,
                                    ConnectorFormats.CABLE,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(20),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (20),
                                    Tariff_Id.Parse("DE*GEF*T0003"),
                                    URL.Parse("https://open.charging.cloud/terms"),
                                    DateTime.Parse("2020-09-22")
@@ -322,9 +322,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2,
                                    ConnectorFormats.SOCKET,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(30),
-                                   Watt.  ParseW(12),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (30),
+                                   Watt.  FromKW(12),
                                    [
                                        Tariff_Id.Parse("DE*GEF*T0001"),
                                        Tariff_Id.Parse("DE*GEF*T0002")
@@ -337,9 +337,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2_COMBO,
                                    ConnectorFormats.CABLE,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(20),
-                                   Watt.  ParseW(8),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (20),
+                                   Watt.  FromKW(8),
                                    [
                                        Tariff_Id.Parse("DE*GEF*T0003"),
                                        Tariff_Id.Parse("DE*GEF*T0004")
@@ -544,9 +544,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2,
                                    ConnectorFormats.SOCKET,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(30),
-                                   Watt.  ParseW(12),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (30),
+                                   Watt.  FromKW(12),
                                    [
                                        Tariff_Id.Parse("DE*GEF*T0001"),
                                        Tariff_Id.Parse("DE*GEF*T0002")
@@ -561,9 +561,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                    ConnectorType.IEC_62196_T2_COMBO,
                                    ConnectorFormats.CABLE,
                                    PowerTypes.AC_3_PHASE,
-                                   Volt.  ParseV(400),
-                                   Ampere.ParseA(20),
-                                   Watt.  ParseW(8),
+                                   Volt.  FromV (400),
+                                   Ampere.FromA (20),
+                                   Watt.  FromKW(8),
                                    [
                                        Tariff_Id.Parse("DE*GEF*T0003"),
                                        Tariff_Id.Parse("DE*GEF*T0004")
@@ -781,8 +781,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.CHADEMO,
                            ConnectorFormats.SOCKET,
                            PowerTypes.DC,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(30),
+                           Volt.  FromV (400),
+                           Ampere.FromA (30),
                            Tariff_Id.Parse("DE*GEF*T0003"),
                            URL.Parse("https://open.charging.cloud/terms"),
                            DateTime.Parse("2020-09-21")
@@ -792,8 +792,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.CHADEMO,
                            ConnectorFormats.CABLE,
                            PowerTypes.DC,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(20),
+                           Volt.  FromV (400),
+                           Ampere.FromA (20),
                            Tariff_Id.Parse("DE*GEF*T0004"),
                            URL.Parse("https://open.charging.cloud/terms"),
                            DateTime.Parse("2021-11-13")
@@ -908,9 +908,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.IEC_62196_T2,
                            ConnectorFormats.SOCKET,
                            PowerTypes.AC_3_PHASE,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(30),
-                           Watt.  ParseW(12),
+                           Volt.  FromV (400),
+                           Ampere.FromA (30),
+                           Watt.  FromKW(12),
                            [
                                Tariff_Id.Parse("DE*GEF*T0001"),
                                Tariff_Id.Parse("DE*GEF*T0002")
@@ -923,9 +923,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.IEC_62196_T2_COMBO,
                            ConnectorFormats.CABLE,
                            PowerTypes.AC_3_PHASE,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(20),
-                           Watt.  ParseW(8),
+                           Volt.  FromV (400),
+                           Ampere.FromA (20),
+                           Watt.  FromKW(8),
                            [
                                Tariff_Id.Parse("DE*GEF*T0003"),
                                Tariff_Id.Parse("DE*GEF*T0004")
@@ -1007,9 +1007,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.IEC_62196_T2,
                            ConnectorFormats.SOCKET,
                            PowerTypes.AC_3_PHASE,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(30),
-                           Watt.  ParseW(12),
+                           Volt.  FromV (400),
+                           Ampere.FromA (30),
+                           Watt.  FromKW(12),
                            [
                                Tariff_Id.Parse("DE*GEF*T0001"),
                                Tariff_Id.Parse("DE*GEF*T0002")
@@ -1024,9 +1024,9 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            ConnectorType.IEC_62196_T2_COMBO,
                            ConnectorFormats.CABLE,
                            PowerTypes.AC_3_PHASE,
-                           Volt.  ParseV(400),
-                           Ampere.ParseA(20),
-                           Watt.  ParseW(8),
+                           Volt.  FromV (400),
+                           Ampere.FromA (20),
+                           Watt.  FromKW(8),
                            [
                                Tariff_Id.Parse("DE*GEF*T0003"),
                                Tariff_Id.Parse("DE*GEF*T0004")

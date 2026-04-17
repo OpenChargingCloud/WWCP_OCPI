@@ -42,17 +42,32 @@ using System.Net.Security;
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
+    public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
+
+
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(Party_Idv3       CPOPartyId,
+                                                                   Location_Id?     LocationId       = null,
+                                                                   EVSE_Id?         EVSEId           = null,
+                                                                   Connector_Id?    ConnectorId      = null,
+                                                                   RemoteParty_Id?  RemotePartyId    = null);
+
+    public delegate Tariff?                 GetTariff2_Delegate   (Party_Idv3       CPOPartyId,
+                                                                   Tariff_Id        TariffId,
+                                                                   DateTimeOffset?  StartTimestamp   = null,
+                                                                   TimeSpan?        Tolerance        = null);
+
+
+
+
     /// <summary>
     /// A delegate for filtering remote parties.
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Idv3     CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
 
     public class PartyData(Party_Idv3       Id,
                            Role             Role,
@@ -114,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code and/or party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -133,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -185,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification and/or location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -204,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -223,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -242,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -299,7 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification, location identification and/or ChargingStation identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -318,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -336,7 +351,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!LocationId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -355,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid ChargingStation identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -375,7 +390,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -393,7 +408,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                     OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                        StatusCode           = 2001,
+                        StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                         StatusMessage        = "Unknown ChargingStation identification!",
                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                             HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -454,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -473,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -491,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!LocationId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -509,7 +524,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!ChargingStationId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid charging station identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -528,7 +543,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -548,7 +563,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -565,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown charging station identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -583,7 +598,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -651,7 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -670,7 +685,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -689,7 +704,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -707,7 +722,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!ChargingStationId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid charging station identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -726,7 +741,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -745,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -765,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -782,7 +797,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown charging station identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -799,7 +814,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -817,7 +832,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -877,7 +892,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification and/or tariff identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -896,7 +911,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -914,7 +929,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!TariffId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid tariff identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -932,7 +947,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown tariff identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -992,7 +1007,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification and/or tariff identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1011,7 +1026,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1029,7 +1044,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!TariffId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid tariff identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1050,7 +1065,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //{
 
             //    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-            //        StatusCode           = 2001,
+            //        StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
             //        StatusMessage        = "Unknown tariff identification!",
             //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //            HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -1103,7 +1118,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification and/or session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1122,7 +1137,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1141,7 +1156,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1159,7 +1174,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!SessionId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1177,7 +1192,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Unknown session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -1229,7 +1244,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Missing country code, party identification and/or session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1248,7 +1263,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1267,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -1285,7 +1300,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (!SessionId.HasValue) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
                     StatusMessage        = "Invalid session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2029,7 +2044,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2049,7 +2064,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Version identification is missing!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2065,7 +2080,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Version identification is invalid!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2083,7 +2098,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     if (versionId.ToString() != Version.Id.ToString())
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "This OCPI version is not supported!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -2310,7 +2325,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                            StatusCode           = 1000,
+                            StatusCode           = StatusCode.Success,
                             StatusMessage        = "Hello world!",
                             Data                 = new VersionDetail(
                                                        versionId,
@@ -2393,7 +2408,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     return Task.FromResult(
                                new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
+                                   StatusCode           = StatusCode.Success,
                                    StatusMessage        = "Hello world!",
                                    HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -2436,7 +2451,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         return Task.FromResult(
                             new OCPIResponse.Builder(request) {
-                                StatusCode           = 2000,
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2451,7 +2466,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
-                            StatusCode           = 1000,
+                            StatusCode           = StatusCode.Success,
                             StatusMessage        = "Hello world!",
                             Data                 = new Credentials(
                                                        request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
@@ -2500,7 +2515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         if (request.LocalAccessInfo.VersionsURL.HasValue)
                             return new OCPIResponse.Builder(request) {
-                                       StatusCode           = 2000,                                              // CREDENTIALS_TOKEN_A
+                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,                                              // CREDENTIALS_TOKEN_A
                                        StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' is already registered!",
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2514,7 +2529,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     }
 
                     return new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
+                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2552,7 +2567,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         if (request.LocalAccessInfo?.Status == AccessStatus.BLOCKED)
                             return new OCPIResponse.Builder(request) {
-                                       StatusCode           = 2000,
+                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                        StatusMessage        = "The given access token '" + (request.AccessToken?.ToString() ?? "") + "' is blocked!",
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2571,7 +2586,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             // The party is not yet fully registered!
                             if (!request.LocalAccessInfo?.VersionsURL.HasValue == true)
                                 return new OCPIResponse.Builder(request) {
-                                           StatusCode           = 2000,
+                                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                            StatusMessage        = "The given access token '" + (request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2591,7 +2606,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     #endregion
 
                     return new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
+                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2627,7 +2642,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                         if (!request.LocalAccessInfo.VersionsURL.HasValue)
                             return new OCPIResponse.Builder(request) {
-                                       StatusCode           = 2000,
+                                       StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                        StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' is not fully registered!",
                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2641,7 +2656,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         await RemoveAccessToken(request.LocalAccessInfo.AccessToken);
 
                         return new OCPIResponse.Builder(request) {
-                                   StatusCode           = 1000,
+                                   StatusCode           = StatusCode.Success,
                                    StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' was deleted!",
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -2653,7 +2668,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     }
 
                     return new OCPIResponse.Builder(request) {
-                               StatusCode           = 2000,
+                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
@@ -2682,7 +2697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (!CREDENTIALS_TOKEN_A.HasValue)
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = "The received credential token must not be null!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2699,7 +2714,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (oldRemoteParty is null)
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = $"There is no remote party having the given access token '{CREDENTIALS_TOKEN_A}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2728,7 +2743,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = "Could not parse the received credentials JSON object: " + errorResponse,
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2756,7 +2771,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //        {
 
             //            return new OCPIResponse.Builder(Request) {
-            //                       StatusCode           = 2000,
+            //                       StatusCode           = StatusCodes.GenericClientError,
             //                       StatusMessage        = "The given combination of country code, party identification and role is unknown!",
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2772,7 +2787,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             //        {
 
             //            return new OCPIResponse.Builder(Request) {
-            //                       StatusCode           = 2000,
+            //                       StatusCode           = StatusCodes.GenericClientError,
             //                       StatusMessage        = "The given combination of country code, party identification and role is already registered!",
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2831,9 +2846,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region ...or send error!
 
-            if (otherVersions.StatusCode != 1000)
+            if (otherVersions.StatusCode != StatusCode.Success)
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2850,7 +2865,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (justMySupportedVersion.Length == 0)
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 3003,
+                           StatusCode           = StatusCode.ServerErrors.NoMatchingEndpoints,
                            StatusMessage        = $"Could not find {Version.String} at '{receivedCredentials.URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2865,9 +2880,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #region ...or send error!
 
-            if (otherVersion2_2_1Details.StatusCode != 1000)
+            if (otherVersion2_2_1Details.StatusCode != StatusCode.Success)
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 3001,
+                           StatusCode           = StatusCode.ServerErrors.UnableToUseTheClientsAPI,
                            StatusMessage        = $"Could not fetch {Version.String} information from '{justMySupportedVersion.First().URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2883,7 +2898,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             if (oldRemoteParty.Roles.Count() != receivedCredentials.Roles.Count())
                 return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = $"Updating the number of credentials roles from '{oldRemoteParty.Roles.Count()}' to '{receivedCredentials.Roles.Count()}' is not allowed!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2909,7 +2924,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (existingCredentialsRole is null)
                     return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 2000,
+                           StatusCode           = StatusCode.ClientErrors.GenericClientError,
                            StatusMessage        = $"Updating the credentials roles is not allowed!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
@@ -2974,6 +2989,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       AccessStatus.ALLOWED,                                     // LocalAccessStatus
 
                       PartyStatus.ENABLED,                                      // PartyStatus
+                      null,                                                     // VisibleVersionIds
 
                       oldRemoteParty.Created,
                       Timestamp.Now,                                            // LastUpdated
@@ -2984,7 +3000,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             return new OCPIResponse.Builder(Request) {
-                           StatusCode           = 1000,
+                           StatusCode           = StatusCode.Success,
                            StatusMessage        = "Hello world!",
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
@@ -4543,7 +4559,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
                            DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                            DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -4563,6 +4579,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -4609,6 +4626,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -4655,7 +4673,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -4680,6 +4698,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAllowDowngrades             = null,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -4723,6 +4742,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -4771,7 +4791,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -4803,6 +4823,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus?                                               Status                            = null,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -4855,6 +4876,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -4898,12 +4920,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus?                   Status            = null,
+                           PartyStatus?                   Status              = null,
+                           IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                           DateTimeOffset?                Created           = null,
-                           DateTimeOffset?                LastUpdated       = null,
-                           EventTracking_Id?              EventTrackingId   = null,
-                           User_Id?                       CurrentUserId     = null)
+                           DateTimeOffset?                Created             = null,
+                           DateTimeOffset?                LastUpdated         = null,
+                           EventTracking_Id?              EventTrackingId     = null,
+                           User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -4916,6 +4939,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5015,7 +5039,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       TOTPConfig?                                                RemoteTOTPConfig                  = null,
                                       DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                                       DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                                      Boolean?                                                   PreferIPv4                        = null,
+                                      IPVersionPreference?                                       PreferIPv4                        = null,
                                       RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                       LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                       IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5035,6 +5059,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -5088,6 +5113,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5134,7 +5160,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                                       TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                      Boolean?                                                   PreferIPv4                        = null,
+                                      IPVersionPreference?                                       PreferIPv4                        = null,
                                       RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                       LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                       IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5159,6 +5185,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -5209,6 +5236,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5257,7 +5285,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                                       TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                      Boolean?                                                   PreferIPv4                        = null,
+                                      IPVersionPreference?                                       PreferIPv4                        = null,
                                       RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                       LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                       IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5289,6 +5317,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                                       PartyStatus?                                               Status                            = null,
+                                      IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                       DateTimeOffset?                                            Created                           = null,
                                       DateTimeOffset?                                            LastUpdated                       = null,
@@ -5348,6 +5377,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5392,12 +5422,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                                      PartyStatus?                   Status            = null,
+                                      PartyStatus?                   Status              = null,
+                                      IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                                      DateTimeOffset?                Created           = null,
-                                      DateTimeOffset?                LastUpdated       = null,
-                                      EventTracking_Id?              EventTrackingId   = null,
-                                      User_Id?                       CurrentUserId     = null)
+                                      DateTimeOffset?                Created             = null,
+                                      DateTimeOffset?                LastUpdated         = null,
+                                      EventTracking_Id?              EventTrackingId     = null,
+                                      User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -5417,6 +5448,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5516,7 +5548,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    TOTPConfig?                                                RemoteTOTPConfig                  = null,
                                    DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                                    DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                                   Boolean?                                                   PreferIPv4                        = null,
+                                   IPVersionPreference?                                       PreferIPv4                        = null,
                                    RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                    LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                    IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5536,6 +5568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -5582,6 +5615,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5638,7 +5672,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                                    TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                   Boolean?                                                   PreferIPv4                        = null,
+                                   IPVersionPreference?                                       PreferIPv4                        = null,
                                    RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                    LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                    IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5663,6 +5697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    Boolean?                                                   RemoteAllowDowngrades             = null,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -5706,6 +5741,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5764,7 +5800,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                                    TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                                   Boolean?                                                   PreferIPv4                        = null,
+                                   IPVersionPreference?                                       PreferIPv4                        = null,
                                    RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                    LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                    IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -5796,6 +5832,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                                    PartyStatus?                                               Status                            = null,
+                                   IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
@@ -5848,6 +5885,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -5902,12 +5940,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                    IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                                    IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                                   PartyStatus?                   Status            = null,
+                                   PartyStatus?                   Status              = null,
+                                   IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                                   DateTimeOffset?                Created           = null,
-                                   DateTimeOffset?                LastUpdated       = null,
-                                   EventTracking_Id?              EventTrackingId   = null,
-                                   User_Id?                       CurrentUserId     = null)
+                                   DateTimeOffset?                Created             = null,
+                                   DateTimeOffset?                LastUpdated         = null,
+                                   EventTracking_Id?              EventTrackingId     = null,
+                                   User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -5920,6 +5959,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -6029,7 +6069,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               TOTPConfig?                                                RemoteTOTPConfig                  = null,
                               DateTimeOffset?                                            RemoteAccessNotBefore             = null,
                               DateTimeOffset?                                            RemoteAccessNotAfter              = null,
-                              Boolean?                                                   PreferIPv4                        = null,
+                              IPVersionPreference?                                       PreferIPv4                        = null,
                               RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                               LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                               IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -6049,6 +6089,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -6095,6 +6136,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -6142,7 +6184,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                               TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                              Boolean?                                                   PreferIPv4                        = null,
+                              IPVersionPreference?                                       PreferIPv4                        = null,
                               RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                               LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                               IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -6167,6 +6209,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Boolean?                                                   RemoteAllowDowngrades             = null,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -6210,6 +6253,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAllowDowngrades,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -6259,7 +6303,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                               TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                              Boolean?                                                   PreferIPv4                        = null,
+                              IPVersionPreference?                                       PreferIPv4                        = null,
                               RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                               LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                               IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -6291,6 +6335,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                               PartyStatus?                                               Status                            = null,
+                              IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                               DateTimeOffset?                                            Created                           = null,
                               DateTimeOffset?                                            LastUpdated                       = null,
@@ -6343,6 +6388,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      LocalAccessStatus,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -6388,12 +6434,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               IEnumerable<LocalAccessInfo>   LocalAccessInfos,
                               IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                              PartyStatus?                   Status            = null,
+                              PartyStatus?                   Status              = null,
+                              IEnumerable<Version_Id>?       VisibleVersionIds   = null,
 
-                              DateTimeOffset?                Created           = null,
-                              DateTimeOffset?                LastUpdated       = null,
-                              EventTracking_Id?              EventTrackingId   = null,
-                              User_Id?                       CurrentUserId     = null)
+                              DateTimeOffset?                Created             = null,
+                              DateTimeOffset?                LastUpdated         = null,
+                              EventTracking_Id?              EventTrackingId     = null,
+                              User_Id?                       CurrentUserId       = null)
 
         {
 
@@ -6406,6 +6453,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      RemoteAccessInfos,
 
                                      Status,
+                                     VisibleVersionIds,
 
                                      Created,
                                      LastUpdated
@@ -6442,7 +6490,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region ContainsRemoteParty(RemotePartyId)
+        #region ContainsRemoteParty       (RemotePartyId)
 
         /// <summary>
         /// Whether this API contains a remote party having the given unique identification.
@@ -6454,7 +6502,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParty     (RemotePartyId)
+        #region GetRemoteParty            (RemotePartyId)
 
         /// <summary>
         /// Get the remote party having the given unique identification.
@@ -6472,7 +6520,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region TryGetRemoteParty  (RemotePartyId, out RemoteParty)
+        #region TryGetRemoteParty         (RemotePartyId, out RemoteParty)
 
         /// <summary>
         /// Try to get the remote party having the given unique identification.
@@ -6489,7 +6537,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (IncludeFilter = null)
+        #region GetRemoteParties          (IncludeFilter = null)
 
         /// <summary>
         /// Get all remote parties machting the given optional filter.
@@ -6504,7 +6552,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId)
+        #region GetRemoteParties          (CountryCode, PartyId)
 
         /// <summary>
         /// Get all remote parties having the given country code and party identification.
@@ -6520,7 +6568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (CountryCode, PartyId, Role)
+        #region GetRemoteParties          (CountryCode, PartyId, Role)
 
         /// <summary>
         /// Get all remote parties having the given country code, party identification and role.
@@ -6539,20 +6587,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (Role)
+        #region GetRemoteParties          (Roles)
 
         /// <summary>
-        /// Get all remote parties having the given role.
+        /// Get all remote parties having one of the given roles.
         /// </summary>
-        /// <param name="Role">The role of the remote parties.</param>
-        public IEnumerable<RemoteParty> GetRemoteParties(Role Role)
+        /// <param name="Roles">An optional list of roles.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(params Role[] Roles)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Role));
+                             Where(remoteParty => remoteParty.Roles.Any(credentialsRole => Roles.Contains(credentialsRole.Role)));
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken)
+        #region GetRemoteParties          (AccessToken)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
 
@@ -6561,7 +6609,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, AccessStatus)
+        #region GetRemoteParties          (AccessToken, AccessStatus)
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
                                                          AccessStatus  AccessStatus)
@@ -6572,12 +6620,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region GetRemoteParties   (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties)
+        #region TryGetRemoteParties       (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties, out ErrorMessage)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
                                            TOTPHTTPHeader?                                       TOTP,
                                            Byte[]?                                               TLSExporterMaterial,
-                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
+                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties,
+                                           [NotNullWhen(false)] out String?                      ErrorMessage)
         {
 
             var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
@@ -6587,39 +6636,59 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
 
-                    if (localAccessInfo.TOTPConfig is not null)
+                    if (localAccessInfo.AccessToken == AccessToken)
                     {
 
-                        //var accessToken  = AccessToken.ToString();
+                        if (localAccessInfo.TOTPConfig is not null)
+                        {
 
-                        var (previous,
-                             current,
-                             next,
-                             _,
-                             _) = TOTPGenerator.GenerateTOTPs(
-                                      localAccessInfo.TOTPConfig.SharedSecret,
-                                      localAccessInfo.TOTPConfig.ValidityTime,
-                                      localAccessInfo.TOTPConfig.Length,
-                                      localAccessInfo.TOTPConfig.Alphabet,
-                                      null,
-                                      TLSExporterMaterial
-                                  );
+                            var (previous,
+                                 current,
+                                 next,
+                                 _,
+                                 _) = TOTPGenerator.GenerateTOTPs(
+                                          localAccessInfo.TOTPConfig.SharedSecret,
+                                          localAccessInfo.TOTPConfig.ValidityTime,
+                                          localAccessInfo.TOTPConfig.Length,
+                                          localAccessInfo.TOTPConfig.Alphabet,
+                                          null,
+                                          TLSExporterMaterial
+                                      );
 
-                        if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
-                            remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                            if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
+                                remoteParties.Add(
+                                    new Tuple<RemoteParty, LocalAccessInfo>(
+                                        remoteParty,
+                                        localAccessInfo
+                                    )
+                                );
 
-                    }
+                            else
+                            {
+                                RemoteParties  = [];
+                                ErrorMessage   = "Invalid Time-based One-Time Password (TOTP)!";
+                                return false;
+                            }
 
-                    else
-                    {
-                        if (localAccessInfo.AccessToken == AccessToken)
-                            remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
+                        }
+
+                        else
+                            remoteParties.Add(
+                                new Tuple<RemoteParty, LocalAccessInfo>(
+                                    remoteParty,
+                                    localAccessInfo
+                                )
+                            );
+
                     }
 
                 }
             }
 
-            RemoteParties = remoteParties;
+            RemoteParties  = remoteParties;
+            ErrorMessage   = remoteParties.Count == 0
+                                 ? "Unknown access token!"
+                                 : null;
 
             return remoteParties.Count > 0;
 
@@ -6628,7 +6697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region RemoveRemoteParty(RemoteParty)
+        #region RemoveRemoteParty         (RemoteParty)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty        RemoteParty,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6655,7 +6724,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(RemotePartyId)
+        #region RemoveRemoteParty         (RemotePartyId)
 
         public async Task<Boolean> RemoveRemoteParty(RemoteParty_Id     RemotePartyId,
                                                      EventTracking_Id?  EventTrackingId   = null,
@@ -6682,7 +6751,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, Role)
+        #region RemoveRemoteParty         (CountryCode, PartyId, Role)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6713,7 +6782,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveRemoteParty(CountryCode, PartyId, Role, AccessToken)
+        #region RemoveRemoteParty         (CountryCode, PartyId, Role, AccessToken)
 
         public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
                                                      Party_Id           PartyId,
@@ -6748,7 +6817,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region RemoveAllRemoteParties()
+        #region RemoveAllRemoteParties    ()
 
         public async Task RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
                                                  User_Id?           CurrentUserId     = null)
@@ -8908,16 +8977,29 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Events
 
-        public delegate Task OnTariffAddedDelegate(Tariff Tariff);
+        public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
+        public delegate Task OnTariffChangedDelegate(Tariff               Tariff);
+        public delegate Task OnTariffRemovedDelegate(IEnumerable<Tariff>  Tariff);
 
-        public event OnTariffAddedDelegate? OnTariffAdded;
-
-
-        public delegate Task OnTariffChangedDelegate(Tariff Tariff);
-
-        public event OnTariffChangedDelegate? OnTariffChanged;
+        public event OnTariffAddedDelegate?    OnTariffAdded;
+        public event OnTariffChangedDelegate?  OnTariffChanged;
+        public event OnTariffRemovedDelegate?  OnTariffRemoved;
 
         #endregion
+
+
+        public GetTariffs2_Delegate?    GetTariffsDelegate      { get; set; }
+
+        public GetTariffIds2_Delegate?  GetTariffIdsDelegate    { get; set; }
+
+
+        public delegate Task<Tariff> OnTariffSlowStorageLookupDelegate(Party_Idv3       PartyId,
+                                                                       Tariff_Id        TariffId,
+                                                                       DateTimeOffset?  Timestamp,
+                                                                       TimeSpan?        Tolerance);
+
+        public event OnTariffSlowStorageLookupDelegate? OnTariffSlowStorageLookup;
+
 
 
         #region AddTariff            (Tariff,                                       SkipNotifications = false, ...)

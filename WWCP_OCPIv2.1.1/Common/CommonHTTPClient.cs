@@ -463,7 +463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 HTTPHostname?                                              VirtualHostname                   = null,
                                 I18NString?                                                Description                       = null,
-                                Boolean?                                                   PreferIPv4                        = null,
+                                IPVersionPreference?                                       PreferIPv4                        = null,
                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                                 LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                                 IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -622,8 +622,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  Path:                  RemoteVersionsURL.Path,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnGetVersionsHTTPRequest,
                                                  ResponseLogDelegate:   OnGetVersionsHTTPResponse,
@@ -661,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            )
                                );
 
-                    switch (response.StatusCode)
+                    switch (response.StatusCode.Value)
                     {
 
                         case 1000:
@@ -834,8 +834,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                          Path:                  versionURL.Path,
                                                          Authentication:        TokenAuth,
                                                          RequestBuilder:        requestBuilder => {
-                                                                                    requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                    requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                    requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                    requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                                 },
                                                          RequestLogDelegate:    OnGetVersionDetailsHTTPRequest,
                                                          ResponseLogDelegate:   OnGetVersionDetailsHTTPResponse,
@@ -912,7 +912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    )
                                        );
 
-                            switch (response.StatusCode)
+                            switch (response.StatusCode.Value)
                             {
 
                                 case 1000:
@@ -1259,8 +1259,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
-                                                                                requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                             },
                                                      RequestLogDelegate:    OnGetCredentialsHTTPRequest,
                                                      ResponseLogDelegate:   OnGetCredentialsHTTPResponse,
@@ -1444,8 +1444,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
-                                                                                requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                             },
                                                      RequestLogDelegate:    OnPostCredentialsHTTPRequest,
                                                      ResponseLogDelegate:   OnPostCredentialsHTTPResponse,
@@ -1632,8 +1632,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      Content:               Credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
-                                                                                requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                             },
                                                      RequestLogDelegate:    OnPutCredentialsHTTPRequest,
                                                      ResponseLogDelegate:   OnPutCredentialsHTTPResponse,
@@ -1843,8 +1843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      Path:                  remoteURL.Value.Path,
                                                      Authentication:        TokenAuth,
                                                      RequestBuilder:        requestBuilder => {
-                                                                                requestBuilder.Set("X-Request-ID",     requestId);
-                                                                                requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                             },
                                                      RequestLogDelegate:    OnDeleteCredentialsHTTPRequest,
                                                      ResponseLogDelegate:   OnDeleteCredentialsHTTPResponse,
@@ -2054,8 +2054,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  Content:               credentials.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set("X-Request-ID",     requestId);
-                                                                            requestBuilder.Set("X-Correlation-ID", correlationId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
+                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
                                                  RequestLogDelegate:    OnRegisterHTTPRequest,
                                                  ResponseLogDelegate:   OnRegisterHTTPResponse,
@@ -2152,6 +2152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            AccessStatus.ALLOWED,       // LocalAccessStatus
 
                                                            PartyStatus.ENABLED,        // PartyStatus
+                                                           null,                       // VisibleVersionIds
 
                                                            null,                       // Created
                                                            Timestamp.Now,              // LastUpdated

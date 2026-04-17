@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                Party_Id.   Parse("GEF"),
                                Session_Id. Parse("Session0001"),
                                DateTime.Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
-                               WattHour.ParseKWh(1.11M),
+                               WattHour.FromKWh(1.11M),
                                new CDRToken(
                                    CountryCode.Parse("DE"),
                                    Party_Id.   Parse("GEF"),

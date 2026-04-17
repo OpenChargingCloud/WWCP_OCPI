@@ -575,15 +575,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  new JProperty("standard",               Standard.          ToString()),
                                  new JProperty("format",                 Format.            AsText()),
                                  new JProperty("power_type",             PowerType.         AsText()),
-                                 new JProperty("max_voltage",            MaxVoltage.        IntegerValue),
-                                 new JProperty("max_amperage",           MaxAmperage.       IntegerValue),
+                                 new JProperty("max_voltage",            MaxVoltage.        RoundedIntegerValue),
+                                 new JProperty("max_amperage",           MaxAmperage.       RoundedIntegerValue),
 
                            CableLength.HasValue
-                               ? new JProperty("cable_length",           CableLength.       Value.IntegerValue)
+                               ? new JProperty("cable_length",           CableLength.       Value.RoundedIntegerValue)
                                : null,
 
                            MaxElectricPower.HasValue
-                               ? new JProperty("max_electric_power",     MaxElectricPower.  Value.IntegerValue)
+                               ? new JProperty("max_electric_power",     MaxElectricPower.  Value.RoundedIntegerValue)
                                : null,
 
                            TermsAndConditions.HasValue
@@ -621,10 +621,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Standard.           Clone(),
                    Format,
                    PowerType,
-                   MaxVoltage.         Clone(),
-                   MaxAmperage.        Clone(),
-                   CableLength?.       Clone(),
-                   MaxElectricPower?.  Clone(),
+                   MaxVoltage,
+                   MaxAmperage,
+                   CableLength,
+                   MaxElectricPower,
                    TermsAndConditions?.Clone(),
                    Capabilities.Select(capability => capability.Clone()),
 

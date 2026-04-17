@@ -48,6 +48,28 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
+
+        /// <summary>
+        /// This remote party identification as a party identification.
+        /// </summary>
+        public static Party_Idv3? AsPartyId(this RemoteParty_Id RemotePartyId)
+            => Party_Idv3.Parse($"{RemotePartyId.CountryCode}{RemotePartyId.PartyId}");
+
+        /// <summary>
+        /// This remote party identification as a party identification.
+        /// </summary>
+        public static Party_Idv3? AsPartyId(this RemoteParty_Id? RemotePartyId)
+            => RemotePartyId.HasValue
+                   ? RemotePartyId.Value.AsPartyId()
+                   : null;
+
+
+
+
+
+
+
+
         /// <summary>
         /// This remote party identification as a CPO identification.
         /// </summary>
@@ -65,16 +87,29 @@ namespace cloud.charging.open.protocols.OCPI
                    : null;
 
 
+
+
+
+
         /// <summary>
-        /// This remote party identification as a EMSP identification.
+        /// Convert this remote party identification to an EMSP identification.
         /// </summary>
-        public static EMSP_Id? AsEMSPId(this RemoteParty_Id RemotePartyId)
+        public static EMSP_Id? ToEMSPId(this RemoteParty_Id  RemotePartyId)
+            => EMSP_Id.Parse($"{RemotePartyId.CountryCode}-{RemotePartyId.PartyId}");
+
+
+
+
+        /// <summary>
+        /// This remote party identification as an EMSP identification.
+        /// </summary>
+        public static EMSP_Id? AsEMSPId(this RemoteParty_Id  RemotePartyId)
             => RemotePartyId.Role == Role.EMSP
                    ? EMSP_Id.Parse($"{RemotePartyId.CountryCode}-{RemotePartyId.PartyId}")
                    : null;
 
         /// <summary>
-        /// This remote party identification as a EMSP identification.
+        /// This remote party identification as an EMSP identification.
         /// </summary>
         public static EMSP_Id? AsEMSPId(this RemoteParty_Id? RemotePartyId)
             => RemotePartyId.HasValue

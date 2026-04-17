@@ -98,7 +98,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The regular expression for parsing party identifications.
         /// </summary>
-        public static readonly Regex PartyId_RegEx = new ("^([a-zA-Z0-9]{5})$");
+        public static readonly Regex PartyId_RegEx = new ("^([a-zA-Z0-9]{5})$",
+                                                          RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
 
         #endregion
 
@@ -231,13 +232,8 @@ namespace cloud.charging.open.protocols.OCPI
                 Text.Length == 5 &&
                 PartyId_RegEx.IsMatch(Text))
             {
-                try
-                {
-                    PartyId = new Party_Idv3(Text);
-                    return true;
-                }
-                catch
-                { }
+                PartyId = new Party_Idv3(Text);
+                return true;
             }
 
             PartyId = default;
@@ -427,18 +423,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
-
-        #endregion
-
-        #region ToString(Role)
-
-        /// <summary>
-        /// Return a role-based text representation of this object.
-        /// </summary>
-        public String ToString(Role Role)
-
-            => $"{CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId}";
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(InternalId ?? String.Empty);
 
         #endregion
 
@@ -450,6 +435,17 @@ namespace cloud.charging.open.protocols.OCPI
         public override String ToString()
 
             => InternalId ?? "";
+
+        #endregion
+
+        #region ToString(Role)
+
+        /// <summary>
+        /// Return a role-based text representation of this object.
+        /// </summary>
+        public String ToString(Role Role)
+
+            => $"{CountryCode}{(Role == Role.EMSP ? "-" : "*")}{PartyId}";
 
         #endregion
 

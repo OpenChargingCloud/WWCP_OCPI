@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -359,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -707,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -740,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -773,7 +773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -806,7 +806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -1315,7 +1315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -1348,7 +1348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:       true,
                                                                         CableAttached:  true,
-                                                                        CableLength:    Meter.ParseM(3.0)
+                                                                        CableLength:    Meter.FromM(3.0)
                                                                     )
                                                                 ],
 
@@ -1381,7 +1381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                           Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                           Lockable:       true,
                                                                           CableAttached:  true,
-                                                                          CableLength:    Meter.ParseM(3.0)
+                                                                          CableLength:    Meter.FromM(3.0)
                                                                       )
                                                                   },
 
@@ -1414,7 +1414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                           Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
                                                                           Lockable:       true,
                                                                           CableAttached:  true,
-                                                                          CableLength:    Meter.ParseM(3.0)
+                                                                          CableLength:    Meter.FromM(3.0)
                                                                       )
                                                                   },
 
@@ -2053,7 +2053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:        true,
                                                                         CableAttached:   true,
-                                                                        CableLength:     Meter.ParseM(4)
+                                                                        CableLength:     Meter.FromM(4)
                                                                     )
                                                                 ]
 
@@ -2278,7 +2278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:        true,
                                                                         CableAttached:   true,
-                                                                        CableLength:     Meter.ParseM(4)
+                                                                        CableLength:     Meter.FromM(4)
                                                                     )
                                                                 ]
 
@@ -2428,14 +2428,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              EnergyMeteringValues:        [
                                                                                               new EnergyMeteringValue(
                                                                                                   startTS,
-                                                                                                  WattHour.ParseKWh(1334.034M),
+                                                                                                  WattHour.FromKWh(1334.034M),
                                                                                                   EnergyMeteringValueTypes.Start,
                                                                                                   "1334.034",
                                                                                                   "..."
                                                                                               ),
                                                                                               new EnergyMeteringValue(
                                                                                                   stopTS,
-                                                                                                  WattHour.ParseKWh(1451.241M),
+                                                                                                  WattHour.FromKWh(1451.241M),
                                                                                                   EnergyMeteringValueTypes.Stop,
                                                                                                   "1451.241",
                                                                                                   "..."
@@ -2581,7 +2581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                         Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:        true,
                                                                         CableAttached:   true,
-                                                                        CableLength:     Meter.ParseM(4)
+                                                                        CableLength:     Meter.FromM(4)
                                                                     )
                                                                 ]
 
@@ -2727,14 +2727,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              EnergyMeteringValues:        [
                                                                                               new EnergyMeteringValue(
                                                                                                   startTS,
-                                                                                                  WattHour.ParseKWh(1334.034M),
+                                                                                                  WattHour.FromKWh(1334.034M),
                                                                                                   EnergyMeteringValueTypes.Start,
                                                                                                   "1334.034",
                                                                                                   "..."
                                                                                               ),
                                                                                               new EnergyMeteringValue(
                                                                                                   stopTS,
-                                                                                                  WattHour.ParseKWh(1451.241M),
+                                                                                                  WattHour.FromKWh(1451.241M),
                                                                                                   EnergyMeteringValueTypes.Stop,
                                                                                                   "1451.241",
                                                                                                   "..."

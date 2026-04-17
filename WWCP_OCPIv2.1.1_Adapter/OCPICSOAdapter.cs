@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                                                   RemoteAccessTokenBase64Encoding   = null,
                            TOTPConfig?                                                RemoteTOTPConfig                  = null,
 
-                           Boolean?                                                   PreferIPv4                        = null,
+                           IPVersionPreference?                                       PreferIPv4                        = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator        = null,
                            LocalCertificateSelectionHandler?                          LocalCertificateSelector          = null,
                            IEnumerable<X509Certificate2>?                             ClientCertificates                = null,
@@ -565,6 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AccessStatus?                                              LocalAccessStatus                 = AccessStatus.ALLOWED,
 
                            PartyStatus                                                PartyStatus                       = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?                                   VisibleVersionIds                 = null,
 
                            DateTimeOffset?                                            Created                           = null,
                            DateTimeOffset?                                            LastUpdated                       = null,
@@ -616,6 +617,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessStatus,
 
                    PartyStatus,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -630,26 +632,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public Task<AddResult<RemoteParty>>
 
-            AddRemoteParty(CountryCode        CountryCode,
-                           Party_Id           PartyId,
-                           Role               Role,
-                           BusinessDetails    BusinessDetails,
+            AddRemoteParty(CountryCode               CountryCode,
+                           Party_Id                  PartyId,
+                           Role                      Role,
+                           BusinessDetails           BusinessDetails,
 
-                           AccessToken        LocalAccessToken,
-                           Boolean?           LocalAccessTokenBase64Encoding   = null,
-                           TOTPConfig?        LocalTOTPConfig                  = null,
-                           HTTPModifiers?     IN                               = null,
-                           DateTimeOffset?    LocalAccessNotBefore             = null,
-                           DateTimeOffset?    LocalAccessNotAfter              = null,
-                           Boolean?           LocalAllowDowngrades             = false,
-                           AccessStatus?      LocalAccessStatus                = AccessStatus.ALLOWED,
+                           AccessToken               LocalAccessToken,
+                           Boolean?                  LocalAccessTokenBase64Encoding   = null,
+                           TOTPConfig?               LocalTOTPConfig                  = null,
+                           HTTPModifiers?            IN                               = null,
+                           DateTimeOffset?           LocalAccessNotBefore             = null,
+                           DateTimeOffset?           LocalAccessNotAfter              = null,
+                           Boolean?                  LocalAllowDowngrades             = false,
+                           AccessStatus?             LocalAccessStatus                = AccessStatus.ALLOWED,
 
-                           PartyStatus?       Status                           = PartyStatus.ENABLED,
+                           PartyStatus?              Status                           = PartyStatus.ENABLED,
+                           IEnumerable<Version_Id>?  VisibleVersionIds                = null,
 
-                           DateTimeOffset?    Created                          = null,
-                           DateTimeOffset?    LastUpdated                      = null,
-                           EventTracking_Id?  EventTrackingId                  = null,
-                           User_Id?           CurrentUserId                    = null)
+                           DateTimeOffset?           Created                          = null,
+                           DateTimeOffset?           LastUpdated                      = null,
+                           EventTracking_Id?         EventTrackingId                  = null,
+                           User_Id?                  CurrentUserId                    = null)
 
             => CommonAPI.AddRemoteParty(
 
@@ -668,6 +671,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LocalAccessStatus,
 
                    Status,
+                   VisibleVersionIds,
 
                    Created,
                    LastUpdated,
@@ -2292,9 +2296,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            WWCP.ChargingProduct?             ChargingProduct       = null,
                            WWCP.ChargingSession_Id?          SessionId             = null,
                            WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                           WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+                           //WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+                           WWCP.EMobilityProvider_Id?        EMobilityProviderId   = null,
 
-                           DateTimeOffset?                   Timestamp             = null,
+                           DateTimeOffset?                   RequestTimestamp      = null,
                            EventTracking_Id?                 EventTrackingId       = null,
                            TimeSpan?                         RequestTimeout        = null,
                            CancellationToken                 CancellationToken     = default)
@@ -2303,50 +2308,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Initial checks
 
-            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            EventTrackingId ??= EventTracking_Id.New;
-            RequestTimeout  ??= this.RequestTimeout;
+            EventTrackingId  ??= EventTracking_Id.New;
+            RequestTimeout   ??= this.RequestTimeout;
 
             #endregion
 
             #region Send OnAuthorizeStartRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
 
-            try
-            {
+            RequestTimestamp ??= startTime;
 
-                OnAuthorizeStartRequest?.Invoke(
-                    startTime,
-                    Timestamp.Value,
-                    this,
-                    Id.ToString(),
-                    EventTrackingId,
-                    RoamingNetwork.Id,
-                    null,
-                    Id,
-                    OperatorId,
-                    LocalAuthentication,
-                    ChargingLocation,
-                    ChargingProduct,
-                    SessionId,
-                    CPOPartnerSessionId,
-                    [],
-                    RequestTimeout,
-                    CancellationToken
-                );
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartRequest));
-            }
+            await LogEvent(
+                      OnAuthorizeStartRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
 
-            DateTimeOffset        endtime;
-            TimeSpan              runtime;
             WWCP.AuthStartResult? authStartResult = null;
 
 
@@ -2551,39 +2551,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Send OnAuthorizeStartResponse event
 
-            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            runtime = endtime - startTime;
+            var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
-            try
-            {
-
-                OnAuthorizeStartResponse?.Invoke(
-                    endtime,
-                    Timestamp.Value,
-                    this,
-                    Id.ToString(),
-                    EventTrackingId,
-                    RoamingNetwork.Id,
-                    null,
-                    Id,
-                    OperatorId,
-                    LocalAuthentication,
-                    ChargingLocation,
-                    ChargingProduct,
-                    SessionId,
-                    CPOPartnerSessionId,
-                    [],
-                    RequestTimeout,
-                    authStartResult,
-                    runtime,
-                    CancellationToken
-                );
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartResponse));
-            }
+            await LogEvent(
+                      OnAuthorizeStartResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          ChargingLocation,
+                          ChargingProduct,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          [],
+                          RequestTimeout,
+                          authStartResult,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -2614,9 +2609,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           WWCP.LocalAuthentication          LocalAuthentication,
                           WWCP.ChargingLocation?            ChargingLocation      = null,
                           WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                          WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+                          //WWCP.ChargingStationOperator_Id?  OperatorId            = null,
+                          WWCP.EMobilityProvider_Id?        EMobilityProviderId   = null,
 
-                          DateTimeOffset?                   Timestamp             = null,
+                          DateTimeOffset?                   RequestTimestamp      = null,
                           EventTracking_Id?                 EventTrackingId       = null,
                           TimeSpan?                         RequestTimeout        = null,
                           CancellationToken                 CancellationToken     = default)
@@ -2625,7 +2621,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Initial checks
 
-            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             EventTrackingId ??= EventTracking_Id.New;
             RequestTimeout  ??= this.RequestTimeout;
 
@@ -2633,34 +2628,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Send OnAuthorizeStopRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime  = Timestamp.Now;
+            var stopwatch  = Stopwatch.StartNew();
 
-            try
-            {
+            RequestTimestamp ??= startTime;
 
-                OnAuthorizeStopRequest?.Invoke(
-                    startTime,
-                    Timestamp.Value,
-                    this,
-                    Id.ToString(),
-                    EventTrackingId,
-                    RoamingNetwork.Id,
-                    null,
-                    Id,
-                    OperatorId,
-                    ChargingLocation,
-                    SessionId,
-                    CPOPartnerSessionId,
-                    LocalAuthentication,
-                    RequestTimeout,
-                    CancellationToken
-                );
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopRequest));
-            }
+            await LogEvent(
+                      OnAuthorizeStopRequest,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          startTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          ChargingLocation,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          RequestTimeout,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -2848,40 +2841,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    SessionId
                                );
 
-            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            endtime = Timestamp.Now;
             runtime = endtime - startTime;
 
 
-            #region Send OnAuthorizeStopResponse event
+            #region Send OnAuthorizeStartResponse event
 
-            try
-            {
+            var endTime = Timestamp.Now;
+            stopwatch.Stop();
 
-                OnAuthorizeStopResponse?.Invoke(
-                    endtime,
-                    Timestamp.Value,
-                    this,
-                    Id.ToString(),
-                    EventTrackingId,
-                    RoamingNetwork.Id,
-                    null,
-                    Id,
-                    OperatorId,
-                    ChargingLocation,
-                    SessionId,
-                    CPOPartnerSessionId,
-                    LocalAuthentication,
-                    RequestTimeout,
-                    authStopResult,
-                    runtime,
-                    CancellationToken
-                );
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopResponse));
-            }
+            await LogEvent(
+                      OnAuthorizeStopResponse,
+                      loggingDelegate => loggingDelegate.Invoke(
+                          endTime,
+                          RequestTimestamp.Value,
+                          this,
+                          Id.ToString(),
+                          EventTrackingId,
+                          RoamingNetwork.Id,
+                          null,
+                          Id,
+                          //ChargingStationOperatorId,
+                          ChargingLocation,
+                          SessionId,
+                          CPOPartnerSessionId,
+                          LocalAuthentication,
+                          EMobilityProviderId,
+                          RequestTimeout,
+                          authStopResult,
+                          stopwatch.Elapsed,
+                          CancellationToken
+                      )
+                  );
 
             #endregion
 
@@ -3159,7 +3150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     if (response is not null)
                     {
 
-                        if (response.StatusCode == 1000)
+                        if (response.StatusCode == StatusCode.Success)
                             sendCDRResults.Add(
                                 WWCP.SendCDRResult.Success(
                                     Timestamp.Now,

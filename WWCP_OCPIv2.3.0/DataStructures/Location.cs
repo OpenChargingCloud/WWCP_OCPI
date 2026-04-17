@@ -1670,8 +1670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="EVSEId">An EVSE identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_Id   EVSEId,
-                                  out EVSE  EVSE)
+        public Boolean TryGetEVSE(EVSE_Id                        EVSEId,
+                                  [NotNullWhen(true)] out EVSE?  EVSE)
         {
 
             lock (EVSEs)

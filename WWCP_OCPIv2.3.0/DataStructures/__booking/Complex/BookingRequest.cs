@@ -487,7 +487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    AuthorizationReference. Clone(),
                    BookableParkingOptions?.Clone(),
                    EVSEUId?.               Clone(),
-                   PowerRequired?.         Clone(),
+                   PowerRequired,
                    Canceled?.              Clone()
                );
 
