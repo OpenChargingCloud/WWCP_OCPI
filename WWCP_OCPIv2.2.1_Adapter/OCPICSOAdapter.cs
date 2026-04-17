@@ -2894,8 +2894,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ChargingTariffs:           null,
                                       ListOfAuthStopTokens:      null,
                                       ListOfAuthStopPINs:        null,
-                                      ProviderId:                //authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
-                                                                 WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
+                                      ProviderId:                authorizationInfo.Token is not null
+                                                                     ? WWCP.EMobilityProvider_Id.TryParse($"{authorizationInfo.Token.CountryCode}{authorizationInfo.Token.PartyId}")
+                                                                     : null,
+                                      ProviderName:              authorizationInfo.Token?.Issuer,
 
                                       // authorizationInfo.Location
                                       // authorizationInfo.Info
