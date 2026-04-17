@@ -3428,20 +3428,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         break;
                     }
 
-                    if (!SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
-                    {
-                        sendCDRResults.Add(
-                            WWCP.SendCDRResult.Error(
-                                Timestamp.Now,
-                                Id,
-                                chargeDetailRecord,
-                                I18NString.Create($"Could not create a CPO client for '{remoteParty.Id})'!")
-                            )
-                        );
-                        break;
-                    }
-
                     #endregion
+
+
+                    var operatorId = chargeDetailRecord.EVSEId?.OperatorId.ToOCPI_PartyIdv3();
+                    var providerId = chargeDetailRecord.ProviderIdStart?.  ToOCPI_PartyIdv3();
+
 
                     #region Convert and send charge detail record
 
@@ -3491,18 +3483,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
                     var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(
-                                                       CDR:                cdr,
-                                                       AllowDowngrades:    false,
-                                                       SkipNotifications:  false,
-                                                       EventTrackingId:    EventTrackingId,
-                                                       CancellationToken:  CancellationToken
+                                                       CDR:                 cdr,
+                                                       AllowDowngrades:     false,
+                                                       SkipNotifications:   false,
+                                                       EventTrackingId:     EventTrackingId,
+                                                       CancellationToken:   CancellationToken
                                                    );
 
-                    var response           = await cpo2EMSPClient.PostCDR(
-                                                       CDR:                cdr,
-                                                  //     EMSPId:             emspId,
-                                                       CancellationToken:  CancellationToken
-                                                   );
+                    OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>? response = null;
+
+                    if (remotePartyId.Role == Role.EMSP)
+                    {
+
+                        if (!SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
+                        {
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Error(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    I18NString.Create($"Could not create a CPO2EMSP HTTP client for '{remoteParty.Id})'!")
+                                )
+                            );
+                            break;
+                        }
+
+                        response = await cpo2EMSPClient.PostCDR(
+                                             CDR:                 cdr,
+                                             From:                operatorId,
+                                             To:                  providerId,
+                                             CancellationToken:   CancellationToken
+                                         );
+
+                    }
+
+                    else if (remotePartyId.Role == Role.HUB)
+                    {
+
+                        if (!SetupCPO2HUBClient(remoteParty, out var cpo2HUBClient))
+                        {
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Error(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    I18NString.Create($"Could not create a CPO2HUB HTTP client for '{remoteParty.Id})'!")
+                                )
+                            );
+                            break;
+                        }
+
+                        response = await cpo2HUBClient.PostCDR(
+                                             CDR:                 cdr,
+                                             From:                operatorId,
+                                             To:                  providerId,
+                                             CancellationToken:   CancellationToken
+                                         );
+
+                    }
 
                     #region Response handling
 
