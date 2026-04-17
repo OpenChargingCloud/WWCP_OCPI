@@ -571,6 +571,180 @@ function StartDebugLog() {
         }, false);
 
 
+        eventSource.addEventListener('OnPutLocationRequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPutLocationRequest",
+                    `Location ${request.location.Id}: ${JSON.stringify(request.location)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutLocationRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPutLocationResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutLocationResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPatchLocationRequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPatchLocationRequest",
+                    `Location ${request.locationId}: ${JSON.stringify(request.locationPatch)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchLocationRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPatchLocationResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchLocationResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
+        eventSource.addEventListener('OnPutEVSERequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPutEVSERequest",
+                    `EVSE ${request.evse.uid}: ${JSON.stringify(request.evse)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutEVSERequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPutEVSEResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutEVSEResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
 
         eventSource.addEventListener('OnPatchEVSERequest', (event: MessageEvent<string>) => {
 
@@ -623,6 +797,182 @@ function StartDebugLog() {
             catch (exception) {
                 ShowHTTPSSEError(
                     'OnPatchEVSEResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
+        eventSource.addEventListener('OnPutConnectorRequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPutConnectorRequest",
+                    `Connector ${request.connector.id}: ${JSON.stringify(request.connector)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutConnectorRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPutConnectorResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutConnectorResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPatchConnectorRequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPatchConnectorRequest",
+                    `Connector ${request.connectorId}: ${JSON.stringify(request.connectorPatch)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchConnectorRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPatchConnectorResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPatchConnectorResponse',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+
+        eventSource.addEventListener('OnPutTariffRequest', (event: MessageEvent<string>) => {
+
+            try {
+
+                const request = JSON.parse(event.data);
+
+                const entries = Object.entries(request);
+                if (entries.length === 0)
+                    return;
+
+                CreateLogEntry(
+                    request.timestamp ?? Date.now(),
+                    request.eventTrackingId ?? "",
+                    request.remotePartyId,
+                    request.from,
+                    request.to,
+                    "out",
+                    "OnPutTariffRequest",
+                    `Tariff ${request.tariff.id}: ${JSON.stringify(request.tariff)}`,
+                    request.remotePartyId ?? "" // ConnectionColorKey
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutTariffRequest',
+                    event.data,
+                    exception
+                );
+            }
+
+        }, false);
+
+        eventSource.addEventListener('OnPutTariffResponse', (event: MessageEvent<string>) => {
+
+            try {
+
+                const response = JSON.parse(event.data);
+
+                AppendLogEntry(
+                    response.timestamp,
+                    response.roamingNetwork,
+                    response.eventTrackingId,
+                    ` ⇒ !`,
+                    response.runtime
+                );
+
+            }
+            catch (exception) {
+                ShowHTTPSSEError(
+                    'OnPutTariffResponse',
                     event.data,
                     exception
                 );
@@ -957,8 +1307,6 @@ function StartDebugLog() {
             }
 
         }, false);
-
-
 
 
         eventSource.addEventListener('OnStopSessionRequest', (event: MessageEvent<string>) => {
