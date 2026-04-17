@@ -2449,32 +2449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           if (remoteParty.Id.Role == Role.EMSP)
                                                           {
 
-                                                              //var cpoClient = new CPO.HTTP.CPO2EMSP_HTTPClient(
-
-                                                              //                    CPO_HTTPAPI,
-                                                              //                    remoteParty,
-                                                              //                    null, // VirtualHostname
-                                                              //                    null, // Description
-                                                              //                    null, // HTTPLogger
-
-                                                              //                    DisableLogging,
-                                                              //                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                              //                    ClientsLoggingContext ?? DefaultLoggingContext,
-                                                              //                    ClientsLogfileCreator,
-                                                              //                    DNSClient
-
-                                                              //                );
-
                                                               if (SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
-                                                              {
-
-                                                                  //var cpoClientLogger  = new CPO.HTTP.CPO2EMSP_HTTPClient.HTTPClientLogger(
-                                                                  //                           cpoClient,
-                                                                  //                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                  //                           ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                  //                           ClientsLogfileCreator
-                                                                  //                       );
-
                                                                   authorizationInfo    = await cpo2EMSPClient.PostToken(
                                                                                                    TokenId:             tokenId.Value,
                                                                                                    TokenType:           TokenType.RFID,
@@ -2482,9 +2457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                    From:                fromChargingStationOperatorId,
                                                                                                    To:                  toEMobilityProviderId,
                                                                                                    CancellationToken:   cancellationToken
-                                                                                               );
-
-                                                              }
+                                                                                               ).ConfigureAwait(false);
 
                                                               else
                                                                   return new AuthorizationInfo(
@@ -2511,7 +2484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                 From:                fromChargingStationOperatorId,
                                                                                                 To:                  toEMobilityProviderId,
                                                                                                 CancellationToken:   cancellationToken
-                                                                                            );
+                                                                                            ).ConfigureAwait(false);
 
                                                               else
                                                                   return new AuthorizationInfo(
@@ -2901,6 +2874,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+            {
+
                 authStartResult = WWCP.AuthStartResult.Authorized(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
@@ -2927,9 +2902,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                       Description:               null,
                                       AdditionalInfo:            null,
+
+                                      AdditionalContext:         JSONObject.Create(
+
+                                                                     authorizationInfo.Token is not null
+                                                                         ? new JProperty("token",      authorizationInfo.Token)
+                                                                         : null,
+
+                                                                     authorizationInfo.Info.    HasValue
+                                                                         ? new JProperty("info",       authorizationInfo.Info)
+                                                                         : null,
+
+                                                                     authorizationInfo.Location.HasValue
+                                                                         ? new JProperty("location",   authorizationInfo.Location)
+                                                                         : null
+
+                                                                 ),
+
                                       NumberOfRetries:           0,
                                       Runtime:                   authorizationInfo.Runtime
                                   );
+
+                //session?.CustomData["startSessionCommand"] 
+
+            }
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStartResult = WWCP.AuthStartResult.Blocked(
@@ -3434,27 +3430,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var operatorId = chargeDetailRecord.EVSEId?.OperatorId.ToOCPI_PartyIdv3();
                     var providerId = chargeDetailRecord.ProviderIdStart?.  ToOCPI_PartyIdv3();
 
-
                     #region Convert and send charge detail record
 
-                    var session   = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
+                    var session         = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
 
-                    if (!StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _))
+                    var wasAnRFIDAuth   = session?.CustomData["ocpi"] as JObject;
+                    var wasARemoteStart = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _);
+
+                    if (wasAnRFIDAuth is null && !wasARemoteStart)
                         continue;
 
-                    var cdrToken  = new CDRToken(
-                                        startSessionCommand.Token.CountryCode,
-                                        startSessionCommand.Token.PartyId,
-                                        startSessionCommand.Token.Id,
-                                        startSessionCommand.Token.Type,
-                                        startSessionCommand.Token.ContractId
-                                    );
+                    var token = startSessionCommand?.Token;
+
+                    if (wasAnRFIDAuth is not null && wasAnRFIDAuth["token"] is JObject tokenJSON)
+                        Token.TryParse(tokenJSON, out token, out _);
+
+                    if (token is null)
+                        continue;
 
                     var cdr       = chargeDetailRecord.ToOCPI(
                                         CustomChargingPoolIdConverter,
                                         CustomEVSEUIdConverter,
                                         CustomEVSEIdConverter,
-                                        cdrToken,
+                                        new CDRToken(
+                                            token.CountryCode,
+                                            token.PartyId,
+                                            token.Id,
+                                            token.Type,
+                                            token.ContractId
+                                        ),
                                         CommonAPI.GetTariffIds,
                                         RemoteParty_Id.TryParse(chargeDetailRecord.ProviderIdStart?.ToString()),
                                         CommonAPI.GetTariff,
