@@ -927,16 +927,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             EVSEUId     = evseUId;
 
 
-            EMSP_HTTPAPI.TryGetRemoteLocation(
+            if (!EMSP_HTTPAPI.TryGetRemoteLocation(
                 Party_Idv3.From(
                     countryCode,
                     partyId
                 ),
                 locationId,
-                out Location
-            );
+                out Location))
+            {
 
-            Location?.TryGetEVSE(
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
+                    StatusMessage        = "Unknown location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            Location.TryGetEVSE(
                 evseUId,
                 out EVSE
             );
@@ -1334,7 +1348,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             }
 
-            EVSE.TryGetConnector(connectorId, out Connector);
+            EVSE.TryGetConnector(
+                connectorId,
+                out Connector
+            );
 
             return true;
 

@@ -759,21 +759,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             EVSEUId     = evseUId;
 
 
-            CommonAPI.TryGetLocation(
+            if (!CommonAPI.TryGetLocation(
                 Party_Idv3.From(
                     countryCode,
                     partyId
                 ),
                 locationId,
-                out Location
-            );
+                out Location))
+            {
 
-            Location?.TryGetEVSE(
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
+                    StatusMessage        = "Unknown location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = [ "OPTIONS", "GET", "POST", "PUT", "DELETE" ],
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            Location.TryGetEVSE(
                 evseUId,
                 out EVSE
             );
 
-            return true;
+            return Location is not null;
 
         }
 
