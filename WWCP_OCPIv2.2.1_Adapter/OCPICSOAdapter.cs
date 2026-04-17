@@ -3456,7 +3456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         CustomEVSEIdConverter,
                                         cdrToken,
                                         CommonAPI.GetTariffIds,
-                                        RemoteParty_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                        RemoteParty_Id.TryParse(chargeDetailRecord.ProviderIdStart?.ToString()),
                                         CommonAPI.GetTariff,
                                         ref warnings
                                     );

@@ -333,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Try to parse the given text as a remote party identification.
         /// </summary>
         /// <param name="Text">A text representation of a remote party identification.</param>
-        public static RemoteParty_Id? TryParse(String Text)
+        public static RemoteParty_Id? TryParse(String? Text)
         {
 
             if (TryParse(Text, out var remotePartyId))
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a remote party identification.</param>
         /// <param name="RemotePartyId">The parsed remote party identification.</param>
-        public static Boolean TryParse(String Text, out RemoteParty_Id RemotePartyId)
+        public static Boolean TryParse(String? Text, out RemoteParty_Id RemotePartyId)
         {
 
             if (Text.IsNotNullOrEmpty())

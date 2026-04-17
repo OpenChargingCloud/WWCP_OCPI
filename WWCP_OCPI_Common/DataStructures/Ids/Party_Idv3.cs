@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// Try to parse the given text as a party identification.
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
-        public static Party_Idv3? TryParse(String Text)
+        public static Party_Idv3? TryParse(String? Text)
         {
 
             if (TryParse(Text, out var partyId))
@@ -223,10 +223,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
         /// <param name="PartyId">The parsed party identification.</param>
-        public static Boolean TryParse(String Text, out Party_Idv3 PartyId)
+        public static Boolean TryParse(String? Text, out Party_Idv3 PartyId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim();
 
             if (Text.IsNotNullOrEmpty() &&
                 Text.Length == 5 &&
