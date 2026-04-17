@@ -2906,15 +2906,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       AdditionalContext:         JSONObject.Create(
 
                                                                      authorizationInfo.Token is not null
-                                                                         ? new JProperty("token",      authorizationInfo.Token)
+                                                                         ? new JProperty("token",      authorizationInfo.Token.         ToJSON())
                                                                          : null,
 
                                                                      authorizationInfo.Info.    HasValue
-                                                                         ? new JProperty("info",       authorizationInfo.Info)
+                                                                         ? new JProperty("info",       authorizationInfo.Info.    Value.ToJSON())
                                                                          : null,
 
                                                                      authorizationInfo.Location.HasValue
-                                                                         ? new JProperty("location",   authorizationInfo.Location)
+                                                                         ? new JProperty("location",   authorizationInfo.Location.Value.ToJSON())
                                                                          : null
 
                                                                  ),
