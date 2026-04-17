@@ -1875,7 +1875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                           #region Check remote party configuration
 
-                                                                                          if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.No)
+                                                                                          if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.No)
                                                                                               return new AuthorizationInfo(
                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
                                                                                                          Token:        null,
@@ -1924,7 +1924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                               #endregion
 
-                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
+                                                                                              if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Yes)
                                                                                               {
 
                                                                                                   var patchEVSEResponse = await cpoClient.PatchEVSE(
@@ -1955,7 +1955,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                               }
 
-                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                              if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
                                                                                               {
 
                                                                                                   var putEVSEResponse = await cpoClient.PutEVSE(
@@ -1984,7 +1984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                               }
 
-                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
+                                                                                              if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
                                                                                               {
 
                                                                                                   var patchEVSEResponse = await cpoClient.PostEVSEStatus(
@@ -2085,7 +2085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                               }
 
-                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
+                                                                                              if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.Patch2Put)
                                                                                               {
 
                                                                                                   var putEVSEResponse = await cpoClient.PutEVSE(
@@ -2114,7 +2114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                               }
 
-                                                                                              if (remoteParty.CPO2EMPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
+                                                                                              if (remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus == RemoteParty.Fie.StatusUpdate)
                                                                                               {
 
                                                                                                   var patchEVSEResponse = await cpoClient.PostEVSEStatus(
@@ -3387,7 +3387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         continue;
                     }
 
-                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString().Replace("*", "-"));
                     var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
                     if (remoteParty is null)
                     {

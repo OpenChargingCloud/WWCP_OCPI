@@ -3831,8 +3831,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,
                                                  RequestBuilder:        requestBuilder => {
-                                                                            requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
-                                                                            requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
+
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,            requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID,        correlationId);
+
+                                                                            if (From.HasValue) {
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  From.Value.CountryCode.ToString());
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       From.Value.PartyId.    ToString());
+                                                                            }
+
+                                                                            if (To.  HasValue) {
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    To.  Value.CountryCode.ToString());
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         To.  Value.PartyId.    ToString());
+                                                                            }
+
                                                                         },
                                                  RequestLogDelegate:    OnPutSessionHTTPRequest,
                                                  ResponseLogDelegate:   OnPutSessionHTTPResponse,
@@ -4381,8 +4393,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
                                                   Authentication:        TokenAuth,
                                                   Connection:            ConnectionType.Close,
                                                   RequestBuilder:        requestBuilder => {
-                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
-                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
+
+                                                                                 requestBuilder.Set(HTTPHeaders.X_Request_ID,            requestId);
+                                                                                 requestBuilder.Set(HTTPHeaders.X_Correlation_ID,        correlationId);
+
+                                                                             if (From.HasValue) {
+                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  From.Value.CountryCode.ToString());
+                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       From.Value.PartyId.    ToString());
+                                                                             }
+
+                                                                             if (To.  HasValue) {
+                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    To.  Value.CountryCode.ToString());
+                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         To.  Value.PartyId.    ToString());
+                                                                             }
+
                                                                          },
                                                   RequestLogDelegate:    OnPostCDRHTTPRequest,
                                                   ResponseLogDelegate:   OnPostCDRHTTPResponse,
@@ -4903,21 +4927,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
 
-                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,         requestId);
-                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID,     correlationId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,            requestId);
+                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID,        correlationId);
 
                                                                             if (From.HasValue) {
                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  From.Value.CountryCode.ToString());
-                                                                                requestBuilder.Set(HTTPHeaders.OCPI_From_PartyId,      From.Value.PartyId.    ToString());
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       From.Value.PartyId.    ToString());
                                                                             }
 
                                                                             if (To.  HasValue) {
                                                                                 requestBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    To.  Value.CountryCode.ToString());
-                                                                                requestBuilder.Set(HTTPHeaders.OCPI_To_PartyId,        To.  Value.PartyId.    ToString());
+                                                                                requestBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         To.  Value.PartyId.    ToString());
                                                                             }
 
                                                                             if (TokenType.HasValue)
-                                                                                requestBuilder.QueryString.Add("type",     TokenType.       Value.ToString());
+                                                                                requestBuilder.QueryString.Add("type", TokenType.Value.ToString());
 
                                                                             if (LocationReference.HasValue)
                                                                             {
