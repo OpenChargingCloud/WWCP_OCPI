@@ -1872,8 +1872,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
                                          null,
                                          CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId) ?? nameof(CPO2EMSP_HTTPClient),
                                          CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
