@@ -3374,29 +3374,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Setup remote party
 
-                    if (!chargeDetailRecord.ProviderIdStart.HasValue)
+                    if (!RoamingNetwork.TryGetChargingSessionById(chargeDetailRecord.SessionId, out var chargingSession))
                     {
                         sendCDRResults.Add(
-                            WWCP.SendCDRResult.UnknownProviderIdStart(
+                            WWCP.SendCDRResult.UnknownSessionId(
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"The ProviderIdStart of the charge detail record is not set!")
+                                I18NString.Create($"The charging session '{chargeDetailRecord.SessionId}' is unknown!")
                             )
                         );
                         continue;
                     }
 
-                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString().Replace("*", "-"));
-                    var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
-                    if (remoteParty is null)
+                    if (chargingSession.AuthorizatorIdStart is null)
                     {
                         sendCDRResults.Add(
                             WWCP.SendCDRResult.Error(
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"Unknown remote party '{emspId}'!")
+                                I18NString.Create($"The AuthorizatorIdStart of the charging session is not set!")
+                            )
+                        );
+                        continue;
+                    }
+
+                    var remotePartyId  = RemoteParty_Id.Parse(chargingSession.AuthorizatorIdStart.ToString());
+                    if (!CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty))
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Unknown remote party '{remotePartyId}'!")
                             )
                         );
                         continue;
@@ -3410,7 +3422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"Unknown remote access info for '{emspId}'!")
+                                I18NString.Create($"Unknown remote access info for '{remotePartyId}'!")
                             )
                         );
                         break;
