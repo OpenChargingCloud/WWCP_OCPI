@@ -217,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPI
         //public IOModifiers?     OUT                { get; set; }
 
 
-        public CPO_2_EMSP_Role               CPO2EMPRole     { get; } = new CPO_2_EMSP_Role();
+        public CPO_2_EMSP_Role               CPO2EMSPRole    { get; } = new CPO_2_EMSP_Role();
         public CPO_2_HUB_Role                CPO2HUBRole     { get; } = new CPO_2_HUB_Role();
 
         public EMSP_2_CPO_Role               EMSP2CPORole    { get; } = new EMSP_2_CPO_Role();
