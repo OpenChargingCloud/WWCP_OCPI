@@ -1820,8 +1820,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                          null,
                                          CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id) ?? nameof(CPO2EMSP_HTTPClient),
                                          CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
@@ -1985,8 +1985,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                          null,
                                          CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id) ?? nameof(CPO2HUB_HTTPClient),
                                          CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
@@ -2031,17 +2031,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 var cpo2HUBClient = new CPO2HUB_HTTPClient(
-                                         this,
-                                         remoteParty,
-                                         null,
-                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                         null,
-                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                     );
+                                        this,
+                                        remoteParty,
+                                        null,
+                                        Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                        null,
+                                        CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId) ?? LoggingPath,
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId) ?? nameof(CPO2HUB_HTTPClient),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                        CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                    );
 
                 cpo2hubClients.TryAdd(hubId, cpo2HUBClient);
 
