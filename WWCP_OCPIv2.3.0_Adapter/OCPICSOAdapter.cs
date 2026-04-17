@@ -3236,7 +3236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         continue;
                     }
 
-                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString().Replace("*", "-"));
                     var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
                     if (remoteParty is null)
                     {
