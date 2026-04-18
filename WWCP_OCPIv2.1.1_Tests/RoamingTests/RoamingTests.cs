@@ -1877,8 +1877,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              ContractId:                null,
                                                                              PrintedNumber:             null,
                                                                              ExpiryDate:                null,
-                                                                             MaxkW:                     null,
-                                                                             MaxkWh:                    null,
+                                                                             MaxPower:                  null,
+                                                                             MaxEnergy:                 null,
                                                                              MaxDuration:               null,
                                                                              ChargingTariffs:           null,
                                                                              ListOfAuthStopTokens:      null,
@@ -1888,7 +1888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              Description:               null,
                                                                              AdditionalInfo:            null,
                                                                              NumberOfRetries:           0,
-                                                                             Runtime:                   null));
+                                                                             Runtime:                   TimeSpan.Zero));
 
                 graphDefinedEMP2Local.AddAuth(AuthenticationToken.Parse("55667788"),
                                               AuthStartResult.    Authorized(AuthorizatorId:            graphDefinedEMP2Local.AuthId,
@@ -1898,8 +1898,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              ContractId:                null,
                                                                              PrintedNumber:             null,
                                                                              ExpiryDate:                null,
-                                                                             MaxkW:                     null,
-                                                                             MaxkWh:                    null,
+                                                                             MaxPower:                  null,
+                                                                             MaxEnergy:                 null,
                                                                              MaxDuration:               null,
                                                                              ChargingTariffs:           null,
                                                                              ListOfAuthStopTokens:      null,
@@ -1909,7 +1909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              Description:               null,
                                                                              AdditionalInfo:            null,
                                                                              NumberOfRetries:           0,
-                                                                             Runtime:                   null));
+                                                                             Runtime:                   TimeSpan.Zero));
 
 
                 var authStartResult1 = await csoRoamingNetwork.AuthorizeStart(
@@ -2075,8 +2075,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              ContractId:                null,
                                                                              PrintedNumber:             null,
                                                                              ExpiryDate:                null,
-                                                                             MaxkW:                     null,
-                                                                             MaxkWh:                    null,
+                                                                             MaxPower:                  null,
+                                                                             MaxEnergy:                 null,
                                                                              MaxDuration:               null,
                                                                              ChargingTariffs:           null,
                                                                              ListOfAuthStopTokens:      null,
@@ -2086,7 +2086,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              Description:               null,
                                                                              AdditionalInfo:            null,
                                                                              NumberOfRetries:           0,
-                                                                             Runtime:                   null));
+                                                                             Runtime:                   TimeSpan.Zero));
 
                 if (evse1                 is not null &&
                     evse1.ChargingStation is not null &&
@@ -2300,8 +2300,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              ContractId:                null,
                                                                              PrintedNumber:             null,
                                                                              ExpiryDate:                null,
-                                                                             MaxkW:                     null,
-                                                                             MaxkWh:                    null,
+                                                                             MaxPower:                  null,
+                                                                             MaxEnergy:                 null,
                                                                              MaxDuration:               null,
                                                                              ChargingTariffs:           null,
                                                                              ListOfAuthStopTokens:      null,
@@ -2311,7 +2311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              Description:               null,
                                                                              AdditionalInfo:            null,
                                                                              NumberOfRetries:           0,
-                                                                             Runtime:                   null));
+                                                                             Runtime:                   TimeSpan.Zero));
 
                 graphDefinedEMP2Local.AddAuth(AuthenticationToken.Parse("55667788"),
                                               AuthStartResult.    Authorized(AuthorizatorId:            graphDefinedEMP1Local.AuthId,
@@ -2321,8 +2321,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              ContractId:                null,
                                                                              PrintedNumber:             null,
                                                                              ExpiryDate:                null,
-                                                                             MaxkW:                     null,
-                                                                             MaxkWh:                    null,
+                                                                             MaxPower:                  null,
+                                                                             MaxEnergy:                 null,
                                                                              MaxDuration:               null,
                                                                              ChargingTariffs:           null,
                                                                              ListOfAuthStopTokens:      null,
@@ -2332,7 +2332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              Description:               null,
                                                                              AdditionalInfo:            null,
                                                                              NumberOfRetries:           0,
-                                                                             Runtime:                   null));
+                                                                             Runtime:                   TimeSpan.Zero));
 
 
                 if (evse1                 is not null &&

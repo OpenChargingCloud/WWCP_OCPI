@@ -2461,6 +2461,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
                                           Id,
                                           this,
+                                          TimeSpan.Zero,
+                                          null,
                                           SessionId
                                       );
 
@@ -2473,8 +2475,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           ContractId:                null,
                                           PrintedNumber:             null,
                                           ExpiryDate:                null,
-                                          MaxkW:                     null,
-                                          MaxkWh:                    null,
+                                          MaxPower:                  null,
+                                          MaxEnergy:                 null,
                                           MaxDuration:               null,
                                           ChargingTariffs:           null,
                                           ListOfAuthStopTokens:      null,
@@ -2545,6 +2547,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
+                                    TimeSpan.Zero,
+                                    null,
                                     SessionId
                                 );
 

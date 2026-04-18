@@ -2277,7 +2277,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             if (authorizationInfo is null)
-                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
+                                      Id,
+                                      this,
+                                      TimeSpan.Zero,
+                                      null,
+                                      SessionId
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
@@ -2288,8 +2294,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            ContractId:                null,
                            PrintedNumber:             null,
                            ExpiryDate:                null,
-                           MaxkW:                     null,
-                           MaxkWh:                    null,
+                           MaxPower:                  null,
+                           MaxEnergy:                 null,
                            MaxDuration:               null,
                            ChargingTariffs:           null,
                            ListOfAuthStopTokens:      null,
@@ -2298,7 +2304,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
@@ -2310,7 +2316,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
@@ -2322,7 +2328,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
@@ -2334,7 +2340,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
@@ -2346,13 +2352,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
 
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
+                                    TimeSpan.Zero,
+                                    null,
                                     SessionId
                                 );
 
@@ -2500,7 +2508,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
             if (authorizationInfo is null)
-                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
+                                      Id,
+                                      this,
+                                      TimeSpan.Zero,
+                                      null,
+                                      SessionId
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
@@ -2511,8 +2525,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            ContractId:                null,
                            PrintedNumber:             null,
                            ExpiryDate:                null,
-                           MaxkW:                     null,
-                           MaxkWh:                    null,
+                           MaxPower:                  null,
+                           MaxEnergy:                 null,
                            MaxDuration:               null,
                            ChargingTariffs:           null,
                            ListOfAuthStopTokens:      null,
@@ -2521,7 +2535,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
@@ -2533,7 +2547,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
@@ -2545,7 +2559,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
@@ -2557,7 +2571,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
@@ -2569,11 +2583,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
-                           Runtime:                   null
+                           Runtime:                   TimeSpan.Zero
                        );
 
 
-            authStartResult ??= WWCP.AuthStartResult.Error(Id, this, SessionId);
+            authStartResult ??= WWCP.AuthStartResult.Error(
+                                    Id,
+                                    this,
+                                    TimeSpan.Zero,
+                                    null,
+                                    SessionId
+                                );
 
 
             #region Send OnAuthorizeStartResponse event

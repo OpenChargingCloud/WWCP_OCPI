@@ -2640,7 +2640,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             if (authorizationInfo is null)
-                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
+                                      Id,
+                                      this,
+                                      TimeSpan.Zero,
+                                      null,
+                                      SessionId
+                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
@@ -2651,8 +2657,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ContractId:                null,
                                       PrintedNumber:             null,
                                       ExpiryDate:                null,
-                                      MaxkW:                     null,
-                                      MaxkWh:                    null,
+                                      MaxPower:                  null,
+                                      MaxEnergy:                 null,
                                       MaxDuration:               null,
                                       ChargingTariffs:           null,
                                       ListOfAuthStopTokens:      null,
@@ -2716,6 +2722,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
+                                    TimeSpan.Zero,
+                                    null,
                                     SessionId
                                 );
 
@@ -2861,6 +2869,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
                                       Id,
                                       this,
+                                      TimeSpan.Zero,
+                                      null,
                                       SessionId
                                   );
 
@@ -2868,6 +2878,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.OutOfService(
                                       Id,
                                       this,
+                                      TimeSpan.Zero,
+                                      null,
                                       null,
                                       SessionId,
                                       I18NString.Create("No valid response from any authorization service!")
@@ -2888,8 +2900,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       PrintedNumber:             authorizationInfo.Token?.VisualNumber,
                                       UILanguage:                authorizationInfo.Token?.UILanguage,
                                       ExpiryDate:                null,
-                                      MaxkW:                     null,
-                                      MaxkWh:                    null,
+                                      MaxPower:                  null,
+                                      MaxEnergy:                 null,
                                       MaxDuration:               null,
                                       ChargingTariffs:           null,
                                       ListOfAuthStopTokens:      null,
@@ -2981,6 +2993,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
+                                    TimeSpan.Zero,
+                                    null,
                                     SessionId
                                 );
 
