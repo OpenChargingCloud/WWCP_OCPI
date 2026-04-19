@@ -545,7 +545,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
 
                             #region Check authentication
 
-                            if (request.User == null &&
+                            if (request.User is null &&
                                 UseHTTPSSE == ServiceSettings.RequiresAuthentication)
                             {
 
