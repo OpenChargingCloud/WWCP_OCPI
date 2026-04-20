@@ -1160,7 +1160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                      RemoteCertificateValidator:            (sender, certificate, chain, httpTestClient, policyErrors) => {
                                                                                 var x = NewHTTPClient.RemoteCertificateValidator?.Invoke(sender, certificate, chain, httpTestClient, policyErrors);
-                                                                                return x ?? (false,[]);
+                                                                                return x ?? TLSValidationResult.GeneralError();
                                                                             },
                                      LocalCertificateSelector:              NewHTTPClient.LocalCertificateSelector,
                                      ClientCertificates:                    NewHTTPClient.ClientCertificates,

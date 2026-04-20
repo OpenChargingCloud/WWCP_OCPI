@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPI
                                 UInt16?                                                    MaxNumberOfRetries           = null,
                                 UInt32?                                                    InternalBufferSize           = null,
                                 Boolean?                                                   UseHTTPPipelining            = null,
-                                HTTPModifiers?                                               OUT                          = null,
+                                HTTPModifiers?                                             OUT                          = null,
 
                                 IEnumerable<Version_Id>?                                   VersionIds                   = null,
                                 Version_Id?                                                SelectedVersionId            = null,
@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                certificateChain,
                                                                                tlsClient,
                                                                                policyErrors) => {
-                                                                                    return (false, [ $"The default behavior within {nameof(RemoteParty)} is to reject all remote TLS server certificates!" ] );
+                                                                                    return TLSValidationResult.Failed($"The default behavior for {nameof(RemoteParty)} is to reject all remote TLS server certificates!");
                                                                                });
             this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCertificates          = ClientCertificates         ?? [];

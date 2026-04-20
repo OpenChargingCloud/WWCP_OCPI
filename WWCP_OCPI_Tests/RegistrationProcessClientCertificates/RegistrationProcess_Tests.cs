@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                        ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
 
                                                                                              if (serverCertificate is null)
-                                                                                                 return (false, [ "The server certificate is null!" ]);
+                                                                                                 return TLSValidationResult.Failed("The server certificate is null!");
 
                                                                                              var chainReport = PKIFactory.ValidateServerChain(
                                                                                                                    serverCertificate,
@@ -153,8 +153,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                                                    rootCACertificate2!
                                                                                                                );
 
-                                                                                             return (chainReport.IsValid,
-                                                                                                     chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+                                                                                             return TLSValidationResult.From(
+                                                                                                        chainReport.IsValid,
+                                                                                                        chainReport.Status.Select(chainStatus => chainStatus.Status.ToString())
+                                                                                                    );
 
                                                                                        }
                                                                                        : null,
@@ -203,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                         ? (sender, serverCertificate, certificateChain, tlsClient, sslPolicyErrors) => {
 
                                                                                                 if (serverCertificate is null)
-                                                                                                    return (false, [ "The server certificate is null!" ]);
+                                                                                                    return TLSValidationResult.Failed("The server certificate is null!");
 
                                                                                                 var chainReport = PKIFactory.ValidateServerChain(
                                                                                                                     serverCertificate,
@@ -211,8 +213,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                                                                                     rootCACertificate2!
                                                                                                                 );
 
-                                                                                                return (chainReport.IsValid,
-                                                                                                        chainReport.Status.Select(chainStatus => chainStatus.Status.ToString()));
+                                                                                                return TLSValidationResult.From(
+                                                                                                           chainReport.IsValid,
+                                                                                                           chainReport.Status.Select(chainStatus => chainStatus.Status.ToString())
+                                                                                                       );
 
                                                                                         }
                                                                                         : null,
