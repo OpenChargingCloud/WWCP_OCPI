@@ -17,7 +17,7 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <param name="Request">The incoming OCPI/HTTP request.</param>
     /// <param name="Response">The outgoing OCPI/HTTP response.</param>
     public delegate Task OCPIResponseLogHandler(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           OCPIAPI,
+                                                HTTPExtAPI         OCPIAPI,
                                                 OCPIRequest        Request,
                                                 OCPIResponse       Response,
                                                 CancellationToken  CancellationToken);

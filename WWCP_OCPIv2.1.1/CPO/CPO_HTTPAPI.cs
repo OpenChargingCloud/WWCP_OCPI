@@ -24,7 +24,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
@@ -38,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPO_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class CPO_HTTPAPI : AHTTPExtAPIExtension2<CommonAPI, HTTPExtAPI>
     {
 
         #region Data
@@ -151,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetLocationsHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
@@ -179,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetLocationsHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
@@ -209,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetLocationHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
@@ -237,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetLocationHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
@@ -270,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetEVSEHTTPRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
+                                                   HTTPExtAPI         API,
                                                    OCPIRequest        Request,
                                                    CancellationToken  CancellationToken)
 
@@ -298,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetEVSEHTTPResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
+                                                    HTTPExtAPI         API,
                                                     OCPIRequest        Request,
                                                     OCPIResponse       Response,
                                                     CancellationToken  CancellationToken)
@@ -331,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetConnectorHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
@@ -359,7 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetConnectorHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
@@ -392,7 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetTariffsHTTPRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       CancellationToken  CancellationToken)
 
@@ -420,7 +419,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetTariffsHTTPResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        OCPIResponse       Response,
                                                        CancellationToken  CancellationToken)
@@ -450,7 +449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetTariffHTTPRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
+                                                     HTTPExtAPI         API,
                                                      OCPIRequest        Request,
                                                      CancellationToken  CancellationToken)
 
@@ -478,7 +477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetTariffHTTPResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       OCPIResponse       Response,
                                                       CancellationToken  CancellationToken)
@@ -511,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetSessionsHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
@@ -539,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetSessionsHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
@@ -569,7 +568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       CancellationToken  CancellationToken)
 
@@ -597,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        OCPIResponse       Response,
                                                        CancellationToken  CancellationToken)
@@ -630,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetCDRsHTTPRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
+                                                   HTTPExtAPI         API,
                                                    OCPIRequest        Request,
                                                    CancellationToken  CancellationToken)
 
@@ -658,7 +657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetCDRsHTTPResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
+                                                    HTTPExtAPI         API,
                                                     OCPIRequest        Request,
                                                     OCPIResponse       Response,
                                                     CancellationToken  CancellationToken)
@@ -688,7 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetCDRHTTPRequest(DateTimeOffset     Timestamp,
-                                                  HTTPAPIX           API,
+                                                  HTTPExtAPI         API,
                                                   OCPIRequest        Request,
                                                   CancellationToken  CancellationToken)
 
@@ -716,7 +715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetCDRHTTPResponse(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
+                                                   HTTPExtAPI         API,
                                                    OCPIRequest        Request,
                                                    OCPIResponse       Response,
                                                    CancellationToken  CancellationToken)
@@ -749,7 +748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetTokensHTTPRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
+                                                     HTTPExtAPI         API,
                                                      OCPIRequest        Request,
                                                      CancellationToken  CancellationToken)
 
@@ -777,7 +776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetTokensHTTPResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       OCPIResponse       Response,
                                                       CancellationToken  CancellationToken)
@@ -807,7 +806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task DeleteTokensHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
@@ -835,7 +834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task DeleteTokensHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
@@ -867,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task GetTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
+                                                    HTTPExtAPI         API,
                                                     OCPIRequest        Request,
                                                     CancellationToken  CancellationToken)
 
@@ -895,7 +894,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task GetTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
+                                                     HTTPExtAPI         API,
                                                      OCPIRequest        Request,
                                                      OCPIResponse       Response,
                                                      CancellationToken  CancellationToken)
@@ -925,7 +924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task PostTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
+                                                     HTTPExtAPI         API,
                                                      OCPIRequest        Request,
                                                      CancellationToken  CancellationToken)
 
@@ -953,7 +952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task PostTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       OCPIResponse       Response,
                                                       CancellationToken  CancellationToken)
@@ -983,7 +982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task PutTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
+                                                    HTTPExtAPI         API,
                                                     OCPIRequest        Request,
                                                     CancellationToken  CancellationToken)
 
@@ -1011,7 +1010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task PutTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
+                                                     HTTPExtAPI         API,
                                                      OCPIRequest        Request,
                                                      OCPIResponse       Response,
                                                      CancellationToken  CancellationToken)
@@ -1041,7 +1040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task PatchTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       CancellationToken  CancellationToken)
 
@@ -1069,7 +1068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task PatchTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        OCPIResponse       Response,
                                                        CancellationToken  CancellationToken)
@@ -1099,7 +1098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task DeleteTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
@@ -1127,7 +1126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task DeleteTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
@@ -1161,7 +1160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task ReserveNowHTTPRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       CancellationToken  CancellationToken)
 
@@ -1198,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task ReserveNowHTTPResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        OCPIResponse       Response,
                                                        CancellationToken  CancellationToken)
@@ -1228,7 +1227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task CancelReservationHTTPRequest(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           API,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              CancellationToken  CancellationToken)
 
@@ -1265,7 +1264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task CancelReservationHTTPResponse(DateTimeOffset     Timestamp,
-                                                              HTTPAPIX           API,
+                                                              HTTPExtAPI         API,
                                                               OCPIRequest        Request,
                                                               OCPIResponse       Response,
                                                               CancellationToken  CancellationToken)
@@ -1295,7 +1294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task StartSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
@@ -1332,7 +1331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task StartSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           API,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
@@ -1362,7 +1361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task StopSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           API,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
@@ -1399,7 +1398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task StopSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           API,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
@@ -1429,7 +1428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task UnlockConnectorHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           API,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
@@ -1466,7 +1465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task UnlockConnectorHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           API,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
@@ -1499,7 +1498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task NotifyWebPaymentsStartedHTTPRequest(DateTimeOffset     Timestamp,
-                                                                    HTTPAPIX           API,
+                                                                    HTTPExtAPI         API,
                                                                     OCPIRequest        Request,
                                                                     CancellationToken  CancellationToken)
 
@@ -1536,7 +1535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task NotifyWebPaymentsStartedHTTPResponse(DateTimeOffset     Timestamp,
-                                                                        HTTPAPIX           API,
+                                                                        HTTPExtAPI         API,
                                                                         OCPIRequest        Request,
                                                                         OCPIResponse       Response,
                                                                         CancellationToken  CancellationToken)
@@ -1566,7 +1565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="API">The CPO HTTP API.</param>
         /// <param name="Request">The OCPI request.</param>
         protected internal Task NotifyWebPaymentsFailedHTTPRequest(DateTimeOffset     Timestamp,
-                                                                    HTTPAPIX           API,
+                                                                    HTTPExtAPI         API,
                                                                     OCPIRequest        Request,
                                                                     CancellationToken  CancellationToken)
 
@@ -1603,7 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Request">The OCPI request.</param>
         /// <param name="Response">The OCPI response.</param>
         protected internal Task NotifyWebPaymentsFailedHTTPResponse(DateTimeOffset     Timestamp,
-                                                                    HTTPAPIX           API,
+                                                                    HTTPExtAPI         API,
                                                                     OCPIRequest        Request,
                                                                     OCPIResponse       Response,
                                                                     CancellationToken  CancellationToken)

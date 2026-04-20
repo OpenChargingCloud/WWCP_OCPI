@@ -1,315 +1,314 @@
-﻿/*
- * Copyright (c) 2015-2026 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
- *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.gnu.org/licenses/agpl.html
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#region Usings
-
-using NUnit.Framework;
-
-using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-
-using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.WWCP;
-
-#endregion
-
-namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
-{
-
-    /// <summary>
-    /// OCPI v3.0 adapter test defaults.
-    /// </summary>
-    public abstract class ACSOAdapterTests
-    {
-
-        #region Data
-
-        protected  RoamingNetwork?            roamingNetwork;
-        protected  HTTPTestServerX?           httpServer;
-        protected  HTTPExtAPIX?               httpAPI;
-        protected  CommonAPI?                 commonAPI;
-        protected  CPOAPI?                    cpoAPI;
-        protected  OCPICSOAdapter?            csoAdapter;
-        protected  IChargingStationOperator?  graphDefinedCSO;
+﻿///*
+// * Copyright (c) 2015-2026 GraphDefined GmbH <achim.friedland@graphdefined.com>
+// * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+// *
+// * Licensed under the Affero GPL license, Version 3.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.gnu.org/licenses/agpl.html
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+
+//#region Usings
+
+//using NUnit.Framework;
+
+//using org.GraphDefined.Vanaheimr.Illias;
+//using org.GraphDefined.Vanaheimr.Hermod;
+//using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
+//using cloud.charging.open.protocols.OCPI;
+//using cloud.charging.open.protocols.WWCP;
+
+//#endregion
+
+//namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
+//{
+
+//    /// <summary>
+//    /// OCPI v3.0 adapter test defaults.
+//    /// </summary>
+//    public abstract class ACSOAdapterTests
+//    {
+
+//        #region Data
+
+//        protected  RoamingNetwork?            roamingNetwork;
+//        protected  HTTPTestServerX?           httpServer;
+//        protected  HTTPExtAPI?               httpAPI;
+//        protected  CommonAPI?                 commonAPI;
+//        protected  CPOAPI?                    cpoAPI;
+//        protected  OCPICSOAdapter?            csoAdapter;
+//        protected  IChargingStationOperator?  graphDefinedCSO;
 
-        protected  URL                        remoteLocationsURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
+//        protected  URL                        remoteLocationsURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
-        #endregion
-
-        #region Constructor(s)
-
-        public ACSOAdapterTests()
-        {
-
-        }
+//        #endregion
 
-        #endregion
-
+//        #region Constructor(s)
+
+//        public ACSOAdapterTests()
+//        {
+
+//        }
 
-        #region SetupOnce()
-
-        [OneTimeSetUp]
-        public void SetupOnce()
-        {
-
-        }
-
-        #endregion
-
-        #region SetupEachTest()
+//        #endregion
+
 
-        [SetUp]
-        public void SetupEachTest()
-        {
+//        #region SetupOnce()
 
-            Timestamp.Reset();
+//        [OneTimeSetUp]
+//        public void SetupOnce()
+//        {
+
+//        }
+
+//        #endregion
 
-            roamingNetwork   = new RoamingNetwork(
-                                   Id:                                  RoamingNetwork_Id.Parse("test"),
-                                   Name:                                I18NString.Create("EV Roaming Test Network"),
-                                   Description:                         I18NString.Create("An EV roaming test network"),
-                                   InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
-                                   InitialStatus:                       RoamingNetworkStatusTypes.     Available,
-                                   RoamingNetworkInfos:                 [
-
-                                                                            //new RoamingNetworkInfo(
-                                                                            //    TrackerId:            Tracker_Id.Parse("1"),
-                                                                            //    NodeId:               Node_Id.Parse("de-bd-gw-01"),
-                                                                            //    IncomingURL:          "",
-                                                                            //    ExpiredAfter:         Timestamp.Now,
-                                                                            //
-                                                                            //    RoamingNetworkId:     this.RoamingNetworkId,
-                                                                            //    priority:             10,
-                                                                            //    weight:               10,
-                                                                            //    hostname:             null,
-                                                                            //    IPAddress:            IPv4Address.Parse("127.0.0.1"),
-                                                                            //    port:                 IPPort.Parse(4001),
-                                                                            //    transport:            TransportTypes.TCP,
-                                                                            //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
-                                                                            //    protocolType:         ProtocolTypes.WWCP,
-                                                                            //    PublicKeys:           null)
-
-                                                                            //new RoamingNetworkInfo(
-                                                                            //    TrackerId:            Tracker_Id.Parse("1"),
-                                                                            //    NodeId:               Node_Id.Parse("de-bd-gw-02"),
-                                                                            //    IncomingURL:          "",
-                                                                            //    ExpiredAfter:         Timestamp.Now,
-
-                                                                            //    RoamingNetworkId:     RoamingNetwork_Id.Parse("Prod"),
-                                                                            //    priority:             10,
-                                                                            //    weight:               10,
-                                                                            //    hostname:             null,
-                                                                            //    IPAddress:            IPv4Address.Parse("127.0.0.1"),
-                                                                            //    port:                 IPPort.Parse(4002),
-                                                                            //    transport:            TransportTypes.TCP,
-                                                                            //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
-                                                                            //    protocolType:         ProtocolTypes.WWCP,
-                                                                            //    PublicKeys:           null)
+//        #region SetupEachTest()
 
-                                                                        ]
-                               );
+//        [SetUp]
+//        public void SetupEachTest()
+//        {
 
-            Assert.That(roamingNetwork, Is.Not.Null);
+//            Timestamp.Reset();
 
+//            roamingNetwork   = new RoamingNetwork(
+//                                   Id:                                  RoamingNetwork_Id.Parse("test"),
+//                                   Name:                                I18NString.Create("EV Roaming Test Network"),
+//                                   Description:                         I18NString.Create("An EV roaming test network"),
+//                                   InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
+//                                   InitialStatus:                       RoamingNetworkStatusTypes.     Available,
+//                                   RoamingNetworkInfos:                 [
+
+//                                                                            //new RoamingNetworkInfo(
+//                                                                            //    TrackerId:            Tracker_Id.Parse("1"),
+//                                                                            //    NodeId:               Node_Id.Parse("de-bd-gw-01"),
+//                                                                            //    IncomingURL:          "",
+//                                                                            //    ExpiredAfter:         Timestamp.Now,
+//                                                                            //
+//                                                                            //    RoamingNetworkId:     this.RoamingNetworkId,
+//                                                                            //    priority:             10,
+//                                                                            //    weight:               10,
+//                                                                            //    hostname:             null,
+//                                                                            //    IPAddress:            IPv4Address.Parse("127.0.0.1"),
+//                                                                            //    port:                 IPPort.Parse(4001),
+//                                                                            //    transport:            TransportTypes.TCP,
+//                                                                            //    URLPrefix:            "",
+//                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
+//                                                                            //    protocolType:         ProtocolTypes.WWCP,
+//                                                                            //    PublicKeys:           null)
+
+//                                                                            //new RoamingNetworkInfo(
+//                                                                            //    TrackerId:            Tracker_Id.Parse("1"),
+//                                                                            //    NodeId:               Node_Id.Parse("de-bd-gw-02"),
+//                                                                            //    IncomingURL:          "",
+//                                                                            //    ExpiredAfter:         Timestamp.Now,
+
+//                                                                            //    RoamingNetworkId:     RoamingNetwork_Id.Parse("Prod"),
+//                                                                            //    priority:             10,
+//                                                                            //    weight:               10,
+//                                                                            //    hostname:             null,
+//                                                                            //    IPAddress:            IPv4Address.Parse("127.0.0.1"),
+//                                                                            //    port:                 IPPort.Parse(4002),
+//                                                                            //    transport:            TransportTypes.TCP,
+//                                                                            //    URLPrefix:            "",
+//                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
+//                                                                            //    protocolType:         ProtocolTypes.WWCP,
+//                                                                            //    PublicKeys:           null)
 
-            httpServer       = new HTTPTestServerX(
-                                   TCPPort:                   IPPort.Parse(3473)
-                               );
+//                                                                        ]
+//                               );
 
-            Assert.That(httpServer,  Is.Not.Null);
+//            Assert.That(roamingNetwork, Is.Not.Null);
 
 
-            httpAPI          = new HTTPExtAPIX(
-                                   HTTPServer:                httpServer
-                               );
+//            httpServer       = new HTTPTestServerX(
+//                                   TCPPort:                   IPPort.Parse(3473)
+//                               );
 
-            Assert.That(httpServer,  Is.Not.Null);
+//            Assert.That(httpServer,  Is.Not.Null);
 
 
-            var ocpiBaseAPI  = new CommonHTTPAPI(
+//            httpAPI          = new HTTPExtAPI(
+//                                   HTTPServer:                httpServer
+//                               );
 
-                                   HTTPAPI:                   httpAPI,
-                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
-                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
-                                   AdditionalURLPathPrefix:   null,
-                                   //KeepRemovedEVSEs:          null,
-                                   LocationsAsOpenData:       true,
-                                   AllowDowngrades:           null,
+//            Assert.That(httpServer,  Is.Not.Null);
 
-                                   ExternalDNSName:           null,
-                                   HTTPServiceName:           null,
-                                   BasePath:                  null,
 
-                                   RootPath:                  HTTPPath.Parse("/ocpi"),
-                                   APIVersionHashes:          null,
+//            var ocpiBaseAPI  = new CommonHTTPAPI(
 
-                                   IsDevelopment:             null,
-                                   DevelopmentServers:        null,
-                                   DisableLogging:            null,
-                                   LoggingContext:            null,
-                                   LoggingPath:               null,
-                                   LogfileName:               null,
-                                   LogfileCreator:            null
+//                                   HTTPAPI:                   httpAPI,
+//                                   OurBaseURL:                URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
+//                                   OurVersionsURL:            URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
+//                                   AdditionalURLPathPrefix:   null,
+//                                   //KeepRemovedEVSEs:          null,
+//                                   LocationsAsOpenData:       true,
+//                                   AllowDowngrades:           null,
 
-                               );
+//                                   ExternalDNSName:           null,
+//                                   HTTPServiceName:           null,
+//                                   BasePath:                  null,
 
-            Assert.That(ocpiBaseAPI,  Is.Not.Null);
+//                                   RootPath:                  HTTPPath.Parse("/ocpi"),
+//                                   APIVersionHashes:          null,
 
+//                                   IsDevelopment:             null,
+//                                   DevelopmentServers:        null,
+//                                   DisableLogging:            null,
+//                                   LoggingContext:            null,
+//                                   LoggingPath:               null,
+//                                   LogfileName:               null,
+//                                   LogfileCreator:            null
 
-            commonAPI        = new CommonAPI(
+//                               );
 
-                                   //OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
-                                   //OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
-                                   OurCredentialRoles:                  [
-                                                                            new CredentialsRole(
-                                                                                PartyId:          Party_Idv3.Parse("DEGEF"),
-                                                                                Role:             Role.CPO,
-                                                                                BusinessDetails:  new BusinessDetails(
-                                                                                                      "GraphDefined CSO",
-                                                                                                      URL.Parse("https://www.graphdefined.com/cso")
-                                                                                                  )
-                                                                            )
-                                                                        ],
-                                   DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
+//            Assert.That(ocpiBaseAPI,  Is.Not.Null);
 
-                                   BaseAPI:                             ocpiBaseAPI,
 
-                                   AdditionalURLPathPrefix:             null,
-                                   KeepRemovedEVSEs:                    null,
-                                   LocationsAsOpenData:                 true,
-                                   AllowDowngrades:                     null,
+//            commonAPI        = new CommonAPI(
 
-                                   ExternalDNSName:                     null,
-                                   HTTPServiceName:                     null,
-                                   BasePath:                            null,
+//                                   //OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
+//                                   //OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
+//                                   OurCredentialRoles:                  [
+//                                                                            new CredentialsRole(
+//                                                                                PartyId:          Party_Idv3.Parse("DEGEF"),
+//                                                                                Role:             Role.CPO,
+//                                                                                BusinessDetails:  new BusinessDetails(
+//                                                                                                      "GraphDefined CSO",
+//                                                                                                      URL.Parse("https://www.graphdefined.com/cso")
+//                                                                                                  )
+//                                                                            )
+//                                                                        ],
+//                                   DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
 
-                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
-                                   APIVersionHashes:                    null,
+//                                   BaseAPI:                             ocpiBaseAPI,
 
-                                   IsDevelopment:                       null,
-                                   DevelopmentServers:                  null,
-                                   DisableLogging:                      null,
-                                   LoggingPath:                         null,
-                                   LogfileName:                         null,
-                                   LogfileCreator:                      null
+//                                   AdditionalURLPathPrefix:             null,
+//                                   KeepRemovedEVSEs:                    null,
+//                                   LocationsAsOpenData:                 true,
+//                                   AllowDowngrades:                     null,
 
-                               );
+//                                   ExternalDNSName:                     null,
+//                                   HTTPServiceName:                     null,
+//                                   BasePath:                            null,
 
-            Assert.That(commonAPI, Is.Not.Null);
+//                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
+//                                   APIVersionHashes:                    null,
 
+//                                   IsDevelopment:                       null,
+//                                   DevelopmentServers:                  null,
+//                                   DisableLogging:                      null,
+//                                   LoggingPath:                         null,
+//                                   LogfileName:                         null,
+//                                   LogfileCreator:                      null
 
-            cpoAPI           = new CPOAPI(
+//                               );
 
-                                   CommonAPI:                           commonAPI,
-                                   AllowDowngrades:                     null,
+//            Assert.That(commonAPI, Is.Not.Null);
 
-                                   ExternalDNSName:                     null,
-                                   HTTPServiceName:                     null,
-                                   BasePath:                            null,
 
-                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
-                                   APIVersionHashes:                    null,
+//            cpoAPI           = new CPOAPI(
 
-                                   IsDevelopment:                       null,
-                                   DevelopmentServers:                  null,
-                                   DisableLogging:                      null,
-                                   LoggingPath:                         null,
-                                   LogfileName:                         null,
-                                   LogfileCreator:                      null
+//                                   CommonAPI:                           commonAPI,
+//                                   AllowDowngrades:                     null,
 
-                               );
+//                                   ExternalDNSName:                     null,
+//                                   HTTPServiceName:                     null,
+//                                   BasePath:                            null,
 
-            Assert.That(cpoAPI, Is.Not.Null);
+//                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
+//                                   APIVersionHashes:                    null,
 
+//                                   IsDevelopment:                       null,
+//                                   DevelopmentServers:                  null,
+//                                   DisableLogging:                      null,
+//                                   LoggingPath:                         null,
+//                                   LogfileName:                         null,
+//                                   LogfileCreator:                      null
 
-            csoAdapter       = roamingNetwork.CreateOCPIv3_0_CSOAdapter(
+//                               );
 
-                                   Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.roamingNetwork.Id),
-                                   Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
-                                   Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
+//            Assert.That(cpoAPI, Is.Not.Null);
 
-                                   CommonAPI:                           commonAPI,
 
-                                   CustomEVSEIdConverter:               null,
-                                   CustomEVSEConverter:                 null,
-                                   CustomEVSEStatusUpdateConverter:     null,
-                                   CustomChargeDetailRecordConverter:   null,
+//            csoAdapter       = roamingNetwork.CreateOCPIv3_0_CSOAdapter(
 
-                                   IncludeEVSEIds:                      null,
-                                   IncludeEVSEs:                        null,
-                                   IncludeChargingPoolIds:              null,
-                                   IncludeChargingPools:                null,
-                                   ChargeDetailRecordFilter:            null,
+//                                   Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.roamingNetwork.Id),
+//                                   Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
+//                                   Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
 
-                                   ServiceCheckEvery:                   null,
-                                   StatusCheckEvery:                    null,
-                                   CDRCheckEvery:                       null,
+//                                   CommonAPI:                           commonAPI,
 
-                                   DisablePushData:                     true,
-                                   DisablePushStatus:                   true,
-                                   DisableAuthentication:               true,
-                                   DisableSendChargeDetailRecords:      true
+//                                   CustomEVSEIdConverter:               null,
+//                                   CustomEVSEConverter:                 null,
+//                                   CustomEVSEStatusUpdateConverter:     null,
+//                                   CustomChargeDetailRecordConverter:   null,
 
-                               );
+//                                   IncludeEVSEIds:                      null,
+//                                   IncludeEVSEs:                        null,
+//                                   IncludeChargingPoolIds:              null,
+//                                   IncludeChargingPools:                null,
+//                                   ChargeDetailRecordFilter:            null,
 
-            Assert.That(csoAdapter, Is.Not.Null);
+//                                   ServiceCheckEvery:                   null,
+//                                   StatusCheckEvery:                    null,
+//                                   CDRCheckEvery:                       null,
 
+//                                   DisablePushData:                     true,
+//                                   DisablePushStatus:                   true,
+//                                   DisableAuthentication:               true,
+//                                   DisableSendChargeDetailRecords:      true
 
-            graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
-                                   Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                   Name:                I18NString.Create("GraphDefined CSO"),
-                                   Description:         I18NString.Create("GraphDefined CSO Services"),
-                                   InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
-                                   InitialStatus:       ChargingStationOperatorStatusTypes.Available
-                               ).Result.ChargingStationOperator;
+//                               );
 
-            Assert.That(graphDefinedCSO, Is.Not.Null);
+//            Assert.That(csoAdapter, Is.Not.Null);
 
 
-        }
+//            graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
+//                                   Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
+//                                   Name:                I18NString.Create("GraphDefined CSO"),
+//                                   Description:         I18NString.Create("GraphDefined CSO Services"),
+//                                   InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
+//                                   InitialStatus:       ChargingStationOperatorStatusTypes.Available
+//                               ).Result.ChargingStationOperator;
 
-        #endregion
+//            Assert.That(graphDefinedCSO, Is.Not.Null);
 
-        #region ShutdownEachTest()
 
-        [TearDown]
-        public async Task ShutdownEachTest()
-        {
-            if (httpServer is not null)
-                await httpServer.Stop();
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region ShutdownOnce()
+//        #region ShutdownEachTest()
 
-        [OneTimeTearDown]
-        public void ShutdownOnce()
-        {
+//        [TearDown]
+//        public async Task ShutdownEachTest()
+//        {
+//            if (httpServer is not null)
+//                await httpServer.Stop();
+//        }
 
-        }
+//        #endregion
 
-        #endregion
+//        #region ShutdownOnce()
 
+//        [OneTimeTearDown]
+//        public void ShutdownOnce()
+//        {
 
-    }
+//        }
 
-}
+//        #endregion
+
+
+//    }
+
+//}

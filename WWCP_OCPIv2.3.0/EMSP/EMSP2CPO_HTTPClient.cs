@@ -810,16 +810,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public EMSP2CPO_HTTPClient(EMSP_HTTPAPI                                              EMSP_HTTPAPI,
-                              RemoteParty                                               RemoteParty,
-                              HTTPHostname?                                             VirtualHostname   = null,
-                              I18NString?                                               Description       = null,
-                              org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
+                                   RemoteParty                                               RemoteParty,
+                                   HTTPHostname?                                             VirtualHostname   = null,
+                                   I18NString?                                               Description       = null,
+                                   org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?  HTTPLogger        = null,
 
-                              Boolean?                                                  DisableLogging    = false,
-                              String?                                                   LoggingPath       = null,
-                              String?                                                   LoggingContext    = null,
-                              OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
-                              IDNSClient?                                               DNSClient         = null)
+                                   Boolean?                                                  DisableLogging    = false,
+                                   String?                                                   LoggingPath       = null,
+                                   String?                                                   LoggingContext    = null,
+                                   OCPILogfileCreatorDelegate?                               LogfileCreator    = null,
+                                   IDNSClient?                                               DNSClient         = null)
 
             : base(EMSP_HTTPAPI.CommonAPI,
                    RemoteParty,
@@ -2706,49 +2706,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
             try
             {
 
-                var remoteURL = await GetModuleRemoteURL(
-                                          Module_Id.Tokens,
-                                          InterfaceRoles.SENDER,
-                                          VersionId,
-                                          eventTrackingId,
-                                          CancellationToken
-                                      );
+                var httpClient = await GetModuleHTTPClient(
+                                           Module_Id.Tokens,
+                                           InterfaceRoles.SENDER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
-                if (remoteURL.HasValue)
+                if (httpClient is not null)
                 {
 
                     #region Upstream HTTP request...
 
-                    var httpResponse = await HTTPClientFactory.Create(
-                                                 remoteURL.Value,
-                                                 VirtualHostname,
-                                                 Description,
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 LocalCertificateSelector,
-                                                 ClientCertificates,
-                                                 ClientCertificateContext,
-                                                 ClientCertificateChain,
-                                                 TLSProtocols,
-                                                 ContentType,
-                                                 Accept,
-                                                 HTTPAuthentication,
-                                                 TOTPConfig,
-                                                 HTTPUserAgent,
-                                                 Connection,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
-                                                 DisableLogging,
-                                                 HTTPLogger,
-                                                 DNSClient
-                                             ).
+                    var httpResponse = await httpClient.
 
-                                             GET(remoteURL.Value.Path + CountryCode.ToString() +
-                                                                        PartyId.    ToString() +
-                                                                        TokenId.    ToString(),
+                                             GET(httpClient.RemoteURL.Path + CountryCode.ToString() +
+                                                                             PartyId.    ToString() +
+                                                                             TokenId.    ToString(),
                                                  Accept:                ocpiAcceptTypes,
                                                  Authentication:        TokenAuth,
                                                  Connection:            ConnectionType.Close,

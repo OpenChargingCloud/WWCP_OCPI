@@ -22,7 +22,6 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.WWCP;
@@ -42,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         protected  RoamingNetwork?            roamingNetwork;
         protected  HTTPTestServerX?           httpServer;
-        protected  HTTPExtAPIX?               httpAPI;
+        protected  HTTPExtAPI?               httpAPI;
         protected  CommonAPI?                 commonAPI;
         protected  CPO_HTTPAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
@@ -136,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.That(httpServer,  Is.Not.Null);
 
 
-            httpAPI          = new HTTPExtAPIX(
+            httpAPI          = new HTTPExtAPI(
                                    HTTPServer:                httpServer
                                );
 

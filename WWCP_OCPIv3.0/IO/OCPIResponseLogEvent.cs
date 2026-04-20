@@ -18,7 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region InvokeAsync(ServerTimestamp, OCPIAPI, Request, Response)
+        #region InvokeAsync (ServerTimestamp, OCPIAPI, Request, Response)
 
         /// <summary>
         /// Call all subscribers sequentially.
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public async Task InvokeAsync(DateTimeOffset     ServerTimestamp,
-                                      HTTPAPIX           OCPIAPI,
+                                      HTTPExtAPI         OCPIAPI,
                                       OCPIRequest        Request,
                                       OCPIResponse       Response,
                                       CancellationToken  CancellationToken)
@@ -134,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenAny    (ServerTimestamp, OCPIAPI, Request, Response,               Timeout = null)
+        #region WhenAny     (ServerTimestamp, OCPIAPI, Request, Response,               Timeout = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for any to complete.
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Response">The outgoing response.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task WhenAny(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken,
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenFirst  (ServerTimestamp, OCPIAPI, Request, Response, VerifyResult, Timeout = null, DefaultResult = null)
+        #region WhenFirst   (ServerTimestamp, OCPIAPI, Request, Response, VerifyResult, Timeout = null, DefaultResult = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
-                                    HTTPAPIX           OCPIAPI,
+                                    HTTPExtAPI         OCPIAPI,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
@@ -253,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenAll    (ServerTimestamp, OCPIAPI, Request, Response)
+        #region WhenAll     (ServerTimestamp, OCPIAPI, Request, Response)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
@@ -263,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public Task WhenAll(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken)

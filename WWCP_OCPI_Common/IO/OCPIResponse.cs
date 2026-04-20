@@ -428,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPI
                 Timestamp                                      ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
                 HTTPResponseBuilder                            ??= new HTTPResponse.Builder(Request?.HTTPRequest);
-                HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServerX?.HTTPServerName;
+                HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServer?.HTTPServerName;
                 HTTPResponseBuilder.Date                       ??= Timestamp.Value;
                 HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
                 HTTPResponseBuilder.AccessControlAllowHeaders  ??= [ "Authorization" ];

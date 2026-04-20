@@ -18,7 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        #region InvokeAsync(ServerTimestamp, OCPIAPI, Request)
+        #region InvokeAsync (ServerTimestamp, OCPIAPI, Request)
 
         /// <summary>
         /// Call all subscribers sequentially.
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         public async Task InvokeAsync(DateTimeOffset     ServerTimestamp,
-                                      HTTPAPIX           OCPIAPI,
+                                      HTTPExtAPI         OCPIAPI,
                                       OCPIRequest        Request,
                                       CancellationToken  CancellationToken)
         {
@@ -131,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenAny    (ServerTimestamp, OCPIAPI, Request,               Timeout = null)
+        #region WhenAny     (ServerTimestamp, OCPIAPI, Request,               Timeout = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for any to complete.
@@ -141,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Request">The incoming request.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task WhenAny(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             CancellationToken  CancellationToken,
                             TimeSpan?          Timeout = null)
@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenFirst  (ServerTimestamp, OCPIAPI, Request, VerifyResult, Timeout = null, DefaultResult = null)
+        #region WhenFirst   (ServerTimestamp, OCPIAPI, Request, VerifyResult, Timeout = null, DefaultResult = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
-                                    HTTPAPIX           OCPIAPI,
+                                    HTTPExtAPI         OCPIAPI,
                                     OCPIRequest        Request,
                                     Func<T, Boolean>   VerifyResult,
                                     Func<TimeSpan, T>  DefaultResult,
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region WhenAll    (ServerTimestamp, OCPIAPI, Request)
+        #region WhenAll     (ServerTimestamp, OCPIAPI, Request)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         public Task WhenAll(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             CancellationToken  CancellationToken)
         {

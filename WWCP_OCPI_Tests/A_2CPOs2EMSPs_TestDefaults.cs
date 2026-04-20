@@ -36,7 +36,6 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.PKI;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
@@ -60,18 +59,18 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                               String?  Token = null)
 
             => await new HTTPClient(RemoteURL).
-                         Execute(client => client.CreateRequest(HTTPMethod.OPTIONS,
-                                                                RemoteURL.Path,
-                                                                RequestBuilder: requestBuilder => {
+                         OPTIONS(
+                             RemoteURL.Path,
+                             RequestBuilder: requestBuilder => {
 
-                                                                    if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                        requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                 if (Token is not null && Token.IsNotNullOrEmpty())
+                                     requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                    requestBuilder.Set("X-Request-ID",      "1234");
-                                                                    requestBuilder.Set("X-Correlation-ID",  "5678");
+                                 requestBuilder.Set("X-Request-ID",      "1234");
+                                 requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                })).
-                         ConfigureAwait(false);
+                             }
+                         ).ConfigureAwait(false);
 
         #endregion
 
@@ -83,19 +82,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              GET(
+                                                  RemoteURL.Path,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
@@ -111,19 +110,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              GET(
+                                                  RemoteURL.Path,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<JArray>(httpResponse,
                                             JArray.Parse(httpResponse.HTTPBodyAsUTF8String ?? "[]"));
@@ -139,19 +138,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              GET(
+                                                  RemoteURL.Path,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Text.HTML_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Text.HTML_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<String>(httpResponse,
                                             httpResponse.HTTPBodyAsUTF8String ?? "");
@@ -167,19 +166,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              GET(
+                                                  RemoteURL.Path,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Text.PLAIN);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Text.PLAIN);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<String>(httpResponse,
                                             httpResponse.HTTPBodyAsUTF8String ?? "");
@@ -196,19 +195,19 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.DELETE,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              DELETE(
+                                                  RemoteURL.Path,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
@@ -226,21 +225,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              PUT(
+                                                  RemoteURL.Path,
+                                                  JSON.ToUTF8Bytes(),
+                                                  HTTPContentType.Application.JSON_UTF8,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
@@ -257,21 +256,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
+                                              POST(
+                                                  RemoteURL.Path,
+                                                  JSON.ToUTF8Bytes(),
+                                                  HTTPContentType.Application.JSON_UTF8,
+                                                  RequestBuilder: requestBuilder => {
 
-                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
+                                                      if (Token is not null && Token.IsNotNullOrEmpty())
+                                                          requestBuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
+                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                      requestBuilder.Set("X-Request-ID",      "1234");
+                                                      requestBuilder.Set("X-Correlation-ID",  "5678");
 
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                                  }
+                                              ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
@@ -341,7 +340,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO #1
 
         public          HTTPTestServerX?                                               cpo1HTTPServer;
-        protected       HTTPExtAPIX?                                                   cpo1HTTPAPI;
+        protected       HTTPExtAPI?                                                   cpo1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1emsp1TLSClientKeyPair;
@@ -380,12 +379,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo1APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.CommonAPI?                                            cpo1CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo1WebAPI_v3_0;
-        protected       OCPIv3_0.CPOAPI?                                               cpo1CPOAPI_v3_0;
-        protected       OCPIv3_0.OCPICSOAdapter?                                       cpo1Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo1APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo1APIResponseLogs_v3_0 = [];
+      //  protected       OCPIv3_0.CommonAPI?                                            cpo1CommonAPI_v3_0;
+      //  protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo1WebAPI_v3_0;
+      //  protected       OCPIv3_0.CPOAPI?                                               cpo1CPOAPI_v3_0;
+      //  protected       OCPIv3_0.OCPICSOAdapter?                                       cpo1Adapter_v3_0;
+      //  protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo1APIRequestLogs_v3_0  = [];
+      //  protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo1APIResponseLogs_v3_0 = [];
 
         protected const String                                                         cpo1_accessing_hub1__token    = "cpo1_accessing_hub1++token";
         protected const String                                                         cpo1_accessing_emsp1__token   = "cpo1_accessing_emsp1++token";
@@ -396,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region CPO #2
 
         public          HTTPTestServerX?                                               cpo2HTTPServer;
-        protected       HTTPExtAPIX?                                                   cpo2HTTPAPI;
+        protected       HTTPExtAPI?                                                   cpo2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo2TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2emsp1TLSClientKeyPair;
@@ -435,12 +434,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo2APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.CommonAPI?                                            cpo2CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo2WebAPI_v3_0;
-        protected       OCPIv3_0.CPOAPI?                                               cpo2CPOAPI_v3_0;
-        protected       OCPIv3_0.OCPICSOAdapter?                                       cpo2Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo2APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo2APIResponseLogs_v3_0 = [];
+        //protected       OCPIv3_0.CommonAPI?                                            cpo2CommonAPI_v3_0;
+        //protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    cpo2WebAPI_v3_0;
+        //protected       OCPIv3_0.CPOAPI?                                               cpo2CPOAPI_v3_0;
+        //protected       OCPIv3_0.OCPICSOAdapter?                                       cpo2Adapter_v3_0;
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     cpo2APIRequestLogs_v3_0  = [];
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    cpo2APIResponseLogs_v3_0 = [];
 
         protected const String                                                         cpo2_accessing_hub1__token    = "cpo2_accessing_hub1++token";
         protected const String                                                         cpo2_accessing_emsp1__token   = "cpo2_accessing_emsp1++token";
@@ -451,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region HUB #1
 
         public          HTTPTestServerX?                                               hub1HTTPServer;
-        protected       HTTPExtAPIX?                                                   hub1HTTPAPI;
+        protected       HTTPExtAPI?                                                   hub1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       hub1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       hub1cpo1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       hub1cpo2TLSClientKeyPair;
@@ -493,12 +492,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   hub1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  hub1APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.CommonAPI?                                            hub1CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    hub1WebAPI_v3_0;
-        //protected       OCPIv3_0.HUBAPI?                                               hub1HUBAPI_v3_0;
-        //protected       OCPIv3_0.OCPICSOAdapter?                                       hub1Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     hub1APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    hub1APIResponseLogs_v3_0 = [];
+        //protected       OCPIv3_0.CommonAPI?                                            hub1CommonAPI_v3_0;
+        //protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    hub1WebAPI_v3_0;
+        ////protected       OCPIv3_0.HUBAPI?                                               hub1HUBAPI_v3_0;
+        ////protected       OCPIv3_0.OCPICSOAdapter?                                       hub1Adapter_v3_0;
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     hub1APIRequestLogs_v3_0  = [];
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    hub1APIResponseLogs_v3_0 = [];
 
         protected const String                                                         hub1_accessing_cpo1__token    = "hub1_accessing_cpo1++token";
         protected const String                                                         hub1_accessing_cpo2__token    = "hub1_accessing_cpo2++token";
@@ -510,7 +509,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region EMSP #1
 
         public          HTTPTestServerX?                                               emsp1HTTPServer;
-        protected       HTTPExtAPIX?                                                   emsp1HTTPAPI;
+        protected       HTTPExtAPI?                                                   emsp1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1cpo1TLSClientKeyPair;
@@ -549,12 +548,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp1APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.CommonAPI?                                            emsp1CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp1WebAPI_v3_0;
-        protected       OCPIv3_0.EMSPAPI?                                              emsp1EMSPAPI_v3_0;
-        protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp1Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp1APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp1APIResponseLogs_v3_0 = [];
+        //protected       OCPIv3_0.CommonAPI?                                            emsp1CommonAPI_v3_0;
+        //protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp1WebAPI_v3_0;
+        //protected       OCPIv3_0.EMSPAPI?                                              emsp1EMSPAPI_v3_0;
+        //protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp1Adapter_v3_0;
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp1APIRequestLogs_v3_0  = [];
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp1APIResponseLogs_v3_0 = [];
 
         protected const String                                                         emsp1_accessing_hub1__token   = "hub1_accessing_cpo1++token";
         protected const String                                                         emsp1_accessing_cpo1__token   = "emsp1_accessing_cpo1++token";
@@ -565,7 +564,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         #region EMSP #2
 
         public          HTTPTestServerX?                                               emsp2HTTPServer;
-        protected       HTTPExtAPIX?                                                   emsp2HTTPAPI;
+        protected       HTTPExtAPI?                                                   emsp2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp2TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo1TLSClientKeyPair;
@@ -604,12 +603,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp2APIResponseLogs_v2_3_0 = [];
 
-        protected       OCPIv3_0.CommonAPI?                                            emsp2CommonAPI_v3_0;
-        protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp2WebAPI_v3_0;
-        protected       OCPIv3_0.EMSPAPI?                                              emsp2EMSPAPI_v3_0;
-        protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp2Adapter_v3_0;
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp2APIRequestLogs_v3_0  = [];
-        protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp2APIResponseLogs_v3_0 = [];
+        //protected       OCPIv3_0.CommonAPI?                                            emsp2CommonAPI_v3_0;
+        //protected       OCPIv3_0.WebAPI.OCPIWebAPI?                                    emsp2WebAPI_v3_0;
+        //protected       OCPIv3_0.EMSPAPI?                                              emsp2EMSPAPI_v3_0;
+        //protected       OCPIv3_0.OCPIEMPAdapter?                                       emsp2Adapter_v3_0;
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIRequest>     emsp2APIRequestLogs_v3_0  = [];
+        //protected       ConcurrentDictionary<DateTimeOffset, OCPIv3_0.OCPIResponse>    emsp2APIResponseLogs_v3_0 = [];
 
         protected const String                                                         emsp1_accessing_hub2__token   = "emsp1_accessing_hub1++token";
         protected const String                                                         emsp1_accessing_cpo2__token   = "emsp1_accessing_cpo1++token";
@@ -1965,23 +1964,23 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Create cpo1/cpo2/hub1/emsp1/emsp2 HTTP APIs
 
-            cpo1HTTPAPI          = new HTTPExtAPIX(
+            cpo1HTTPAPI          = new HTTPExtAPI(
                                        HTTPServer:  cpo1HTTPServer
                                    );
 
-            cpo2HTTPAPI          = new HTTPExtAPIX(
+            cpo2HTTPAPI          = new HTTPExtAPI(
                                        HTTPServer:  cpo2HTTPServer
                                    );
 
-            hub1HTTPAPI          = new HTTPExtAPIX(
+            hub1HTTPAPI          = new HTTPExtAPI(
                                        HTTPServer:  hub1HTTPServer
                                    );
 
-            emsp1HTTPAPI         = new HTTPExtAPIX(
+            emsp1HTTPAPI         = new HTTPExtAPI(
                                        HTTPServer:  emsp1HTTPServer
                                    );
 
-            emsp2HTTPAPI         = new HTTPExtAPIX(
+            emsp2HTTPAPI         = new HTTPExtAPI(
                                        HTTPServer:  emsp2HTTPServer
                                    );
 
@@ -5804,8 +5803,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (cpo1CommonAPI_v2_3_0 is not null)
                 File.Delete(cpo1CommonAPI_v2_3_0.RemotePartyDBFileName);
 
-            if (cpo1CommonAPI_v3_0   is not null)
-                File.Delete(cpo1CommonAPI_v3_0.  RemotePartyDBFileName);
+            //if (cpo1CommonAPI_v3_0   is not null)
+            //    File.Delete(cpo1CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 
@@ -5820,8 +5819,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (cpo2CommonAPI_v2_3_0 is not null)
                 File.Delete(cpo2CommonAPI_v2_3_0.RemotePartyDBFileName);
 
-            if (cpo2CommonAPI_v3_0   is not null)
-                File.Delete(cpo2CommonAPI_v3_0.  RemotePartyDBFileName);
+            //if (cpo2CommonAPI_v3_0   is not null)
+            //    File.Delete(cpo2CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 
@@ -5833,8 +5832,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (hub1CommonAPI_v2_3_0 is not null)
                 File.Delete(hub1CommonAPI_v2_3_0.RemotePartyDBFileName);
 
-            if (hub1CommonAPI_v3_0   is not null)
-                File.Delete(hub1CommonAPI_v3_0.  RemotePartyDBFileName);
+            //if (hub1CommonAPI_v3_0   is not null)
+            //    File.Delete(hub1CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 
@@ -5849,8 +5848,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (emsp1CommonAPI_v2_3_0 is not null)
                 File.Delete(emsp1CommonAPI_v2_3_0.RemotePartyDBFileName);
 
-            if (emsp1CommonAPI_v3_0   is not null)
-                File.Delete(emsp1CommonAPI_v3_0.  RemotePartyDBFileName);
+            //if (emsp1CommonAPI_v3_0   is not null)
+            //    File.Delete(emsp1CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 
@@ -5865,8 +5864,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             if (emsp2CommonAPI_v2_3_0 is not null)
                 File.Delete(emsp2CommonAPI_v2_3_0.RemotePartyDBFileName);
 
-            if (emsp2CommonAPI_v3_0   is not null)
-                File.Delete(emsp2CommonAPI_v3_0.  RemotePartyDBFileName);
+            //if (emsp2CommonAPI_v3_0   is not null)
+            //    File.Delete(emsp2CommonAPI_v3_0.  RemotePartyDBFileName);
 
             #endregion
 

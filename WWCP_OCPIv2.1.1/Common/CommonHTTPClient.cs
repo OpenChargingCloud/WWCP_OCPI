@@ -361,31 +361,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Version.Id,
                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                    RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
-                   RemoteParty.RemoteAccessInfos.First().TOTPConfig,
 
-                   VirtualHostname,
+                   //VirtualHostname,
                    Description,
-                   RemoteParty.RemoteAccessInfos.First().MaxNumberOfPooledClients,
-                   RemoteParty.RemoteAccessInfos.First().PreferIPv4,
+                   RemoteParty.RemoteAccessInfos.First().HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   RemoteParty.RemoteAccessInfos.First().Accept,
+                   RemoteParty.RemoteAccessInfos.First().ContentType,
+                   RemoteParty.RemoteAccessInfos.First().ConnectionType,
+                   null,  // DefaultRequestBuilder
+
                    RemoteParty.RemoteAccessInfos.First().RemoteCertificateValidator,
                    RemoteParty.RemoteAccessInfos.First().LocalCertificateSelector,
                    RemoteParty.RemoteAccessInfos.First().ClientCertificates,
                    RemoteParty.RemoteAccessInfos.First().ClientCertificateContext,
                    RemoteParty.RemoteAccessInfos.First().ClientCertificateChain,
                    RemoteParty.RemoteAccessInfos.First().TLSProtocols,
+                   null,  // CipherSuitesPolicy
+                   null,  // CertificateChainPolicy
+                   null,  // CertificateRevocationCheckMode
+                   null,  // ApplicationProtocols
+                   null,  // AllowRenegotiation
+                   null,  // AllowTLSResume
+                   RemoteParty.RemoteAccessInfos.First().TOTPConfig,
 
-                   RemoteParty.RemoteAccessInfos.First().HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   RemoteParty.RemoteAccessInfos.First().Accept,
-                   RemoteParty.RemoteAccessInfos.First().ContentType,
-                   RemoteParty.RemoteAccessInfos.First().ConnectionType,
+                   RemoteParty.RemoteAccessInfos.First().MaxNumberOfPooledClients,
 
+                   RemoteParty.RemoteAccessInfos.First().PreferIPv4,
+                   null,  // ConnectTimeout
                    RemoteParty.RemoteAccessInfos.First().RequestTimeout,
+                   null,  // SendTimeout
                    RemoteParty.RemoteAccessInfos.First().TransmissionRetryDelay,
                    RemoteParty.RemoteAccessInfos.First().MaxNumberOfRetries,
                    RemoteParty.RemoteAccessInfos.First().InternalBufferSize,
-                   RemoteParty.RemoteAccessInfos.First().UseHTTPPipelining,
+
+                   null,  // ConsumeRequestChunkedTEImmediately 
+                   null,  // ConsumeResponseChunkedTEImmediately
+
+                   //HTTPLogger,
+
                    DisableLogging,
-                   HTTPLogger,
                    DNSClient)
 
         {
@@ -1075,7 +1089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<HTTPTestClient?>
+        public async Task<HTTPClient?>
 
             GetModuleHTTPClient(Module_Id          ModuleId,
                                 Version_Id?        VersionId           = null,
@@ -1095,7 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (remoteURL.HasValue)
             {
 
-                HTTPTestClient? httpClient = null;
+                HTTPClient? httpClient = null;
 
                 if (remoteURL.Value.Hostname.ToString() == NewHTTPClient.DomainName?.ToString())
                 {
@@ -1105,7 +1119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 else
                 {
 
-                    httpClient = new HTTPTestClient(
+                    httpClient = new HTTPClient(
 
                                      remoteURL.Value,
                                      Description:                           NewHTTPClient.Description,

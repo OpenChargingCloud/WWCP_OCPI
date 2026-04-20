@@ -24,7 +24,6 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
@@ -181,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class OCPIWebAPI : AHTTPExtAPIExtension2<CommonAPI, HTTPExtAPI>
     {
 
         #region Data

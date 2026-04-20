@@ -18,7 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public async Task InvokeAsync(DateTimeOffset     ServerTimestamp,
-                                      HTTPAPIX           OCPIAPI,
+                                      HTTPExtAPI         OCPIAPI,
                                       OCPIRequest        Request,
                                       OCPIResponse       Response,
                                       CancellationToken  CancellationToken)
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Response">The outgoing response.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task WhenAny(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken,
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
-                                    HTTPAPIX           OCPIAPI,
+                                    HTTPExtAPI         OCPIAPI,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
@@ -263,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public Task WhenAll(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         OCPIAPI,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken)

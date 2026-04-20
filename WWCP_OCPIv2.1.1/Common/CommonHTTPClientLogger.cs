@@ -102,30 +102,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               handler => CommonClient.OnGetVersionsHTTPRequest += handler,
                               handler => CommonClient.OnGetVersionsHTTPRequest -= handler,
                               "GetVersions", "versions", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetVersionsResponse",
                               handler => CommonClient.OnGetVersionsHTTPResponse += handler,
                               handler => CommonClient.OnGetVersionsHTTPResponse -= handler,
                               "GetVersions", "versions", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("GetVersionDetailsRequest",
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
                               "GetVersionDetails", "versions", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetVersionDetailsResponse",
                               handler => CommonClient.OnGetVersionDetailsHTTPResponse += handler,
                               handler => CommonClient.OnGetVersionDetailsHTTPResponse -= handler,
                               "GetVersionDetails", "versions", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -135,75 +135,75 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               handler => CommonClient.OnGetCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnGetCredentialsHTTPRequest -= handler,
                               "GetCredentials", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetCredentialsResponse",
                               handler => CommonClient.OnGetCredentialsHTTPResponse += handler,
                               handler => CommonClient.OnGetCredentialsHTTPResponse -= handler,
                               "GetCredentials", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PostCredentialsRequest",
                               handler => CommonClient.OnPostCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnPostCredentialsHTTPRequest -= handler,
                               "PostCredentials", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PostCredentialsResponse",
                               handler => CommonClient.OnPostCredentialsHTTPResponse += handler,
                               handler => CommonClient.OnPostCredentialsHTTPResponse -= handler,
                               "PostCredentials", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutCredentialsRequest",
                               handler => CommonClient.OnPutCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnPutCredentialsHTTPRequest -= handler,
                               "PutCredentials", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutCredentialsResponse",
                               handler => CommonClient.OnPutCredentialsHTTPResponse += handler,
                               handler => CommonClient.OnPutCredentialsHTTPResponse -= handler,
                               "PutCredentials", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("DeleteCredentialsRequest",
                               handler => CommonClient.OnDeleteCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnDeleteCredentialsHTTPRequest -= handler,
                               "DeleteCredentials", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("DeleteCredentialsResponse",
                               handler => CommonClient.OnDeleteCredentialsHTTPResponse += handler,
                               handler => CommonClient.OnDeleteCredentialsHTTPResponse -= handler,
                               "DeleteCredentials", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("RegisterRequest",
                               handler => CommonClient.OnRegisterHTTPRequest += handler,
                               handler => CommonClient.OnRegisterHTTPRequest -= handler,
                               "Register", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("RegisterResponse",
                               handler => CommonClient.OnRegisterHTTPResponse += handler,
                               handler => CommonClient.OnRegisterHTTPResponse -= handler,
                               "Register", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 

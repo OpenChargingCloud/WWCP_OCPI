@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 (timestamp, httpAPI, httpRequest, ct) => {
                     return OCPIRequestLogger?.Invoke(
                                timestamp,
-                               httpAPI,
+                               httpAPI as HTTPExtAPI,
                                OCPIRequest.Parse(
                                    httpRequest,
                                    CommonAPI
@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     if (httpRequest.SubprotocolRequest is OCPIRequest ocpiRequest)
                         return OCPIResponseLogger?.Invoke(
                                    timestamp,
-                                   httpAPI,
+                                   httpAPI as HTTPExtAPI,
                                    ocpiRequest,
                                    (httpResponse.SubprotocolResponse as OCPIResponse)
                                        ?? new OCPIResponse(

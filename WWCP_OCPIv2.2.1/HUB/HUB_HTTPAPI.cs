@@ -26,7 +26,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP;
@@ -1629,7 +1628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// The HTTP API for EV roaming hubs.
     /// CPOS and EMSPs will connect to this API.
     /// </summary>
-    public class HUB_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class HUB_HTTPAPI : AHTTPExtAPIExtension2<CommonAPI, HTTPExtAPI>
     {
 
         #region Data

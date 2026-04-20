@@ -27,7 +27,6 @@ using NUnit.Framework.Legacy;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
@@ -45,16 +44,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                                                     String  Token)
         {
 
-            var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
-                                                                                         requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
-                                                                                     })).
-                                              ConfigureAwait(false);
+            var httpResponse  = await new HTTPClient(RemoteURL).GET(
+                                          RemoteURL.Path,
+                                          RequestBuilder: requestBuilder => {
+                                              requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                              requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                              requestBuilder.Set("X-Request-ID",      "1234");
+                                              requestBuilder.Set("X-Correlation-ID",  "5678");
+                                          }
+                                      ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
@@ -68,17 +66,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(Method,
-                                                                                     RemoteURL.Path,
-                                                                                     RequestBuilder: requestBuilder => {
-                                                                                         requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
-                                                                                     })).
-                                              ConfigureAwait(false);
+                                          RunRequest(
+                                              Method,
+                                              RemoteURL.Path,
+                                              RequestBuilder: requestBuilder => {
+                                                  requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                                  requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                  requestBuilder.Content        = JSON.ToUTF8Bytes();
+                                                  requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                  requestBuilder.Set("X-Request-ID",      "1234");
+                                                  requestBuilder.Set("X-Correlation-ID",  "5678");
+                                              }
+                                          ).ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
                                              JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
@@ -101,9 +100,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         protected       HTTPTestServerX?                                     emsp1HTTPServer;
         protected       HTTPTestServerX?                                     emsp2HTTPServer;
 
-        protected       HTTPExtAPIX?                                         cpoHTTPAPI;
-        protected       HTTPExtAPIX?                                         emsp1HTTPAPI;
-        protected       HTTPExtAPIX?                                         emsp2HTTPAPI;
+        protected       HTTPExtAPI?                                         cpoHTTPAPI;
+        protected       HTTPExtAPI?                                         emsp1HTTPAPI;
+        protected       HTTPExtAPI?                                         emsp2HTTPAPI;
 
         //protected       HTTPAPI?                                             cpoHTTPAPI;
         protected       CommonAPI?                                           cpoCommonAPI;
@@ -198,15 +197,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             #region Create cpo/emsp1/emsp2 HTTP Servers
 
-            cpoHTTPAPI            = new HTTPExtAPIX(
+            cpoHTTPAPI            = new HTTPExtAPI(
                                         HTTPServer:      cpoHTTPServer
                                     );
 
-            emsp1HTTPAPI          = new HTTPExtAPIX(
+            emsp1HTTPAPI          = new HTTPExtAPI(
                                         HTTPServer:      emsp1HTTPServer
                                     );
 
-            emsp2HTTPAPI          = new HTTPExtAPIX(
+            emsp2HTTPAPI          = new HTTPExtAPI(
                                         HTTPServer:      emsp2HTTPServer
                                     );
 

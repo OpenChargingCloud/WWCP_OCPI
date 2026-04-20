@@ -33,7 +33,6 @@ using org.GraphDefined.Vanaheimr.Illias.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 #endregion
 
@@ -49,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The OCPI Common HTTP API.
     /// </summary>
-    public class CommonHTTPAPI : AHTTPExtAPIXExtension<HTTPExtAPIX>
+    public class CommonHTTPAPI : AHTTPExtAPIExtension1<HTTPExtAPI>
     {
 
         #region Data
@@ -272,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// An event sent whenever a GET / request was received.
         /// </summary>
-        public HTTPRequestLogEventX OnGetRootRequest = new();
+        public HTTPRequestLogEvent OnGetRootRequest = new();
 
         /// <summary>
         /// An event sent whenever a GET / request was received.
@@ -281,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
         protected internal Task GetRootRequest(DateTimeOffset     Timestamp,
-                                               HTTPAPIX           API,
+                                               HTTPAPI            API,
                                                HTTPRequest        Request,
                                                CancellationToken  CancellationToken)
 
@@ -299,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// An event sent whenever a GET / response was sent.
         /// </summary>
-        public HTTPResponseLogEventX OnGetRootResponse = new();
+        public HTTPResponseLogEvent OnGetRootResponse = new();
 
         /// <summary>
         /// An event sent whenever a GET / response was sent.
@@ -309,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Request">A HTTP request.</param>
         /// <param name="Response">A HTTP response.</param>
         protected internal Task GetRootResponse(DateTimeOffset     Timestamp,
-                                                HTTPAPIX           API,
+                                                HTTPAPI            API,
                                                 HTTPRequest        Request,
                                                 HTTPResponse       Response,
                                                 CancellationToken  CancellationToken)
@@ -339,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="API">The Common API.</param>
         /// <param name="Request">A HTTP request.</param>
         protected internal Task GetVersionsRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
+                                                   HTTPExtAPI         API,
                                                    OCPIRequest        Request,
                                                    CancellationToken  CancellationToken)
 
@@ -367,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Request">A HTTP request.</param>
         /// <param name="Response">A HTTP response.</param>
         protected internal Task GetVersionsResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
+                                                    HTTPExtAPI         API,
                                                     OCPIRequest        Request,
                                                     OCPIResponse       Response,
                                                     CancellationToken  CancellationToken)
@@ -417,7 +416,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        public CommonHTTPAPI(HTTPExtAPIX                    HTTPAPI,
+        public CommonHTTPAPI(HTTPExtAPI                     HTTPAPI,
                              URL                            OurBaseURL,
                              URL                            OurVersionsURL,
 

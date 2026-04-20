@@ -30,9 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP;
-using cloud.charging.open.protocols.WWCP.Virtual;
+//using cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP;
+//using cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP;
 
 #endregion
 
@@ -132,9 +131,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Properties
 
-        public CPO2EMSPClient?  CPO2EMSPClient    { get; set; }
+        //public CPO2EMSPClient?  CPO2EMSPClient    { get; set; }
 
-        public EMSP2CPOClient?  EMSP2CPOClient    { get; set; }
+        //public EMSP2CPOClient?  EMSP2CPOClient    { get; set; }
 
         #endregion
 

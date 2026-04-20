@@ -79,7 +79,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         try
                         {
 
-                            var httpResponse = await HTTPClientFactory.Create(UpstreamCommand.ResponseURL
+                            var httpResponse = await new HTTPClient(
+                                                         UpstreamCommand.ResponseURL
                                                                               //null,
                                                                               //default,
                                                                               //RemoteCertificateValidator,
@@ -94,15 +95,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                               //DNSClient: DNSClient
                                                                              ).
 
-                                                     Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                            UpstreamCommand.ResponseURL.Path,
-                                                                                            RequestBuilder: requestBuilder => {
-                                                                                                requestBuilder.ContentType  = HTTPContentType.Application.JSON_UTF8;
-                                                                                                requestBuilder.Content      = result?.ToJSON().ToUTF8Bytes(Newtonsoft.Json.Formatting.None);
-                                                                                                requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                requestBuilder.Set(HTTPHeaders.X_Request_ID,      UpstreamCommand.RequestId);
-                                                                                                requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  UpstreamCommand.CorrelationId);
-                                                                                            })
+                                                     POST(
+                                                         UpstreamCommand.ResponseURL.Path,
+                                                         result?.ToJSON().ToUTF8Bytes(Newtonsoft.Json.Formatting.None) ?? [],
+                                                         HTTPContentType.Application.JSON_UTF8,
+                                                         RequestBuilder: requestBuilder => {
+                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,      UpstreamCommand.RequestId);
+                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID,  UpstreamCommand.CorrelationId);
+                                                         }
 
                                                              //RequestLogDelegate:   OnStartSessionHTTPRequest,
                                                              //ResponseLogDelegate:  OnStartSessionHTTPResponse,
@@ -111,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                              //RequestTimeout: this.RequestTimeout
                                                             );
 
-                            httpResponse.AppendToLogfile("Send_CommandResultsUpstream.log");
+                            await httpResponse.AppendToLogfile("Send_CommandResultsUpstream.log");
 
 
                         }

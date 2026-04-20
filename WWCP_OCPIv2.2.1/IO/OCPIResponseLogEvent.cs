@@ -18,7 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -104,17 +104,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region InvokeAsync (ServerTimestamp, OCPIAPI, Request, Response)
+        #region InvokeAsync (ServerTimestamp, API, Request, Response)
 
         /// <summary>
         /// Call all subscribers sequentially.
         /// </summary>
         /// <param name="ServerTimestamp">The timestamp of the event.</param>
-        /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
+        /// <param name="API">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public async Task InvokeAsync(DateTimeOffset     ServerTimestamp,
-                                      HTTPAPIX           OCPIAPI,
+                                      HTTPExtAPI         API,
                                       OCPIRequest        Request,
                                       OCPIResponse       Response,
                                       CancellationToken  CancellationToken)
@@ -128,24 +128,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             foreach (var callback in invocationList)
-                await callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken).ConfigureAwait(false);
+                await callback(ServerTimestamp, API, Request, Response, CancellationToken).ConfigureAwait(false);
 
         }
 
         #endregion
 
-        #region WhenAny     (ServerTimestamp, OCPIAPI, Request, Response,               Timeout = null)
+        #region WhenAny     (ServerTimestamp, API, Request, Response,               Timeout = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for any to complete.
         /// </summary>
         /// <param name="ServerTimestamp">The timestamp of the event.</param>
-        /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
+        /// <param name="API">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task WhenAny(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         API,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken,
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             lock (subscribers)
             {
 
-                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
+                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, API, Request, Response, CancellationToken))];
 
                 if (Timeout.HasValue)
                     invocationList.Add(Task.Delay(Timeout.Value));
@@ -170,21 +170,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region WhenFirst   (ServerTimestamp, OCPIAPI, Request, Response, VerifyResult, Timeout = null, DefaultResult = null)
+        #region WhenFirst   (ServerTimestamp, API, Request, Response, VerifyResult, Timeout = null, DefaultResult = null)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
         /// </summary>
         /// <typeparam name="T">The type of the results.</typeparam>
         /// <param name="ServerTimestamp">The timestamp of the event.</param>
-        /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
+        /// <param name="API">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         /// <param name="VerifyResult">A delegate to verify and filter results.</param>
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
         /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTimeOffset     ServerTimestamp,
-                                    HTTPAPIX           OCPIAPI,
+                                    HTTPExtAPI         API,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             lock (subscribers)
             {
 
-                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
+                invocationList = [.. subscribers.Select(callback => callback(ServerTimestamp, API, Request, Response, CancellationToken))];
 
                 if (Timeout.HasValue)
                     invocationList.Add(TimeoutTask = Task.Run(() => Thread.Sleep(Timeout.Value)));
@@ -253,17 +253,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region WhenAll     (ServerTimestamp, OCPIAPI, Request, Response)
+        #region WhenAll     (ServerTimestamp, API, Request, Response)
 
         /// <summary>
         /// Call all subscribers in parallel and wait for all to complete.
         /// </summary>
         /// <param name="ServerTimestamp">The timestamp of the event.</param>
-        /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
+        /// <param name="API">The sending OCPI/HTTP API.</param>
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         public Task WhenAll(DateTimeOffset     ServerTimestamp,
-                            HTTPAPIX           OCPIAPI,
+                            HTTPExtAPI         API,
                             OCPIRequest        Request,
                             OCPIResponse       Response,
                             CancellationToken  CancellationToken)
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             lock (subscribers)
             {
-                invocationList = [.. subscribers.Select (callback => callback(ServerTimestamp, OCPIAPI, Request, Response, CancellationToken))];
+                invocationList = [.. subscribers.Select (callback => callback(ServerTimestamp, API, Request, Response, CancellationToken))];
             }
 
             return Task.WhenAll(invocationList);

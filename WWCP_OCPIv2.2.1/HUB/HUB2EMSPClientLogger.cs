@@ -87,45 +87,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetLocationHTTPRequest += handler,
                               handler => HUBClient.OnGetLocationHTTPRequest -= handler,
                               "GetLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetLocationResponse",
                               handler => HUBClient.OnGetLocationHTTPResponse += handler,
                               handler => HUBClient.OnGetLocationHTTPResponse -= handler,
                               "GetLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutLocationRequest",
                               handler => HUBClient.OnPutLocationHTTPRequest += handler,
                               handler => HUBClient.OnPutLocationHTTPRequest -= handler,
                               "PutLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutLocationResponse",
                               handler => HUBClient.OnPutLocationHTTPResponse += handler,
                               handler => HUBClient.OnPutLocationHTTPResponse -= handler,
                               "PutLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchLocationRequest",
                               handler => HUBClient.OnPatchLocationHTTPRequest += handler,
                               handler => HUBClient.OnPatchLocationHTTPRequest -= handler,
                               "PatchLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchLocationResponse",
                               handler => HUBClient.OnPatchLocationHTTPResponse += handler,
                               handler => HUBClient.OnPatchLocationHTTPResponse -= handler,
                               "PatchLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -135,45 +135,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetEVSEHTTPRequest += handler,
                               handler => HUBClient.OnGetEVSEHTTPRequest -= handler,
                               "GetEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetEVSEResponse",
                               handler => HUBClient.OnGetEVSEHTTPResponse += handler,
                               handler => HUBClient.OnGetEVSEHTTPResponse -= handler,
                               "GetEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutEVSERequest",
                               handler => HUBClient.OnPutEVSEHTTPRequest += handler,
                               handler => HUBClient.OnPutEVSEHTTPRequest -= handler,
                               "PutEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutEVSEResponse",
                               handler => HUBClient.OnPutEVSEHTTPResponse += handler,
                               handler => HUBClient.OnPutEVSEHTTPResponse -= handler,
                               "PutEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchEVSERequest",
                               handler => HUBClient.OnPatchEVSEHTTPRequest += handler,
                               handler => HUBClient.OnPatchEVSEHTTPRequest -= handler,
                               "PatchEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchEVSEResponse",
                               handler => HUBClient.OnPatchEVSEHTTPResponse += handler,
                               handler => HUBClient.OnPatchEVSEHTTPResponse -= handler,
                               "PatchEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -183,45 +183,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetConnectorHTTPRequest += handler,
                               handler => HUBClient.OnGetConnectorHTTPRequest -= handler,
                               "GetConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetConnectorResponse",
                               handler => HUBClient.OnGetConnectorHTTPResponse += handler,
                               handler => HUBClient.OnGetConnectorHTTPResponse -= handler,
                               "GetConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutConnectorRequest",
                               handler => HUBClient.OnPutConnectorHTTPRequest += handler,
                               handler => HUBClient.OnPutConnectorHTTPRequest -= handler,
                               "PutConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutConnectorResponse",
                               handler => HUBClient.OnPutConnectorHTTPResponse += handler,
                               handler => HUBClient.OnPutConnectorHTTPResponse -= handler,
                               "PutConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchConnectorRequest",
                               handler => HUBClient.OnPatchConnectorHTTPRequest += handler,
                               handler => HUBClient.OnPatchConnectorHTTPRequest -= handler,
                               "PatchConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchConnectorResponse",
                               handler => HUBClient.OnPatchConnectorHTTPResponse += handler,
                               handler => HUBClient.OnPatchConnectorHTTPResponse -= handler,
                               "PatchConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -231,60 +231,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetTariffHTTPRequest += handler,
                               handler => HUBClient.OnGetTariffHTTPRequest -= handler,
                               "GetTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetTariffResponse",
                               handler => HUBClient.OnGetTariffHTTPResponse += handler,
                               handler => HUBClient.OnGetTariffHTTPResponse -= handler,
                               "GetTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutTariffRequest",
                               handler => HUBClient.OnPutTariffHTTPRequest += handler,
                               handler => HUBClient.OnPutTariffHTTPRequest -= handler,
                               "PutTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutTariffResponse",
                               handler => HUBClient.OnPutTariffHTTPResponse += handler,
                               handler => HUBClient.OnPutTariffHTTPResponse -= handler,
                               "PutTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchTariffRequest",
                               handler => HUBClient.OnPatchTariffHTTPRequest += handler,
                               handler => HUBClient.OnPatchTariffHTTPRequest -= handler,
                               "PatchTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchTariffResponse",
                               handler => HUBClient.OnPatchTariffHTTPResponse += handler,
                               handler => HUBClient.OnPatchTariffHTTPResponse -= handler,
                               "PatchTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("DeleteTariffRequest",
                               handler => HUBClient.OnDeleteTariffHTTPRequest += handler,
                               handler => HUBClient.OnDeleteTariffHTTPRequest -= handler,
                               "DeleteTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("DeleteTariffResponse",
                               handler => HUBClient.OnDeleteTariffHTTPResponse += handler,
                               handler => HUBClient.OnDeleteTariffHTTPResponse -= handler,
                               "DeleteTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -294,60 +294,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetSessionHTTPRequest += handler,
                               handler => HUBClient.OnGetSessionHTTPRequest -= handler,
                               "GetSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetSessionResponse",
                               handler => HUBClient.OnGetSessionHTTPResponse += handler,
                               handler => HUBClient.OnGetSessionHTTPResponse -= handler,
                               "GetSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutSessionRequest",
                               handler => HUBClient.OnPutSessionHTTPRequest += handler,
                               handler => HUBClient.OnPutSessionHTTPRequest -= handler,
                               "PutSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutSessionResponse",
                               handler => HUBClient.OnPutSessionHTTPResponse += handler,
                               handler => HUBClient.OnPutSessionHTTPResponse -= handler,
                               "PutSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchSessionRequest",
                               handler => HUBClient.OnPatchSessionHTTPRequest += handler,
                               handler => HUBClient.OnPatchSessionHTTPRequest -= handler,
                               "PatchSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchSessionResponse",
                               handler => HUBClient.OnPatchSessionHTTPResponse += handler,
                               handler => HUBClient.OnPatchSessionHTTPResponse -= handler,
                               "PatchSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("DeleteSessionRequest",
                               handler => HUBClient.OnDeleteSessionHTTPRequest += handler,
                               handler => HUBClient.OnDeleteSessionHTTPRequest -= handler,
                               "DeleteSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("DeleteSessionResponse",
                               handler => HUBClient.OnDeleteSessionHTTPResponse += handler,
                               handler => HUBClient.OnDeleteSessionHTTPResponse -= handler,
                               "DeleteSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -357,30 +357,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetCDRHTTPRequest += handler,
                               handler => HUBClient.OnGetCDRHTTPRequest -= handler,
                               "GetCDR", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetCDRResponse",
                               handler => HUBClient.OnGetCDRHTTPResponse += handler,
                               handler => HUBClient.OnGetCDRHTTPResponse -= handler,
                               "GetCDR", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PostCDRRequest",
                               handler => HUBClient.OnPostCDRHTTPRequest += handler,
                               handler => HUBClient.OnPostCDRHTTPRequest -= handler,
                               "PostCDR", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PostCDRResponse",
                               handler => HUBClient.OnPostCDRHTTPResponse += handler,
                               handler => HUBClient.OnPostCDRHTTPResponse -= handler,
                               "PostCDR", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -390,30 +390,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                               handler => HUBClient.OnGetTokensHTTPRequest += handler,
                               handler => HUBClient.OnGetTokensHTTPRequest -= handler,
                               "GetTokens", "token", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetTokensResponse",
                               handler => HUBClient.OnGetTokensHTTPResponse += handler,
                               handler => HUBClient.OnGetTokensHTTPResponse -= handler,
                               "GetTokens", "token", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PostTokenRequest",
                               handler => HUBClient.OnPostTokenHTTPRequest += handler,
                               handler => HUBClient.OnPostTokenHTTPRequest -= handler,
                               "PostToken", "token", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PostTokenResponse",
                               handler => HUBClient.OnPostTokenHTTPResponse += handler,
                               handler => HUBClient.OnPostTokenHTTPResponse -= handler,
                               "PostToken", "token", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 

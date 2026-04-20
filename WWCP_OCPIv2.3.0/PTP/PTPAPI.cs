@@ -1,1567 +1,1566 @@
-﻿/*
- * Copyright (c) 2015-2026 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
- *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.gnu.org/licenses/agpl.html
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#region Usings
-
-using System.Collections.Concurrent;
-
-using Newtonsoft.Json.Linq;
-
-using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
-
-using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP;
-
-#endregion
-
-namespace cloud.charging.open.protocols.OCPIv2_3_0
-{
-
-    /// <summary>
-    /// The HTTP API for Payment Terminal Providers.
-    /// CPOs will connect to this API.
-    /// </summary>
-    public class PTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
-    {
-
-        #region Data
-
-        /// <summary>
-        /// The default HTTP server name.
-        /// </summary>
-        public new const           String    DefaultHTTPServiceName   = "GraphDefined OCPI PTP HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server TCP port.
-        /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort    = IPPort.Parse(8080);
+﻿///*
+// * Copyright (c) 2015-2026 GraphDefined GmbH <achim.friedland@graphdefined.com>
+// * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+// *
+// * Licensed under the Affero GPL license, Version 3.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.gnu.org/licenses/agpl.html
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+
+//#region Usings
+
+//using System.Collections.Concurrent;
+
+//using Newtonsoft.Json.Linq;
+
+//using org.GraphDefined.Vanaheimr.Illias;
+//using org.GraphDefined.Vanaheimr.Hermod;
+//using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
+//using cloud.charging.open.protocols.OCPI;
+//using cloud.charging.open.protocols.OCPIv2_3_0.PTP.HTTP;
+
+//#endregion
+
+//namespace cloud.charging.open.protocols.OCPIv2_3_0
+//{
+
+//    /// <summary>
+//    /// The HTTP API for Payment Terminal Providers.
+//    /// CPOs will connect to this API.
+//    /// </summary>
+//    public class PTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPI>
+//    {
+
+//        #region Data
+
+//        /// <summary>
+//        /// The default HTTP server name.
+//        /// </summary>
+//        public new const           String    DefaultHTTPServiceName   = "GraphDefined OCPI PTP HTTP API v0.1";
 
-        /// <summary>
-        /// The default HTTP URL path prefix.
-        /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse("ptp/");
+//        /// <summary>
+//        /// The default HTTP server TCP port.
+//        /// </summary>
+//        public new static readonly IPPort    DefaultHTTPServerPort    = IPPort.Parse(8080);
 
-        /// <summary>
-        /// The default PTP API logfile name.
-        /// </summary>
-        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_PTPAPI.log";
-
-
-        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// The OCPI CommonAPI.
-        /// </summary>
-        public CommonAPI      CommonAPI
-            => HTTPBaseAPI;
-
-        /// <summary>
-        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
-        /// OCPI v2.3 does not define any behaviour for this.
-        /// </summary>
-        public Boolean?       AllowDowngrades       { get; }
-
-        /// <summary>
-        /// The PTP API logger.
-        /// </summary>
-        public PTPAPILogger?  PTPAPILogger          { get; }
-
-        #endregion
-
-        #region Custom JSON parsers
-
-        #endregion
-
-        #region Custom JSON serializers
-
-        public CustomJObjectSerializerDelegate<Terminal>?                    CustomTerminalSerializer                      { get; set; }
-
-        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
-        public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
-        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<Terminal>>?       CustomTerminalEnergyMeterSerializer           { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
-        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
-        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<PriceLimit>?                  CustomPriceLimitSerializer                    { get; set; }
-        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<TaxAmount>?                   CustomTaxAmountSerializer                     { get; set; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
-        public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
-        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
-        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
-        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
-        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
-        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
-
-
-        public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
-        public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
-
-        #endregion
-
-        #region Events
-
-        #region Terminal(s)
-
-        #region (protected internal) GetTerminalsRequest             (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET terminals request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTerminalsRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminals request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTerminalsRequest(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetTerminalsRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTerminalsResponse            (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET terminals response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTerminalsResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminals response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalsResponse(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     OCPIResponse       Response,
-                                                     CancellationToken  CancellationToken)
-
-            => OnGetTerminalsResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) GetTerminalRequest              (Request)
-
-        /// <summary>
-        /// An event sent whenever a GET terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetTerminalRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnGetTerminalRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) GetTerminalResponse             (Response)
-
-        /// <summary>
-        /// An event sent whenever a GET terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetTerminalResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a GET terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetTerminalResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnGetTerminalResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PutTerminalRequest              (Request)
-
-        /// <summary>
-        /// An event sent whenever a PUT terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPutTerminalRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a PUT terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTerminalRequest(DateTimeOffset     Timestamp,
-                                                   HTTPAPIX           API,
-                                                   OCPIRequest        Request,
-                                                   CancellationToken  CancellationToken)
-
-            => OnPutTerminalRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PutTerminalResponse             (Response)
-
-        /// <summary>
-        /// An event sent whenever a PUT terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPutTerminalResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a PUT terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTerminalResponse(DateTimeOffset     Timestamp,
-                                                    HTTPAPIX           API,
-                                                    OCPIRequest        Request,
-                                                    OCPIResponse       Response,
-                                                    CancellationToken  CancellationToken)
-
-            => OnPutTerminalResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PatchTerminalRequest            (Request)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPatchTerminalRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTerminalRequest(DateTimeOffset     Timestamp,
-                                                     HTTPAPIX           API,
-                                                     OCPIRequest        Request,
-                                                     CancellationToken  CancellationToken)
-
-            => OnPatchTerminalRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PatchTerminalResponse           (Response)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPatchTerminalResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTerminalResponse(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           API,
-                                                      OCPIRequest        Request,
-                                                      OCPIResponse       Response,
-                                                      CancellationToken  CancellationToken)
-
-            => OnPatchTerminalResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PostTerminalsActivateRequest    (Request)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPostTerminalsActivateRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTerminalsActivateRequest(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           API,
-                                                             OCPIRequest        Request,
-                                                             CancellationToken  CancellationToken)
-
-            => OnPostTerminalsActivateRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PostTerminalsActivateResponse   (Response)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPostTerminalsActivateResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsActivateResponse(DateTimeOffset     Timestamp,
-                                                              HTTPAPIX           API,
-                                                              OCPIRequest        Request,
-                                                              OCPIResponse       Response,
-                                                              CancellationToken  CancellationToken)
-
-            => OnPostTerminalsActivateResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-
-        #region (protected internal) PostTerminalsDeactivateRequest  (Request)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnPostTerminalsDeactivateRequest = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task PostTerminalsDeactivateRequest(DateTimeOffset     Timestamp,
-                                                               HTTPAPIX           API,
-                                                               OCPIRequest        Request,
-                                                               CancellationToken  CancellationToken)
-
-            => OnPostTerminalsDeactivateRequest.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #region (protected internal) PostTerminalsDeactivateResponse (Response)
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnPostTerminalsDeactivateResponse = new();
-
-        /// <summary>
-        /// An event sent whenever a PATCH terminal response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The PTP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task PostTerminalsDeactivateResponse(DateTimeOffset     Timestamp,
-                                                                HTTPAPIX           API,
-                                                                OCPIRequest        Request,
-                                                                OCPIResponse       Response,
-                                                                CancellationToken  CancellationToken)
-
-            => OnPostTerminalsDeactivateResponse.WhenAll(
-                   Timestamp,
-                   API,
-                   Request,
-                   Response,
-                   CancellationToken
-               );
-
-        #endregion
-
-        #endregion
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Create an instance of the HTTP API for Payment Terminal Providers
-        /// using the given CommonAPI.
-        /// </summary>
-        /// <param name="CommonAPI">The OCPI common API.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        /// 
-        /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
-        /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public PTPAPI(CommonAPI                    CommonAPI,
-                      I18NString?                  Description               = null,
-                      Boolean?                     AllowDowngrades           = null,
-
-                      HTTPPath?                    BasePath                  = null,
-                      HTTPPath?                    URLPathPrefix             = null,
-
-                      String?                      ExternalDNSName           = null,
-                      String?                      HTTPServerName            = DefaultHTTPServerName,
-                      String?                      HTTPServiceName           = DefaultHTTPServiceName,
-                      String?                      APIVersionHash            = null,
-                      JObject?                     APIVersionHashes          = null,
-
-                      Boolean?                     IsDevelopment             = false,
-                      IEnumerable<String>?         DevelopmentServers        = null,
-                      Boolean?                     DisableLogging            = false,
-                      String?                      LoggingContext            = null,
-                      String?                      LoggingPath               = null,
-                      String?                      LogfileName               = null,
-                      OCPILogfileCreatorDelegate?  LogfileCreator            = null)
-
-            : base(CommonAPI,
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
-                   BasePath,
-
-                   Description     ?? I18NString.Create($"OCPI{Version.String} PTP API"),
-
-                   ExternalDNSName,
-                   HTTPServerName  ?? DefaultHTTPServerName,
-                   HTTPServiceName ?? DefaultHTTPServiceName,
-                   APIVersionHash,
-                   APIVersionHashes,
-
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName     ?? DefaultLogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null)
-
-        {
-
-            this.AllowDowngrades  = AllowDowngrades;
-            //this.RequestTimeout   = TimeSpan.FromSeconds(30);
-
-            this.PTPAPILogger     = this.DisableLogging == false
-                                        ? new PTPAPILogger(
-                                              this,
-                                              LoggingContext,
-                                              LoggingPath,
-                                              LogfileCreator
-                                          )
-                                        : null;
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
-
-
-        #region PTP2CPO  Clients
-
-        private readonly ConcurrentDictionary<CPO_Id, PTP2CPOClient> ptp2cpoClients = new();
-
-        /// <summary>
-        /// Return an enumeration of all PTP2CPO clients.
-        /// </summary>
-        public IEnumerable<PTP2CPOClient> PTP2CPOClients
-            => ptp2cpoClients.Values;
-
-
-        #region GetCPOClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote PTP.</param>
-        /// <param name="PartyId">The party identification of the remote PTP.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public PTP2CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                           Party_Id     PartyId,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
-        {
-
-            var cpoId          = CPO_Id.        From(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From(cpoId);
-
-            if (AllowCachedClients &&
-                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new PTP2CPOClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                ptp2cpoClients.TryAdd(cpoId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="RemoteParty">A remote party.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public PTP2CPOClient? GetCPOClient(RemoteParty  RemoteParty,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
-        {
-
-            var cpoId = CPO_Id.From(RemoteParty.Id);
-
-            if (AllowCachedClients &&
-                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new PTP2CPOClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                ptp2cpoClients.TryAdd(cpoId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
-
-        /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
-        /// </summary>
-        /// <param name="RemotePartyId">A remote party identification.</param>
-        /// <param name="Description">A description for the OCPI client.</param>
-        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public PTP2CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                           I18NString?     Description          = null,
-                                           Boolean         AllowCachedClients   = true)
-        {
-
-            var cpoId = CPO_Id.From(RemotePartyId);
-
-            if (AllowCachedClients &&
-                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
-            {
-                return cachedCPOClient;
-            }
-
-            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
-            {
-
-                var cpoClient = new PTP2CPOClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
-
-                ptp2cpoClients.TryAdd(cpoId, cpoClient);
-
-                return cpoClient;
-
-            }
-
-            return null;
-
-        }
-
-        #endregion
-
-        #endregion
-
-
-        #region (private) RegisterURLTemplates()
-
-        private void RegisterURLTemplates()
-        {
-
-            #region ~/payments/terminals
-
-            #region OPTIONS  ~/payments/terminals
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/terminals
-
-            // https://example.com/ocpi/2.3.0/ptp/payments/terminals/?date_from=2025-03-01T12:00:00&date_to=2025-03-11T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.GET,
-                URLPathPrefix + "payments/terminals",
-                GetTerminalsRequest,
-                GetTerminalsResponse,
-                request => {
-
-                    #region Check access token
-
-                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
-                        (request.LocalAccessInfo?.Status           != AccessStatus.ALLOWED ||
-                         request.LocalAccessInfo?.IsNot(Role.EMSP) == true))
-                    {
-
-
-                    //if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                    //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    //{
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
-                                    AccessControlAllowHeaders   = [ "Authorization" ],
-                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-
-                    var withExtensions            = request.QueryString.GetBoolean ("withExtensions", false);
-
-                    var filters                   = request.GetDateAndPaginationFilters();
-                    var matchFilter               = request.QueryString.CreateStringFilter<Terminal>(
-                                                        "match",
-                                                        (paymentTerminal, pattern) => paymentTerminal.Id.                           Matches (pattern)         ||
-                                                                                      paymentTerminal.CustomerReference?.ToString().Contains(pattern) == true ||
-                                                                                      paymentTerminal.CountryCode?.      ToString().Contains(pattern) == true ||
-                                                                                      paymentTerminal.PartyId?.          ToString().Contains(pattern) == true ||
-                                                                                      paymentTerminal.Address.                      Matches (pattern)         ||
-                                                                                      paymentTerminal.City.                         Matches (pattern)         ||
-                                                                                      paymentTerminal.PostalCode.                   Matches (pattern)         ||
-                                                                                      paymentTerminal.State.                        Matches (pattern)         ||
-                                                                                      paymentTerminal.Country?.          ToString().Contains(pattern) == true ||
-                                                                                      paymentTerminal.FloorLevel.                   Matches (pattern)         ||
-                                                                                      paymentTerminal.PhysicalReference.            Matches (pattern)         ||
-                                                                                      paymentTerminal.Coordinates?.      ToString().Matches (pattern) == true ||
-                                                                                      paymentTerminal.Directions.                   Matches (pattern)         ||
-                                                                                      // Capabilities
-                                                                                      // PaymentMethods
-                                                                                      // PaymentBrands
-                                                                                      paymentTerminal.LocationIds.                  Matches (pattern)         ||
-                                                                                      paymentTerminal.EVSEUIds.                     Matches (pattern)
-                                                    );
-
-                                                                           //ToDo: Filter to NOT show all payments/terminals to everyone!
-                    var allPaymentTerminals       = CommonAPI.GetPaymentTerminals().//terminal => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == terminal.CountryCode &&
-                                                                             //                                                       role.PartyId     == terminal.PartyId)).
-                                                              ToArray();
-
-                    var filteredPaymentTerminals  = allPaymentTerminals.Where(matchFilter).
-                                                                        Where(terminal => !filters.From.HasValue || terminal.LastUpdated >  filters.From.Value).
-                                                                        Where(terminal => !filters.To.  HasValue || terminal.LastUpdated <= filters.To.  Value).
-                                                                        ToArray();
-
-
-                    var httpResponseBuilder       = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                        HTTPStatusCode              = HTTPStatusCode.OK,
-                                                        Server                      = DefaultHTTPServerName,
-                                                        Date                        = Timestamp.Now,
-                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                                        AccessControlAllowHeaders   = [ "Authorization" ],
-                                                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
-                                                    }.
-
-                                                    // The overall number of payments/terminals
-                                                    Set("X-Total-Count",     allPaymentTerminals.     Length).
-
-                                                    // The number of payments/terminals matching search filters
-                                                    Set("X-Filtered-Count",  filteredPaymentTerminals.Length).
-
-                                                    // The maximum number of payments/terminals that the server WILL return within a single request
-                                                    Set("X-Limit",           allPaymentTerminals.     Length);
-
-
-                    #region When the limit query parameter was set & this is not the last pagination page...
-
-                    if (filters.Limit.HasValue &&
-                        allPaymentTerminals.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
-                    {
-
-                        // The new query parameters for the "next" page of pagination within the HTTP Link header
-                        var queryParameters    = new List<String?>() {
-                                                     filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
-                                                     filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
-                                                     filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
-                                                     filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
-                                                 }.Where(queryParameter => queryParameter is not null).
-                                                   AggregateWith("&");
-
-                        if (queryParameters.Length > 0)
-                            queryParameters = "?" + queryParameters;
-
-                        // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
-                        //   - Link: <https://www.server.com/ocpi/ptp/2.3.0/payments/terminals/?offset=150&limit=50>; rel="next"
-                        httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
-                                                                                     ? $"https://{ExternalDNSName}"
-                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}" +
-                                                        $"{URLPathPrefix}/payments/terminals{queryParameters}>; rel=\"next\"");
-
-                    }
-
-                    #endregion
-
-
-                    return Task.FromResult(
-                               new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.Success,
-                                   StatusMessage        = "Hello world!",
-                                   HTTPResponseBuilder  = httpResponseBuilder,
-                                   Data                 = new JArray(
-                                                              filteredPaymentTerminals.
-                                                                  OrderBy       (paymentTerminal => paymentTerminal.Created).
-                                                                  SkipTakeFilter(filters.Offset,
-                                                                                 filters.Limit).
-                                                                  Select        (paymentTerminal => paymentTerminal.ToJSON(true,
-                                                                                                                           true,
-                                                                                                                           CustomTerminalSerializer,
-                                                                                                                           CustomDisplayTextSerializer,
-                                                                                                                           CustomImageSerializer))
-                                                          )
-                               }
-                           );
-
-                });
-
-            #endregion
-
-            #endregion
-
-            #region ~/payments/terminals/{terminalId}
-
-            #region OPTIONS  ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.GET,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                GetTerminalRequest,
-                GetTerminalResponse,
-                request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                StatusMessage        = "Invalid or blocked access token!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-                    #region Check terminal
-
-                    if (!request.ParsePaymentTerminal(CommonAPI,
-                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
-                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
-                                               out var terminalId,
-                                               out var terminal,
-                                               out var ocpiResponseBuilder,
-                                               FailOnMissingTerminal: true) ||
-                         terminal is null)
-                    {
-                        return Task.FromResult(ocpiResponseBuilder!);
-                    }
-
-                    #endregion
-
-
-                    return Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = terminal.ToJSON(true,
-                                                                      true,
-                                                                      CustomTerminalSerializer,
-                                                                      CustomDisplayTextSerializer,
-                                                                      CustomImageSerializer),
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ],
-                                   LastModified               = terminal.LastUpdated,
-                                   ETag                       = terminal.ETag
-                               }
-                        });
-
-                });
-
-            #endregion
-
-            #region PUT      ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.PUT,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                PutTerminalRequest,
-                PutTerminalResponse,
-                async request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    #region Check existing location
-
-                    if (!request.ParsePaymentTerminal(CommonAPI,
-                                               out var terminalId,
-                                               out var existingTerminal,
-                                               out var ocpiResponseBuilder,
-                                               FailOnMissingTerminal: false))
-                    {
-                        return ocpiResponseBuilder;
-                    }
-
-                    #endregion
-
-                    #region Parse new or updated location JSON
-
-                    if (!request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
-                        return ocpiResponseBuilder;
-
-                    if (!Terminal.TryParse(locationJSON,
-                                           out var newOrUpdatedTerminal,
-                                           out var errorResponse,
-                                           terminalId))
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
-                                   StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-
-                    var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
-                                                      newOrUpdatedTerminal,
-                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
-                                                      false, //SkipNotifications
-                                                      request.HTTPRequest.EventTrackingId,
-                                                      CurrentUserId: null
-                                                  );
-
-                    if (addOrUpdateResult.IsSuccess &&
-                        addOrUpdateResult.Data is not null)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.Success,
-                                   StatusMessage        = "Hello world!",
-                                   Data                 = addOrUpdateResult.Data.ToJSON(true,
-                                                                                        true,
-                                                                                        CustomTerminalSerializer,
-                                                                                        CustomDisplayTextSerializer,
-                                                                                        CustomImageSerializer),
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
-                                                                        ? HTTPStatusCode.Created
-                                                                        : HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ],
-                                       LastModified               = addOrUpdateResult.Data.LastUpdated,
-                                       ETag                       = addOrUpdateResult.Data.ETag
-                                   }
-                               };
-
-                    }
-
-                    return new OCPIResponse.Builder(request) {
-                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                               StatusMessage        = addOrUpdateResult.ErrorResponse,
-                               Data                 = newOrUpdatedTerminal.ToJSON(true,
-                                                                                  true,
-                                                                                  CustomTerminalSerializer,
-                                                                                  CustomDisplayTextSerializer,
-                                                                                  CustomImageSerializer),
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           };
-
-                }
-
-            );
-
-            #endregion
-
-            #region PATCH    ~/payments/terminals/{terminalId}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.PATCH,
-                URLPathPrefix + "payments/terminals/{terminalId}",
-                PatchTerminalRequest,
-                PatchTerminalResponse,
-                async request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    #region Check location
-
-                    if (!request.ParseMandatoryPaymentTerminal(CommonAPI,
-                                                               //out var countryCode,
-                                                               //out var partyId,
-                                                               out var locationId,
-                                                               out var existingTerminal,
-                                                               out var ocpiResponseBuilder,
-                                                               FailOnMissingTerminal: true))
-                    {
-                        return ocpiResponseBuilder;
-                    }
-
-                    #endregion
-
-                    #region Parse Payment Terminal JSON patch
-
-                    if (!request.TryParseJObjectRequestBody(out var paymentTerminalPatch, out ocpiResponseBuilder))
-                        return ocpiResponseBuilder;
-
-                    #endregion
-
-
-                    // Validation-Checks for PATCHes
-                    // (E-Tag, Timestamp, ...)
-
-                    var patchedTerminal = await CommonAPI.TryPatchPaymentTerminal(
-                                                    Party_Idv3.From(
-                                                        existingTerminal.CountryCode.Value,
-                                                        existingTerminal.PartyId.    Value
-                                                    ),
-                                                    existingTerminal.Id,
-                                                    paymentTerminalPatch,
-                                                    AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
-                                                    false, //SkipNotifications,
-                                                    request.HTTPRequest.EventTrackingId,
-                                                    CurrentUserId: null
-                                                );
-
-
-                    //ToDo: Handle update errors!
-                    if (patchedTerminal.IsSuccessAndDataNotNull(out var data))
-                        return new OCPIResponse.Builder(request) {
-                                       StatusCode           = StatusCode.Success,
-                                       StatusMessage        = "Hello world!",
-                                       Data                 = data.ToJSON(true,
-                                                                          true,
-                                                                          CustomTerminalSerializer,
-                                                                          CustomDisplayTextSerializer,
-                                                                          CustomImageSerializer),
-                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                           AccessControlAllowHeaders  = [ "Authorization" ],
-                                           LastModified               = data.LastUpdated,
-                                           ETag                       = data.ETag
-                                       }
-                                   };
-
-                    return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = patchedTerminal.ErrorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                }
-
-            );
-
-            #endregion
-
-            #endregion
-
-            #region ~/payments/terminals/activate
-
-            #region OPTIONS  ~/payments/terminals/activate
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals/activate",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region POST     ~/payments/terminals/activate
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.POST,
-                URLPathPrefix + "payments/terminals/activate",
-                PostTerminalsActivateRequest,
-                PostTerminalsActivateResponse,
-                async request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    #region Parse payment terminal JSON (will autogenerate a missing terminal id!)
-
-                    if (!request.TryParseJObjectRequestBody(out var terminalJSON, out var ocpiResponseBuilder))
-                        return ocpiResponseBuilder;
-
-                    if (!Terminal.TryParse(terminalJSON,
-                                           out var terminalToActivate,
-                                           out var errorResponse,
-                                           GenerateMissingTerminalId: true))
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
-                                   StatusMessage        = "Could not parse the given terminal JSON: " + errorResponse,
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    if (terminalToActivate.Reference.IsNullOrEmpty())
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = "The payment terminal reference must not be null!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-
-
-                    //var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
-                    //                                  newOrUpdatedTerminal,
-                    //                                  AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
-                    //                                  false, //SkipNotifications
-                    //                                  request.HTTPRequest.EventTrackingId,
-                    //                                  CurrentUserId: null
-                    //                              );
-
-                    //if (addOrUpdateResult.IsSuccess &&
-                    //    addOrUpdateResult.Data is not null)
-                    //{
-
-                    //    return new OCPIResponse.Builder(request) {
-                    //               StatusCode           = StatusCodes.Success,
-                    //               StatusMessage        = "Hello world!",
-                    //               Data                 = addOrUpdateResult.Data.ToJSON(true,
-                    //                                                                    true,
-                    //                                                                    CustomTerminalSerializer,
-                    //                                                                    CustomDisplayTextSerializer,
-                    //                                                                    CustomImageSerializer),
-                    //               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                    //                   HTTPStatusCode             = addOrUpdateResult.WasCreated == true
-                    //                                                    ? HTTPStatusCode.Created
-                    //                                                    : HTTPStatusCode.OK,
-                    //                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                    //                   AccessControlAllowHeaders  = [ "Authorization" ],
-                    //                   LastModified               = addOrUpdateResult.Data.LastUpdated,
-                    //                   ETag                       = addOrUpdateResult.Data.ETag
-                    //               }
-                    //           };
-
-                    //}
-
-                    return new OCPIResponse.Builder(request) {
-                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                               StatusMessage        = "!",// addOrUpdateResult.ErrorResponse,
-                               //Data                 = newOrUpdatedTerminal.ToJSON(true,
-                               //                                                   true,
-                               //                                                   CustomTerminalSerializer,
-                               //                                                   CustomDisplayTextSerializer,
-                               //                                                   CustomImageSerializer),
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           };
-
-                }
-
-            );
-
-            #endregion
-
-            #endregion
-
-            #region ~/payments/terminals/{terminalId}/deactivate
-
-            #region OPTIONS  ~/payments/terminals/{terminalId}/deactivate
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region POST     ~/payments/terminals/{terminalId}/deactivate
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.POST,
-                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
-                PostTerminalsDeactivateRequest,
-                PostTerminalsDeactivateResponse,
-                async request => {
-
-                    #region Check access token
-
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
-                    {
-
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                   StatusMessage        = "Invalid or blocked access token!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    }
-
-                    #endregion
-
-                    #region Get terminal identification
-
-                    if (!request.ParsePaymentTerminalId(CommonAPI,
-                                                 out var terminalId,
-                                                 out var ocpiResponseBuilder))
-                    {
-                        return ocpiResponseBuilder;
-                    }
-
-                    #endregion
-
-
-                    var terminalFound = false;
-
-
-                    if (terminalFound)
-                        return new OCPIResponse.Builder(request) {
-                                   StatusCode           = StatusCode.Success,
-                                   StatusMessage        = "Hello world!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                   }
-                               };
-
-                    return new OCPIResponse.Builder(request) {
-                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                               StatusMessage        = "Unknown terminal!",
-                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                               }
-                           };
-
-                }
-
-            );
-
-            #endregion
-
-            #endregion
-
-
-            #region ~/payments/financial-advice-confirmations
-
-            #region OPTIONS  ~/payments/financial-advice-confirmations
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/financial-advice-confirmations",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/financial-advice-confirmations
-
-            #endregion
-
-            #endregion
-
-            #region ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-            #region OPTIONS  ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-            CommonAPI.AddOCPIMethod(
-
-                HTTPMethod.OPTIONS,
-                URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
-                request =>
-
-                    Task.FromResult(
-                        new OCPIResponse.Builder(request) {
-                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
-                                   HTTPStatusCode              = HTTPStatusCode.OK,
-                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
-                                   AccessControlAllowHeaders   = [ "Authorization" ],
-                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
-                               }
-                        })
-
-            );
-
-            #endregion
-
-            #region GET      ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
-
-            #endregion
-
-            #endregion
-
-
-        }
-
-        #endregion
-
-
-    }
-
-}
+//        /// <summary>
+//        /// The default HTTP URL path prefix.
+//        /// </summary>
+//        public new static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse("ptp/");
+
+//        /// <summary>
+//        /// The default PTP API logfile name.
+//        /// </summary>
+//        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_PTPAPI.log";
+
+
+//        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
+
+//        #endregion
+
+//        #region Properties
+
+//        /// <summary>
+//        /// The OCPI CommonAPI.
+//        /// </summary>
+//        public CommonAPI      CommonAPI
+//            => HTTPBaseAPI;
+
+//        /// <summary>
+//        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+//        /// OCPI v2.3 does not define any behaviour for this.
+//        /// </summary>
+//        public Boolean?       AllowDowngrades       { get; }
+
+//        /// <summary>
+//        /// The PTP API logger.
+//        /// </summary>
+//        public PTPAPILogger?  PTPAPILogger          { get; }
+
+//        #endregion
+
+//        #region Custom JSON parsers
+
+//        #endregion
+
+//        #region Custom JSON serializers
+
+//        public CustomJObjectSerializerDelegate<Terminal>?                    CustomTerminalSerializer                      { get; set; }
+
+//        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
+//        public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
+//        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
+//        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
+//        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
+//        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
+//        public CustomJObjectSerializerDelegate<EnergyMeter<Terminal>>?       CustomTerminalEnergyMeterSerializer           { get; set; }
+//        public CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?           CustomEVSEEnergyMeterSerializer               { get; set; }
+//        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
+//        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
+//        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
+//        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
+//        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
+//        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
+//        public CustomJObjectSerializerDelegate<EVSEParking>?                 CustomEVSEParkingSerializer                   { get; set; }
+//        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
+//        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
+//        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
+//        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
+
+
+//        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
+//        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+//        public CustomJObjectSerializerDelegate<PriceLimit>?                  CustomPriceLimitSerializer                    { get; set; }
+//        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
+//        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
+//        public CustomJObjectSerializerDelegate<TaxAmount>?                   CustomTaxAmountSerializer                     { get; set; }
+//        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
+
+
+//        public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
+//        public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
+//        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
+//        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
+
+
+//        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
+//        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
+//        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
+//        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
+
+
+//        public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
+//        public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
+
+//        #endregion
+
+//        #region Events
+
+//        #region Terminal(s)
+
+//        #region (protected internal) GetTerminalsRequest             (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminals request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnGetTerminalsRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminals request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task GetTerminalsRequest(DateTimeOffset     Timestamp,
+//                                                    HTTPExtAPI         API,
+//                                                    OCPIRequest        Request,
+//                                                    CancellationToken  CancellationToken)
+
+//            => OnGetTerminalsRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) GetTerminalsResponse            (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminals response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnGetTerminalsResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminals response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task GetTerminalsResponse(DateTimeOffset     Timestamp,
+//                                                     HTTPExtAPI         API,
+//                                                     OCPIRequest        Request,
+//                                                     OCPIResponse       Response,
+//                                                     CancellationToken  CancellationToken)
+
+//            => OnGetTerminalsResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+
+//        #region (protected internal) GetTerminalRequest              (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminal request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnGetTerminalRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminal request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task GetTerminalRequest(DateTimeOffset     Timestamp,
+//                                                   HTTPExtAPI         API,
+//                                                   OCPIRequest        Request,
+//                                                   CancellationToken  CancellationToken)
+
+//            => OnGetTerminalRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) GetTerminalResponse             (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminal response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnGetTerminalResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a GET terminal response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task GetTerminalResponse(DateTimeOffset     Timestamp,
+//                                                    HTTPExtAPI         API,
+//                                                    OCPIRequest        Request,
+//                                                    OCPIResponse       Response,
+//                                                    CancellationToken  CancellationToken)
+
+//            => OnGetTerminalResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+
+//        #region (protected internal) PutTerminalRequest              (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a PUT terminal request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnPutTerminalRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PUT terminal request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task PutTerminalRequest(DateTimeOffset     Timestamp,
+//                                                   HTTPExtAPI         API,
+//                                                   OCPIRequest        Request,
+//                                                   CancellationToken  CancellationToken)
+
+//            => OnPutTerminalRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) PutTerminalResponse             (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a PUT terminal response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnPutTerminalResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PUT terminal response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task PutTerminalResponse(DateTimeOffset     Timestamp,
+//                                                    HTTPExtAPI         API,
+//                                                    OCPIRequest        Request,
+//                                                    OCPIResponse       Response,
+//                                                    CancellationToken  CancellationToken)
+
+//            => OnPutTerminalResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+
+//        #region (protected internal) PatchTerminalRequest            (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnPatchTerminalRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task PatchTerminalRequest(DateTimeOffset     Timestamp,
+//                                                     HTTPExtAPI         API,
+//                                                     OCPIRequest        Request,
+//                                                     CancellationToken  CancellationToken)
+
+//            => OnPatchTerminalRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) PatchTerminalResponse           (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnPatchTerminalResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task PatchTerminalResponse(DateTimeOffset     Timestamp,
+//                                                      HTTPExtAPI         API,
+//                                                      OCPIRequest        Request,
+//                                                      OCPIResponse       Response,
+//                                                      CancellationToken  CancellationToken)
+
+//            => OnPatchTerminalResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+
+//        #region (protected internal) PostTerminalsActivateRequest    (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnPostTerminalsActivateRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task PostTerminalsActivateRequest(DateTimeOffset     Timestamp,
+//                                                             HTTPExtAPI         API,
+//                                                             OCPIRequest        Request,
+//                                                             CancellationToken  CancellationToken)
+
+//            => OnPostTerminalsActivateRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) PostTerminalsActivateResponse   (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnPostTerminalsActivateResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task PostTerminalsActivateResponse(DateTimeOffset     Timestamp,
+//                                                              HTTPExtAPI         API,
+//                                                              OCPIRequest        Request,
+//                                                              OCPIResponse       Response,
+//                                                              CancellationToken  CancellationToken)
+
+//            => OnPostTerminalsActivateResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+
+//        #region (protected internal) PostTerminalsDeactivateRequest  (Request)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        public OCPIRequestLogEvent OnPostTerminalsDeactivateRequest = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal request was received.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the request.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        protected internal Task PostTerminalsDeactivateRequest(DateTimeOffset     Timestamp,
+//                                                               HTTPExtAPI         API,
+//                                                               OCPIRequest        Request,
+//                                                               CancellationToken  CancellationToken)
+
+//            => OnPostTerminalsDeactivateRequest.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #region (protected internal) PostTerminalsDeactivateResponse (Response)
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        public OCPIResponseLogEvent OnPostTerminalsDeactivateResponse = new();
+
+//        /// <summary>
+//        /// An event sent whenever a PATCH terminal response was sent.
+//        /// </summary>
+//        /// <param name="Timestamp">The timestamp of the response.</param>
+//        /// <param name="API">The PTP API.</param>
+//        /// <param name="Request">An OCPI request.</param>
+//        /// <param name="Response">An OCPI response.</param>
+//        protected internal Task PostTerminalsDeactivateResponse(DateTimeOffset     Timestamp,
+//                                                                HTTPExtAPI         API,
+//                                                                OCPIRequest        Request,
+//                                                                OCPIResponse       Response,
+//                                                                CancellationToken  CancellationToken)
+
+//            => OnPostTerminalsDeactivateResponse.WhenAll(
+//                   Timestamp,
+//                   API,
+//                   Request,
+//                   Response,
+//                   CancellationToken
+//               );
+
+//        #endregion
+
+//        #endregion
+
+//        #endregion
+
+//        #region Constructor(s)
+
+//        /// <summary>
+//        /// Create an instance of the HTTP API for Payment Terminal Providers
+//        /// using the given CommonAPI.
+//        /// </summary>
+//        /// <param name="CommonAPI">The OCPI common API.</param>
+//        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+//        /// 
+//        /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
+//        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
+//        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+//        /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
+//        public PTPAPI(CommonAPI                    CommonAPI,
+//                      I18NString?                  Description               = null,
+//                      Boolean?                     AllowDowngrades           = null,
+
+//                      HTTPPath?                    BasePath                  = null,
+//                      HTTPPath?                    URLPathPrefix             = null,
+
+//                      String?                      ExternalDNSName           = null,
+//                      String?                      HTTPServerName            = DefaultHTTPServerName,
+//                      String?                      HTTPServiceName           = DefaultHTTPServiceName,
+//                      String?                      APIVersionHash            = null,
+//                      JObject?                     APIVersionHashes          = null,
+
+//                      Boolean?                     IsDevelopment             = false,
+//                      IEnumerable<String>?         DevelopmentServers        = null,
+//                      Boolean?                     DisableLogging            = false,
+//                      String?                      LoggingContext            = null,
+//                      String?                      LoggingPath               = null,
+//                      String?                      LogfileName               = null,
+//                      OCPILogfileCreatorDelegate?  LogfileCreator            = null)
+
+//            : base(CommonAPI,
+//                   URLPathPrefix   ?? DefaultURLPathPrefix,
+//                   BasePath,
+
+//                   Description     ?? I18NString.Create($"OCPI{Version.String} PTP API"),
+
+//                   ExternalDNSName,
+//                   HTTPServerName  ?? DefaultHTTPServerName,
+//                   HTTPServiceName ?? DefaultHTTPServiceName,
+//                   APIVersionHash,
+//                   APIVersionHashes,
+
+//                   IsDevelopment,
+//                   DevelopmentServers,
+//                   DisableLogging,
+//                   LoggingPath,
+//                   LogfileName     ?? DefaultLogfileName,
+//                   LogfileCreator is not null
+//                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+//                       : null)
+
+//        {
+
+//            this.AllowDowngrades  = AllowDowngrades;
+//            //this.RequestTimeout   = TimeSpan.FromSeconds(30);
+
+//            this.PTPAPILogger     = this.DisableLogging == false
+//                                        ? new PTPAPILogger(
+//                                              this,
+//                                              LoggingContext,
+//                                              LoggingPath,
+//                                              LogfileCreator
+//                                          )
+//                                        : null;
+
+//            RegisterURLTemplates();
+
+//        }
+
+//        #endregion
+
+
+//        #region PTP2CPO  Clients
+
+//        private readonly ConcurrentDictionary<CPO_Id, PTP2CPOClient> ptp2cpoClients = new();
+
+//        /// <summary>
+//        /// Return an enumeration of all PTP2CPO clients.
+//        /// </summary>
+//        public IEnumerable<PTP2CPOClient> PTP2CPOClients
+//            => ptp2cpoClients.Values;
+
+
+//        #region GetCPOClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
+
+//        /// <summary>
+//        /// As a CPO create a client to access e.g. a remote PTP.
+//        /// </summary>
+//        /// <param name="CountryCode">The country code of the remote PTP.</param>
+//        /// <param name="PartyId">The party identification of the remote PTP.</param>
+//        /// <param name="Description">A description for the OCPI client.</param>
+//        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+//        public PTP2CPOClient? GetCPOClient(CountryCode  CountryCode,
+//                                           Party_Id     PartyId,
+//                                           I18NString?  Description          = null,
+//                                           Boolean      AllowCachedClients   = true)
+//        {
+
+//            var cpoId          = CPO_Id.        From(CountryCode, PartyId);
+//            var remotePartyId  = RemoteParty_Id.From(cpoId);
+
+//            if (AllowCachedClients &&
+//                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+//            {
+//                return cachedCPOClient;
+//            }
+
+//            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
+//                remoteParty?.RemoteAccessInfos?.Any() == true)
+//            {
+
+//                var cpoClient = new PTP2CPOClient(
+//                                    this,
+//                                    remoteParty,
+//                                    null,
+//                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
+//                                    null,
+//                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+//                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+//                                );
+
+//                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+//                return cpoClient;
+
+//            }
+
+//            return null;
+
+//        }
+
+//        #endregion
+
+//        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
+
+//        /// <summary>
+//        /// As a CPO create a client to access e.g. a remote PTP.
+//        /// </summary>
+//        /// <param name="RemoteParty">A remote party.</param>
+//        /// <param name="Description">A description for the OCPI client.</param>
+//        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+//        public PTP2CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+//                                           I18NString?  Description          = null,
+//                                           Boolean      AllowCachedClients   = true)
+//        {
+
+//            var cpoId = CPO_Id.From(RemoteParty.Id);
+
+//            if (AllowCachedClients &&
+//                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+//            {
+//                return cachedCPOClient;
+//            }
+
+//            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+//            {
+
+//                var cpoClient = new PTP2CPOClient(
+//                                    this,
+//                                    RemoteParty,
+//                                    null,
+//                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+//                                    null,
+//                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+//                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+//                                );
+
+//                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+//                return cpoClient;
+
+//            }
+
+//            return null;
+
+//        }
+
+//        #endregion
+
+//        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+
+//        /// <summary>
+//        /// As a CPO create a client to access e.g. a remote PTP.
+//        /// </summary>
+//        /// <param name="RemotePartyId">A remote party identification.</param>
+//        /// <param name="Description">A description for the OCPI client.</param>
+//        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+//        public PTP2CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+//                                           I18NString?     Description          = null,
+//                                           Boolean         AllowCachedClients   = true)
+//        {
+
+//            var cpoId = CPO_Id.From(RemotePartyId);
+
+//            if (AllowCachedClients &&
+//                ptp2cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+//            {
+//                return cachedCPOClient;
+//            }
+
+//            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
+//                remoteParty?.RemoteAccessInfos?.Any() == true)
+//            {
+
+//                var cpoClient = new PTP2CPOClient(
+//                                    this,
+//                                    remoteParty,
+//                                    null,
+//                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+//                                    null,
+//                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+//                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+//                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+//                                );
+
+//                ptp2cpoClients.TryAdd(cpoId, cpoClient);
+
+//                return cpoClient;
+
+//            }
+
+//            return null;
+
+//        }
+
+//        #endregion
+
+//        #endregion
+
+
+//        #region (private) RegisterURLTemplates()
+
+//        private void RegisterURLTemplates()
+//        {
+
+//            #region ~/payments/terminals
+
+//            #region OPTIONS  ~/payments/terminals
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/terminals",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode              = HTTPStatusCode.OK,
+//                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+//                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowHeaders   = [ "Authorization" ],
+//                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region GET      ~/payments/terminals
+
+//            // https://example.com/ocpi/2.3.0/ptp/payments/terminals/?date_from=2025-03-01T12:00:00&date_to=2025-03-11T12:00:00&offset=50&limit=100
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.GET,
+//                URLPathPrefix + "payments/terminals",
+//                GetTerminalsRequest,
+//                GetTerminalsResponse,
+//                request => {
+
+//                    #region Check access token
+
+//                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+//                        (request.LocalAccessInfo?.Status           != AccessStatus.ALLOWED ||
+//                         request.LocalAccessInfo?.IsNot(Role.EMSP) == true))
+//                    {
+
+
+//                    //if (Request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+//                    //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    //{
+
+//                        return Task.FromResult(
+//                            new OCPIResponse.Builder(request) {
+//                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                StatusMessage        = "Invalid or blocked access token!",
+//                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+//                                    AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+//                                    AccessControlAllowHeaders   = [ "Authorization" ],
+//                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+//                                }
+//                            });
+
+//                    }
+
+//                    #endregion
+
+
+//                    var withExtensions            = request.QueryString.GetBoolean ("withExtensions", false);
+
+//                    var filters                   = request.GetDateAndPaginationFilters();
+//                    var matchFilter               = request.QueryString.CreateStringFilter<Terminal>(
+//                                                        "match",
+//                                                        (paymentTerminal, pattern) => paymentTerminal.Id.                           Matches (pattern)         ||
+//                                                                                      paymentTerminal.CustomerReference?.ToString().Contains(pattern) == true ||
+//                                                                                      paymentTerminal.CountryCode?.      ToString().Contains(pattern) == true ||
+//                                                                                      paymentTerminal.PartyId?.          ToString().Contains(pattern) == true ||
+//                                                                                      paymentTerminal.Address.                      Matches (pattern)         ||
+//                                                                                      paymentTerminal.City.                         Matches (pattern)         ||
+//                                                                                      paymentTerminal.PostalCode.                   Matches (pattern)         ||
+//                                                                                      paymentTerminal.State.                        Matches (pattern)         ||
+//                                                                                      paymentTerminal.Country?.          ToString().Contains(pattern) == true ||
+//                                                                                      paymentTerminal.FloorLevel.                   Matches (pattern)         ||
+//                                                                                      paymentTerminal.PhysicalReference.            Matches (pattern)         ||
+//                                                                                      paymentTerminal.Coordinates?.      ToString().Matches (pattern) == true ||
+//                                                                                      paymentTerminal.Directions.                   Matches (pattern)         ||
+//                                                                                      // Capabilities
+//                                                                                      // PaymentMethods
+//                                                                                      // PaymentBrands
+//                                                                                      paymentTerminal.LocationIds.                  Matches (pattern)         ||
+//                                                                                      paymentTerminal.EVSEUIds.                     Matches (pattern)
+//                                                    );
+
+//                                                                           //ToDo: Filter to NOT show all payments/terminals to everyone!
+//                    var allPaymentTerminals       = CommonAPI.GetPaymentTerminals().//terminal => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == terminal.CountryCode &&
+//                                                                             //                                                       role.PartyId     == terminal.PartyId)).
+//                                                              ToArray();
+
+//                    var filteredPaymentTerminals  = allPaymentTerminals.Where(matchFilter).
+//                                                                        Where(terminal => !filters.From.HasValue || terminal.LastUpdated >  filters.From.Value).
+//                                                                        Where(terminal => !filters.To.  HasValue || terminal.LastUpdated <= filters.To.  Value).
+//                                                                        ToArray();
+
+
+//                    var httpResponseBuilder       = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                                        HTTPStatusCode              = HTTPStatusCode.OK,
+//                                                        Server                      = DefaultHTTPServerName,
+//                                                        Date                        = Timestamp.Now,
+//                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+//                                                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+//                                                    }.
+
+//                                                    // The overall number of payments/terminals
+//                                                    Set("X-Total-Count",     allPaymentTerminals.     Length).
+
+//                                                    // The number of payments/terminals matching search filters
+//                                                    Set("X-Filtered-Count",  filteredPaymentTerminals.Length).
+
+//                                                    // The maximum number of payments/terminals that the server WILL return within a single request
+//                                                    Set("X-Limit",           allPaymentTerminals.     Length);
+
+
+//                    #region When the limit query parameter was set & this is not the last pagination page...
+
+//                    if (filters.Limit.HasValue &&
+//                        allPaymentTerminals.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+//                    {
+
+//                        // The new query parameters for the "next" page of pagination within the HTTP Link header
+//                        var queryParameters    = new List<String?>() {
+//                                                     filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+//                                                     filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+//                                                     filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+//                                                     filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+//                                                 }.Where(queryParameter => queryParameter is not null).
+//                                                   AggregateWith("&");
+
+//                        if (queryParameters.Length > 0)
+//                            queryParameters = "?" + queryParameters;
+
+//                        // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+//                        //   - Link: <https://www.server.com/ocpi/ptp/2.3.0/payments/terminals/?offset=150&limit=50>; rel="next"
+//                        httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+//                                                                                     ? $"https://{ExternalDNSName}"
+//                                                                                     : $"http://127.0.0.1:{CommonAPI.BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort}")}" +
+//                                                        $"{URLPathPrefix}/payments/terminals{queryParameters}>; rel=\"next\"");
+
+//                    }
+
+//                    #endregion
+
+
+//                    return Task.FromResult(
+//                               new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.Success,
+//                                   StatusMessage        = "Hello world!",
+//                                   HTTPResponseBuilder  = httpResponseBuilder,
+//                                   Data                 = new JArray(
+//                                                              filteredPaymentTerminals.
+//                                                                  OrderBy       (paymentTerminal => paymentTerminal.Created).
+//                                                                  SkipTakeFilter(filters.Offset,
+//                                                                                 filters.Limit).
+//                                                                  Select        (paymentTerminal => paymentTerminal.ToJSON(true,
+//                                                                                                                           true,
+//                                                                                                                           CustomTerminalSerializer,
+//                                                                                                                           CustomDisplayTextSerializer,
+//                                                                                                                           CustomImageSerializer))
+//                                                          )
+//                               }
+//                           );
+
+//                });
+
+//            #endregion
+
+//            #endregion
+
+//            #region ~/payments/terminals/{terminalId}
+
+//            #region OPTIONS  ~/payments/terminals/{terminalId}
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/terminals/{terminalId}",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode             = HTTPStatusCode.OK,
+//                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                   AccessControlAllowHeaders  = [ "Authorization" ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region GET      ~/payments/terminals/{terminalId}
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.GET,
+//                URLPathPrefix + "payments/terminals/{terminalId}",
+//                GetTerminalRequest,
+//                GetTerminalResponse,
+//                request => {
+
+//                    #region Check access token
+
+//                    if (request.LocalAccessInfo?.IsNot(Role.EMSP) == true ||
+//                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    {
+
+//                        return Task.FromResult(
+//                            new OCPIResponse.Builder(request) {
+//                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                StatusMessage        = "Invalid or blocked access token!",
+//                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+//                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                    AccessControlAllowHeaders  = [ "Authorization" ]
+//                                }
+//                            });
+
+//                    }
+
+//                    #endregion
+
+//                    #region Check terminal
+
+//                    if (!request.ParsePaymentTerminal(CommonAPI,
+//                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+//                                               CommonAPI.Parties.Select(partyData => new Tuple<CountryCode, Party_Id>(partyData.Id.CountryCode, partyData.Id.PartyId)),
+//                                               out var terminalId,
+//                                               out var terminal,
+//                                               out var ocpiResponseBuilder,
+//                                               FailOnMissingTerminal: true) ||
+//                         terminal is null)
+//                    {
+//                        return Task.FromResult(ocpiResponseBuilder!);
+//                    }
+
+//                    #endregion
+
+
+//                    return Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               StatusCode           = StatusCode.Success,
+//                               StatusMessage        = "Hello world!",
+//                               Data                 = terminal.ToJSON(true,
+//                                                                      true,
+//                                                                      CustomTerminalSerializer,
+//                                                                      CustomDisplayTextSerializer,
+//                                                                      CustomImageSerializer),
+//                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode             = HTTPStatusCode.OK,
+//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                   AccessControlAllowHeaders  = [ "Authorization" ],
+//                                   LastModified               = terminal.LastUpdated,
+//                                   ETag                       = terminal.ETag
+//                               }
+//                        });
+
+//                });
+
+//            #endregion
+
+//            #region PUT      ~/payments/terminals/{terminalId}
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.PUT,
+//                URLPathPrefix + "payments/terminals/{terminalId}",
+//                PutTerminalRequest,
+//                PutTerminalResponse,
+//                async request => {
+
+//                    #region Check access token
+
+//                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+//                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = "Invalid or blocked access token!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+//                    #region Check existing location
+
+//                    if (!request.ParsePaymentTerminal(CommonAPI,
+//                                               out var terminalId,
+//                                               out var existingTerminal,
+//                                               out var ocpiResponseBuilder,
+//                                               FailOnMissingTerminal: false))
+//                    {
+//                        return ocpiResponseBuilder;
+//                    }
+
+//                    #endregion
+
+//                    #region Parse new or updated location JSON
+
+//                    if (!request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
+//                        return ocpiResponseBuilder;
+
+//                    if (!Terminal.TryParse(locationJSON,
+//                                           out var newOrUpdatedTerminal,
+//                                           out var errorResponse,
+//                                           terminalId))
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
+//                                   StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+
+//                    var addOrUpdateResult = await CommonAPI.AddOrUpdatePaymentTerminal(
+//                                                      newOrUpdatedTerminal,
+//                                                      AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
+//                                                      false, //SkipNotifications
+//                                                      request.HTTPRequest.EventTrackingId,
+//                                                      CurrentUserId: null
+//                                                  );
+
+//                    if (addOrUpdateResult.IsSuccess &&
+//                        addOrUpdateResult.Data is not null)
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.Success,
+//                                   StatusMessage        = "Hello world!",
+//                                   Data                 = addOrUpdateResult.Data.ToJSON(true,
+//                                                                                        true,
+//                                                                                        CustomTerminalSerializer,
+//                                                                                        CustomDisplayTextSerializer,
+//                                                                                        CustomImageSerializer),
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+//                                                                        ? HTTPStatusCode.Created
+//                                                                        : HTTPStatusCode.OK,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ],
+//                                       LastModified               = addOrUpdateResult.Data.LastUpdated,
+//                                       ETag                       = addOrUpdateResult.Data.ETag
+//                                   }
+//                               };
+
+//                    }
+
+//                    return new OCPIResponse.Builder(request) {
+//                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                               StatusMessage        = addOrUpdateResult.ErrorResponse,
+//                               Data                 = newOrUpdatedTerminal.ToJSON(true,
+//                                                                                  true,
+//                                                                                  CustomTerminalSerializer,
+//                                                                                  CustomDisplayTextSerializer,
+//                                                                                  CustomImageSerializer),
+//                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                   AccessControlAllowHeaders  = [ "Authorization" ]
+//                               }
+//                           };
+
+//                }
+
+//            );
+
+//            #endregion
+
+//            #region PATCH    ~/payments/terminals/{terminalId}
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.PATCH,
+//                URLPathPrefix + "payments/terminals/{terminalId}",
+//                PatchTerminalRequest,
+//                PatchTerminalResponse,
+//                async request => {
+
+//                    #region Check access token
+
+//                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+//                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = "Invalid or blocked access token!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+//                    #region Check location
+
+//                    if (!request.ParseMandatoryPaymentTerminal(CommonAPI,
+//                                                               //out var countryCode,
+//                                                               //out var partyId,
+//                                                               out var locationId,
+//                                                               out var existingTerminal,
+//                                                               out var ocpiResponseBuilder,
+//                                                               FailOnMissingTerminal: true))
+//                    {
+//                        return ocpiResponseBuilder;
+//                    }
+
+//                    #endregion
+
+//                    #region Parse Payment Terminal JSON patch
+
+//                    if (!request.TryParseJObjectRequestBody(out var paymentTerminalPatch, out ocpiResponseBuilder))
+//                        return ocpiResponseBuilder;
+
+//                    #endregion
+
+
+//                    // Validation-Checks for PATCHes
+//                    // (E-Tag, Timestamp, ...)
+
+//                    var patchedTerminal = await CommonAPI.TryPatchPaymentTerminal(
+//                                                    Party_Idv3.From(
+//                                                        existingTerminal.CountryCode.Value,
+//                                                        existingTerminal.PartyId.    Value
+//                                                    ),
+//                                                    existingTerminal.Id,
+//                                                    paymentTerminalPatch,
+//                                                    AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
+//                                                    false, //SkipNotifications,
+//                                                    request.HTTPRequest.EventTrackingId,
+//                                                    CurrentUserId: null
+//                                                );
+
+
+//                    //ToDo: Handle update errors!
+//                    if (patchedTerminal.IsSuccessAndDataNotNull(out var data))
+//                        return new OCPIResponse.Builder(request) {
+//                                       StatusCode           = StatusCode.Success,
+//                                       StatusMessage        = "Hello world!",
+//                                       Data                 = data.ToJSON(true,
+//                                                                          true,
+//                                                                          CustomTerminalSerializer,
+//                                                                          CustomDisplayTextSerializer,
+//                                                                          CustomImageSerializer),
+//                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                           HTTPStatusCode             = HTTPStatusCode.OK,
+//                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                           AccessControlAllowHeaders  = [ "Authorization" ],
+//                                           LastModified               = data.LastUpdated,
+//                                           ETag                       = data.ETag
+//                                       }
+//                                   };
+
+//                    return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = patchedTerminal.ErrorResponse,
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.OK,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                }
+
+//            );
+
+//            #endregion
+
+//            #endregion
+
+//            #region ~/payments/terminals/activate
+
+//            #region OPTIONS  ~/payments/terminals/activate
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/terminals/activate",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode              = HTTPStatusCode.OK,
+//                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
+//                                   AccessControlAllowMethods   = [ "OPTIONS", "POST" ],
+//                                   AccessControlAllowHeaders   = [ "Authorization" ],
+//                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region POST     ~/payments/terminals/activate
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.POST,
+//                URLPathPrefix + "payments/terminals/activate",
+//                PostTerminalsActivateRequest,
+//                PostTerminalsActivateResponse,
+//                async request => {
+
+//                    #region Check access token
+
+//                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+//                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = "Invalid or blocked access token!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+//                    #region Parse payment terminal JSON (will autogenerate a missing terminal id!)
+
+//                    if (!request.TryParseJObjectRequestBody(out var terminalJSON, out var ocpiResponseBuilder))
+//                        return ocpiResponseBuilder;
+
+//                    if (!Terminal.TryParse(terminalJSON,
+//                                           out var terminalToActivate,
+//                                           out var errorResponse,
+//                                           GenerateMissingTerminalId: true))
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
+//                                   StatusMessage        = "Could not parse the given terminal JSON: " + errorResponse,
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+//                    if (terminalToActivate.Reference.IsNullOrEmpty())
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = "The payment terminal reference must not be null!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+
+
+//                    //var addOrUpdateResult = await CommonAPI.AddOrUpdateTerminal(
+//                    //                                  newOrUpdatedTerminal,
+//                    //                                  AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade"),
+//                    //                                  false, //SkipNotifications
+//                    //                                  request.HTTPRequest.EventTrackingId,
+//                    //                                  CurrentUserId: null
+//                    //                              );
+
+//                    //if (addOrUpdateResult.IsSuccess &&
+//                    //    addOrUpdateResult.Data is not null)
+//                    //{
+
+//                    //    return new OCPIResponse.Builder(request) {
+//                    //               StatusCode           = StatusCodes.Success,
+//                    //               StatusMessage        = "Hello world!",
+//                    //               Data                 = addOrUpdateResult.Data.ToJSON(true,
+//                    //                                                                    true,
+//                    //                                                                    CustomTerminalSerializer,
+//                    //                                                                    CustomDisplayTextSerializer,
+//                    //                                                                    CustomImageSerializer),
+//                    //               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                    //                   HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+//                    //                                                    ? HTTPStatusCode.Created
+//                    //                                                    : HTTPStatusCode.OK,
+//                    //                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                    //                   AccessControlAllowHeaders  = [ "Authorization" ],
+//                    //                   LastModified               = addOrUpdateResult.Data.LastUpdated,
+//                    //                   ETag                       = addOrUpdateResult.Data.ETag
+//                    //               }
+//                    //           };
+
+//                    //}
+
+//                    return new OCPIResponse.Builder(request) {
+//                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                               StatusMessage        = "!",// addOrUpdateResult.ErrorResponse,
+//                               //Data                 = newOrUpdatedTerminal.ToJSON(true,
+//                               //                                                   true,
+//                               //                                                   CustomTerminalSerializer,
+//                               //                                                   CustomDisplayTextSerializer,
+//                               //                                                   CustomImageSerializer),
+//                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                   AccessControlAllowHeaders  = [ "Authorization" ]
+//                               }
+//                           };
+
+//                }
+
+//            );
+
+//            #endregion
+
+//            #endregion
+
+//            #region ~/payments/terminals/{terminalId}/deactivate
+
+//            #region OPTIONS  ~/payments/terminals/{terminalId}/deactivate
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode              = HTTPStatusCode.OK,
+//                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.POST ],
+//                                   AccessControlAllowMethods   = [ "OPTIONS", "POST" ],
+//                                   AccessControlAllowHeaders   = [ "Authorization" ],
+//                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region POST     ~/payments/terminals/{terminalId}/deactivate
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.POST,
+//                URLPathPrefix + "payments/terminals/{terminalId}/deactivate",
+//                PostTerminalsDeactivateRequest,
+//                PostTerminalsDeactivateResponse,
+//                async request => {
+
+//                    #region Check access token
+
+//                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+//                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+//                    {
+
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                                   StatusMessage        = "Invalid or blocked access token!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.Forbidden,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    }
+
+//                    #endregion
+
+//                    #region Get terminal identification
+
+//                    if (!request.ParsePaymentTerminalId(CommonAPI,
+//                                                 out var terminalId,
+//                                                 out var ocpiResponseBuilder))
+//                    {
+//                        return ocpiResponseBuilder;
+//                    }
+
+//                    #endregion
+
+
+//                    var terminalFound = false;
+
+
+//                    if (terminalFound)
+//                        return new OCPIResponse.Builder(request) {
+//                                   StatusCode           = StatusCode.Success,
+//                                   StatusMessage        = "Hello world!",
+//                                   HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                       HTTPStatusCode             = HTTPStatusCode.OK,
+//                                       AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                       AccessControlAllowHeaders  = [ "Authorization" ]
+//                                   }
+//                               };
+
+//                    return new OCPIResponse.Builder(request) {
+//                               StatusCode           = StatusCode.ClientErrors.GenericClientError,
+//                               StatusMessage        = "Unknown terminal!",
+//                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+//                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+//                                   AccessControlAllowHeaders  = [ "Authorization" ]
+//                               }
+//                           };
+
+//                }
+
+//            );
+
+//            #endregion
+
+//            #endregion
+
+
+//            #region ~/payments/financial-advice-confirmations
+
+//            #region OPTIONS  ~/payments/financial-advice-confirmations
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/financial-advice-confirmations",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode              = HTTPStatusCode.OK,
+//                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+//                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowHeaders   = [ "Authorization" ],
+//                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region GET      ~/payments/financial-advice-confirmations
+
+//            #endregion
+
+//            #endregion
+
+//            #region ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+//            #region OPTIONS  ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+//            CommonAPI.AddOCPIMethod(
+
+//                HTTPMethod.OPTIONS,
+//                URLPathPrefix + "payments/financial-advice-confirmations/{financial_advice_confirmation_id}",
+//                request =>
+
+//                    Task.FromResult(
+//                        new OCPIResponse.Builder(request) {
+//                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+//                                   HTTPStatusCode              = HTTPStatusCode.OK,
+//                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+//                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowHeaders   = [ "Authorization" ],
+//                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID ]
+//                               }
+//                        })
+
+//            );
+
+//            #endregion
+
+//            #region GET      ~/payments/financial-advice-confirmations/{financial_advice_confirmation_id}
+
+//            #endregion
+
+//            #endregion
+
+
+//        }
+
+//        #endregion
+
+
+//    }
+
+//}

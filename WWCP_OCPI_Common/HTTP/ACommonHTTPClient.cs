@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The HTTP client.
         /// </summary>
-        public     HTTPTestClient            NewHTTPClient;
+        public     HTTPClient            NewHTTPClient;
 
         /// <summary>
         /// A HTTP client pool for low-latency HTTP requests.
@@ -133,61 +133,115 @@ namespace cloud.charging.open.protocols.OCPI
                                  Version_Id?                                                SelectedOCPIVersionId        = null,
                                  AccessToken?                                               AccessToken                  = null,
                                  Boolean?                                                   AccessTokenIsBase64Encoded   = null,
-                                 TOTPConfig?                                                TOTPConfig                   = null,
 
-                                 HTTPHostname?                                              VirtualHostname              = null,
-                                 I18NString?                                                Description                  = null,
-                                 UInt16?                                                    MaxNumberOfPooledClients     = null,
-                                 IPVersionPreference?                                       PreferIPv4                   = null,
-                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                 LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                 IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                                 SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                                 IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                                 SslProtocols?                                              TLSProtocols                 = null,
+                                 I18NString?                                                Description                           = null,
+                                 String?                                                    HTTPUserAgent                         = null,
+                                 AcceptTypes?                                               Accept                                = null,
+                                 HTTPContentType?                                           ContentType                           = null,
+                                 ConnectionType?                                            Connection                            = null,
+                                 DefaultRequestBuilderDelegate?                             DefaultRequestBuilder                 = null,
 
-                                 String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
-                                 AcceptTypes?                                               Accept                       = null,
-                                 HTTPContentType?                                           ContentType                  = null,
-                                 ConnectionType?                                            Connection                   = null,
+                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidationHandler    = null,
+                                 LocalCertificateSelectionHandler?                          LocalCertificateSelector              = null,
+                                 IEnumerable<X509Certificate2>?                             ClientCertificates                    = null,
+                                 SslStreamCertificateContext?                               ClientCertificateContext              = null,
+                                 IEnumerable<X509Certificate2>?                             ClientCertificateChain                = null,
+                                 SslProtocols?                                              TLSProtocols                          = null,
+                                 CipherSuitesPolicy?                                        CipherSuitesPolicy                    = null,
+                                 X509ChainPolicy?                                           CertificateChainPolicy                = null,
+                                 X509RevocationMode?                                        CertificateRevocationCheckMode        = null,
+                                 IEnumerable<SslApplicationProtocol>?                       ApplicationProtocols                  = null,
+                                 Boolean?                                                   AllowRenegotiation                    = null,
+                                 Boolean?                                                   AllowTLSResume                        = null,
+                                 TOTPConfig?                                                TOTPConfig                            = null,
 
-                                 TimeSpan?                                                  RequestTimeout               = null,
-                                 TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                 UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
-                                 UInt32?                                                    InternalBufferSize           = DefaultInternalBufferSize,
-                                 Boolean?                                                   UseHTTPPipelining            = null,
-                                 Boolean?                                                   DisableLogging               = false,
-                                 HTTPClientLogger?                                          HTTPLogger                   = null,
-                                 IDNSClient?                                                DNSClient                    = null)
+                                 UInt16?                                                    MaxNumberOfPooledClients              = null,
+
+                                 IPVersionPreference?                                       PreferIPv4                            = null,
+                                 TimeSpan?                                                  ConnectTimeout                        = null,
+                                 TimeSpan?                                                  ReceiveTimeout                        = null,
+                                 TimeSpan?                                                  SendTimeout                           = null,
+                                 TransmissionRetryDelayDelegate?                            TransmissionRetryDelay                = null,
+                                 UInt16?                                                    MaxNumberOfRetries                    = null,
+                                 UInt32?                                                    BufferSize                            = null,
+
+                                 Boolean?                                                   ConsumeRequestChunkedTEImmediately    = null,
+                                 Boolean?                                                   ConsumeResponseChunkedTEImmediately   = null,
+
+                                 Boolean?                                                   DisableLogging                        = null,
+                                 IDNSClient?                                                DNSClient                             = null)
+
+                                 //TOTPConfig?                                                TOTPConfig                   = null,
+
+                                 //HTTPHostname?                                              VirtualHostname              = null,
+                                 //I18NString?                                                Description                  = null,
+                                 //IPVersionPreference?                                       PreferIPv4                   = null,
+                                 //RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
+                                 //LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
+                                 //IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
+                                 //SslStreamCertificateContext?                               ClientCertificateContext     = null,
+                                 //IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
+                                 //SslProtocols?                                              TLSProtocols                 = null,
+
+                                 //String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
+                                 //AcceptTypes?                                               Accept                       = null,
+                                 //HTTPContentType?                                           ContentType                  = null,
+                                 //ConnectionType?                                            Connection                   = null,
+
+                                 //TimeSpan?                                                  RequestTimeout               = null,
+                                 //TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
+                                 //UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
+                                 //UInt32?                                                    InternalBufferSize           = 16000, //DefaultInternalBufferSize,
+                                 //Boolean?                                                   UseHTTPPipelining            = null,
+                                 //HTTPClientLogger?                                          HTTPLogger                   = null,
+
+                                 //Boolean?                                                   DisableLogging               = null,
+                                 //IDNSClient?                                                DNSClient                    = null)
 
             : base(VersionsURL,
-                   VirtualHostname,
                    Description,
-                   PreferIPv4,
-                   RemoteCertificateValidator,
+                   HTTPUserAgent  ?? DefaultHTTPUserAgent,
+                   Accept         ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   ContentType    ?? HTTPContentType.Application.JSON_UTF8,
+                   Connection     ?? ConnectionType.KeepAlive,
+                   null, //DefaultRequestBuilder,
+
+                   RemoteCertificateValidationHandler,
                    LocalCertificateSelector,
                    ClientCertificates,
                    ClientCertificateContext,
                    ClientCertificateChain,
                    TLSProtocols,
-                   ContentType    ?? HTTPContentType.Application.JSON_UTF8,
-                   Accept         ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   null, //CipherSuitesPolicy,
+                   null, //CertificateChainPolicy,
+                   null, //CertificateRevocationCheckMode,
+                   null, //ApplicationProtocols,
+                   null, //AllowRenegotiation,
+                   null, //AllowTLSResume,
+                   TOTPConfig,
+
                    AccessToken.HasValue
                        ? AccessTokenIsBase64Encoded ?? true
                              ? HTTPTokenAuthentication.Parse(AccessToken.Value.ToString().ToBase64())
                              : HTTPTokenAuthentication.Parse(AccessToken.Value.ToString())
                        : null,
-                   TOTPConfig,
-                   HTTPUserAgent  ?? DefaultHTTPUserAgent,
-                   Connection     ?? ConnectionType.KeepAlive,
-                   RequestTimeout ?? DefaultRequestTimeout,
+
+                   PreferIPv4,
+                   null, //ConnectTimeout,
+                   null, //ReceiveTimeout,
+                   null, //SendTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
-                   InternalBufferSize,
-                   UseHTTPPipelining,
+                   null, //BufferSize,
+
+                   null, //ConsumeRequestChunkedTEImmediately
+                   null, //ConsumeResponseChunkedTEImmediately
+
                    DisableLogging,
-                   HTTPLogger,
                    DNSClient)
+
+            //       RequestTimeout ?? DefaultRequestTimeout,
+
 
         {
 
@@ -198,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             var httpHostname            = HTTPHostname.Parse($"{RemoteURL.Hostname}:{RemoteURL.Port}");
 
-            this.NewHTTPClient          = new HTTPTestClient(
+            this.NewHTTPClient          = new HTTPClient(
 
                                               URL:                                   this.RemoteURL,
                                               Description:                           this.Description,
@@ -207,13 +261,13 @@ namespace cloud.charging.open.protocols.OCPI
                                               Accept:                                ocpiAcceptTypes,
                                               ContentType:                           ocpiContentType,
                                               Connection:                            this.Connection ?? ConnectionType.KeepAlive,
-                                              DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                               Host         = httpHostname,
-                                                                                               Accept       = ocpiAcceptTypes,
-                                                                                               ContentType  = ocpiContentType,
-                                                                                               UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                                                               Connection   = this.Connection    ?? ConnectionType.KeepAlive
-                                                                                           },
+                                              DefaultRequestBuilder:                 (httpClient) => new HTTPRequest.Builder(this, CancellationToken.None) {
+                                                                                                         Host         = httpHostname,
+                                                                                                         Accept       = ocpiAcceptTypes,
+                                                                                                         ContentType  = ocpiContentType,
+                                                                                                         UserAgent    = httpClient.HTTPUserAgent,
+                                                                                                         Connection   = this.Connection    ?? ConnectionType.KeepAlive
+                                                                                                     },
 
                                               RemoteCertificateValidator:            this.RemoteCertificateValidator is not null
                                                                                          ? (sender,
@@ -261,13 +315,13 @@ namespace cloud.charging.open.protocols.OCPI
                                               Accept:                                ocpiAcceptTypes,
                                               ContentType:                           ocpiContentType,
                                               Connection:                            this.Connection ?? ConnectionType.KeepAlive,
-                                              DefaultRequestBuilder:                 () => new HTTPRequest.Builder(this, CancellationToken.None) {
-                                                                                               Host         = httpHostname,
-                                                                                               Accept       = ocpiAcceptTypes,
-                                                                                               ContentType  = ocpiContentType,
-                                                                                               UserAgent    = this.HTTPUserAgent ?? DefaultHTTPUserAgent,
-                                                                                               Connection   = this.Connection    ?? ConnectionType.KeepAlive
-                                                                                           },
+                                              DefaultRequestBuilder:                 (httpClient) => new HTTPRequest.Builder(this, CancellationToken.None) {
+                                                                                                         Host         = httpHostname,
+                                                                                                         Accept       = ocpiAcceptTypes,
+                                                                                                         ContentType  = ocpiContentType,
+                                                                                                         UserAgent    = httpClient.HTTPUserAgent,
+                                                                                                         Connection   = this.Connection    ?? ConnectionType.KeepAlive
+                                                                                                     },
 
                                               RemoteCertificateValidator:            this.RemoteCertificateValidator is not null
                                                                                          ? (sender,

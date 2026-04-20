@@ -24,7 +24,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.HTTPTest;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
@@ -38,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// The HTTP API for charge point operators.
     /// EMSPs will connect to this API.
     /// </summary>
-    public class CPO_HTTPAPI : AHTTPExtAPIXExtension2<CommonAPI, HTTPExtAPIX>
+    public class CPO_HTTPAPI : AHTTPExtAPIExtension2<CommonAPI, HTTPExtAPI>
     {
 
         #region Data
@@ -165,13 +164,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetLocationsHTTPRequest(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetLocationsHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -193,14 +192,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetLocationsHTTPResponse(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           HTTPAPI,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              OCPIResponse       Response,
                                                              CancellationToken  CancellationToken)
 
                 => OnGetLocationsHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -223,13 +222,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetLocationHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetLocationHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -251,14 +250,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetLocationHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetLocationHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -284,13 +283,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetEVSEHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           HTTPAPI,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
                 => OnGetEVSEHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -312,14 +311,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetEVSEHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           HTTPAPI,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
 
                 => OnGetEVSEHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -345,13 +344,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetConnectorHTTPRequest(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetConnectorHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -373,14 +372,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetConnectorHTTPResponse(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           HTTPAPI,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              OCPIResponse       Response,
                                                              CancellationToken  CancellationToken)
 
                 => OnGetConnectorHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -406,13 +405,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetTariffsHTTPRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           CancellationToken  CancellationToken)
 
                 => OnGetTariffsHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -434,14 +433,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetTariffsHTTPResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            OCPIResponse       Response,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetTariffsHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -464,13 +463,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetTariffHTTPRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           HTTPAPI,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          CancellationToken  CancellationToken)
 
                 => OnGetTariffHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -492,14 +491,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetTariffHTTPResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           OCPIResponse       Response,
                                                           CancellationToken  CancellationToken)
 
                 => OnGetTariffHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -525,13 +524,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetSessionsHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetSessionsHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -553,14 +552,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetSessionsHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetSessionsHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -583,13 +582,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           CancellationToken  CancellationToken)
 
                 => OnGetSessionHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -611,14 +610,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            OCPIResponse       Response,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetSessionHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -644,13 +643,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetCDRsHTTPRequest(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           HTTPAPI,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        CancellationToken  CancellationToken)
 
                 => OnGetCDRsHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -672,14 +671,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetCDRsHTTPResponse(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           HTTPAPI,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         OCPIResponse       Response,
                                                         CancellationToken  CancellationToken)
 
                 => OnGetCDRsHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -702,13 +701,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetCDRHTTPRequest(DateTimeOffset     Timestamp,
-                                                      HTTPAPIX           HTTPAPI,
+                                                      HTTPExtAPI         API,
                                                       OCPIRequest        Request,
                                                       CancellationToken  CancellationToken)
 
                 => OnGetCDRHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -730,14 +729,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetCDRHTTPResponse(DateTimeOffset     Timestamp,
-                                                       HTTPAPIX           HTTPAPI,
+                                                       HTTPExtAPI         API,
                                                        OCPIRequest        Request,
                                                        OCPIResponse       Response,
                                                        CancellationToken  CancellationToken)
 
                 => OnGetCDRHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -763,13 +762,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetTokensHTTPRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           HTTPAPI,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          CancellationToken  CancellationToken)
 
                 => OnGetTokensHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -791,14 +790,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetTokensHTTPResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           OCPIResponse       Response,
                                                           CancellationToken  CancellationToken)
 
                 => OnGetTokensHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -821,13 +820,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task DeleteTokensHTTPRequest(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             CancellationToken  CancellationToken)
 
                 => OnDeleteTokensHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -849,14 +848,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task DeleteTokensHTTPResponse(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           HTTPAPI,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              OCPIResponse       Response,
                                                              CancellationToken  CancellationToken)
 
                 => OnDeleteTokensHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -881,13 +880,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           HTTPAPI,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
                 => OnGetTokenHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -909,14 +908,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           HTTPAPI,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
 
                 => OnGetTokenHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -939,13 +938,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task PostTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           HTTPAPI,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          CancellationToken  CancellationToken)
 
                 => OnPostTokenHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -967,14 +966,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task PostTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           OCPIResponse       Response,
                                                           CancellationToken  CancellationToken)
 
                 => OnPostTokenHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -997,13 +996,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task PutTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                        HTTPAPIX           HTTPAPI,
+                                                        HTTPExtAPI         API,
                                                         OCPIRequest        Request,
                                                         CancellationToken  CancellationToken)
 
                 => OnPutTokenHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1025,14 +1024,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task PutTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                         HTTPAPIX           HTTPAPI,
+                                                         HTTPExtAPI         API,
                                                          OCPIRequest        Request,
                                                          OCPIResponse       Response,
                                                          CancellationToken  CancellationToken)
 
                 => OnPutTokenHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1055,13 +1054,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task PatchTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           CancellationToken  CancellationToken)
 
                 => OnPatchTokenHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1083,14 +1082,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task PatchTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            OCPIResponse       Response,
                                                            CancellationToken  CancellationToken)
 
                 => OnPatchTokenHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1113,13 +1112,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task DeleteTokenHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnDeleteTokenHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1141,14 +1140,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task DeleteTokenHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnDeleteTokenHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1174,13 +1173,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetBookingsHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetBookingsHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1202,14 +1201,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetBookingsHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetBookingsHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1232,13 +1231,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task PostBookingHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnPostBookingHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1260,14 +1259,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task PostBookingHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnPostBookingHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1293,13 +1292,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The PTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task GetTerminalHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnGetTerminalHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1321,14 +1320,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task GetTerminalHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnGetTerminalHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1351,13 +1350,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The PTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task PostTerminalHTTPRequest(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             CancellationToken  CancellationToken)
 
                 => OnPostTerminalHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1379,14 +1378,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task PostTerminalHTTPResponse(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           HTTPAPI,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              OCPIResponse       Response,
                                                              CancellationToken  CancellationToken)
 
                 => OnPostTerminalHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1413,13 +1412,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task ReserveNowHTTPRequest(DateTimeOffset     Timestamp,
-                                                          HTTPAPIX           HTTPAPI,
+                                                          HTTPExtAPI         API,
                                                           OCPIRequest        Request,
                                                           CancellationToken  CancellationToken)
 
                 => OnReserveNowHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1441,14 +1440,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task ReserveNowHTTPResponse(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            OCPIResponse       Response,
                                                            CancellationToken  CancellationToken)
 
                 => OnReserveNowHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1471,13 +1470,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task CancelReservationHTTPRequest(DateTimeOffset     Timestamp,
-                                                                 HTTPAPIX           HTTPAPI,
+                                                                 HTTPExtAPI         API,
                                                                  OCPIRequest        Request,
                                                                  CancellationToken  CancellationToken)
 
                 => OnCancelReservationHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1499,14 +1498,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task CancelReservationHTTPResponse(DateTimeOffset     Timestamp,
-                                                                  HTTPAPIX           HTTPAPI,
+                                                                  HTTPExtAPI         API,
                                                                   OCPIRequest        Request,
                                                                   OCPIResponse       Response,
                                                                   CancellationToken  CancellationToken)
 
                 => OnCancelReservationHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1529,13 +1528,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task StartSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             CancellationToken  CancellationToken)
 
                 => OnStartSessionHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1557,14 +1556,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task StartSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                             HTTPAPIX           HTTPAPI,
+                                                             HTTPExtAPI         API,
                                                              OCPIRequest        Request,
                                                              OCPIResponse       Response,
                                                              CancellationToken  CancellationToken)
 
                 => OnStartSessionHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1587,13 +1586,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task StopSessionHTTPRequest(DateTimeOffset     Timestamp,
-                                                           HTTPAPIX           HTTPAPI,
+                                                           HTTPExtAPI         API,
                                                            OCPIRequest        Request,
                                                            CancellationToken  CancellationToken)
 
                 => OnStopSessionHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1615,14 +1614,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task StopSessionHTTPResponse(DateTimeOffset     Timestamp,
-                                                            HTTPAPIX           HTTPAPI,
+                                                            HTTPExtAPI         API,
                                                             OCPIRequest        Request,
                                                             OCPIResponse       Response,
                                                             CancellationToken  CancellationToken)
 
                 => OnStopSessionHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1645,13 +1644,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="HTTPAPI">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task UnlockConnectorHTTPRequest(DateTimeOffset     Timestamp,
-                                                               HTTPAPIX           HTTPAPI,
+                                                               HTTPExtAPI         API,
                                                                OCPIRequest        Request,
                                                                CancellationToken  CancellationToken)
 
                 => OnUnlockConnectorHTTPRequest.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        CancellationToken
                    );
@@ -1673,14 +1672,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task UnlockConnectorHTTPResponse(DateTimeOffset     Timestamp,
-                                                                HTTPAPIX           HTTPAPI,
+                                                                HTTPExtAPI         API,
                                                                 OCPIRequest        Request,
                                                                 OCPIResponse       Response,
                                                                 CancellationToken  CancellationToken)
 
                 => OnUnlockConnectorHTTPResponse.WhenAll(
                        Timestamp,
-                       HTTPAPI,
+                       API,
                        Request,
                        Response,
                        CancellationToken
@@ -1706,7 +1705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="API">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task NotifyWebPaymentsStartedHTTPRequest(DateTimeOffset     Timestamp,
-                                                                        HTTPAPIX           API,
+                                                                        HTTPExtAPI         API,
                                                                         OCPIRequest        Request,
                                                                         CancellationToken  CancellationToken)
 
@@ -1734,7 +1733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task NotifyWebPaymentsStartedHTTPResponse(DateTimeOffset     Timestamp,
-                                                                         HTTPAPIX           API,
+                                                                         HTTPExtAPI         API,
                                                                          OCPIRequest        Request,
                                                                          OCPIResponse       Response,
                                                                          CancellationToken  CancellationToken)
@@ -1764,7 +1763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="API">The CPO HTTP API.</param>
             /// <param name="Request">The OCPI request.</param>
             protected internal Task NotifyWebPaymentsFailedHTTPRequest(DateTimeOffset     Timestamp,
-                                                                       HTTPAPIX           API,
+                                                                       HTTPExtAPI         API,
                                                                        OCPIRequest        Request,
                                                                        CancellationToken  CancellationToken)
 
@@ -1792,7 +1791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// <param name="Request">The OCPI request.</param>
             /// <param name="Response">The OCPI response.</param>
             protected internal Task NotifyWebPaymentsFailedHTTPResponse(DateTimeOffset     Timestamp,
-                                                                        HTTPAPIX           API,
+                                                                        HTTPExtAPI         API,
                                                                         OCPIRequest        Request,
                                                                         OCPIResponse       Response,
                                                                         CancellationToken  CancellationToken)

@@ -87,45 +87,45 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetLocationHTTPRequest += handler,
                               handler => CPOClient.OnGetLocationHTTPRequest -= handler,
                               "GetLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetLocationResponse",
                               handler => CPOClient.OnGetLocationHTTPResponse += handler,
                               handler => CPOClient.OnGetLocationHTTPResponse -= handler,
                               "GetLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutLocationRequest",
                               handler => CPOClient.OnPutLocationHTTPRequest += handler,
                               handler => CPOClient.OnPutLocationHTTPRequest -= handler,
                               "PutLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutLocationResponse",
                               handler => CPOClient.OnPutLocationHTTPResponse += handler,
                               handler => CPOClient.OnPutLocationHTTPResponse -= handler,
                               "PutLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchLocationRequest",
                               handler => CPOClient.OnPatchLocationHTTPRequest += handler,
                               handler => CPOClient.OnPatchLocationHTTPRequest -= handler,
                               "PatchLocation", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchLocationResponse",
                               handler => CPOClient.OnPatchLocationHTTPResponse += handler,
                               handler => CPOClient.OnPatchLocationHTTPResponse -= handler,
                               "PatchLocation", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -135,45 +135,45 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetEVSEHTTPRequest += handler,
                               handler => CPOClient.OnGetEVSEHTTPRequest -= handler,
                               "GetEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetEVSEResponse",
                               handler => CPOClient.OnGetEVSEHTTPResponse += handler,
                               handler => CPOClient.OnGetEVSEHTTPResponse -= handler,
                               "GetEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutEVSERequest",
                               handler => CPOClient.OnPutEVSEHTTPRequest += handler,
                               handler => CPOClient.OnPutEVSEHTTPRequest -= handler,
                               "PutEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutEVSEResponse",
                               handler => CPOClient.OnPutEVSEHTTPResponse += handler,
                               handler => CPOClient.OnPutEVSEHTTPResponse -= handler,
                               "PutEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchEVSERequest",
                               handler => CPOClient.OnPatchEVSEHTTPRequest += handler,
                               handler => CPOClient.OnPatchEVSEHTTPRequest -= handler,
                               "PatchEVSE", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchEVSEResponse",
                               handler => CPOClient.OnPatchEVSEHTTPResponse += handler,
                               handler => CPOClient.OnPatchEVSEHTTPResponse -= handler,
                               "PatchEVSE", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -183,45 +183,45 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetConnectorHTTPRequest += handler,
                               handler => CPOClient.OnGetConnectorHTTPRequest -= handler,
                               "GetConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetConnectorResponse",
                               handler => CPOClient.OnGetConnectorHTTPResponse += handler,
                               handler => CPOClient.OnGetConnectorHTTPResponse -= handler,
                               "GetConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutConnectorRequest",
                               handler => CPOClient.OnPutConnectorHTTPRequest += handler,
                               handler => CPOClient.OnPutConnectorHTTPRequest -= handler,
                               "PutConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutConnectorResponse",
                               handler => CPOClient.OnPutConnectorHTTPResponse += handler,
                               handler => CPOClient.OnPutConnectorHTTPResponse -= handler,
                               "PutConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchConnectorRequest",
                               handler => CPOClient.OnPatchConnectorHTTPRequest += handler,
                               handler => CPOClient.OnPatchConnectorHTTPRequest -= handler,
                               "PatchConnector", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchConnectorResponse",
                               handler => CPOClient.OnPatchConnectorHTTPResponse += handler,
                               handler => CPOClient.OnPatchConnectorHTTPResponse -= handler,
                               "PatchConnector", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -231,60 +231,60 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetTariffHTTPRequest += handler,
                               handler => CPOClient.OnGetTariffHTTPRequest -= handler,
                               "GetTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetTariffResponse",
                               handler => CPOClient.OnGetTariffHTTPResponse += handler,
                               handler => CPOClient.OnGetTariffHTTPResponse -= handler,
                               "GetTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutTariffRequest",
                               handler => CPOClient.OnPutTariffHTTPRequest += handler,
                               handler => CPOClient.OnPutTariffHTTPRequest -= handler,
                               "PutTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutTariffResponse",
                               handler => CPOClient.OnPutTariffHTTPResponse += handler,
                               handler => CPOClient.OnPutTariffHTTPResponse -= handler,
                               "PutTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchTariffRequest",
                               handler => CPOClient.OnPatchTariffHTTPRequest += handler,
                               handler => CPOClient.OnPatchTariffHTTPRequest -= handler,
                               "PatchTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchTariffResponse",
                               handler => CPOClient.OnPatchTariffHTTPResponse += handler,
                               handler => CPOClient.OnPatchTariffHTTPResponse -= handler,
                               "PatchTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("DeleteTariffRequest",
                               handler => CPOClient.OnDeleteTariffHTTPRequest += handler,
                               handler => CPOClient.OnDeleteTariffHTTPRequest -= handler,
                               "DeleteTariff", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("DeleteTariffResponse",
                               handler => CPOClient.OnDeleteTariffHTTPResponse += handler,
                               handler => CPOClient.OnDeleteTariffHTTPResponse -= handler,
                               "DeleteTariff", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -294,60 +294,60 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetSessionHTTPRequest += handler,
                               handler => CPOClient.OnGetSessionHTTPRequest -= handler,
                               "GetSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetSessionResponse",
                               handler => CPOClient.OnGetSessionHTTPResponse += handler,
                               handler => CPOClient.OnGetSessionHTTPResponse -= handler,
                               "GetSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PutSessionRequest",
                               handler => CPOClient.OnPutSessionHTTPRequest += handler,
                               handler => CPOClient.OnPutSessionHTTPRequest -= handler,
                               "PutSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PutSessionResponse",
                               handler => CPOClient.OnPutSessionHTTPResponse += handler,
                               handler => CPOClient.OnPutSessionHTTPResponse -= handler,
                               "PutSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PatchSessionRequest",
                               handler => CPOClient.OnPatchSessionHTTPRequest += handler,
                               handler => CPOClient.OnPatchSessionHTTPRequest -= handler,
                               "PatchSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PatchSessionResponse",
                               handler => CPOClient.OnPatchSessionHTTPResponse += handler,
                               handler => CPOClient.OnPatchSessionHTTPResponse -= handler,
                               "PatchSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("DeleteSessionRequest",
                               handler => CPOClient.OnDeleteSessionHTTPRequest += handler,
                               handler => CPOClient.OnDeleteSessionHTTPRequest -= handler,
                               "DeleteSession", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("DeleteSessionResponse",
                               handler => CPOClient.OnDeleteSessionHTTPResponse += handler,
                               handler => CPOClient.OnDeleteSessionHTTPResponse -= handler,
                               "DeleteSession", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -357,30 +357,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetCDRHTTPRequest += handler,
                               handler => CPOClient.OnGetCDRHTTPRequest -= handler,
                               "GetCDR", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetCDRResponse",
                               handler => CPOClient.OnGetCDRHTTPResponse += handler,
                               handler => CPOClient.OnGetCDRHTTPResponse -= handler,
                               "GetCDR", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PostCDRRequest",
                               handler => CPOClient.OnPostCDRHTTPRequest += handler,
                               handler => CPOClient.OnPostCDRHTTPRequest -= handler,
                               "PostCDR", "cdr", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PostCDRResponse",
                               handler => CPOClient.OnPostCDRHTTPResponse += handler,
                               handler => CPOClient.OnPostCDRHTTPResponse -= handler,
                               "PostCDR", "cdr", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
@@ -390,30 +390,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
                               handler => CPOClient.OnGetTokensHTTPRequest += handler,
                               handler => CPOClient.OnGetTokensHTTPRequest -= handler,
                               "GetTokens", "token", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("GetTokensResponse",
                               handler => CPOClient.OnGetTokensHTTPResponse += handler,
                               handler => CPOClient.OnGetTokensHTTPResponse -= handler,
                               "GetTokens", "token", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
 
                 RegisterEvent("PostTokenRequest",
                               handler => CPOClient.OnPostTokenHTTPRequest += handler,
                               handler => CPOClient.OnPostTokenHTTPRequest -= handler,
                               "PostToken", "token", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 RegisterEvent("PostTokenResponse",
                               handler => CPOClient.OnPostTokenHTTPResponse += handler,
                               handler => CPOClient.OnPostTokenHTTPResponse -= handler,
                               "PostToken", "token", "response", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
+                    RegisterDefaultConsoleLogTargetX(this).
+                    RegisterDefaultDiscLogTargetX(this);
 
                 #endregion
 
