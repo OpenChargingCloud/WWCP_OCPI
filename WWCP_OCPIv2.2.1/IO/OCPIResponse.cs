@@ -235,10 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #endregion
 
-                    var text  = Response.HTTPBodyAsUTF8String;
-                    var json  = text is not null
-                                    ? JObject.Parse(text)
-                                    : null;
+                    var json = JSONObject.TryParse(Response.HTTPBodyAsUTF8String);
 
                     if (json is not null)
                     {
@@ -264,6 +261,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                );
 
                     }
+                    else
+                        result = new OCPIResponse(
+                                     StatusCode.GenericError,
+                                     "Invalid JSON in HTTP response body!",
+                                     Response.HTTPBodyAsUTF8String
+                                 );
 
                 }
 
@@ -693,61 +696,72 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (Response.HTTPBody?.Length > 0)
                 {
 
-                    var json           = JObject.Parse(Response.HTTPBodyAsUTF8String);
+                    var json = JSONObject.TryParse(Response.HTTPBodyAsUTF8String);
 
-                    #region Documentation
-
-                    // {
-                    //   "data": [
-                    //     {
-                    //       "version": "2.2",
-                    //       "url":     "https://example.com/ocpi/versions/2.2/"
-                    //     }
-                    //   ],
-                    //   "status_code":     1000,
-                    //   "status_message": "hello world!",
-                    //   "timestamp":      "2020-10-05T21:15:30.134Z"
-                    // }
-
-                    #endregion
-
-                    var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError;
-                    var statusMessage  =                     json["status_message"]?.Value<String>();
-                    var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
-                    if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
-                        timestamp      = timestamp.Value.ToUniversalTime();
-
-                    if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
-                        Response.HTTPStatusCode == HTTPStatusCode.Created)
+                    if (json is not null)
                     {
 
-                        result = new OCPIResponse<TResponse>(
-                                     Parser(Response),
-                                     statusCode,
-                                     statusMessage ?? String.Empty,
-                                     null,
-                                     timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                        #region Documentation
 
-                                     Response,
-                                     remoteRequestId,
-                                     remoteCorrelationId,
-                                     remoteLocation
-                                 );
+                        // {
+                        //   "data": [
+                        //     {
+                        //       "version": "2.2",
+                        //       "url":     "https://example.com/ocpi/versions/2.2/"
+                        //     }
+                        //   ],
+                        //   "status_code":     1000,
+                        //   "status_message": "hello world!",
+                        //   "timestamp":      "2020-10-05T21:15:30.134Z"
+                        // }
+
+                        #endregion
+
+                        var statusCode     = StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError;
+                        var statusMessage  =                     json["status_message"]?.Value<String>();
+                        var timestamp      =                     json["timestamp"]?.     Value<DateTime>();
+                        if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                            timestamp      = timestamp.Value.ToUniversalTime();
+
+                        if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
+                            Response.HTTPStatusCode == HTTPStatusCode.Created)
+                        {
+
+                            result = new OCPIResponse<TResponse>(
+                                         Parser(Response),
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         null,
+                                         timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation
+                                     );
+
+                        }
+
+                        else
+                            result = new OCPIResponse<TResponse>(
+                                         default,
+                                         statusCode,
+                                         statusMessage ?? String.Empty,
+                                         Response.EntirePDU,
+                                         timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+
+                                         Response,
+                                         remoteRequestId,
+                                         remoteCorrelationId,
+                                         remoteLocation
+                                     );
 
                     }
-
                     else
                         result = new OCPIResponse<TResponse>(
-                                     default,
-                                     statusCode,
-                                     statusMessage ?? String.Empty,
-                                     Response.EntirePDU,
-                                     timestamp     ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-
-                                     Response,
-                                     remoteRequestId,
-                                     remoteCorrelationId,
-                                     remoteLocation
+                                     StatusCode.GenericError,
+                                     "Invalid JSON in HTTP response body!",
+                                     Response.HTTPBodyAsUTF8String
                                  );
 
                 }
@@ -804,27 +818,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,           Request_Id.     TryParse, RequestId);
                 var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,       Correlation_Id. TryParse, CorrelationId);
-                var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
+                var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",                         Hermod.Location.TryParse);
 
                 var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code, CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,     Party_Id.       TryParse);
+                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,      Party_Id.       TryParse);
                 var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,       Party_Id.       TryParse);
-
-                var text = "";
+                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,        Party_Id.       TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
-                    text = Response.HTTPBodyAsUTF8String;
-
-                //if (Response.HTTPBodyStream is ChunkedTransferEncodingStream chunkedStream)
-                //    text = Response.ReadAllChunks().GetAwaiter().GetResult();
-
-                if (text.IsNotNullOrEmpty())
                 {
 
-                    var json  = text is not null
-                                    ? JObject.Parse(text)
-                                    : null;
+                    var json = JSONObject.TryParse(Response.HTTPBodyAsUTF8String);
 
                     if (json is not null)
                     {
@@ -895,7 +899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         else
                             result = new OCPIResponse<IEnumerable<TResponse>>(
-                                         [],
+                                            [],
                                          statusCode,
                                          statusMessage ?? String.Empty,
                                          null,
@@ -913,8 +917,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      );
 
                     }
+                    else
+                        result = new OCPIResponse<IEnumerable<TResponse>>(
+                                     StatusCode.GenericError,
+                                     "Invalid JSON in HTTP response body!",
+                                     Response.HTTPBodyAsUTF8String
+                                 );
 
                 }
+
+                else
+                    result = new OCPIResponse<IEnumerable<TResponse>>(
+                                 default,
+                                 StatusCode.GenericError,
+                                 Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                                 Response.EntirePDU,
+                                 Response.Timestamp,
+
+                                 Response,
+                                 remoteRequestId,
+                                 remoteCorrelationId,
+                                 remoteLocation
+                             );
 
                 result ??= new OCPIResponse<IEnumerable<TResponse>>(
                                [],
@@ -972,27 +996,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var remoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,           Request_Id.     TryParse, RequestId);
                 var remoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,       Correlation_Id. TryParse, CorrelationId);
-                var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
+                var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",                         Hermod.Location.TryParse);
 
                 var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code, CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,     Party_Id.       TryParse);
+                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,      Party_Id.       TryParse);
                 var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,       Party_Id.       TryParse);
-
-                var text = "";
+                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,        Party_Id.       TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
-                    text = Response.HTTPBodyAsUTF8String;
-
-                //if (Response.HTTPBodyStream is ChunkedTransferEncodingStream chunkedStream)
-                //    text = Response.ReadAllChunks().GetAwaiter().GetResult();
-
-                if (text.IsNotNullOrEmpty())
                 {
 
-                    var json  = text is not null
-                                    ? JObject.Parse(text)
-                                    : null;
+                    var json  = JSONObject.TryParse(Response.HTTPBodyAsUTF8String);
 
                     if (json is not null)
                     {
@@ -1049,8 +1063,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      );
 
                     }
+                    else
+                        result = new OCPIResponse<TResponse>(
+                                     StatusCode.GenericError,
+                                     "Invalid JSON in HTTP response body!",
+                                     Response.HTTPBodyAsUTF8String
+                                 );
 
                 }
+
+                else
+                    result = new OCPIResponse<TResponse>(
+                                 default,
+                                 StatusCode.GenericError,
+                                 Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
+                                 Response.EntirePDU,
+                                 Response.Timestamp,
+
+                                 Response,
+                                 remoteRequestId,
+                                 remoteCorrelationId,
+                                 remoteLocation
+                             );
 
                 result ??= new OCPIResponse<TResponse>(
                                StatusCode.GenericError,
