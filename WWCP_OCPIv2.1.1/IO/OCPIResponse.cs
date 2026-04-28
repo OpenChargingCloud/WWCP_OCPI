@@ -112,47 +112,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToJSON()
+        #region (static) Error     (StatusMessage,             AdditionalInformation   = null, Timestamp = null, ...)
 
-        public JObject ToJSON()
-        {
+        public static OCPIResponse Error(String           StatusMessage,
+                                         String?          AdditionalInformation   = null,
+                                         DateTimeOffset?  Timestamp               = null,
 
-            var json = JSONObject.Create(
+                                         HTTPResponse?    HTTPResponse            = null,
+                                         Request_Id?      RequestId               = null,
+                                         Correlation_Id?  CorrelationId           = null)
 
-                                 new JProperty("status_code",             StatusCode.Value),
+            => new(StatusCode.GenericError,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
 
-                           StatusMessage.IsNotNullOrEmpty()
-                               ? new JProperty("status_message",          StatusMessage)
-                               : null,
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
 
-                           AdditionalInformation.IsNotNullOrEmpty()
-                               ? new JProperty("additionalInformation",   AdditionalInformation)
-                               : null,
+        #endregion
 
-                           RequestId.HasValue
-                               ? new JProperty("requestId",               RequestId.    Value.ToString())
-                               : null,
+        #region (static) Error     (StatusCode, StatusMessage, AdditionalInformation   = null, Timestamp = null, ...)
 
-                           CorrelationId.HasValue
-                               ? new JProperty("correlationId",           CorrelationId.Value.ToString())
-                               : null,
+        public static OCPIResponse Error(StatusCode       StatusCode,
+                                         String           StatusMessage,
+                                         String?          AdditionalInformation   = null,
+                                         DateTimeOffset?  Timestamp               = null,
 
-                           HTTPLocation.HasValue
-                               ? new JProperty("httpLocation",            HTTPLocation. Value.ToString())
-                               : null,
+                                         HTTPResponse?    HTTPResponse            = null,
+                                         Request_Id?      RequestId               = null,
+                                         Correlation_Id?  CorrelationId           = null)
 
-                                 new JProperty("timestamp",               Timestamp.          ToISO8601())
+            => new(StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
 
-                       );
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
 
-            return json;
+        #endregion
 
-        }
+        #region (static) Exception (Exception,                                                 Timestamp = null,...)
+
+        public static OCPIResponse Exception(Exception        Exception,
+                                             DateTimeOffset?  Timestamp       = null,
+
+                                             HTTPResponse?    HTTPResponse    = null,
+                                             Request_Id?      RequestId       = null,
+                                             Correlation_Id?  CorrelationId   = null)
+
+            => new(StatusCode.GenericError,
+                   Exception.Message,
+                   Exception.StackTrace,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
 
         #endregion
 
 
-        #region (static) Parse(Response, RequestId, CorrelationId)
+        #region (static) Parse     (HTTPResponse, RequestId, CorrelationId)
 
         public static OCPIResponse Parse(HTTPResponse    HTTPResponse,
                                          Request_Id      RequestId,
@@ -166,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,     Request_Id.     TryParse, RequestId);
                 var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID, Correlation_Id. TryParse, CorrelationId);
-                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
+                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",                   Hermod.Location.TryParse);
 
                 if (HTTPResponse.HTTPBody?.Length > 0)
                 {
@@ -243,6 +267,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             return result;
 
         }
+
+        #endregion
+
+        #region (static) TryParse  (HTTPResponse, RequestId, CorrelationId, out OCPIResponse)
 
         public static Boolean TryParse(HTTPResponse                           HTTPResponse,
                                        Request_Id                             RequestId,
@@ -345,57 +373,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
+        #endregion
 
-        public static OCPIResponse Error(String           StatusMessage,
-                                         String?          AdditionalInformation   = null,
-                                         DateTimeOffset?  Timestamp               = null,
+        #region ToJSON()
 
-                                         HTTPResponse?    HTTPResponse            = null,
-                                         Request_Id?      RequestId               = null,
-                                         Correlation_Id?  CorrelationId           = null)
+        public JObject ToJSON()
+        {
 
-            => new(StatusCode.GenericError,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            var json = JSONObject.Create(
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                                 new JProperty("status_code",             StatusCode.Value),
 
-        public static OCPIResponse Error(StatusCode       StatusCode,
-                                         String           StatusMessage,
-                                         String?          AdditionalInformation   = null,
-                                         DateTimeOffset?  Timestamp               = null,
+                           StatusMessage.IsNotNullOrEmpty()
+                               ? new JProperty("status_message",          StatusMessage)
+                               : null,
 
-                                         HTTPResponse?    HTTPResponse            = null,
-                                         Request_Id?      RequestId               = null,
-                                         Correlation_Id?  CorrelationId           = null)
+                           AdditionalInformation.IsNotNullOrEmpty()
+                               ? new JProperty("additionalInformation",   AdditionalInformation)
+                               : null,
 
-            => new(StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+                           RequestId.HasValue
+                               ? new JProperty("requestId",               RequestId.    Value.ToString())
+                               : null,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                           CorrelationId.HasValue
+                               ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                               : null,
 
-        public static OCPIResponse Exception(Exception        Exception,
-                                             DateTimeOffset?  Timestamp       = null,
+                           HTTPLocation.HasValue
+                               ? new JProperty("httpLocation",            HTTPLocation. Value.ToString())
+                               : null,
 
-                                             HTTPResponse?    HTTPResponse    = null,
-                                             Request_Id?      RequestId       = null,
-                                             Correlation_Id?  CorrelationId   = null)
+                                 new JProperty("timestamp",               Timestamp.          ToISO8601())
 
-            => new(StatusCode.GenericError,
-                   Exception.Message,
-                   Exception.StackTrace,
-                   Timestamp,
+                       );
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+            return json;
+
+        }
+
+        #endregion
+
+
 
 
         public class Builder
@@ -448,6 +467,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
+
+            #region ToHTTPResponseBuilder()
 
             public HTTPResponse.Builder ToHTTPResponseBuilder()
             {
@@ -519,6 +540,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
 
+            #endregion
+
+            #region ToImmutable
 
             public OCPIResponse ToImmutable
 
@@ -529,6 +553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
                         ToHTTPResponseBuilder().AsImmutable);
 
+            #endregion
 
         }
 

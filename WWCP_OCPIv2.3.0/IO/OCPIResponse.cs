@@ -25,6 +25,7 @@ using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -133,6 +134,279 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
+        #region (static) Error     (StatusMessage,             AdditionalInformation   = null, Timestamp = null, ...)
+
+        public static OCPIResponse Error(String           StatusMessage,
+                                         String?          AdditionalInformation   = null,
+                                         DateTimeOffset?  Timestamp               = null,
+
+                                         HTTPResponse?    HTTPResponse            = null,
+                                         Request_Id?      RequestId               = null,
+                                         Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   StatusCode.GenericError,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+        #endregion
+
+        #region (static) Error     (StatusCode, StatusMessage, AdditionalInformation   = null, Timestamp = null, ...)
+
+        public static OCPIResponse Error(StatusCode       StatusCode,
+                                         String           StatusMessage,
+                                         String?          AdditionalInformation   = null,
+                                         DateTimeOffset?  Timestamp               = null,
+
+                                         HTTPResponse?    HTTPResponse            = null,
+                                         Request_Id?      RequestId               = null,
+                                         Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+        #endregion
+
+        #region (static) Exception (Exception,                                                 Timestamp = null,...)
+
+        public static OCPIResponse Exception(Exception        Exception,
+                                             DateTimeOffset?  Timestamp               = null,
+
+                                             HTTPResponse?    HTTPResponse            = null,
+                                             Request_Id?      RequestId               = null,
+                                             Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   StatusCode.GenericError,
+                   Exception.Message,
+                   Exception.StackTrace,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+        #endregion
+
+
+        #region (static) Parse     (HTTPResponse, RequestId, CorrelationId)
+
+        public static OCPIResponse Parse(HTTPResponse    HTTPResponse,
+                                         Request_Id      RequestId,
+                                         Correlation_Id  CorrelationId)
+        {
+
+            OCPIResponse? result = default;
+
+            try
+            {
+
+                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,            Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,        Correlation_Id. TryParse, CorrelationId);
+                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",                          Hermod.Location.TryParse);
+
+                var fromPartyId          = HTTPResponse.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,       Party_Id.       TryParse);
+                var fromCountryCode      = HTTPResponse.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.    TryParse);
+                var toPartyId            = HTTPResponse.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,         Party_Id.       TryParse);
+                var toCountryCode        = HTTPResponse.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.    TryParse);
+
+                if (HTTPResponse.HTTPBody?.Length > 0)
+                {
+
+                    #region Documentation
+
+                    // {
+                    //     "status_code":      1000,
+                    //     "status_message":  "hello world!",
+                    //     "timestamp":       "2020-10-05T21:15:30.134Z"
+                    // }
+
+                    #endregion
+
+                    var json = JSONObject.TryParse(HTTPResponse.HTTPBodyAsUTF8String);
+
+                    if (json is not null)
+                    {
+
+                        var timestamp  = json["timestamp"]?.Value<DateTime>();
+                        if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                            timestamp  = timestamp.Value.ToUniversalTime();
+
+                        return new OCPIResponse(
+                                   StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError,
+                                                       json["status_message"]?.Value<String>() ?? String.Empty,
+                                                       json["data"]?.          Value<String>(),
+                                   timestamp,
+                                   HTTPResponse,
+                                   remoteRequestId,
+                                   remoteCorrelationId,
+                                   location,
+
+                                   fromCountryCode,
+                                   fromPartyId,
+                                   toCountryCode,
+                                   toPartyId
+                               );
+
+                    }
+
+                }
+
+                result ??= new OCPIResponse(
+                               StatusCode.GenericError,
+                               HTTPResponse.HTTPStatusCode.Code + " - " + HTTPResponse.HTTPStatusCode.Description,
+                               null,
+                               HTTPResponse.Timestamp,
+
+                               HTTPResponse,
+                               remoteRequestId,
+                               remoteCorrelationId
+                           );
+
+            }
+            catch (Exception e)
+            {
+
+                result = new OCPIResponse(
+                             StatusCode.GenericError,
+                             e.Message,
+                             e.StackTrace,
+                             org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                             HTTPResponse,
+                             RequestId,
+                             CorrelationId
+                         );
+
+            }
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse  (HTTPResponse, RequestId, CorrelationId, out OCPIResponse)
+
+        public static Boolean TryParse(HTTPResponse                           HTTPResponse,
+                                       Request_Id                             RequestId,
+                                       Correlation_Id                         CorrelationId,
+                                       [NotNullWhen(true)] out OCPIResponse?  OCPIResponse)
+        {
+
+            OCPIResponse = default;
+
+            try
+            {
+
+                var remoteRequestId      = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,            Request_Id.     TryParse, RequestId);
+                var remoteCorrelationId  = HTTPResponse.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,        Correlation_Id. TryParse, CorrelationId);
+                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",                          Hermod.Location.TryParse);
+
+                var fromPartyId          = HTTPResponse.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,       Party_Id.       TryParse);
+                var fromCountryCode      = HTTPResponse.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.    TryParse);
+                var toPartyId            = HTTPResponse.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,         Party_Id.       TryParse);
+                var toCountryCode        = HTTPResponse.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.    TryParse);
+
+                var httpBody             = HTTPResponse.HTTPBodyAsUTF8String;
+
+                if (httpBody?.Length > 0)
+                {
+
+                    #region Documentation
+
+                    // {
+                    //     "status_code":      1000,
+                    //     "status_message":  "hello world!",
+                    //     "timestamp":       "2020-10-05T21:15:30.134Z"
+                    // }
+
+                    #endregion
+
+                    var json = JSONObject.TryParse(httpBody);
+
+                    if (json is null)
+                    {
+
+                        OCPIResponse = new OCPIResponse(
+                                           StatusCode.GenericError,
+                                           "Invalid JSON in HTTP response body!",
+                                           httpBody
+                                       );
+
+                        return false;
+
+                    }
+
+                    var timestamp  = json["timestamp"]?.Value<DateTime>();
+                    if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                        timestamp  = timestamp.Value.ToUniversalTime();
+
+                    OCPIResponse = new OCPIResponse(
+                                       StatusCode.TryParse(json["status_code"]?.Value<Int32>()) ?? StatusCode.GenericError,
+                                       json["status_message"]?.Value<String>() ?? String.Empty,
+                                       json["data"]?.ToString(),
+                                       timestamp,
+                                       HTTPResponse,
+                                       remoteRequestId,
+                                       remoteCorrelationId,
+                                       location
+                                   );
+
+                    return true;
+
+                }
+
+                else
+                    OCPIResponse = new OCPIResponse(
+                                       StatusCode.GenericError,
+                                       $"{HTTPResponse.HTTPStatusCode.Code} - {HTTPResponse.HTTPStatusCode.Description}",
+                                       HTTPResponse.EntirePDU,
+                                       HTTPResponse.Timestamp,
+
+                                       HTTPResponse,
+                                       remoteRequestId,
+                                       remoteCorrelationId
+                                   );
+
+            }
+            catch (Exception e)
+            {
+
+                OCPIResponse = new OCPIResponse(
+                                   StatusCode.GenericError,
+                                   e.Message,
+                                   e.StackTrace,
+                                   org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                   HTTPResponse,
+                                   RequestId,
+                                   CorrelationId
+                               );
+
+            }
+
+            OCPIResponse ??= new OCPIResponse(
+                                 StatusCode.GenericError,
+                                 String.Empty
+                             );
+
+            return true;
+
+        }
+
+        #endregion
+
         #region ToJSON()
 
         public JObject ToJSON()
@@ -169,169 +443,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             return json;
 
         }
-
-        #endregion
-
-        #region (static) Parse(Response, RequestId, CorrelationId)
-
-        public static OCPIResponse Parse(HTTPResponse    Response,
-                                         Request_Id      RequestId,
-                                         Correlation_Id  CorrelationId)
-        {
-
-            OCPIResponse? result = default;
-
-            try
-            {
-
-                var RemoteRequestId      = Response.TryParseHeaderStruct                (HTTPHeaders.X_Request_ID,            Request_Id.     TryParse, RequestId);
-                var RemoteCorrelationId  = Response.TryParseHeaderStruct                (HTTPHeaders.X_Correlation_ID,        Correlation_Id. TryParse, CorrelationId);
-                var location             = Response.TryParseHeaderField<Hermod.Location>("Location",                          Hermod.Location.TryParse);
-
-                var fromPartyId          = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_From_PartyId,       Party_Id.       TryParse);
-                var fromCountryCode      = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_From_Country_Code,  CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderStruct<Party_Id>      (HTTPHeaders.OCPI_To_PartyId,         Party_Id.       TryParse);
-                var toCountryCode        = Response.TryParseHeaderStruct<CountryCode>   (HTTPHeaders.OCPI_To_Country_Code,    CountryCode.    TryParse);
-
-                if (Response.HTTPBody?.Length > 0)
-                {
-
-                    #region Documentation
-
-                    // {
-                    //     "status_code":      1000,
-                    //     "status_message":  "hello world!",
-                    //     "timestamp":       "2020-10-05T21:15:30.134Z"
-                    // }
-
-                    #endregion
-
-                    var json = JSONObject.TryParse(Response.HTTPBodyAsUTF8String);
-
-                    if (json is not null)
-                    {
-
-                        var timestamp  = json["timestamp"]?.Value<DateTime>();
-                        if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
-                            timestamp  = timestamp.Value.ToUniversalTime();
-
-                        return new OCPIResponse(
-                                   StatusCode.TryParse(json["status_code"]?.   Value<Int32>()) ?? StatusCode.GenericError,
-                                                       json["status_message"]?.Value<String>() ?? String.Empty,
-                                                       json["data"]?.          Value<String>(),
-                                   timestamp,
-                                   Response,
-                                   RemoteRequestId,
-                                   RemoteCorrelationId,
-                                   location,
-
-                                   fromCountryCode,
-                                   fromPartyId,
-                                   toCountryCode,
-                                   toPartyId
-                               );
-
-                    }
-
-                }
-
-                result ??= new OCPIResponse(
-                               StatusCode.GenericError,
-                               Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                               null,
-                               Response.Timestamp,
-
-                               Response,
-                               RemoteRequestId,
-                               RemoteCorrelationId
-                           );
-
-            }
-            catch (Exception e)
-            {
-
-                result = new OCPIResponse(
-                             StatusCode.GenericError,
-                             e.Message,
-                             e.StackTrace,
-                             org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                             Response,
-                             RequestId,
-                             CorrelationId
-                         );
-
-            }
-
-            return result;
-
-        }
-
-        #endregion
-
-
-        #region (static) Error    (StatusMessage,             AdditionalInformation   = null, Timestamp = null, ...)
-
-        public static OCPIResponse Error(String           StatusMessage,
-                                         String?          AdditionalInformation   = null,
-                                         DateTimeOffset?  Timestamp               = null,
-
-                                         HTTPResponse?    HTTPResponse            = null,
-                                         Request_Id?      RequestId               = null,
-                                         Correlation_Id?  CorrelationId           = null)
-
-            => new(null,
-                   StatusCode.GenericError,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
-
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
-
-        #endregion
-
-        #region (static) Error    (StatusCode, StatusMessage, AdditionalInformation   = null, Timestamp = null, ...)
-
-        public static OCPIResponse Error(StatusCode       StatusCode,
-                                         String           StatusMessage,
-                                         String?          AdditionalInformation   = null,
-                                         DateTimeOffset?  Timestamp               = null,
-
-                                         HTTPResponse?    HTTPResponse            = null,
-                                         Request_Id?      RequestId               = null,
-                                         Correlation_Id?  CorrelationId           = null)
-
-            => new(null,
-                   StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
-
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
-
-        #endregion
-
-        #region (static) Exception(Exception,                                                 Timestamp = null,...)
-
-        public static OCPIResponse Exception(Exception        Exception,
-                                             DateTimeOffset?  Timestamp               = null,
-
-                                             HTTPResponse?    HTTPResponse            = null,
-                                             Request_Id?      RequestId               = null,
-                                             Correlation_Id?  CorrelationId           = null)
-
-            => new(null,
-                   StatusCode.GenericError,
-                   Exception.Message,
-                   Exception.StackTrace,
-                   Timestamp,
-
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
 
         #endregion
 

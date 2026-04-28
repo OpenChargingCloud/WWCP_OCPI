@@ -303,7 +303,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-
         #region ToJSON()
 
         public JObject ToJSON()
