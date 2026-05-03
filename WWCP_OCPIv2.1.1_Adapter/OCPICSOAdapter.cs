@@ -2780,6 +2780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (authorizationInfo is null)
                     authStopResult = WWCP.AuthStopResult.CommunicationTimeout(
                                          Id,
+                                         stopwatch.Elapsed,
                                          this,
                                          SessionId
                                      );
@@ -2841,6 +2842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             authStopResult ??= WWCP.AuthStopResult.Error(
                                    Id,
+                                   stopwatch.Elapsed,
                                    this,
                                    SessionId
                                );

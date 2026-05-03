@@ -2986,6 +2986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (authorizationInfo is null)
                 authStopResult = WWCP.AuthStopResult.CommunicationTimeout(
                                      Id,
+                                     stopwatch.Elapsed,
                                      this,
                                      SessionId
                                  );
@@ -2993,6 +2994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             else if (authorizationInfo.RemoteParty is null)
                 authStopResult = WWCP.AuthStopResult.OutOfService(
                                      Id,
+                                     stopwatch.Elapsed,
                                      this,
                                      null,
                                      SessionId,
@@ -3002,42 +3004,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStopResult = WWCP.AuthStopResult.Authorized(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      ISendAuthorizeStartStop:   this,
                                      SessionId:                 SessionId,
                                      ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStopResult = WWCP.AuthStopResult.Blocked(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      ISendAuthorizeStartStop:   this,
                                      SessionId:                 SessionId,
                                      ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStopResult = WWCP.AuthStopResult.NotAuthorized(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      ISendAuthorizeStartStop:   this,
                                      SessionId:                 SessionId,
                                      ProviderId:                null,
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
 
             authStopResult ??= WWCP.AuthStopResult.Error(
                                    Id,
+                                   stopwatch.Elapsed,
                                    this,
                                    SessionId
                                );
