@@ -1145,7 +1145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      AllowRenegotiation:                    NewHTTPClient.AllowRenegotiation,
                                      AllowTLSResume:                        NewHTTPClient.AllowTLSResume,
 
-                                     PreferIPv4:                            NewHTTPClient.PreferIPv4,
+                                     IPVersionPreference:                   NewHTTPClient.IPVersionPreference,
                                      ConnectTimeout:                        NewHTTPClient.ConnectTimeout,
                                      ReceiveTimeout:                        NewHTTPClient.ReceiveTimeout,
                                      SendTimeout:                           NewHTTPClient.SendTimeout,

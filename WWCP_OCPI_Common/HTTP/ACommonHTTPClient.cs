@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPI
                                               ConsumeRequestChunkedTEImmediately:    true,
                                               ConsumeResponseChunkedTEImmediately:   true,
 
-                                              PreferIPv4:                            this.PreferIPv4,
+                                              IPVersionPreference:                   this.IPVersionPreference,
                                               ConnectTimeout:                        null,
                                               ReceiveTimeout:                        null,
                                               SendTimeout:                           null,
@@ -349,7 +349,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                               MaxNumberOfClients:                    MaxNumberOfPooledClients ?? 6,
 
-                                              PreferIPv4:                            this.PreferIPv4,
+                                              IPVersionPreference:                   this.IPVersionPreference,
                                               ConnectTimeout:                        null,
                                               ReceiveTimeout:                        null,
                                               SendTimeout:                           null,
