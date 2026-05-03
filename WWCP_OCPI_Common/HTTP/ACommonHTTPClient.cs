@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The HTTP client.
         /// </summary>
-        public     HTTPClient            NewHTTPClient;
+        public     HTTPClient                NewHTTPClient;
 
         /// <summary>
         /// A HTTP client pool for low-latency HTTP requests.
