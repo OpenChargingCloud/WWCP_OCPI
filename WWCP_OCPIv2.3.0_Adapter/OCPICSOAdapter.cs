@@ -1879,12 +1879,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                             var remotes = new PriorityList<RemoteParty>();
                                             foreach (var remoteParty in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB))
                                             {
+                                                if (remoteParty.Status == PartyStatus.ENABLED)
+                                                {
 
-                                                var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                                                    var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
 
-                                                if (remoteAccessInfo is not null)
-                                                    remotes.Add(remoteParty);
+                                                    if ( remoteAccessInfo is not null)
+                                                        remotes.Add(remoteParty);
 
+                                                }
                                             }
 
                                             #endregion
@@ -1894,7 +1897,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                                              Work:                   async (remoteParty, cancellationToken) => {
 
-                                                                 remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus = RemoteParty.Fie.Yes;
+                                                                                          remoteParty.CPO2EMSPRole.Send_PATCH_EVSEStatus = RemoteParty.Fie.Yes;
 
                                                                                           #region Check remote party configuration
 
@@ -1985,7 +1988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                                               PartyId:             partyId.    Value,
                                                                                                                               LocationId:          locationId. Value,
                                                                                                                               EVSE:                evse2,
-                                                                                                                              RemotePartyId:              null,
+                                                                                                                              RemotePartyId:       null,
 
                                                                                                                               //From:                fromChargingStationOperatorId,
                                                                                                                               //To:                  toEMobilityProviderId,
