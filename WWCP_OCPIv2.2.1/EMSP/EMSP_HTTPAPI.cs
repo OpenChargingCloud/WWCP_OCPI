@@ -14793,7 +14793,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
-                    #region Send OnTokenAuthorizeRequest event
+                    #region Send OnPostTokenRequest event
 
                     var startTime  = Timestamp.Now;
                     var stopwatch  = Stopwatch.StartNew();
@@ -14923,11 +14923,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             if (request.From.HasValue)
                             {
 
-                                if (!CommonAPI.TryGetLocation(
-                                    request.From.Value,
-                                    locationReference.Value.LocationId,
-                                    out validLocation))
+                                if (!remoteCPOs.TryGetValue(request.From.Value, out var partyData) ||
+                                     partyData is null ||
+                                    !partyData.Locations.TryGetValue(locationReference.Value.LocationId, out validLocation))
                                 {
+                                //if (!CommonAPI.TryGetLocation(
+                                //    request.From.Value,
+                                //    locationReference.Value.LocationId,
+                                //    out validLocation))
+                                //{
 
                                     return new OCPIResponse.Builder(request) {
                                                StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
@@ -14962,24 +14966,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 {
 
                                     return new OCPIResponse.Builder(request) {
-                                        StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
-                                        StatusMessage        = "Could not determine the country code and party identification of the given location!",
-                                        Data                 = new AuthorizationInfo(
-                                                                   AllowedType.NOT_ALLOWED,
-                                                                   _tokenStatus.Token,
-                                                                   locationReference.Value
-                                                               ).ToJSON(
-                                                                     CustomAuthorizationInfoSerializer,
-                                                                     CustomTokenSerializer,
-                                                                     CustomLocationReferenceSerializer,
-                                                                     CustomDisplayTextSerializer
-                                                                 ),
-                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                            AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
-                                            AccessControlAllowHeaders  = [ "Authorization" ]
-                                        }
-                                    };
+                                               StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
+                                               StatusMessage        = "Could not determine the country code and party identification of the given location!",
+                                               Data                 = new AuthorizationInfo(
+                                                                          AllowedType.NOT_ALLOWED,
+                                                                          _tokenStatus.Token,
+                                                                          locationReference.Value
+                                                                      ).ToJSON(
+                                                                            CustomAuthorizationInfoSerializer,
+                                                                            CustomTokenSerializer,
+                                                                            CustomLocationReferenceSerializer,
+                                                                            CustomDisplayTextSerializer
+                                                                        ),
+                                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                                   HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                   AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
+                                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                                               }
+                                           };
 
                                 }
 
@@ -15256,7 +15260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     #endregion
 
 
-                    #region Send OnTokenAuthorizeResponse event
+                    #region Send OnPostTokenResponse event
 
                     var endTime = Timestamp.Now;
                     stopwatch.Stop();

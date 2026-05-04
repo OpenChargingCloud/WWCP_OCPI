@@ -1221,7 +1221,7 @@ function StartDebugLog() {
                     response.timestamp,
                     response.roamingNetwork,
                     response.eventTrackingId,
-                    ` ⇒ ${response.result.allowed}`,
+                    ` ⇒ ${response.authorizationInfo.allowed} (${response.authorizationInfoauthorization_reference ?? "-"})`,
                     response.runtime
                 );
 
