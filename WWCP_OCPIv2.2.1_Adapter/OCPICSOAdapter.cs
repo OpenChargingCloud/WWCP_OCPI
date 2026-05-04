@@ -1671,7 +1671,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                              );
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(
+                                                       location,
+                                                       evse2,
+                                                       CancellationToken: CancellationToken
+                                                   );
                                 else
                                     result = AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
@@ -1858,12 +1862,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             var remotes = new PriorityList<RemoteParty>();
                                             foreach (var remoteParty in CommonAPI.GetRemoteParties(Role.EMSP, Role.HUB))
                                             {
+                                                if (remoteParty.Status == PartyStatus.ENABLED)
+                                                {
 
-                                                var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                                                    var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
 
-                                                if (remoteAccessInfo is not null)
-                                                    remotes.Add(remoteParty);
+                                                    if ( remoteAccessInfo is not null)
+                                                        remotes.Add(remoteParty);
 
+                                                }
                                             }
 
                                             #endregion
@@ -2456,7 +2463,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                    LocationReference:   locationReference,
                                                                                                    From:                fromChargingStationOperatorId,
                                                                                                    To:                  toEMobilityProviderId,
-                                                                                                   CancellationToken:   cancellationToken
+
+                                                                                                   EventTrackingId:     EventTrackingId,
+                                                                                                   RequestTimeout:      TimeSpan.FromSeconds(120)
+                                                                                                   //CancellationToken:   cancellationToken  // FOR SOME REASONS THIS HAS TIMING ISSUES!
                                                                                                ).ConfigureAwait(false);
 
                                                               else
@@ -2483,7 +2493,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                 LocationReference:   locationReference,
                                                                                                 From:                fromChargingStationOperatorId,
                                                                                                 To:                  toEMobilityProviderId,
-                                                                                                CancellationToken:   cancellationToken
+
+                                                                                                EventTrackingId:     EventTrackingId,
+                                                                                                RequestTimeout:      TimeSpan.FromSeconds(300)
+                                                                                                //CancellationToken:   cancellationToken  // FOR SOME REASONS THIS HAS TIMING ISSUES!
                                                                                             ).ConfigureAwait(false);
 
                                                               else
@@ -2615,11 +2628,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (DisableAuthorization)
                 return WWCP.AuthStartResult.AdminDown(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           Description:               I18NString.Create("Authentication is disabled!"),
-                           Runtime:                   TimeSpan.Zero
+                           Id,
+                           this,
+                           Timestamp.Now,
+                           stopwatch.Elapsed,
+                           SessionId:    SessionId,
+                           Description:  I18NString.Create("Authentication is disabled!")
                        );
 
             var authorizationInfo = await PostToken(
@@ -2643,15 +2657,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
                                       Id,
                                       this,
-                                      TimeSpan.Zero,
-                                      null,
-                                      SessionId
+                                      Timestamp.Now,
+                                      stopwatch.Elapsed,
+                                      SessionId:  SessionId
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
                                       AuthorizatorId:            Id,
                                       ISendAuthorizeStartStop:   this,
+                                      Runtime:                   authorizationInfo.Runtime,
+                                      ResponseTimestamp:         Timestamp.Now,
                                       SessionId:                 SessionId,
                                       EMPPartnerSessionId:       null,
                                       ContractId:                null,
@@ -2666,64 +2682,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStartResult = WWCP.AuthStartResult.Blocked(
                                       AuthorizatorId:            Id,
                                       ISendAuthorizeStartStop:   this,
+                                      Runtime:                   authorizationInfo.Runtime,
+                                      ResponseTimestamp:         Timestamp.Now,
                                       SessionId:                 SessionId,
                                       ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
                 authStartResult = WWCP.AuthStartResult.Expired(
                                       AuthorizatorId:            Id,
                                       ISendAuthorizeStartStop:   this,
+                                      Runtime:                   authorizationInfo.Runtime,
+                                      ResponseTimestamp:         Timestamp.Now,
                                       SessionId:                 SessionId,
                                       ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
                 authStartResult = WWCP.AuthStartResult.NoCredit(
                                       AuthorizatorId:            Id,
                                       ISendAuthorizeStartStop:   this,
+                                      Runtime:                   authorizationInfo.Runtime,
+                                      ResponseTimestamp:         Timestamp.Now,
                                       SessionId:                 SessionId,
                                       ProviderId:                authorizationInfo.RemoteParty?.Id.ToEMSPId().ToWWCP(),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStartResult = WWCP.AuthStartResult.NotAuthorized(
                                       AuthorizatorId:            Id,
                                       ISendAuthorizeStartStop:   this,
+                                      Runtime:                   authorizationInfo.Runtime,
+                                      ResponseTimestamp:         Timestamp.Now,
                                       SessionId:                 SessionId,
                                       ProviderId:                null,
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
 
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
-                                    TimeSpan.Zero,
-                                    null,
+                                    Timestamp.Now,
+                                    stopwatch.Elapsed,
                                     SessionId
                                 );
 
@@ -2842,9 +2861,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return WWCP.AuthStartResult.AdminDown(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
+                           ResponseTimestamp:         Timestamp.Now,
+                           Runtime:                   stopwatch.Elapsed,
                            SessionId:                 SessionId,
-                           Description:               I18NString.Create("Authentication is disabled!"),
-                           Runtime:                   TimeSpan.Zero
+                           Description:               I18NString.Create("Authentication is disabled!")
                        );
 
 
@@ -2869,8 +2889,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.CommunicationTimeout(
                                       Id,
                                       this,
-                                      TimeSpan.Zero,
-                                      null,
+                                      Timestamp.Now,
+                                      stopwatch.Elapsed,
                                       SessionId
                                   );
 
@@ -2878,11 +2898,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.OutOfService(
                                       Id,
                                       this,
-                                      TimeSpan.Zero,
-                                      null,
-                                      null,
-                                      SessionId,
-                                      I18NString.Create("No valid response from any authorization service!")
+                                      Timestamp.Now,
+                                      stopwatch.Elapsed,
+                                      SessionId:    SessionId,
+                                      Description:  I18NString.Create("No valid response from any authorization service!")
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
@@ -2891,6 +2910,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.Authorized(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
+                                      ResponseTimestamp:         Timestamp.Now,
+                                      Runtime:                   authorizationInfo.Runtime,
                                       SessionId:                 SessionId,
                                       EMPPartnerSessionId:       null,
                                       AuthorizationReference:    authorizationInfo.AuthorizationReference.HasValue
@@ -2933,8 +2954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                  ),
 
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
                 //session?.CustomData["startSessionCommand"] 
@@ -2945,56 +2965,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStartResult = WWCP.AuthStartResult.Blocked(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
+                                      ResponseTimestamp:         Timestamp.Now,
+                                      Runtime:                   authorizationInfo.Runtime,
                                       SessionId:                 SessionId,
                                       ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
                 authStartResult = WWCP.AuthStartResult.Expired(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
+                                      ResponseTimestamp:         Timestamp.Now,
+                                      Runtime:                   authorizationInfo.Runtime,
                                       SessionId:                 SessionId,
                                       ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
                 authStartResult = WWCP.AuthStartResult.NoCredit(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
+                                      ResponseTimestamp:         Timestamp.Now,
+                                      Runtime:                   authorizationInfo.Runtime,
                                       SessionId:                 SessionId,
                                       ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStartResult = WWCP.AuthStartResult.NotAuthorized(
                                       AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                       ISendAuthorizeStartStop:   this,
+                                      ResponseTimestamp:         Timestamp.Now,
+                                      Runtime:                   authorizationInfo.Runtime,
                                       SessionId:                 SessionId,
                                       ProviderId:                null,
                                       Description:               null,
                                       AdditionalInfo:            null,
-                                      NumberOfRetries:           0,
-                                      Runtime:                   authorizationInfo.Runtime
+                                      NumberOfRetries:           0
                                   );
 
 
             authStartResult ??= WWCP.AuthStartResult.Error(
                                     Id,
                                     this,
-                                    TimeSpan.Zero,
-                                    null,
+                                    Timestamp.Now,
+                                    stopwatch.Elapsed,
                                     SessionId
                                 );
 
@@ -3107,11 +3131,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (DisableAuthorization)
                 return WWCP.AuthStopResult.AdminDown(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           Description:               I18NString.Create("Authentication is disabled!"),
-                           Runtime:                   TimeSpan.Zero
+                           Id,
+                           this,
+                           Timestamp.Now,
+                           stopwatch.Elapsed,
+                           SessionId:    SessionId,
+                           Description:  I18NString.Create("Authentication is disabled!")
                        );
 
 
@@ -3136,6 +3161,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStopResult = WWCP.AuthStopResult.CommunicationTimeout(
                                      Id,
                                      this,
+                                     Timestamp.Now,
+                                     stopwatch.Elapsed,
                                      SessionId
                                  );
 
@@ -3143,51 +3170,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 authStopResult = WWCP.AuthStopResult.OutOfService(
                                      Id,
                                      this,
-                                     null,
-                                     SessionId,
-                                     I18NString.Create("No valid response from any authorization service!")
+                                     Timestamp.Now,
+                                     stopwatch.Elapsed,
+                                     SessionId:    SessionId,
+                                     Description:  I18NString.Create("No valid response from any authorization service!")
                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                 authStopResult = WWCP.AuthStopResult.Authorized(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                      ISendAuthorizeStartStop:   this,
+                                     ResponseTimestamp:         Timestamp.Now,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      SessionId:                 SessionId,
                                      ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
                 authStopResult = WWCP.AuthStopResult.Blocked(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                      ISendAuthorizeStartStop:   this,
+                                     ResponseTimestamp:         Timestamp.Now,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      SessionId:                 SessionId,
                                      ProviderId:                WWCP.EMobilityProvider_Id.TryParse(authorizationInfo.Token?.Issuer),
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
             else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
                 authStopResult = WWCP.AuthStopResult.NotAuthorized(
                                      AuthorizatorId:            authorizationInfo.RemoteParty.Id,
                                      ISendAuthorizeStartStop:   this,
+                                     ResponseTimestamp:         Timestamp.Now,
+                                     Runtime:                   authorizationInfo.Runtime,
                                      SessionId:                 SessionId,
                                      ProviderId:                null,
                                      Description:               null,
                                      AdditionalInfo:            null,
-                                     NumberOfRetries:           0,
-                                     Runtime:                   authorizationInfo.Runtime
+                                     NumberOfRetries:           0
                                  );
 
 
             authStopResult ??= WWCP.AuthStopResult.Error(
                                    Id,
                                    this,
+                                   Timestamp.Now,
+                                   stopwatch.Elapsed,
                                    SessionId
                                );
 
