@@ -2463,6 +2463,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                    LocationReference:   locationReference,
                                                                                                    From:                fromChargingStationOperatorId,
                                                                                                    To:                  toEMobilityProviderId,
+
+                                                                                                   EventTrackingId:     EventTrackingId,
+                                                                                                   RequestTimeout:      TimeSpan.FromSeconds(120),
                                                                                                    CancellationToken:   cancellationToken
                                                                                                ).ConfigureAwait(false);
 
@@ -2490,6 +2493,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                 LocationReference:   locationReference,
                                                                                                 From:                fromChargingStationOperatorId,
                                                                                                 To:                  toEMobilityProviderId,
+
+                                                                                                EventTrackingId:     EventTrackingId,
+                                                                                                RequestTimeout:      TimeSpan.FromSeconds(120),
                                                                                                 CancellationToken:   cancellationToken
                                                                                             ).ConfigureAwait(false);
 
