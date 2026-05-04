@@ -2465,8 +2465,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                    To:                  toEMobilityProviderId,
 
                                                                                                    EventTrackingId:     EventTrackingId,
-                                                                                                   RequestTimeout:      TimeSpan.FromSeconds(120),
-                                                                                                   CancellationToken:   cancellationToken
+                                                                                                   RequestTimeout:      TimeSpan.FromSeconds(120)
+                                                                                                   //CancellationToken:   cancellationToken  // FOR SOME REASONS THIS HAS TIMING ISSUES!
                                                                                                ).ConfigureAwait(false);
 
                                                               else
@@ -2496,7 +2496,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                                 EventTrackingId:     EventTrackingId,
                                                                                                 RequestTimeout:      TimeSpan.FromSeconds(300)
-                                                                                      //          CancellationToken:   cancellationToken
+                                                                                                //CancellationToken:   cancellationToken  // FOR SOME REASONS THIS HAS TIMING ISSUES!
                                                                                             ).ConfigureAwait(false);
 
                                                               else
