@@ -4012,8 +4012,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          ).ToUTF8Bytes(JSONFormatting),
                                                   Authentication:        TokenAuth,
                                                   RequestBuilder:        requestBuilder => {
+
+                                                                             // Maybe the OCPI module HTTP Host header is different to the OCPI versions URL host header!
+                                                                             // Also when persistend HTPP connections are used, and the IP address is the same, but the
+                                                                             // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
+
+                                                                             requestBuilder.Host = httpClient.RemoteURL.Hostname;
+
                                                                              requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                              requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
+
                                                                          },
                                                   RequestLogDelegate:    OnPostCDRHTTPRequest,
                                                   ResponseLogDelegate:   OnPostCDRHTTPResponse,
@@ -4164,8 +4172,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + CDRId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
+
+                                                                            // Maybe the OCPI module HTTP Host header is different to the OCPI versions URL host header!
+                                                                            // Also when persistend HTPP connections are used, and the IP address is the same, but the
+                                                                            // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
+
+                                                                            requestBuilder.Host = httpClient.RemoteURL.Hostname;
+
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
+
                                                                         },
                                                  RequestLogDelegate:    OnGetCDRHTTPRequest,
                                                  ResponseLogDelegate:   OnGetCDRHTTPResponse,
@@ -4336,6 +4352,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                  Path:                  httpClient.RemoteURL.Path + offsetLimit,
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
+
+                                                                            // Maybe the OCPI module HTTP Host header is different to the OCPI versions URL host header!
+                                                                            // Also when persistend HTPP connections are used, and the IP address is the same, but the
+                                                                            // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
+
+                                                                            requestBuilder.Host = httpClient.RemoteURL.Hostname;
+
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
                                                                         },
