@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!startSessionCommand.EVSEUId.HasValue)
@@ -417,7 +417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse))
@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!evse.EVSEId.HasValue)
@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
@@ -443,12 +443,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [
-                                   DisplayText.Create(
-                                       Languages.en,
-                                       "StartSessionCommand rejected!"
-                                   )
-                               ]
+                               DisplayTexts.Create(
+                                   Languages.en,
+                                   "StartSessionCommand rejected!"
+                               )
                            );
 
 
@@ -459,7 +457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!") ]
+                               DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
                            );
 
                 // OCPI uses the AuthorizationReference as session identification...
@@ -505,7 +503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.ACCEPTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand accepted!") ]
+                               DisplayTexts.Create("StartSessionCommand accepted!")
                            );
 
                 }
@@ -515,7 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                //startSessionCommand,
                                CommandResultTypes.REJECTED,
                                //TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
             };
@@ -556,14 +554,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    stopSessionCommand,
                                    CommandResponseTypes.ACCEPTED,
                                    TimeSpan.FromMinutes(1),
-                                   [ DisplayText.Create(Languages.en, "StopSessionCommand accepted!") ]
+                                   DisplayTexts.Create("StopSessionCommand accepted!")
                                );
 
                     return new CommandResponse(
                                stopSessionCommand,
                                CommandResponseTypes.REJECTED,
                                TimeSpan.FromMinutes(1),
-                               [ DisplayText.Create(Languages.en, "StopSessionCommand rejected!") ]
+                               DisplayTexts.Create("StopSessionCommand rejected!")
                            );
 
                 }
@@ -572,7 +570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            stopSessionCommand,
                            CommandResponseTypes.REJECTED,
                            TimeSpan.FromMinutes(1),
-                           [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!") ]
+                           DisplayTexts.Create($"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!")
                        );
 
             };

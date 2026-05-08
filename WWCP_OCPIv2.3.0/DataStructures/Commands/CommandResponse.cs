@@ -44,27 +44,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The optional command leading to this response.
         /// </summary>
         [Optional]
-        public IOCPICommand?             Command    { get; }
+        public IOCPICommand?         Command     { get; }
 
         /// <summary>
         /// Response from the CPO on the command request.
         /// </summary>
         [Mandatory]
-        public CommandResponseTypes      Result     { get; }
+        public CommandResponseTypes  Result      { get; }
 
         /// <summary>
         /// Timeout for this command in seconds. When the Result is not received within
         /// this timeout, the eMSP can assume that the message might never be send.
         /// </summary>
         [Mandatory]
-        public TimeSpan                  Timeout    { get; }
+        public TimeSpan              Timeout     { get; }
 
         /// <summary>
         /// Human-readable description of the result (if one can be provided),
         /// multiple languages can be provided.
         /// </summary>
         [Mandatory]
-        public IEnumerable<DisplayText>  Message    { get; }
+        public DisplayTexts          Messages    { get; }
 
         #endregion
 
@@ -75,15 +75,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="Result">Response from the CPO on the command request.</param>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        private CommandResponse(CommandResponseTypes      Result,
-                                TimeSpan                  Timeout,
-                                IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        private CommandResponse(CommandResponseTypes  Result,
+                                TimeSpan              Timeout,
+                                DisplayTexts          Messages)
         {
 
-            this.Result   = Result;
-            this.Timeout  = Timeout;
-            this.Message  = Message?.Distinct() ?? [];
+            this.Result    = Result;
+            this.Timeout   = Timeout;
+            this.Messages  = Messages ?? DisplayTexts.Empty;
 
         }
 
@@ -94,17 +94,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="Command">The command leading to this response.</param>
         /// <param name="Result">Response from the CPO on the command request.</param>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">Human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public CommandResponse(IOCPICommand              Command,
-                               CommandResponseTypes      Result,
-                               TimeSpan                  Timeout,
-                               IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">Human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public CommandResponse(IOCPICommand          Command,
+                               CommandResponseTypes  Result,
+                               TimeSpan              Timeout,
+                               DisplayTexts          Messages)
         {
 
-            this.Command  = Command;
-            this.Result   = Result;
-            this.Timeout  = Timeout;
-            this.Message  = Message?.Distinct() ?? [];
+            this.Command   = Command;
+            this.Result    = Result;
+            this.Timeout   = Timeout;
+            this.Messages  = Messages ?? DisplayTexts.Empty;
 
         }
 
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     return false;
                 }
 
-                #region Parse Result     [mandatory]
+                #region Parse Result      [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("result",
                                              "command response",
@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse Timeout    [mandatory]
+                #region Parse Timeout     [mandatory]
 
                 if (!JSON.ParseMandatory("timeout",
                                          "command timeout",
@@ -213,13 +213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse Message    [optional]
+                #region Parse Messages    [optional]
 
-                if (JSON.ParseOptionalJSON("message",
-                                           "message",
-                                           DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> message,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalJSONArray("message",
+                                                "message",
+                                                DisplayTexts.TryParse,
+                                                out DisplayTexts messages,
+                                                out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                       command,
                                       result,
                                       timeout,
-                                      message
+                                      messages
                                   );
 
                 if (CustomCommandResponseParser is not null)
@@ -269,8 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  new JProperty("result",   Result.ToString()),
                                  new JProperty("timeout",  (UInt32) Timeout.TotalSeconds),
 
-                           Message.SafeAny()
-                               ? new JProperty("message",  new JArray(Message.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
+                           Messages.SafeAny()
+                               ? new JProperty("message",  new JArray(Messages.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null
 
                        );
@@ -286,69 +286,69 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region Static methods
 
-        #region NOT_SUPPORTED   (Timeout, Message)
+        #region NOT_SUPPORTED   (Timeout, Messages)
 
         /// <summary>
         /// The requested command is not supported by this CPO, charge point, EVSE etc.
         /// </summary>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public static CommandResponse NOT_SUPPORTED(TimeSpan                  Timeout,
-                                                    IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResponse NOT_SUPPORTED(TimeSpan      Timeout,
+                                                    DisplayTexts  Messages)
 
             => new (CommandResponseTypes.NOT_SUPPORTED,
                     Timeout,
-                    Message);
+                    Messages);
 
         #endregion
 
-        #region REJECTED        (Timeout, Message)
+        #region REJECTED        (Timeout, Messages)
 
         /// <summary>
         /// The command was rejected by the CPO,
         /// e.g. because the command is not supported or the command parameters are invalid.
         /// </summary>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public static CommandResponse REJECTED(TimeSpan                  Timeout,
-                                               IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResponse REJECTED(TimeSpan      Timeout,
+                                               DisplayTexts  Messages)
 
             => new (CommandResponseTypes.REJECTED,
                     Timeout,
-                    Message);
+                    Messages);
 
         #endregion
 
-        #region ACCEPTED        (Timeout, Message)
+        #region ACCEPTED        (Timeout, Messages)
 
         /// <summary>
         /// The command was accepted by the CPO,
         /// but the command execution has not yet started.
         /// </summary>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public static CommandResponse ACCEPTED(TimeSpan                  Timeout,
-                                               IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResponse ACCEPTED(TimeSpan      Timeout,
+                                               DisplayTexts  Messages)
 
             => new (CommandResponseTypes.ACCEPTED,
                     Timeout,
-                    Message);
+                    Messages);
 
         #endregion
 
-        #region UNKNOWN_SESSION (Timeout, Message)
+        #region UNKNOWN_SESSION (Timeout, Messages)
 
         /// <summary>
         /// The Session in the requested command is not known by this CPO.
         /// </summary>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
-        /// <param name="Message">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public static CommandResponse UNKNOWN_SESSION(TimeSpan                  Timeout,
-                                                      IEnumerable<DisplayText>  Message)
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResponse UNKNOWN_SESSION(TimeSpan      Timeout,
+                                                      DisplayTexts  Messages)
 
             => new (CommandResponseTypes.UNKNOWN_SESSION,
                     Timeout,
-                    Message);
+                    Messages);
 
         #endregion
 
@@ -532,8 +532,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                Result. Equals(CommandResponse.Result)  &&
                Timeout.Equals(CommandResponse.Timeout) &&
 
-               Message.Count().Equals(CommandResponse.Message.Count()) &&
-               Message.All(message => CommandResponse.Message.Contains(message));
+               Messages.Count().Equals(CommandResponse.Messages.Count()) &&
+               Messages.All(message => CommandResponse.Messages.Contains(message));
 
         #endregion
 
@@ -552,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 return Result. GetHashCode() * 5 ^
                        Timeout.GetHashCode() * 3 ^
-                       Message.CalcHashCode();
+                       Messages.CalcHashCode();
 
             }
         }
@@ -572,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    " after ",
                    Timeout.TotalSeconds,
                    " second(s) => ",
-                   Message.AggregateWith(", ")
+                   Messages.AggregateWith(", ")
 
                );
 

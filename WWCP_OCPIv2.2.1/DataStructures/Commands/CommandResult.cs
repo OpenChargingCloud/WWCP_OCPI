@@ -42,14 +42,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Result of the command request as sent by the Charge Point to the CPO.
         /// </summary>
         [Mandatory]
-        public CommandResultTypes        Result     { get; }
+        public CommandResultTypes  Result     { get; }
 
         /// <summary>
         /// Human-readable description of the reason (if one can be provided),
         /// multiple languages can be provided.
         /// </summary>
         [Mandatory]
-        public IEnumerable<DisplayText>  Message    { get; }
+        public DisplayTexts        Message    { get; }
 
         #endregion
 
@@ -60,19 +60,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="Result">Human-readable description of the reason (if one can be provided), multiple languages can be provided.</param>
         /// <param name="Message">Result of the command request as sent by the charge point to the CPO.</param>
-        public CommandResult(CommandResultTypes        Result,
-                             IEnumerable<DisplayText>  Message)
+        public CommandResult(CommandResultTypes  Result,
+                             DisplayTexts?       Message   = null)
         {
 
             this.Result   = Result;
-            this.Message  = Message?.Distinct() ?? Array.Empty<DisplayText>();
+            this.Message  = Message ?? DisplayTexts.Empty;
 
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomCommandResultParser = null)
+        #region (static) Parse    (JSON, CustomCommandResultParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a command result.
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomCommandResultParser = null)
+        #region (static) TryParse (JSON, CustomCommandResultParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a command result.
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out CommandResult, out ErrorResponse, CustomCommandResultParser = null)
+        #region (static) TryParse (JSON, out CommandResult, out ErrorResponse, CustomCommandResultParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryEnum("result",
                                              "command result",
-                                             out CommandResultTypes Result,
+                                             out CommandResultTypes result,
                                              out ErrorResponse))
                 {
                     return false;
@@ -179,13 +179,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse Message       [optional]
+                #region Parse Messages      [optional]
 
-                if (JSON.ParseOptionalJSON("message",
-                                           "message",
-                                           DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Message,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalJSONArray("message",
+                                                "message",
+                                                DisplayTexts.TryParse,
+                                                out DisplayTexts messages,
+                                                out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -194,8 +194,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CommandResult = new CommandResult(Result,
-                                                  Message);
+                CommandResult = new CommandResult(
+                                    result,
+                                    messages
+                                );
 
                 if (CustomCommandResultParser is not null)
                     CommandResult = CustomCommandResultParser(JSON,
@@ -207,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             catch (Exception e)
             {
                 CommandResult  = default;
-                ErrorResponse  = "The given JSON representation of a command result is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a CommandResult is invalid: " + e.Message;
                 return false;
             }
 

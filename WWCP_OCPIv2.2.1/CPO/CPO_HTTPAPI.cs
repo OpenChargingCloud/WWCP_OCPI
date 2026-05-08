@@ -4131,8 +4131,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             reserveNowCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4250,8 +4250,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             cancelReservationCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4346,7 +4346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    StatusMessage        = CommonAPI.DefaultStatusMessage,
                                    Data                 = CommandResponse.REJECTED(
                                                               TimeSpan.FromSeconds(10),
-                                                              [ new DisplayText(Languages.en, "Could not parse the given 'START_SESSION' command JSON: " + errorResponse) ]
+                                                              DisplayTexts.Create("Could not parse the given 'START_SESSION' command JSON: " + errorResponse)
                                                           ).ToJSON(
                                                               CustomCommandResponseSerializer,
                                                               CustomDisplayTextSerializer
@@ -4426,26 +4426,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                         var httpResponse = await httpClient.POST(
                                                                      responseURL.Path,
-                                                                     new OCPIResponse<CommandResult>(
+                                                                     new CommandResult(
+                                                                         CommandResultTypes.ACCEPTED,
+                                                                         DisplayTexts.Create("Charging session started successfully!")
+                                                                     ).ToJSON().ToUTF8Bytes(),
+                                                                     RequestBuilder: (HTTPResponseBuilder) => {
 
-                                                                         StatusCode:              StatusCode.Success,
-                                                                         StatusMessage:           null,
-                                                                         AdditionalInformation:   null,
-                                                                         Timestamp:               Timestamp.Now,
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
 
-                                                                         RequestId:               Request_Id.    NewRandom(),
-                                                                         CorrelationId:           Correlation_Id.NewRandom(),
-                                                                         Location:                null,
+                                                                         if (request.To.  HasValue) {
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  request.To.  Value.CountryCode);
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       request.To.  Value.PartyId);
+                                                                         }
 
-                                                                         FromCountryCode:         request.To?.  CountryCode,
-                                                                         FromPartyId:             request.To?.  PartyId,
-                                                                         ToCountryCode:           request.From?.CountryCode,
-                                                                         ToPartyId:               request.From?.PartyId
-
-                                                                     ).ToJSON().ToUTF8Bytes()
-                                                                     //RequestBuilder: (req) => {
-                                                                     //    req.Set("X-
-                                                                     //}
+                                                                         if (request.From.HasValue) {
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    request.From.Value.CountryCode);
+                                                                             HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         request.From.Value.PartyId);
+                                                                         }
+                                                                     }
                                                                  ).ConfigureAwait(false);
 
                                     }
@@ -4531,7 +4530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         commandResponse = CommandResponse.ACCEPTED(
                                               TimeSpan.FromSeconds(120),
-                                              [ new DisplayText(Languages.en, "Command accepted, starting session...") ]
+                                              DisplayTexts.Create("Command accepted, starting session...")
                                           );
 
                     }
@@ -4540,8 +4539,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             startSessionCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4659,8 +4658,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             stopSessionCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4778,8 +4777,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             unlockConnectorCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4900,8 +4899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsStartedCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -5019,8 +5018,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsFailedCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 

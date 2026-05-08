@@ -227,6 +227,13 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region (static) Create(Text)
+        public static DisplayTexts Create(String Text)
+
+            => new ([ new DisplayText(Languages.en, Text) ]);
+            
+        #endregion
+
         #region (static) Create(Language, Text)
         public static DisplayTexts Create(Languages  Language,
                                           String     Text)

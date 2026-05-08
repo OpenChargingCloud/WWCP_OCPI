@@ -337,20 +337,20 @@ namespace cloud.charging.open.protocols.OCPI
         /// No license.
         /// </summary>
         public static readonly SoftwareLicense None               = new (SoftwareLicense_Id.Parse("None"),
-                                                                           DisplayTexts.Create(Languages.en, "None - do not use!"));
+                                                                           DisplayTexts.Create("None - do not use!"));
 
         /// <summary>
         /// The software etc.pp is not software.
         /// </summary>
         public static readonly SoftwareLicense ClosedSource       = new (SoftwareLicense_Id.Parse("ClosedSource"),
-                                                                           DisplayTexts.Create(Languages.en, "Closed Source - do not use!"));
+                                                                           DisplayTexts.Create("Closed Source - do not use!"));
 
 
         /// <summary>
         /// Apache License v2.0
         /// </summary>
         public static readonly SoftwareLicense Apache2_0          = new (SoftwareLicense_Id.Parse("Apache-2.0"),
-                                                                           DisplayTexts.Create(Languages.en, "Apache License v2.0"),
+                                                                           DisplayTexts.Create("Apache License v2.0"),
                                                                            URL.Parse("https://www.apache.org/licenses/LICENSE-2.0.txt"),
                                                                            URL.Parse("https://www.apache.org/licenses/LICENSE-2.0"),
                                                                            URL.Parse("https://opensource.org/license/apache-2-0/"));
@@ -359,21 +359,21 @@ namespace cloud.charging.open.protocols.OCPI
         /// The MIT License
         /// </summary>
         public static readonly SoftwareLicense MIT                = new (SoftwareLicense_Id.Parse("MIT"),
-                                                                           DisplayTexts.Create(Languages.en, "The MIT License"),
+                                                                           DisplayTexts.Create("The MIT License"),
                                                                            URL.Parse("https://opensource.org/license/mit/"));
 
         /// <summary>
         /// The 2-Clause BSD License
         /// </summary>
         public static readonly SoftwareLicense BSD2               = new (SoftwareLicense_Id.Parse("BSD-2-Clause"),
-                                                                           DisplayTexts.Create(Languages.en, "The 2-Clause BSD License"),
+                                                                           DisplayTexts.Create("The 2-Clause BSD License"),
                                                                            URL.Parse("https://opensource.org/license/bsd-2-clause/"));
 
         /// <summary>
         /// The 3-Clause BSD License
         /// </summary>
         public static readonly SoftwareLicense BSD3               = new (SoftwareLicense_Id.Parse("BSD-3-Clause"),
-                                                                           DisplayTexts.Create(Languages.en, "The 3-Clause BSD License"),
+                                                                           DisplayTexts.Create("The 3-Clause BSD License"),
                                                                            URL.Parse("https://opensource.org/license/bsd-3-clause/"));
 
 
@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// GNU General Public License version 2
         /// </summary>
         public static readonly SoftwareLicense GPL2               = new (SoftwareLicense_Id.Parse("GPL-2.0"),
-                                                                           DisplayTexts.Create(Languages.en, "GNU General Public License version 2"),
+                                                                           DisplayTexts.Create("GNU General Public License version 2"),
                                                                            URL.Parse("https://www.gnu.org/licenses/gpl-2.0.html"),
                                                                            URL.Parse("https://opensource.org/license/gpl-2-0/"));
 
@@ -389,7 +389,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// GNU General Public License version 3
         /// </summary>
         public static readonly SoftwareLicense GPL3               = new (SoftwareLicense_Id.Parse("GPL-3.0"),
-                                                                           DisplayTexts.Create(Languages.en, "GNU General Public License version 3"),
+                                                                           DisplayTexts.Create("GNU General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/gpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/gpl-3-0/"));
 
@@ -397,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// GNU Affero General Public License version 3
         /// </summary>
         public static readonly SoftwareLicense AGPL3              = new (SoftwareLicense_Id.Parse("AGPL-3.0"),
-                                                                           DisplayTexts.Create(Languages.en, "GNU Affero General Public License version 3"),
+                                                                           DisplayTexts.Create("GNU Affero General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/agpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/agpl-v3/"));
 
@@ -405,7 +405,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// GNU Lesser General Public License version 3
         /// </summary>
         public static readonly SoftwareLicense LGPL3              = new (SoftwareLicense_Id.Parse("LGPL-3.0"),
-                                                                           DisplayTexts.Create(Languages.en, "GNU Lesser General Public License version 3"),
+                                                                           DisplayTexts.Create("GNU Lesser General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/lgpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/lgpl-v3/"));
 
@@ -414,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// European Union Public License, version 1.2 (EUPL-1.2)
         /// </summary>
         public static readonly SoftwareLicense EUPLv1_2           = new (SoftwareLicense_Id.Parse("EUPL-1.2"),
-                                                                           DisplayTexts.Create(Languages.en, "European Union Public License, version 1.2 (EUPL-1.2)"),
+                                                                           DisplayTexts.Create("European Union Public License, version 1.2 (EUPL-1.2)"),
                                                                            URL.Parse("https://joinup.ec.europa.eu/collection/eupl/news/understanding-eupl-v12"),
                                                                            URL.Parse("https://opensource.org/license/eupl-1-2/"));
 

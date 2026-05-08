@@ -4563,8 +4563,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             reserveNowCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:  TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4677,8 +4677,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             cancelReservationCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4791,8 +4791,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             startSessionCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -4905,8 +4905,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             stopSessionCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -5019,8 +5019,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             unlockConnectorCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -5138,8 +5138,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsStartedCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
@@ -5257,8 +5257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsFailedCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout: TimeSpan.FromSeconds(15),
-                                            Message: [ new DisplayText(Languages.en, "Not supported!") ]
+                                            Timeout:   TimeSpan.FromSeconds(15),
+                                            Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
