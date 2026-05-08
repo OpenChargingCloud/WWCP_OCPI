@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="PartyId">The Party_Idv3 to convert.</param>
         public static CPO_Id  AsCPOId (this Party_Idv3 PartyId)
-            => CPO_Id.Parse(PartyId.ToString());
+            => CPO_Id.Parse($"{PartyId.CountryCode}*{PartyId.PartyId}");
 
         /// <summary>
         /// Converts a nullable Party_Idv3 value to a nullable CPO_Id.
@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         /// <param name="PartyId">The Party_Idv3 to convert.</param>
         public static EMSP_Id AsEMSPId(this Party_Idv3 PartyId)
-            => EMSP_Id.Parse(PartyId.ToString());
+            => EMSP_Id.Parse($"{PartyId.CountryCode}-{PartyId.PartyId}");
 
         /// <summary>
         /// Converts a nullable Party_Idv3 value to a nullable EMSP_Id.
