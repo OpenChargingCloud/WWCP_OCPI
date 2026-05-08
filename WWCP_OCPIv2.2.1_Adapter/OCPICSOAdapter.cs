@@ -452,29 +452,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            );
 
 
-                var providerId  = (from ?? remotePartyId.AsEMSPId()).ToWWCP();
+                var emspId                  = from ?? remotePartyId.AsEMSPId();
+                var providerId              = emspId.ToWWCP();
+                if (!emspId.HasValue || !providerId.HasValue)
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!") ]
+                           );
 
-                var result      = await RoamingNetwork.RemoteStart(
-                                            WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
-                                            null,                                   // ChargingProduct
-                                            null,                                   // ReservationId
-                                            providerId.HasValue                     // OCPI does not have its own charging session identification!
-                                                ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
-                                                : WWCP.ChargingSession_Id.NewRandom(),
-                                            providerId,
-                                            WWCP.RemoteAuthentication.FromRemoteIdentification(
-                                                WWCP.EMobilityAccount_Id.Parse(
-                                                    $"{startSessionCommand.Token.CountryCode}-{startSessionCommand.Token.PartyId}-{startSessionCommand.Token.Id}"
-                                                )
-                                            ),
-                                            JSONObject.Create(
-                                                new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
-                                            ),
-                                            WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
-                                                remotePartyId.ToString()
-                                            ),
-                                            this                                    // CSORoamingProvider
-                                        );
+                // OCPI uses the AuthorizationReference as session identification...
+                var authorizationReference  = startSessionCommand.AuthorizationReference
+                                                  ?? AuthorizationReference.NewRandom(emspId.Value);
+
+                // ...but we need to ensure that the session identification is unique across all roaming providers!
+                if (!authorizationReference.StartsWith(emspId.Value.ToString()))
+                    authorizationReference  = AuthorizationReference.Parse($"{emspId.Value}-{authorizationReference}");
+
+                var result                  = await RoamingNetwork.RemoteStart(
+
+                                                        ChargingLocation:         WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                                        ChargingProduct:          null,
+                                                        ReservationId:            null,
+                                                        SessionId:                WWCP.ChargingSession_Id.Parse(authorizationReference.ToString()),
+                                                        ProviderId:               providerId,
+                                                        RemoteAuthentication:     WWCP.RemoteAuthentication.FromRemoteIdentification(
+                                                                                      WWCP.EMobilityAccount_Id.Parse(
+                                                                                          $"{startSessionCommand.Token.CountryCode}-{startSessionCommand.Token.PartyId}-{startSessionCommand.Token.Id}"
+                                                                                      )
+                                                                                  ),
+                                                        AdditionalSessionInfos:   JSONObject.Create(
+                                                                                      new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
+                                                                                  ),
+                                                        AuthenticationPath:       WWCP.Auth_Path.Parse(  // Authentication path == CSO Roaming Provider identification!
+                                                                                      remotePartyId.ToString()
+                                                                                  ),
+                                                        CSORoamingProvider:       this,
+
+                                                        RequestTimestamp:         null,
+                                                        EventTrackingId:          null,
+                                                        RequestTimeout:           null
+                                                        //CancellationToken:        null
+
+                                                    );
 
 
                 if (result.Result == WWCP.RemoteStartResultTypes.Success)
