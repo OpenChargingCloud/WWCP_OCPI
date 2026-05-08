@@ -110,6 +110,21 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region (static) NewRandom (PartyId,    Length = 30)
+
+        /// <summary>
+        /// Create a new random authorization reference for a specific provider.
+        /// The provider identification is used as a prefix to ensure uniqueness across different providers.
+        /// </summary>
+        /// <param name="PartyId">The unique identification of the provider party.</param>
+        /// <param name="Length">The expected length of the authorization reference.</param>
+        public static AuthorizationReference NewRandom(Party_Idv3  PartyId,
+                                                       Byte        Length = 31)
+
+            => new ($"{PartyId.AsEMSPId()}-{RandomExtensions.RandomString(Length)}");
+
+        #endregion
+
         #region (static) NewRandom (ProviderId, Length = 30)
 
         /// <summary>
@@ -119,19 +134,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ProviderId">The unique identification of the provider.</param>
         /// <param name="Length">The expected length of the authorization reference.</param>
         public static AuthorizationReference NewRandom(EMSP_Id  ProviderId,
-                                                       Byte     Length = 30)
-
-            => new ($"{ProviderId}-{RandomExtensions.RandomString(Length)}");
-
-
-        /// <summary>
-        /// Create a new random authorization reference for a specific provider.
-        /// The provider identification is used as a prefix to ensure uniqueness across different providers.
-        /// </summary>
-        /// <param name="ProviderId">The unique identification of the provider.</param>
-        /// <param name="Length">The expected length of the authorization reference.</param>
-        public static AuthorizationReference NewRandom(Party_Idv3  ProviderId,
-                                                       Byte        Length = 30)
+                                                       Byte     Length = 31)
 
             => new ($"{ProviderId}-{RandomExtensions.RandomString(Length)}");
 
