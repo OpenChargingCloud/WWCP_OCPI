@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
         public CustomJObjectSerializerDelegate<CommandResponse>?             CustomCommandResponseSerializer               { get; set; }
-
+        public CustomJObjectSerializerDelegate<CommandResult>?               CustomCommandResultSerializer                 { get; set; }
 
         public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
         public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
@@ -1593,10 +1593,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region OnStartSessionCommand
 
-        public delegate Task<CommandResponse> OnStartSessionCommandDelegate(RemoteParty_Id       RemotePartyId,
-                                                                            EMSP_Id?             From,
-                                                                            CPO_Id?              To,
-                                                                            StartSessionCommand  StartSessionCommand);
+        public delegate Task<CommandResult> OnStartSessionCommandDelegate(RemoteParty_Id       RemotePartyId,
+                                                                          EMSP_Id?             From,
+                                                                          CPO_Id?              To,
+                                                                          StartSessionCommand  StartSessionCommand);
 
         public event OnStartSessionCommandDelegate? OnStartSessionCommand;
 
@@ -4343,7 +4343,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
-                                   StatusMessage        = "Could not parse the given 'START_SESSION' command JSON: " + errorResponse,
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
+                                   Data                 = CommandResponse.REJECTED(
+                                                              TimeSpan.FromSeconds(10),
+                                                              [ new DisplayText(Languages.en, "Could not parse the given 'START_SESSION' command JSON: " + errorResponse) ]
+                                                          ).ToJSON(
+                                                              CustomCommandResponseSerializer,
+                                                              CustomDisplayTextSerializer
+                                                          ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                        AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4359,12 +4366,176 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     CommandResponse? commandResponse = null;
 
                     if (OnStartSessionCommand is not null)
-                        commandResponse = await OnStartSessionCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    startSessionCommand
-                                                );
+                    {
+
+                        _ = Task.Run(async () => {
+
+                            var responseURL = startSessionCommand.ResponseURL;
+
+                            try
+                            {
+
+                                var commandResult = await OnStartSessionCommand.Invoke(
+                                                              request.RemoteParty.Id,
+                                                              request.From.AsEMSPId(),
+                                                              request.To.  AsCPOId(),
+                                                              startSessionCommand
+                                                          );
+
+                                if      (request.LocalAccessInfo.Is(Role.EMSP))
+                                {
+
+                                    var emspClient = GetEMSPClient(request.RemoteParty.Id);
+                                    if (emspClient is not null)
+                                    {
+
+                                        var httpClient = new HTTPClient(
+                                                             URL:                                   responseURL,
+                                                             Description:                           I18NString.Create($"OCPI Command Response Client for '{request.RemoteParty.Id}'"),
+                                                             HTTPUserAgent:                         emspClient.HTTPUserAgent,
+                                                             Accept:                                emspClient.Accept,
+                                                             ContentType:                           emspClient.ContentType,
+                                                             Connection:                            emspClient.Connection,
+                                                             null,
+                                                             RemoteCertificateValidator:            emspClient.RemoteCertificateValidator,
+                                                             LocalCertificateSelector:              emspClient.LocalCertificateSelector,
+                                                             ClientCertificates:                    emspClient.ClientCertificates,
+                                                             ClientCertificateContext:              emspClient.ClientCertificateContext,
+                                                             ClientCertificateChain:                emspClient.ClientCertificateChain,
+                                                             TLSProtocols:                          emspClient.TLSProtocols,
+                                                             CipherSuitesPolicy:                    emspClient.CipherSuitesPolicy,
+                                                             CertificateChainPolicy:                emspClient.CertificateChainPolicy,
+                                                             CertificateRevocationCheckMode:        emspClient.CertificateRevocationCheckMode,
+                                                             ApplicationProtocols:                  emspClient.ApplicationProtocols,
+                                                             AllowRenegotiation:                    emspClient.AllowRenegotiation,
+                                                             AllowTLSResume:                        emspClient.AllowTLSResume,
+                                                             TOTPConfig:                            emspClient.TOTPConfig,
+                                                             HTTPAuthentication:                    emspClient.HTTPAuthentication,
+                                                             IPVersionPreference:                   emspClient.IPVersionPreference,
+                                                             ConnectTimeout:                        emspClient.ConnectTimeout,
+                                                             ReceiveTimeout:                        emspClient.ReceiveTimeout,
+                                                             SendTimeout:                           emspClient.SendTimeout,
+                                                             TransmissionRetryDelay:                emspClient.TransmissionRetryDelay,
+                                                             MaxNumberOfRetries:                    emspClient.MaxNumberOfRetries,
+                                                             BufferSize:                            emspClient.BufferSize,
+                                                             ConsumeRequestChunkedTEImmediately:    emspClient.ConsumeRequestChunkedTEImmediately,
+                                                             ConsumeResponseChunkedTEImmediately:   emspClient.ConsumeResponseChunkedTEImmediately,
+                                                             DisableLogging:                        emspClient.DisableLogging,
+                                                             DNSClient:                             emspClient.DNSClient
+                                                         );
+
+                                        var httpResponse = await httpClient.POST(
+                                                                     responseURL.Path,
+                                                                     new OCPIResponse<CommandResult>(
+
+                                                                         StatusCode:              StatusCode.Success,
+                                                                         StatusMessage:           null,
+                                                                         AdditionalInformation:   null,
+                                                                         Timestamp:               Timestamp.Now,
+
+                                                                         RequestId:               Request_Id.    NewRandom(),
+                                                                         CorrelationId:           Correlation_Id.NewRandom(),
+                                                                         Location:                null,
+
+                                                                         FromCountryCode:         request.To?.  CountryCode,
+                                                                         FromPartyId:             request.To?.  PartyId,
+                                                                         ToCountryCode:           request.From?.CountryCode,
+                                                                         ToPartyId:               request.From?.PartyId
+
+                                                                     ).ToJSON().ToUTF8Bytes()
+                                                                     //RequestBuilder: (req) => {
+                                                                     //    req.Set("X-
+                                                                     //}
+                                                                 ).ConfigureAwait(false);
+
+                                    }
+
+                                }
+
+                                else if (request.LocalAccessInfo.Is(Role.HUB))
+                                {
+
+                                    var hubClient = GetHUBClient(request.RemoteParty.Id);
+                                    if (hubClient is not null)
+                                    {
+
+                                        var httpClient = new HTTPClient(
+                                                             URL:                                   responseURL,
+                                                             Description:                           I18NString.Create($"OCPI Command Response Client for '{request.RemoteParty.Id}'"),
+                                                             HTTPUserAgent:                         hubClient.HTTPUserAgent,
+                                                             Accept:                                hubClient.Accept,
+                                                             ContentType:                           hubClient.ContentType,
+                                                             Connection:                            hubClient.Connection,
+                                                             null,
+                                                             RemoteCertificateValidator:            hubClient.RemoteCertificateValidator,
+                                                             LocalCertificateSelector:              hubClient.LocalCertificateSelector,
+                                                             ClientCertificates:                    hubClient.ClientCertificates,
+                                                             ClientCertificateContext:              hubClient.ClientCertificateContext,
+                                                             ClientCertificateChain:                hubClient.ClientCertificateChain,
+                                                             TLSProtocols:                          hubClient.TLSProtocols,
+                                                             CipherSuitesPolicy:                    hubClient.CipherSuitesPolicy,
+                                                             CertificateChainPolicy:                hubClient.CertificateChainPolicy,
+                                                             CertificateRevocationCheckMode:        hubClient.CertificateRevocationCheckMode,
+                                                             ApplicationProtocols:                  hubClient.ApplicationProtocols,
+                                                             AllowRenegotiation:                    hubClient.AllowRenegotiation,
+                                                             AllowTLSResume:                        hubClient.AllowTLSResume,
+                                                             TOTPConfig:                            hubClient.TOTPConfig,
+                                                             HTTPAuthentication:                    hubClient.HTTPAuthentication,
+                                                             IPVersionPreference:                   hubClient.IPVersionPreference,
+                                                             ConnectTimeout:                        hubClient.ConnectTimeout,
+                                                             ReceiveTimeout:                        hubClient.ReceiveTimeout,
+                                                             SendTimeout:                           hubClient.SendTimeout,
+                                                             TransmissionRetryDelay:                hubClient.TransmissionRetryDelay,
+                                                             MaxNumberOfRetries:                    hubClient.MaxNumberOfRetries,
+                                                             BufferSize:                            hubClient.BufferSize,
+                                                             ConsumeRequestChunkedTEImmediately:    hubClient.ConsumeRequestChunkedTEImmediately,
+                                                             ConsumeResponseChunkedTEImmediately:   hubClient.ConsumeResponseChunkedTEImmediately,
+                                                             DisableLogging:                        hubClient.DisableLogging,
+                                                             DNSClient:                             hubClient.DNSClient
+                                                         );
+
+                                        var httpResponse = await httpClient.POST(
+                                                                     responseURL.Path,
+                                                                     new OCPIResponse<CommandResult>(
+
+                                                                         StatusCode:              StatusCode.Success,
+                                                                         StatusMessage:           null,
+                                                                         AdditionalInformation:   null,
+                                                                         Timestamp:               Timestamp.Now,
+
+                                                                         RequestId:               Request_Id.    NewRandom(),
+                                                                         CorrelationId:           Correlation_Id.NewRandom(),
+                                                                         Location:                null,
+
+                                                                         FromCountryCode:         request.To?.  CountryCode,
+                                                                         FromPartyId:             request.To?.  PartyId,
+                                                                         ToCountryCode:           request.From?.CountryCode,
+                                                                         ToPartyId:               request.From?.PartyId
+
+                                                                     ).ToJSON().ToUTF8Bytes()
+                                                                     //RequestBuilder: (req) => {
+                                                                     //    req.Set("X-
+                                                                     //}
+                                                                 ).ConfigureAwait(false);
+
+                                    }
+
+                                }
+
+                            }
+                            catch ( Exception ex ) {
+                                DebugX.LogT($"The OCPI Command Response could not be sent to '{responseURL}' for command '{startSessionCommand.Id}': {ex.Message}");
+                            }
+
+                        }).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              [ new DisplayText(Languages.en, "Command accepted, starting session...") ]
+                                          );
+
+                    }
+
 
                     commandResponse ??= new CommandResponse(
                                             startSessionCommand,

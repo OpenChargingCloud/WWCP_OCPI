@@ -405,44 +405,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, startSessionCommand.LocationId, out var location))
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
                 if (!startSessionCommand.EVSEUId.HasValue)
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
                 if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse))
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
                 if (!evse.EVSEId.HasValue)
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
 
                 if (!wwcpEVSEId.HasValue)
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [
                                    DisplayText.Create(
                                        Languages.en,
@@ -455,10 +455,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 var emspId                  = from ?? remotePartyId.AsEMSPId();
                 var providerId              = emspId.ToWWCP();
                 if (!emspId.HasValue || !providerId.HasValue)
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, $"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!") ]
                            );
 
@@ -501,20 +501,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (result.Result == WWCP.RemoteStartResultTypes.Success)
                 {
 
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.ACCEPTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.ACCEPTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand accepted!") ]
                            );
 
                 }
 
                 else
-                    return new CommandResponse(
-                               startSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
+                    return new CommandResult(
+                               //startSessionCommand,
+                               CommandResultTypes.REJECTED,
+                               //TimeSpan.FromMinutes(1),
                                [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 

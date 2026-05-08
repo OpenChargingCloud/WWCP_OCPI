@@ -40,7 +40,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public OCPIRequest?      Request                   { get; }
 
         public StatusCode        StatusCode                { get; }
-        public String            StatusMessage             { get; }
+        public String?           StatusMessage             { get; }
         public String?           AdditionalInformation     { get; }
         public DateTimeOffset    Timestamp                 { get; }
 
@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public OCPIResponse(OCPIRequest       Request,
 
                             StatusCode        StatusCode,
-                            String            StatusMessage,
+                            String?           StatusMessage           = null,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
 
@@ -605,7 +605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public OCPIResponse(TResponse?        Data,
 
                             StatusCode        StatusCode,
-                            String            StatusMessage,
+                            String?           StatusMessage           = null,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
 
@@ -639,7 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         }
 
         public OCPIResponse(StatusCode        StatusCode,
-                            String            StatusMessage,
+                            String?           StatusMessage           = null,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
 
@@ -1293,7 +1293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public OCPIResponse(TRequest          Request,
                             TResponse?        Data,
                             StatusCode        StatusCode,
-                            String            StatusMessage,
+                            String?           StatusMessage           = null,
                             String?           AdditionalInformation   = null,
                             DateTimeOffset?   Timestamp               = null,
 
