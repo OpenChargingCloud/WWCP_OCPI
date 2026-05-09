@@ -397,7 +397,139 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             // WireIncomingRequests
 
-            #region OnStartSessionCommand  => RemoteStart
+            #region OnReserveNowCommand         => Reserve
+
+            this.CPO_HTTPAPI.OnReserveNowCommand += async (remotePartyId,
+                                                           from,
+                                                           to,
+                                                           reserveNowCommand) => {
+
+                if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, reserveNowCommand.LocationId, out var location))
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("ReserveNowCommand rejected!")
+                           );
+
+                if (!reserveNowCommand.EVSEUId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("ReserveNowCommand rejected!")
+                           );
+
+                if (!location.TryGetEVSE(reserveNowCommand.EVSEUId.Value, out var evse))
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("ReserveNowCommand rejected!")
+                           );
+
+                if (!evse.EVSEId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("ReserveNowCommand rejected!")
+                           );
+
+                var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
+
+                if (!wwcpEVSEId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("ReserveNowCommand rejected!")
+                           );
+
+
+                var emspId                  = from ?? remotePartyId.AsEMSPId();
+                var providerId              = emspId.ToWWCP();
+                if (!emspId.HasValue || !providerId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
+                           );
+
+                // OCPI uses the AuthorizationReference as session identification...
+                var authorizationReference  = reserveNowCommand.AuthorizationReference
+                                                  ?? AuthorizationReference.NewRandom(emspId.Value);
+
+                // ...but we need to ensure that the session identification is unique across all roaming providers!
+                if (!authorizationReference.StartsWith(emspId.Value.ToString()))
+                    authorizationReference  = AuthorizationReference.Parse($"{emspId.Value}-{authorizationReference}");
+
+                var result                  = await RoamingNetwork.Reserve(
+
+                                                        ChargingLocation:         WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                                        ChargingProduct:          null,
+                                                        ReservationId:            null,
+                                                       // SessionId:                WWCP.ChargingSession_Id.Parse(authorizationReference.ToString()),
+                                                        ProviderId:               providerId,
+                                                        RemoteAuthentication:     WWCP.RemoteAuthentication.FromRemoteIdentification(
+                                                                                      WWCP.EMobilityAccount_Id.Parse(
+                                                                                          $"{reserveNowCommand.Token.CountryCode}-{reserveNowCommand.Token.PartyId}-{reserveNowCommand.Token.Id}"
+                                                                                      )
+                                                                                  ),
+                                                      //  AdditionalSessionInfos:   JSONObject.Create(
+                                                      //                                new JProperty("reserveNowCommand",  reserveNowCommand.ToJSON())
+                                                      //                            ),
+                                                        AuthenticationPath:       WWCP.Auth_Path.Parse(  // Authentication path == CSO Roaming Provider identification!
+                                                                                      remotePartyId.ToString()
+                                                                                  ),
+                                                        CSORoamingProvider:       this,
+
+                                                        RequestTimestamp:         null,
+                                                        EventTrackingId:          null,
+                                                        RequestTimeout:           null
+                                                        //CancellationToken:        null
+
+                                                    );
+
+
+                return result.Result == WWCP.ReservationResultTypes.Success
+
+                           ? CommandResult.ACCEPTED(
+                                 DisplayTexts.Create("ReserveNowCommand accepted!")
+                             )
+
+                           : CommandResult.REJECTED(
+                                 DisplayTexts.Create("ReserveNowCommand rejected!")
+                             );
+
+            };
+
+            #endregion
+
+            #region OnCancelReservationCommand  => CancelReservation
+
+            this.CPO_HTTPAPI.OnCancelReservationCommand += async (remotePartyId,
+                                                                  from,
+                                                                  to,
+                                                                  cancelReservationCommand) => {
+
+                var emspId                  = from ?? remotePartyId.AsEMSPId();
+                var providerId              = emspId.ToWWCP();
+                if (!emspId.HasValue || !providerId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
+                           );
+
+
+                var result = await RoamingNetwork.CancelReservation(
+                                        WWCP.ChargingReservation_Id.Parse(
+                                            //providerId.Value,
+                                            cancelReservationCommand.ReservationId.ToString()
+                                        ),
+                                        WWCP.ChargingReservationCancellationReason.Aborted,
+                                        this
+                                    );
+
+
+                return result.Result == WWCP.CancelReservationResultTypes.Success
+
+                           ? CommandResult.ACCEPTED(
+                                 DisplayTexts.Create("CancelReservationCommand accepted!")
+                             )
+
+                           : CommandResult.REJECTED(
+                                 DisplayTexts.Create("CancelReservationCommand rejected!")
+                             );
+
+            };
+
+            #endregion
+
+
+            #region OnStartSessionCommand       => RemoteStart
 
             this.CPO_HTTPAPI.OnStartSessionCommand += async (remotePartyId,
                                                              from,
@@ -405,58 +537,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(CommonAPI.DefaultPartyId, startSessionCommand.LocationId, out var location))
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
+                    return CommandResult.REJECTED(
                                DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!startSessionCommand.EVSEUId.HasValue)
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
+                    return CommandResult.REJECTED(
                                DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse))
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
+                    return CommandResult.REJECTED(
                                DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 if (!evse.EVSEId.HasValue)
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
+                    return CommandResult.REJECTED(
                                DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
 
                 if (!wwcpEVSEId.HasValue)
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
-                               DisplayTexts.Create(
-                                   Languages.en,
-                                   "StartSessionCommand rejected!"
-                               )
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create("StartSessionCommand rejected!")
                            );
 
 
                 var emspId                  = from ?? remotePartyId.AsEMSPId();
                 var providerId              = emspId.ToWWCP();
                 if (!emspId.HasValue || !providerId.HasValue)
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
+                    return CommandResult.REJECTED(
                                DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
                            );
 
@@ -496,86 +607,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     );
 
 
-                if (result.Result == WWCP.RemoteStartResultTypes.Success)
-                {
+                return result.Result == WWCP.RemoteStartResultTypes.Success
 
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.ACCEPTED,
-                               //TimeSpan.FromMinutes(1),
-                               DisplayTexts.Create("StartSessionCommand accepted!")
-                           );
+                           ? CommandResult.ACCEPTED(
+                                 DisplayTexts.Create("StartSessionCommand accepted!")
+                             )
 
-                }
-
-                else
-                    return new CommandResult(
-                               //startSessionCommand,
-                               CommandResultTypes.REJECTED,
-                               //TimeSpan.FromMinutes(1),
-                               DisplayTexts.Create("StartSessionCommand rejected!")
-                           );
+                           : CommandResult.REJECTED(
+                                 DisplayTexts.Create("StartSessionCommand rejected!")
+                             );
 
             };
 
             #endregion
 
-            #region OnStopSessionCommand   => RemoteStop
+            #region OnStopSessionCommand        => RemoteStop
 
             this.CPO_HTTPAPI.OnStopSessionCommand += async (remotePartyId,
                                                             from,
                                                             to,
                                                             stopSessionCommand) => {
 
-                var providerId = (from ?? remotePartyId.AsEMSPId()).ToWWCP();
-
-                if (providerId.HasValue)
-                {
-
-                    var result = await RoamingNetwork.RemoteStop(
-                                           WWCP.ChargingSession_Id.Parse(
-                                               providerId.Value,
-                                               stopSessionCommand.SessionId.ToString()
-                                           ),
-                                           WWCP.ReservationHandling.Close,
-                                           providerId,
-                                           null,                                   // Remote authentication
-                                           JSONObject.Create(
-                                               new JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
-                                           ),
-                                           WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
-                                               remotePartyId.ToString()//Id.ToString()
-                                           ),
-                                           this                                    // CSORoamingProvider
-                                       );
-
-                    if (result.Result == WWCP.RemoteStopResultTypes.Success)
-                        return new CommandResponse(
-                                   stopSessionCommand,
-                                   CommandResponseTypes.ACCEPTED,
-                                   TimeSpan.FromMinutes(1),
-                                   DisplayTexts.Create("StopSessionCommand accepted!")
-                               );
-
-                    return new CommandResponse(
-                               stopSessionCommand,
-                               CommandResponseTypes.REJECTED,
-                               TimeSpan.FromMinutes(1),
-                               DisplayTexts.Create("StopSessionCommand rejected!")
+                var emspId                  = from ?? remotePartyId.AsEMSPId();
+                var providerId              = emspId.ToWWCP();
+                if (!emspId.HasValue || !providerId.HasValue)
+                    return CommandResult.REJECTED(
+                               DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
                            );
 
-                }
 
-                return new CommandResponse(
-                           stopSessionCommand,
-                           CommandResponseTypes.REJECTED,
-                           TimeSpan.FromMinutes(1),
-                           DisplayTexts.Create($"Invalid E-mobility provider identification '{(from ?? remotePartyId.AsEMSPId())}'!")
-                       );
+                var result = await RoamingNetwork.RemoteStop(
+                                        WWCP.ChargingSession_Id.Parse(
+                                            providerId.Value,
+                                            stopSessionCommand.SessionId.ToString()
+                                        ),
+                                        WWCP.ReservationHandling.Close,
+                                        providerId,
+                                        null,                                   // Remote authentication
+                                        JSONObject.Create(
+                                            new JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
+                                        ),
+                                        WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
+                                            remotePartyId.ToString()//Id.ToString()
+                                        ),
+                                        this                                    // CSORoamingProvider
+                                    );
+
+
+                return result.Result == WWCP.RemoteStopResultTypes.Success
+
+                           ? CommandResult.ACCEPTED(
+                                 DisplayTexts.Create("StopSessionCommand accepted!")
+                             )
+
+                           : CommandResult.REJECTED(
+                                 DisplayTexts.Create("StopSessionCommand rejected!")
+                             );
 
             };
 
             #endregion
+
 
         }
 

@@ -247,6 +247,129 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
+        #region Static methods
+
+        #region ACCEPTED             (Messages)
+
+        /// <summary>
+        /// Command request accepted by the charge point.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult ACCEPTED(DisplayTexts Messages)
+
+            => new (CommandResultTypes.ACCEPTED,
+                    Messages);
+
+        #endregion
+
+        #region CANCELED_RESERVATION (Messages)
+
+        /// <summary>
+        /// The Reservation has been canceled by the CPO.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult CANCELED_RESERVATION(DisplayTexts Messages)
+
+            => new (CommandResultTypes.CANCELED_RESERVATION,
+                    Messages);
+
+        #endregion
+
+        #region EVSE_OCCUPIED        (Messages)
+
+        /// <summary>
+        /// EVSE is currently occupied, another session is ongoing. Cannot start a new session.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult EVSE_OCCUPIED(DisplayTexts Messages)
+
+            => new (CommandResultTypes.EVSE_OCCUPIED,
+                    Messages);
+
+        #endregion
+
+        #region EVSE_INOPERATIVE     (Messages)
+
+        /// <summary>
+        /// EVSE is currently inoperative or faulted.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult EVSE_INOPERATIVE(DisplayTexts Messages)
+
+            => new (CommandResultTypes.EVSE_INOPERATIVE,
+                    Messages);
+
+        #endregion
+
+        #region FAILED               (Messages)
+
+        /// <summary>
+        /// Execution of the command failed at the charge point.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult FAILED(DisplayTexts Messages)
+
+            => new (CommandResultTypes.FAILED,
+                    Messages);
+
+        #endregion
+
+        #region NOT_SUPPORTED        (Messages)
+
+        /// <summary>
+        /// The requested command is not supported by this charge point, EVSE etc.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult NOT_SUPPORTED(DisplayTexts Messages)
+
+            => new (CommandResultTypes.NOT_SUPPORTED,
+                    Messages);
+
+        #endregion
+
+        #region REJECTED             (Messages)
+
+        /// <summary>
+        /// Command request rejected by the charge point.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult REJECTED(DisplayTexts Messages)
+
+            => new (CommandResultTypes.REJECTED,
+                    Messages);
+
+        #endregion
+
+        #region TIMEOUT              (Messages)
+
+        /// <summary>
+        /// Command request timeout, no response received from the charge point in a reasonable time.
+        /// </summary>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult TIMEOUT(DisplayTexts Messages)
+
+            => new (CommandResultTypes.TIMEOUT,
+                    Messages);
+
+        #endregion
+
+        #region UNKNOWN_RESERVATION  (Messages)
+
+        /// <summary>
+        /// The Reservation in the requested command is not known by this charge point.
+        /// </summary>
+        /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
+        /// <param name="Messages">A human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
+        public static CommandResult UNKNOWN_RESERVATION(DisplayTexts Messages)
+
+            => new (CommandResultTypes.UNKNOWN_RESERVATION,
+                    Messages);
+
+        #endregion
+
+        #endregion
+
+
         #region Operator overloading
 
         #region Operator == (CommandResult1, CommandResult2)

@@ -31,13 +31,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     /// <summary>
     /// The CPO2PTP Client is used by CPOs to talk to PTPs.
     /// </summary>
-    public partial class CPO2PTPClient : IHTTPClient
+    public partial class CPO2PTP_HTTPClient : IHTTPClient
     {
 
         /// <summary>
         /// The CPO2PTP HTTP Client Logger.
         /// </summary>
-        public new sealed class Logger : CommonHTTPClient.HTTPClientLogger
+        public new sealed class HTTPClientLogger : CommonHTTPClient.HTTPClientLogger
         {
 
             #region Data
@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             /// <summary>
             /// The attached CPO2PTP client.
             /// </summary>
-            public CPO2PTPClient  CPOClient    { get; }
+            public CPO2PTP_HTTPClient  CPOClient    { get; }
 
             #endregion
 
@@ -67,10 +67,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CPO2PTPClient                CPOClient,
-                          String?                      LoggingPath,
-                          String?                      Context          = DefaultContext,
-                          OCPILogfileCreatorDelegate?  LogfileCreator   = null)
+            public HTTPClientLogger(CPO2PTP_HTTPClient                CPOClient,
+                                    String?                      LoggingPath,
+                                    String?                      Context          = DefaultContext,
+                                    OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CPOClient,
                        LoggingPath,

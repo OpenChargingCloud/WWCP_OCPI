@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
     /// <summary>
     /// The CPO2PTP Client is used by CPOs to talk to PTPs.
     /// </summary>
-    public partial class CPO2PTPClient : CommonHTTPClient
+    public partial class CPO2PTP_HTTPClient : CommonHTTPClient
     {
 
         #region (class) APICounters
@@ -206,12 +206,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// The default HTTP user agent.
         /// </summary>
-        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2PTPClient)}";
+        public new const String  DefaultHTTPUserAgent    = $"GraphDefined OCPI {Version.String} {nameof(CPO2PTP_HTTPClient)}";
 
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public new const String  DefaultLoggingContext   = nameof(CPO2PTPClient);
+        public new const String  DefaultLoggingContext   = nameof(CPO2PTP_HTTPClient);
 
         #endregion
 
@@ -222,16 +222,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public new APICounters  Counters    { get; }
+        public new APICounters       Counters    { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger       HTTPLogger
+        public new HTTPClientLogger  HTTPLogger
         {
             get
             {
-                return base.HTTPLogger as Logger;
+                return base.HTTPLogger as HTTPClientLogger;
             }
             set
             {
@@ -844,17 +844,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPO2PTPClient(CPO_HTTPAPI                       CPOAPI,
-                             RemoteParty                  RemoteParty,
-                             HTTPHostname?                VirtualHostname   = null,
-                             I18NString?                  Description       = null,
-                             org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
+        public CPO2PTP_HTTPClient(CPO_HTTPAPI                  CPOAPI,
+                                  RemoteParty                  RemoteParty,
+                                  HTTPHostname?                VirtualHostname   = null,
+                                  I18NString?                  Description       = null,
+                                  org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPClientLogger?            HTTPLogger        = null,
 
-                             Boolean?                     DisableLogging    = false,
-                             String?                      LoggingPath       = null,
-                             String?                      LoggingContext    = null,
-                             OCPILogfileCreatorDelegate?  LogfileCreator    = null,
-                             IDNSClient?                  DNSClient         = null)
+                                  Boolean?                     DisableLogging    = false,
+                                  String?                      LoggingPath       = null,
+                                  String?                      LoggingContext    = null,
+                                  OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                                  IDNSClient?                  DNSClient         = null)
 
             : base(CPOAPI.CommonAPI,
                    RemoteParty,
@@ -874,7 +874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             this.Counters    = new APICounters();
 
             base.HTTPLogger  = this.DisableLogging == false
-                                   ? new Logger(
+                                   ? new HTTPClientLogger(
                                          this,
                                          LoggingPath,
                                          LoggingContext,
@@ -888,7 +888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
 
 
         public override JObject ToJSON()
-            => base.ToJSON(nameof(CPO2PTPClient));
+            => base.ToJSON(nameof(CPO2PTP_HTTPClient));
 
 
 
@@ -905,7 +905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP
             where TDelegate : Delegate
 
             => LogEvent(
-                   nameof(CPO2PTPClient),
+                   nameof(CPO2PTP_HTTPClient),
                    Logger,
                    LogHandler,
                    EventName,

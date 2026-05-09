@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP;
 
 #endregion
 
@@ -80,6 +81,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
         public Action<CPO2EMSP_HTTPClient>?  DefaultCPO2EMSP_HTTPClientConfigurator    { get; set; }
+
+        public Action<CPO2HUB_HTTPClient>?   DefaultCPO2HUB_HTTPClientConfigurator     { get; set; }
+
+        public Action<CPO2PTP_HTTPClient>?   DefaultCPO2PTP_HTTPClientConfigurator     { get; set; }
 
         #endregion
 
@@ -1813,10 +1818,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnReserveNowCommand
 
-        public delegate Task<CommandResponse> OnReserveNowCommandDelegate(RemoteParty_Id     RemotePartyId,
-                                                                          EMSP_Id?           From,
-                                                                          CPO_Id?            To,
-                                                                          ReserveNowCommand  ReserveNowCommand);
+        public delegate Task<CommandResult> OnReserveNowCommandDelegate(RemoteParty_Id     RemotePartyId,
+                                                                        EMSP_Id?           From,
+                                                                        CPO_Id?            To,
+                                                                        ReserveNowCommand  ReserveNowCommand);
 
         public event OnReserveNowCommandDelegate? OnReserveNowCommand;
 
@@ -1824,10 +1829,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnCancelReservationCommand
 
-        public delegate Task<CommandResponse> OnCancelReservationCommandDelegate(RemoteParty_Id            RemotePartyId,
-                                                                                 EMSP_Id?                  From,
-                                                                                 CPO_Id?                   To,
-                                                                                 CancelReservationCommand  CancelReservationCommand);
+        public delegate Task<CommandResult> OnCancelReservationCommandDelegate(RemoteParty_Id            RemotePartyId,
+                                                                               EMSP_Id?                  From,
+                                                                               CPO_Id?                   To,
+                                                                               CancelReservationCommand  CancelReservationCommand);
 
         public event OnCancelReservationCommandDelegate? OnCancelReservationCommand;
 
@@ -1835,10 +1840,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnStartSessionCommand
 
-        public delegate Task<CommandResponse> OnStartSessionCommandDelegate(RemoteParty_Id       RemotePartyId,
-                                                                            EMSP_Id?             From,
-                                                                            CPO_Id?              To,
-                                                                            StartSessionCommand  StartSessionCommand);
+        public delegate Task<CommandResult> OnStartSessionCommandDelegate(RemoteParty_Id       RemotePartyId,
+                                                                          EMSP_Id?             From,
+                                                                          CPO_Id?              To,
+                                                                          StartSessionCommand  StartSessionCommand);
 
         public event OnStartSessionCommandDelegate? OnStartSessionCommand;
 
@@ -1846,10 +1851,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnStopSessionCommand
 
-        public delegate Task<CommandResponse> OnStopSessionCommandDelegate(RemoteParty_Id      RemotePartyId,
-                                                                           EMSP_Id?            From,
-                                                                           CPO_Id?             To,
-                                                                           StopSessionCommand  StopSessionCommand);
+        public delegate Task<CommandResult> OnStopSessionCommandDelegate(RemoteParty_Id      RemotePartyId,
+                                                                         EMSP_Id?            From,
+                                                                         CPO_Id?             To,
+                                                                         StopSessionCommand  StopSessionCommand);
 
         public event OnStopSessionCommandDelegate? OnStopSessionCommand;
 
@@ -1857,10 +1862,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnUnlockConnectorCommand
 
-        public delegate Task<CommandResponse> OnUnlockConnectorCommandDelegate(RemoteParty_Id          RemotePartyId,
-                                                                               EMSP_Id?                From,
-                                                                               CPO_Id?                 To,
-                                                                               UnlockConnectorCommand  UnlockConnectorCommand);
+        public delegate Task<CommandResult> OnUnlockConnectorCommandDelegate(RemoteParty_Id          RemotePartyId,
+                                                                             EMSP_Id?                From,
+                                                                             CPO_Id?                 To,
+                                                                             UnlockConnectorCommand  UnlockConnectorCommand);
 
         public event OnUnlockConnectorCommandDelegate? OnUnlockConnectorCommand;
 
@@ -1871,10 +1876,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnNotifyWebPaymentsStartedCommand
 
-        public delegate Task<CommandResponse> OnNotifyWebPaymentsStartedCommandDelegate(RemoteParty_Id                   RemotePartyId,
-                                                                                        EMSP_Id?                         From,
-                                                                                        CPO_Id?                          To,
-                                                                                        NotifyWebPaymentsStartedCommand  NotifyWebPaymentsStartedCommand);
+        public delegate Task<CommandResult> OnNotifyWebPaymentsStartedCommandDelegate(RemoteParty_Id                   RemotePartyId,
+                                                                                      EMSP_Id?                         From,
+                                                                                      CPO_Id?                          To,
+                                                                                      NotifyWebPaymentsStartedCommand  NotifyWebPaymentsStartedCommand);
 
         public event OnNotifyWebPaymentsStartedCommandDelegate? OnNotifyWebPaymentsStartedCommand;
 
@@ -1882,10 +1887,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region OnNotifyWebPaymentsFailedCommand
 
-        public delegate Task<CommandResponse> OnNotifyWebPaymentsFailedCommandDelegate(RemoteParty_Id                  RemotePartyId,
-                                                                                       EMSP_Id?                        From,
-                                                                                       CPO_Id?                         To,
-                                                                                       NotifyWebPaymentsFailedCommand  NotifyWebPaymentsFailedCommand);
+        public delegate Task<CommandResult> OnNotifyWebPaymentsFailedCommandDelegate(RemoteParty_Id                  RemotePartyId,
+                                                                                     EMSP_Id?                        From,
+                                                                                     CPO_Id?                         To,
+                                                                                     NotifyWebPaymentsFailedCommand  NotifyWebPaymentsFailedCommand);
 
         public event OnNotifyWebPaymentsFailedCommandDelegate? OnNotifyWebPaymentsFailedCommand;
 
@@ -2059,8 +2064,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                          Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                          null,
                                          CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id) ?? nameof(CPO2EMSP_HTTPClient),
                                          CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
@@ -2111,8 +2116,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                          Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
                                          null,
                                          CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId) ?? nameof(CPO2EMSP_HTTPClient),
                                          CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
                                          CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
                                      );
@@ -2133,61 +2138,108 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region CPO-2-PTP  Clients
+        #region CPO-2-HUB Clients
 
-        private readonly ConcurrentDictionary<PTP_Id, CPO2PTPClient> cpo2ptpClients = new();
-
-        /// <summary>
-        /// Return an enumeration of all CPO2PTP clients.
-        /// </summary>
-        public IEnumerable<CPO2PTPClient> CPO2PTPClients
-            => cpo2ptpClients.Values;
-
-
-        #region GetPTPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
+        private readonly ConcurrentDictionary<HUB_Id, CPO2HUB_HTTPClient> cpo2hubClients = new();
 
         /// <summary>
-        /// As a CPO create a client to access e.g. a remote PTP.
+        /// Return an enumeration of all CPO2HUB clients.
         /// </summary>
-        /// <param name="CountryCode">The country code of the remote PTP.</param>
-        /// <param name="PartyId">The party identification of the remote PTP.</param>
+        public IEnumerable<CPO2HUB_HTTPClient> CPO2HUBClients
+            => cpo2hubClients.Values;
+
+
+        #region GetHUBClient (CountryCode, PartyId,   Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote HUB.</param>
+        /// <param name="PartyId">The party identification of the remote HUB.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(CountryCode  CountryCode,
-                                           Party_Id     PartyId,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
+        public CPO2HUB_HTTPClient? GetHUBClient(CountryCode  CountryCode,
+                                                Party_Id     PartyId,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetHUBClient(
+                   RemoteParty_Id.From(
+                       CountryCode,
+                       PartyId,
+                       Role.HUB
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetHUBClient (             PartyIdv3, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="v">The party identification of the remote HUB.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(Party_Idv3   PartyIdv3,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetHUBClient(
+                   RemoteParty_Id.From(
+                       PartyIdv3,
+                       Role.HUB
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetHUBClient (RemoteParty,            Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(RemoteParty  RemoteParty,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
         {
 
-            var ptpId          = PTP_Id.        Parse(CountryCode, PartyId);
-            var remotePartyId  = RemoteParty_Id.From (ptpId);
+            var hubId = HUB_Id.From(RemoteParty.Id);
 
             if (AllowCachedClients &&
-                cpo2ptpClients.TryGetValue(ptpId, out var cachedCPOClient))
+                cpo2hubClients.TryGetValue(hubId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
 
-            if (CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty) &&
-                remoteParty?.RemoteAccessInfos?.Any() == true)
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(remotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2HUBClient = new CPO2HUB_HTTPClient(
+                                         this,
+                                         RemoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id) ?? nameof(CPO2HUB_HTTPClient),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
+                cpo2hubClients.TryAdd(hubId, cpo2HUBClient);
 
-                return cpoClient;
+                DefaultCPO2HUB_HTTPClientConfigurator?.Invoke(cpo2HUBClient);
+
+                return cpo2HUBClient;
 
             }
 
@@ -2197,7 +2249,121 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region GetPTPClient(RemoteParty,          Description = null, AllowCachedClients = true)
+        #region GetHUBClient (RemotePartyId,          Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote HUB.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2HUB_HTTPClient? GetHUBClient(RemoteParty_Id  RemotePartyId,
+                                                I18NString?     Description          = null,
+                                                Boolean         AllowCachedClients   = true)
+        {
+
+            var hubId = HUB_Id.From(RemotePartyId);
+
+            if (AllowCachedClients &&
+                cpo2hubClients.TryGetValue(hubId, out var cachedCPOClient))
+            {
+                return cachedCPOClient;
+            }
+
+            if (CommonAPI.TryGetRemoteParty(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpo2HUBClient = new CPO2HUB_HTTPClient(
+                                        this,
+                                        remoteParty,
+                                        null,
+                                        Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                        null,
+                                        CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId) ?? LoggingPath,
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId) ?? nameof(CPO2HUB_HTTPClient),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                        CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                    );
+
+                cpo2hubClients.TryAdd(hubId, cpo2HUBClient);
+
+                DefaultCPO2HUB_HTTPClientConfigurator?.Invoke(cpo2HUBClient);
+
+                return cpo2HUBClient;
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region CPO-2-PTP Clients
+
+        private readonly ConcurrentDictionary<PTP_Id, CPO2PTP_HTTPClient> cpo2ptpClients = new();
+
+        /// <summary>
+        /// Return an enumeration of all CPO2PTP clients.
+        /// </summary>
+        public IEnumerable<CPO2PTP_HTTPClient> CPO2PTPClients
+            => cpo2ptpClients.Values;
+
+
+        #region GetPTPClient (CountryCode, PartyId,   Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote PTP.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote PTP.</param>
+        /// <param name="PartyId">The party identification of the remote PTP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2PTP_HTTPClient? GetPTPClient(CountryCode  CountryCode,
+                                                Party_Id     PartyId,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetPTPClient(
+                   RemoteParty_Id.From(
+                       CountryCode,
+                       PartyId,
+                       Role.PTP
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetPTPClient (             PartyIdv3, Description = null, AllowCachedClients = true)
+
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote PTP.
+        /// </summary>
+        /// <param name="v">The party identification of the remote PTP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPO2PTP_HTTPClient? GetPTPClient(Party_Idv3   PartyIdv3,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
+
+            => GetPTPClient(
+                   RemoteParty_Id.From(
+                       PartyIdv3,
+                       Role.PTP
+                   ),
+                   Description,
+                   AllowCachedClients
+               );
+
+        #endregion
+
+        #region GetPTPClient (RemoteParty,            Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote PTP.
@@ -2205,9 +2371,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="RemoteParty">A remote party.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(RemoteParty  RemoteParty,
-                                           I18NString?  Description          = null,
-                                           Boolean      AllowCachedClients   = true)
+        public CPO2PTP_HTTPClient? GetPTPClient(RemoteParty  RemoteParty,
+                                                I18NString?  Description          = null,
+                                                Boolean      AllowCachedClients   = true)
         {
 
             var ptpId = PTP_Id.From(RemoteParty.Id);
@@ -2221,22 +2387,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (RemoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    RemoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2PTPClient = new CPO2PTP_HTTPClient(
+                                         this,
+                                         RemoteParty,
+                                         null,
+                                         Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemoteParty.Id),
+                                         null,
+                                         CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id) ?? LoggingPath,
+                                         CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id) ?? nameof(CPO2PTP_HTTPClient),
+                                         CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                         CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                     );
 
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
+                cpo2ptpClients.TryAdd(ptpId, cpo2PTPClient);
 
-                return cpoClient;
+                DefaultCPO2PTP_HTTPClientConfigurator?.Invoke(cpo2PTPClient);
+
+                return cpo2PTPClient;
 
             }
 
@@ -2246,7 +2414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region GetPTPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
+        #region GetPTPClient (RemotePartyId,          Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote PTP.
@@ -2254,9 +2422,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="RemotePartyId">A remote party identification.</param>
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
-        public CPO2PTPClient? GetPTPClient(RemoteParty_Id  RemotePartyId,
-                                           I18NString?     Description          = null,
-                                           Boolean         AllowCachedClients   = true)
+        public CPO2PTP_HTTPClient? GetPTPClient(RemoteParty_Id  RemotePartyId,
+                                                I18NString?     Description          = null,
+                                                Boolean         AllowCachedClients   = true)
         {
 
             var ptpId = PTP_Id.From(RemotePartyId);
@@ -2271,22 +2439,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
-                var cpoClient = new CPO2PTPClient(
-                                    this,
-                                    remoteParty,
-                                    null,
-                                    Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
-                                    null,
-                                    CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
-                                    CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
-                                );
+                var cpo2PTPClient = new CPO2PTP_HTTPClient(
+                                        this,
+                                        remoteParty,
+                                        null,
+                                        Description ?? CommonAPI.BaseAPI.ClientConfigurations.Description?.Invoke(RemotePartyId),
+                                        null,
+                                        CommonAPI.BaseAPI.ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId) ?? LoggingPath,
+                                        CommonAPI.BaseAPI.ClientConfigurations.LoggingContext?.Invoke(RemotePartyId) ?? nameof(CPO2PTP_HTTPClient),
+                                        CommonAPI.BaseAPI.ClientConfigurations.LogfileCreator,
+                                        CommonAPI.HTTPBaseAPI.HTTPServer.DNSClient
+                                    );
 
-                cpo2ptpClients.TryAdd(ptpId, cpoClient);
+                cpo2ptpClients.TryAdd(ptpId, cpo2PTPClient);
 
-                return cpoClient;
+                DefaultCPO2PTP_HTTPClientConfigurator?.Invoke(cpo2PTPClient);
+
+                return cpo2PTPClient;
 
             }
 
@@ -2295,6 +2465,175 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) CallOCPICommandCallback(OCPIHTTPRequest, OCPICommand, CommandResultType, DisplayText, Runner)
+
+        private async Task CallOCPICommandCallback(OCPIRequest                OCPIHTTPRequest,
+                                                   IOCPICommand               OCPICommand,
+
+                                                   CommandResultTypes         CommandResultType,
+                                                   DisplayTexts               DisplayText,
+
+                                                   Func<Task<CommandResult>>  Runner)
+        {
+
+            if (OCPIHTTPRequest.RemoteParty is null)
+                return;
+
+            var responseURL = OCPICommand.ResponseURL;
+
+            try
+            {
+
+                var commandResult = await Runner();
+
+                if      (OCPIHTTPRequest.LocalAccessInfo.Is(Role.EMSP))
+                {
+
+                    var emspClient = GetEMSPClient(OCPIHTTPRequest.RemoteParty.Id);
+                    if (emspClient is not null)
+                    {
+
+                        var httpClient = new HTTPClient(
+                                                URL:                                   responseURL,
+                                                Description:                           I18NString.Create($"OCPI Command Response Client for '{OCPIHTTPRequest.RemoteParty.Id}'"),
+                                                HTTPUserAgent:                         emspClient.HTTPUserAgent,
+                                                Accept:                                emspClient.Accept,
+                                                ContentType:                           emspClient.ContentType,
+                                                Connection:                            emspClient.Connection,
+                                                null,
+                                                RemoteCertificateValidator:            emspClient.RemoteCertificateValidator,
+                                                LocalCertificateSelector:              emspClient.LocalCertificateSelector,
+                                                ClientCertificates:                    emspClient.ClientCertificates,
+                                                ClientCertificateContext:              emspClient.ClientCertificateContext,
+                                                ClientCertificateChain:                emspClient.ClientCertificateChain,
+                                                TLSProtocols:                          emspClient.TLSProtocols,
+                                                CipherSuitesPolicy:                    emspClient.CipherSuitesPolicy,
+                                                CertificateChainPolicy:                emspClient.CertificateChainPolicy,
+                                                CertificateRevocationCheckMode:        emspClient.CertificateRevocationCheckMode,
+                                                ApplicationProtocols:                  emspClient.ApplicationProtocols,
+                                                AllowRenegotiation:                    emspClient.AllowRenegotiation,
+                                                AllowTLSResume:                        emspClient.AllowTLSResume,
+                                                TOTPConfig:                            emspClient.TOTPConfig,
+                                                HTTPAuthentication:                    emspClient.HTTPAuthentication,
+                                                IPVersionPreference:                   emspClient.IPVersionPreference,
+                                                ConnectTimeout:                        emspClient.ConnectTimeout,
+                                                ReceiveTimeout:                        emspClient.ReceiveTimeout,
+                                                SendTimeout:                           emspClient.SendTimeout,
+                                                TransmissionRetryDelay:                emspClient.TransmissionRetryDelay,
+                                                MaxNumberOfRetries:                    emspClient.MaxNumberOfRetries,
+                                                BufferSize:                            emspClient.BufferSize,
+                                                ConsumeRequestChunkedTEImmediately:    emspClient.ConsumeRequestChunkedTEImmediately,
+                                                ConsumeResponseChunkedTEImmediately:   emspClient.ConsumeResponseChunkedTEImmediately,
+                                                DisableLogging:                        emspClient.DisableLogging,
+                                                DNSClient:                             emspClient.DNSClient
+                                            );
+
+                        var httpResponse = await httpClient.POST(
+                                                        responseURL.Path,
+                                                        new CommandResult(
+                                                            CommandResultType,
+                                                            DisplayText
+                                                        ).ToJSON().ToUTF8Bytes(),
+                                                        RequestBuilder: (HTTPResponseBuilder) => {
+
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
+
+                                                            if (OCPIHTTPRequest.To.  HasValue) {
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
+                                                            }
+
+                                                            if (OCPIHTTPRequest.From.HasValue) {
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
+                                                            }
+                                                        }
+                                                    ).ConfigureAwait(false);
+
+                    }
+
+                }
+
+                else if (OCPIHTTPRequest.LocalAccessInfo.Is(Role.HUB))
+                {
+
+                    var hubClient = GetHUBClient(OCPIHTTPRequest.RemoteParty.Id);
+                    if (hubClient is not null)
+                    {
+
+                        var httpClient = new HTTPClient(
+                                                URL:                                   responseURL,
+                                                Description:                           I18NString.Create($"OCPI Command Response Client for '{OCPIHTTPRequest.RemoteParty.Id}'"),
+                                                HTTPUserAgent:                         hubClient.HTTPUserAgent,
+                                                Accept:                                hubClient.Accept,
+                                                ContentType:                           hubClient.ContentType,
+                                                Connection:                            hubClient.Connection,
+                                                null,
+                                                RemoteCertificateValidator:            hubClient.RemoteCertificateValidator,
+                                                LocalCertificateSelector:              hubClient.LocalCertificateSelector,
+                                                ClientCertificates:                    hubClient.ClientCertificates,
+                                                ClientCertificateContext:              hubClient.ClientCertificateContext,
+                                                ClientCertificateChain:                hubClient.ClientCertificateChain,
+                                                TLSProtocols:                          hubClient.TLSProtocols,
+                                                CipherSuitesPolicy:                    hubClient.CipherSuitesPolicy,
+                                                CertificateChainPolicy:                hubClient.CertificateChainPolicy,
+                                                CertificateRevocationCheckMode:        hubClient.CertificateRevocationCheckMode,
+                                                ApplicationProtocols:                  hubClient.ApplicationProtocols,
+                                                AllowRenegotiation:                    hubClient.AllowRenegotiation,
+                                                AllowTLSResume:                        hubClient.AllowTLSResume,
+                                                TOTPConfig:                            hubClient.TOTPConfig,
+                                                HTTPAuthentication:                    hubClient.HTTPAuthentication,
+                                                IPVersionPreference:                   hubClient.IPVersionPreference,
+                                                ConnectTimeout:                        hubClient.ConnectTimeout,
+                                                ReceiveTimeout:                        hubClient.ReceiveTimeout,
+                                                SendTimeout:                           hubClient.SendTimeout,
+                                                TransmissionRetryDelay:                hubClient.TransmissionRetryDelay,
+                                                MaxNumberOfRetries:                    hubClient.MaxNumberOfRetries,
+                                                BufferSize:                            hubClient.BufferSize,
+                                                ConsumeRequestChunkedTEImmediately:    hubClient.ConsumeRequestChunkedTEImmediately,
+                                                ConsumeResponseChunkedTEImmediately:   hubClient.ConsumeResponseChunkedTEImmediately,
+                                                DisableLogging:                        hubClient.DisableLogging,
+                                                DNSClient:                             hubClient.DNSClient
+                                            );
+
+                        var httpResponse = await httpClient.POST(
+                                                        responseURL.Path,
+                                                        new CommandResult(
+                                                            CommandResultType,
+                                                            DisplayText
+                                                        ).ToJSON().ToUTF8Bytes(),
+                                                        RequestBuilder: (HTTPResponseBuilder) => {
+
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
+
+                                                            if (OCPIHTTPRequest.To.  HasValue) {
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
+                                                            }
+
+                                                            if (OCPIHTTPRequest.From.HasValue) {
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
+                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
+                                                            }
+                                                        }
+                                                    ).ConfigureAwait(false);
+
+                    }
+
+                }
+
+            }
+            catch ( Exception ex ) {
+                DebugX.LogT($"The OCPI Command Response could not be sent to '{responseURL}' for command '{OCPICommand.Id}': {ex.Message}");
+            }
+
+        }
 
         #endregion
 
@@ -4507,8 +4846,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4553,25 +4894,50 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnReserveNowCommand is not null)
-                        commandResponse = await OnReserveNowCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    reserveNowCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                reserveNowCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("Charging reservation started successfully!"),
+
+                                () => OnReserveNowCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          reserveNowCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, starting reservation...")
+                                          );
+
+                    }
+
 
                     commandResponse ??= new CommandResponse(
                                             reserveNowCommand,
                                             CommandResponseTypes.NOT_SUPPORTED,
-                                            Timeout:  TimeSpan.FromSeconds(15),
+                                            Timeout:   TimeSpan.FromSeconds(15),
                                             Messages:  DisplayTexts.Create("Not supported!")
                                         );
 
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4621,8 +4987,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4667,12 +5035,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnCancelReservationCommand is not null)
-                        commandResponse = await OnCancelReservationCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    cancelReservationCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                cancelReservationCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("Charging reservation cancelled successfully!"),
+
+                                () => OnCancelReservationCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          cancelReservationCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, cancelling reservation...")
+                                          );
+
+                    }
 
                     commandResponse ??= new CommandResponse(
                                             cancelReservationCommand,
@@ -4684,8 +5073,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4735,8 +5127,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4765,7 +5159,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = StatusCode.ClientErrors.InvalidOrMissingParameters,
-                                   StatusMessage        = "Could not parse the given 'START_SESSION' command JSON: " + errorResponse,
+                                   StatusMessage        = CommonAPI.DefaultStatusMessage,
+                                   Data                 = CommandResponse.REJECTED(
+                                                              TimeSpan.FromSeconds(10),
+                                                              DisplayTexts.Create("Could not parse the given 'START_SESSION' command JSON: " + errorResponse)
+                                                          ).ToJSON(
+                                                              CustomCommandResponseSerializer,
+                                                              CustomDisplayTextSerializer
+                                                          ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                        AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4781,12 +5182,34 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnStartSessionCommand is not null)
-                        commandResponse = await OnStartSessionCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    startSessionCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                startSessionCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("Charging session started successfully!"),
+
+                                () => OnStartSessionCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          startSessionCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, starting session...")
+                                          );
+
+                    }
+
 
                     commandResponse ??= new CommandResponse(
                                             startSessionCommand,
@@ -4798,8 +5221,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4849,8 +5275,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4873,8 +5301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         return ocpiResponse;
 
                     if (!StopSessionCommand.TryParse(stopSessionJSON,
-                                                      out var stopSessionCommand,
-                                                      out var errorResponse))
+                                                     out var stopSessionCommand,
+                                                     out var errorResponse))
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -4895,12 +5323,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnStopSessionCommand is not null)
-                        commandResponse = await OnStopSessionCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    stopSessionCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                stopSessionCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("Charging session stopped successfully!"),
+
+                                () => OnStopSessionCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          stopSessionCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, stopping session...")
+                                          );
+
+                    }
 
                     commandResponse ??= new CommandResponse(
                                             stopSessionCommand,
@@ -4912,8 +5361,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -4963,8 +5415,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Check access token
 
-                    if (request.RemoteParty is null ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if (request.RemoteParty     is null ||
+                        request.LocalAccessInfo is null ||
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                        request.LocalAccessInfo.IsNot(Role.EMSP, Role.HUB) == true)
                     {
 
                         return new OCPIResponse.Builder(request) {
@@ -5009,12 +5463,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnUnlockConnectorCommand is not null)
-                        commandResponse = await OnUnlockConnectorCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    unlockConnectorCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                unlockConnectorCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("Connector unlocked successfully!"),
+
+                                () => OnUnlockConnectorCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          unlockConnectorCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, unlocking connector...")
+                                          );
+
+                    }
 
                     commandResponse ??= new CommandResponse(
                                             unlockConnectorCommand,
@@ -5026,8 +5501,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
-                               Data                 = commandResponse.ToJSON(),
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = commandResponse.ToJSON(
+                                                          CustomCommandResponseSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ),
                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                    AccessControlAllowMethods  = [ "OPTIONS", "POST" ],
@@ -5128,12 +5606,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnNotifyWebPaymentsStartedCommand is not null)
-                        commandResponse = await OnNotifyWebPaymentsStartedCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    notifyWebPaymentsStartedCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                notifyWebPaymentsStartedCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("A web payment has been started successfully!"),
+
+                                () => OnNotifyWebPaymentsStartedCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          notifyWebPaymentsStartedCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, starting web payment...")
+                                          );
+
+                    }
 
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsStartedCommand,
@@ -5145,7 +5644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer
@@ -5247,12 +5746,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     CommandResponse? commandResponse = null;
 
                     if (OnNotifyWebPaymentsFailedCommand is not null)
-                        commandResponse = await OnNotifyWebPaymentsFailedCommand.Invoke(
-                                                    request.RemoteParty.Id,
-                                                    request.From.AsEMSPId(),
-                                                    request.To.  AsCPOId(),
-                                                    notifyWebPaymentsFailedCommand
-                                                );
+                    {
+
+                        // Process the command asynchronously and when done
+                        // send the response to the given ResponseURL
+                        _ = CallOCPICommandCallback(
+
+                                request,
+                                notifyWebPaymentsFailedCommand,
+
+                                CommandResultTypes.ACCEPTED,
+                                DisplayTexts.Create("A web payment has failed!"),
+
+                                () => OnNotifyWebPaymentsFailedCommand.Invoke(
+                                          request.RemoteParty.Id,
+                                          request.From.AsEMSPId(),
+                                          request.To.  AsCPOId(),
+                                          notifyWebPaymentsFailedCommand
+                                      )
+
+                            ).ConfigureAwait(false);
+
+                        commandResponse = CommandResponse.ACCEPTED(
+                                              TimeSpan.FromSeconds(120),
+                                              DisplayTexts.Create("Command accepted, processing failed web payment...")
+                                          );
+
+                    }
 
                     commandResponse ??= new CommandResponse(
                                             notifyWebPaymentsFailedCommand,
@@ -5264,7 +5784,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     return new OCPIResponse.Builder(request) {
                                StatusCode           = StatusCode.Success,
-                               StatusMessage        = "Hello world!",
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
                                Data                 = commandResponse.ToJSON(
                                                           CustomCommandResponseSerializer,
                                                           CustomDisplayTextSerializer

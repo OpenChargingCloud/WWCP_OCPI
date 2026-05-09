@@ -3677,6 +3677,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public String                   AssetsDBFileName           { get; }
 
+
+        public String                   DefaultStatusMessage       { get; }
+
         #endregion
 
         #region Events
