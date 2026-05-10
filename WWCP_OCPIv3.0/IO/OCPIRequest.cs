@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                         StatusCode    = StatusCode.ClientErrors.InvalidOrMissingParameters,
                                                         StatusMessage = "Invalid OCPI request!"
                                                     };
-                        var httpResponseBuilderX  = new HTTPResponse.Builder();
+                        var httpResponseBuilderX  = new HTTPResponse.Builder(httpRequest);
 
                         httpResponseBuilderX.SubprotocolResponse = new OCPIResponse(
                                                                        ocpiResponseBuilderX.Request,
@@ -233,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     catch (Exception e)
                     {
 
-                        return new HTTPResponse.Builder() {
+                        return new HTTPResponse.Builder(httpRequest) {
                                    HTTPStatusCode  = HTTPStatusCode.InternalServerError,
                                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                                    Content         = new OCPIResponse<JObject>(

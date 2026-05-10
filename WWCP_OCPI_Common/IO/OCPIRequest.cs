@@ -151,7 +151,7 @@ namespace cloud.charging.open.protocols.OCPI
                                   //             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                   //             Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 
-                                return new HTTPResponse.Builder() {
+                                return new HTTPResponse.Builder(httpRequest) {
                                            HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                            Server                     = CommonAPI.HTTPServiceName,
                                            Date                       = Timestamp.Now,
@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                         StatusCode     = StatusCode.ClientErrors.InvalidOrMissingParameters,
                                                         StatusMessage  = "Invalid OCPI request!"
                                                     };
-                        var httpResponseBuilderX  = new HTTPResponse.Builder();
+                        var httpResponseBuilderX  = new HTTPResponse.Builder(httpRequest);
 
                         httpResponseBuilderX.SubprotocolResponse = new OCPIResponse(
                                                                        ocpiResponseBuilderX.Request,
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPI
                     catch (Exception e)
                     {
 
-                        return new HTTPResponse.Builder() {
+                        return new HTTPResponse.Builder(httpRequest) {
                                    HTTPStatusCode  = HTTPStatusCode.InternalServerError,
                                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                                    Content         = new OCPIResponse<JObject>(
