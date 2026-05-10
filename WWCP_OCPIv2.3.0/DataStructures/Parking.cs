@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_height",
                                        "max vehicle height",
-                                       Meter.TryParseCM,
+                                       Meter.TryParse_cm,
                                        out Meter? MaxVehicleHeight,
                                        out ErrorResponse))
                 {
@@ -460,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_length",
                                        "max vehicle length",
-                                       Meter.TryParseCM,
+                                       Meter.TryParse_cm,
                                        out Meter? MaxVehicleLength,
                                        out ErrorResponse))
                 {
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("max_vehicle_width",
                                        "max vehicle width",
-                                       Meter.TryParseCM,
+                                       Meter.TryParse_cm,
                                        out Meter? MaxVehicleWidth,
                                        out ErrorResponse))
                 {
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("parking_space_length",
                                        "parking space length",
-                                       Meter.TryParseCM,
+                                       Meter.TryParse_cm,
                                        out Meter? ParkingSpaceLength,
                                        out ErrorResponse))
                 {
@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 if (JSON.ParseOptional("parking_space_width",
                                        "parking space width",
-                                       Meter.TryParseCM,
+                                       Meter.TryParse_cm,
                                        out Meter? ParkingSpaceWidth,
                                        out ErrorResponse))
                 {
@@ -745,23 +745,23 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            MaxVehicleHeight.     HasValue
-                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.     Value.CM)
+                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.     Value.cm)
                                : null,
 
                            MaxVehicleLength.     HasValue
-                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.     Value.CM)
+                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.     Value.cm)
                                : null,
 
                            MaxVehicleWidth.      HasValue
-                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth.      Value.CM)
+                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth.      Value.cm)
                                : null,
 
                            ParkingSpaceLength.     HasValue
-                               ? new JProperty("parking_space_length",      ParkingSpaceLength.   Value.CM)
+                               ? new JProperty("parking_space_length",      ParkingSpaceLength.   Value.cm)
                                : null,
 
                            ParkingSpaceWidth.      HasValue
-                               ? new JProperty("parking_space_width",       ParkingSpaceWidth.    Value.CM)
+                               ? new JProperty("parking_space_width",       ParkingSpaceWidth.    Value.cm)
                                : null,
 
                            DangerousGoodsAllowed.HasValue

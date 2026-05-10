@@ -654,23 +654,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            MaxVehicleHeight.     HasValue
-                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.Value.Value)
+                               ? new JProperty("max_vehicle_height",        MaxVehicleHeight.Value.m)
                                : null,
 
                            MaxVehicleLength.     HasValue
-                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.Value.Value)
+                               ? new JProperty("max_vehicle_length",        MaxVehicleLength.Value.m)
                                : null,
 
                            MaxVehicleWidth.      HasValue
-                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth. Value.Value)
+                               ? new JProperty("max_vehicle_width",         MaxVehicleWidth. Value.m)
                                : null,
 
                            ParkingBayLength.     HasValue
-                               ? new JProperty("parking_bay_length",        ParkingBayLength.Value.Value)
+                               ? new JProperty("parking_bay_length",        ParkingBayLength.Value.m)
                                : null,
 
                            ParkingBayWidth.      HasValue
-                               ? new JProperty("parking_bay_width",         ParkingBayWidth. Value.Value)
+                               ? new JProperty("parking_bay_width",         ParkingBayWidth. Value.m)
                                : null,
 
                            DangerousGoodsAllowed.HasValue

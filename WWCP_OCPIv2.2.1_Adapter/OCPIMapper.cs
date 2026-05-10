@@ -1025,65 +1025,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ToOCPI(this CurrentType)
-
-        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes CurrentType)
-
-            => CurrentType switch {
-                   WWCP.CurrentTypes.AC_OnePhase     => PowerTypes.AC_1_PHASE,
-                   WWCP.CurrentTypes.AC_ThreePhases  => PowerTypes.AC_3_PHASE,
-                   WWCP.CurrentTypes.DC              => PowerTypes.DC,
-                   _                                 => null,
-               };
-
-        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes? CurrentType)
-
-            => CurrentType.HasValue
-                   ? CurrentType.Value.ToOCPI()
-                   : null;
-
-        #endregion
-
-
-        #region ToOCPI(this PlugType)
-
-        public static ConnectorType? ToOCPI(this WWCP.ChargingPlugTypes PlugType)
-
-            => PlugType switch {
-                   //WWCP.PlugTypes.SmallPaddleInductive          => 
-                   //WWCP.PlugTypes.LargePaddleInductive          => 
-                   //WWCP.PlugTypes.AVCONConnector                => 
-                   //WWCP.PlugTypes.TeslaConnector                => 
-                   WWCP.ChargingPlugTypes.TESLA_Roadster                => ConnectorType.TESLA_R,
-                   WWCP.ChargingPlugTypes.TESLA_ModelS                  => ConnectorType.TESLA_S,
-                   //WWCP.PlugTypes.NEMA5_20                      => 
-                   WWCP.ChargingPlugTypes.TypeEFrenchStandard           => ConnectorType.DOMESTIC_E,
-                   WWCP.ChargingPlugTypes.TypeFSchuko                   => ConnectorType.DOMESTIC_F,
-                   WWCP.ChargingPlugTypes.TypeGBritishStandard          => ConnectorType.DOMESTIC_G,
-                   WWCP.ChargingPlugTypes.TypeJSwissStandard            => ConnectorType.DOMESTIC_J,
-                   WWCP.ChargingPlugTypes.Type1Connector_CableAttached  => ConnectorType.IEC_62196_T1,
-                   WWCP.ChargingPlugTypes.Type2Outlet                   => ConnectorType.IEC_62196_T2,
-                   WWCP.ChargingPlugTypes.Type2Connector_CableAttached  => ConnectorType.IEC_62196_T2,
-                   WWCP.ChargingPlugTypes.Type3Outlet                   => ConnectorType.IEC_62196_T3A,
-                   WWCP.ChargingPlugTypes.IEC60309SinglePhase           => ConnectorType.IEC_60309_2_single_16,
-                   WWCP.ChargingPlugTypes.IEC60309ThreePhase            => ConnectorType.IEC_60309_2_three_16,
-                   WWCP.ChargingPlugTypes.CCSCombo1Plug_CableAttached   => ConnectorType.IEC_62196_T1_COMBO,
-                   WWCP.ChargingPlugTypes.CCSCombo2Plug_CableAttached   => ConnectorType.IEC_62196_T2_COMBO,
-                   WWCP.ChargingPlugTypes.CHAdeMO                       => ConnectorType.CHADEMO,
-                   //WWCP.PlugTypes.CEE3                          => 
-                   //WWCP.PlugTypes.CEE5                          => 
-                   _                                            => null,
-               };
-
-        public static ConnectorType? ToOCPI(this WWCP.ChargingPlugTypes? PlugType)
-
-            => PlugType.HasValue
-                   ? PlugType.Value.ToOCPI()
-                   : null;
-
-        #endregion
-
-
         #region ToOCPI(this ChargingConnector, EVSE, ref Warnings)
 
         public static Connector? ToOCPI(this WWCP.IChargingConnector  ChargingConnector,
@@ -1131,11 +1072,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return null;
                 }
 
-                var standard     = ChargingConnector.Plug.ToOCPI();
+                var standard     = ChargingConnector.Type.ToOCPI();
 
                 if (!standard.HasValue)
                 {
-                    warnings.Add(Warning.Create($"The given socket outlet plug '{ChargingConnector.Plug}' could not be converted to an OCPI connector standard!"));
+                    warnings.Add(Warning.Create($"The given socket outlet plug '{ChargingConnector.Type}' could not be converted to an OCPI connector standard!"));
                     Warnings = warnings;
                     return null;
                 }
@@ -1147,10 +1088,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            Id:                      connectorId,
                            Standard:                standard.Value,
-                           Format:                  ChargingConnector.CableAttached switch {
-                                                        true  => ConnectorFormats.CABLE,
-                                                        _     => ConnectorFormats.SOCKET
-                                                    },
+                           Format:                  ChargingConnector.ChargingCable is not null
+                                                        ? ConnectorFormats.CABLE
+                                                        : ConnectorFormats.SOCKET,
                            PowerType:               powerType.Value,
 
                            //MaxVoltage:              (UInt16) (EVSE.RMSVoltage.HasValue
@@ -1253,35 +1193,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => AuthMethod.HasValue
                    ? AuthMethod.Value.ToWWCP()
-                   : null;
-
-        #endregion
-
-
-        #region ToOCPI(this EnergyMeterId)
-
-        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
-
-            => EnergyMeter_Id.Parse(EnergyMeterId.ToString());
-
-        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
-
-            => EnergyMeterId.HasValue
-                   ? EnergyMeterId.Value.ToOCPI()
-                   : null;
-
-        #endregion
-
-        #region ToWWCP(this MeterId)
-
-        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id MeterId)
-
-            => WWCP.EnergyMeter_Id.Parse(MeterId.ToString());
-
-        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id? MeterId)
-
-            => MeterId.HasValue
-                   ? MeterId.Value.ToWWCP()
                    : null;
 
         #endregion

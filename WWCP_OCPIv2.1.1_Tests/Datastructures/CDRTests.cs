@@ -513,15 +513,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                       InitialStatus:        EVSEStatusType.Available,
 
-                                      ChargingConnectors:   new[] {
+                                      ChargingConnectors:   [
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("1"),
-                                                                    Plug:            ChargingPlugTypes.Type2Outlet,
-                                                                    Lockable:        true,
-                                                                    CableAttached:   true,
-                                                                    CableLength:     Meter.FromM(4)
+                                                                    Type:            ChargingConnectorType.IEC_62196_T2,
+                                                                    ChargingCable:   new ChargingCable(
+                                                                                         Meter.From_m(4m)
+                                                                                     ),
+                                                                    Lockable:        true
                                                                 )
-                                                            }
+                                                            ]
 
                                   );
 
@@ -543,14 +544,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       InitialAdminStatus:   EVSEAdminStatusType.Operational,
                                       InitialStatus:        EVSEStatusType.Available,
 
-                                      ChargingConnectors:   new[] {
+                                      ChargingConnectors:   [
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("2"),
-                                                                    Plug:            ChargingPlugTypes.TypeFSchuko,
-                                                                    Lockable:        false,
-                                                                    CableAttached:   false
+                                                                    Type:            ChargingConnectorType.IEC_62196_T2,
+                                                                    ChargingCable:   new ChargingCable(
+                                                                                         Meter.From_m(2m)
+                                                                                     ),
+                                                                    Lockable:        false
                                                                 )
-                                                            }
+                                                            ]
 
                                   );
 

@@ -272,6 +272,349 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region ToOCPI(this WWCPConnectorType)
+
+        public static ConnectorType? ToOCPI(this WWCP.ChargingConnectorType WWCPConnectorType)
+        {
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.CHAdeMO)
+                return ConnectorType.CHADEMO;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.CHAOJI)
+                return ConnectorType.CHAOJI;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_A)
+                return ConnectorType.DOMESTIC_A;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_B)
+                return ConnectorType.DOMESTIC_B;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_C)
+                return ConnectorType.DOMESTIC_C;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_D)
+                return ConnectorType.DOMESTIC_D;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_E_FrenchStandard)
+                return ConnectorType.DOMESTIC_E;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_F_SchuKo)
+                return ConnectorType.DOMESTIC_F;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_G_BritishStandard)
+                return ConnectorType.DOMESTIC_G;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_H)
+                return ConnectorType.DOMESTIC_H;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_I)
+                return ConnectorType.DOMESTIC_I;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_J_SwissStandard)
+                return ConnectorType.DOMESTIC_J;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_K)
+                return ConnectorType.DOMESTIC_K;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_L)
+                return ConnectorType.DOMESTIC_L;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_M)
+                return ConnectorType.DOMESTIC_M;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_N)
+                return ConnectorType.DOMESTIC_N;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.DOMESTIC_O)
+                return ConnectorType.DOMESTIC_O;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.GBT_AC)
+                return ConnectorType.GBT_AC;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.GBT_DC)
+                return ConnectorType.GBT_DC;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_60309_2_single_16)
+                return ConnectorType.IEC_60309_2_single_16;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_60309_2_three_16)
+                return ConnectorType.IEC_60309_2_three_16;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_60309_2_three_32)
+                return ConnectorType.IEC_60309_2_three_32;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_60309_2_three_64)
+                return ConnectorType.IEC_60309_2_three_64;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T1)
+                return ConnectorType.IEC_62196_T1;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T1_COMBO)
+                return ConnectorType.IEC_62196_T1_COMBO;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T2)
+                return ConnectorType.IEC_62196_T2;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T2_COMBO)
+                return ConnectorType.IEC_62196_T2_COMBO;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T3A)
+                return ConnectorType.IEC_62196_T3A;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.IEC_62196_T3C)
+                return ConnectorType.IEC_62196_T3C;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_5_20)
+                return ConnectorType.NEMA_5_20;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_6_30)
+                return ConnectorType.NEMA_6_30;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_6_50)
+                return ConnectorType.NEMA_6_50;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_10_30)
+                return ConnectorType.NEMA_10_30;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_10_50)
+                return ConnectorType.NEMA_10_50;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_14_30)
+                return ConnectorType.NEMA_14_30;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.NEMA_14_50)
+                return ConnectorType.NEMA_14_50;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.PANTOGRAPH_BOTTOM_UP)
+                return ConnectorType.PANTOGRAPH_BOTTOM_UP;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.PANTOGRAPH_TOP_DOWN)
+                return ConnectorType.PANTOGRAPH_TOP_DOWN;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.TESLA_Roadster)
+                return ConnectorType.TESLA_R;
+
+            if (WWCPConnectorType == WWCP.ChargingConnectorType.TESLA_ModelS)
+                return ConnectorType.TESLA_S;
+
+            throw new ArgumentException($"Unsupported WWCP charging connector type: {WWCPConnectorType}!", nameof(WWCPConnectorType));
+
+        }
+        public static ConnectorType? ToOCPI(this WWCP.ChargingConnectorType? ConnectorType)
+
+            => ConnectorType.HasValue
+                   ? ConnectorType.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this ConnectorType)
+
+        public static WWCP.ChargingConnectorType? ToWWCP(this ConnectorType OCPIConnectorType)
+        {
+
+            if (OCPIConnectorType == ConnectorType.CHADEMO)
+                return WWCP.ChargingConnectorType.CHAdeMO;
+
+            if (OCPIConnectorType == ConnectorType.CHAOJI)
+                return WWCP.ChargingConnectorType.CHAOJI;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_A)
+                return WWCP.ChargingConnectorType.DOMESTIC_A;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_B)
+                return WWCP.ChargingConnectorType.DOMESTIC_B;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_C)
+                return WWCP.ChargingConnectorType.DOMESTIC_C;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_D)
+                return WWCP.ChargingConnectorType.DOMESTIC_D;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_E)
+                return WWCP.ChargingConnectorType.DOMESTIC_E_FrenchStandard;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_F)
+                return WWCP.ChargingConnectorType.DOMESTIC_F_SchuKo;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_G)
+                return WWCP.ChargingConnectorType.DOMESTIC_G_BritishStandard;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_H)
+                return WWCP.ChargingConnectorType.DOMESTIC_H;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_I)
+                return WWCP.ChargingConnectorType.DOMESTIC_I;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_J)
+                return WWCP.ChargingConnectorType.DOMESTIC_J_SwissStandard;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_K)
+                return WWCP.ChargingConnectorType.DOMESTIC_K;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_L)
+                return WWCP.ChargingConnectorType.DOMESTIC_L;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_M)
+                return WWCP.ChargingConnectorType.DOMESTIC_M;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_N)
+                return WWCP.ChargingConnectorType.DOMESTIC_N;
+
+            if (OCPIConnectorType == ConnectorType.DOMESTIC_O)
+                return WWCP.ChargingConnectorType.DOMESTIC_O;
+
+            if (OCPIConnectorType == ConnectorType.GBT_AC)
+                return WWCP.ChargingConnectorType.GBT_AC;
+
+            if (OCPIConnectorType == ConnectorType.GBT_DC)
+                return WWCP.ChargingConnectorType.GBT_DC;
+
+            if (OCPIConnectorType == ConnectorType.IEC_60309_2_single_16)
+                return WWCP.ChargingConnectorType.IEC_60309_2_single_16;
+
+            if (OCPIConnectorType == ConnectorType.IEC_60309_2_three_16)
+                return WWCP.ChargingConnectorType.IEC_60309_2_three_16;
+
+            if (OCPIConnectorType == ConnectorType.IEC_60309_2_three_32)
+                return WWCP.ChargingConnectorType.IEC_60309_2_three_32;
+
+            if (OCPIConnectorType == ConnectorType.IEC_60309_2_three_64)
+                return WWCP.ChargingConnectorType.IEC_60309_2_three_64;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T1)
+                return WWCP.ChargingConnectorType.IEC_62196_T1;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T1_COMBO)
+                return WWCP.ChargingConnectorType.IEC_62196_T1_COMBO;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T2)
+                return WWCP.ChargingConnectorType.IEC_62196_T2;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T2_COMBO)
+                return WWCP.ChargingConnectorType.IEC_62196_T2_COMBO;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T3A)
+                return WWCP.ChargingConnectorType.IEC_62196_T3A;
+
+            if (OCPIConnectorType == ConnectorType.IEC_62196_T3C)
+                return WWCP.ChargingConnectorType.IEC_62196_T3C;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_5_20)
+                return WWCP.ChargingConnectorType.NEMA_5_20;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_6_30)
+                return WWCP.ChargingConnectorType.NEMA_6_30;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_6_50)
+                return WWCP.ChargingConnectorType.NEMA_6_50;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_10_30)
+                return WWCP.ChargingConnectorType.NEMA_10_30;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_10_50)
+                return WWCP.ChargingConnectorType.NEMA_10_50;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_14_30)
+                return WWCP.ChargingConnectorType.NEMA_14_30;
+
+            if (OCPIConnectorType == ConnectorType.NEMA_14_50)
+                return WWCP.ChargingConnectorType.NEMA_14_50;
+
+            if (OCPIConnectorType == ConnectorType.PANTOGRAPH_BOTTOM_UP)
+                return WWCP.ChargingConnectorType.PANTOGRAPH_BOTTOM_UP;
+
+            if (OCPIConnectorType == ConnectorType.PANTOGRAPH_TOP_DOWN)
+                return WWCP.ChargingConnectorType.PANTOGRAPH_TOP_DOWN;
+
+            if (OCPIConnectorType == ConnectorType.TESLA_R)
+                return WWCP.ChargingConnectorType.TESLA_Roadster;
+
+            if (OCPIConnectorType == ConnectorType.TESLA_S)
+                return WWCP.ChargingConnectorType.TESLA_ModelS;
+
+            throw new ArgumentException($"Unsupported OCPI connector type: {OCPIConnectorType}!", nameof(OCPIConnectorType));
+
+        }
+
+        public static WWCP.ChargingConnectorType? ToWWCP(this ConnectorType? OCPIConnectorType)
+
+            => OCPIConnectorType.HasValue
+                   ? OCPIConnectorType.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+
+        #region ToOCPI(this CurrentType)
+
+        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes CurrentType)
+
+            => CurrentType switch {
+                   WWCP.CurrentTypes.AC_OnePhase     => PowerTypes.AC_1_PHASE,
+                   WWCP.CurrentTypes.AC_ThreePhases  => PowerTypes.AC_3_PHASE,
+                   WWCP.CurrentTypes.DC              => PowerTypes.DC,
+                   _                                 => null
+               };
+
+        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes? CurrentType)
+
+            => CurrentType.HasValue
+                   ? CurrentType.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this CurrentType)
+
+        public static WWCP.CurrentTypes? ToWWCP(this PowerTypes PowerType)
+
+            => PowerType switch {
+                   PowerTypes.AC_1_PHASE  => WWCP.CurrentTypes.AC_OnePhase,
+                   PowerTypes.AC_3_PHASE  => WWCP.CurrentTypes.AC_ThreePhases,
+                   PowerTypes.DC          => WWCP.CurrentTypes.DC,
+                   _                      => null
+               };
+
+        public static WWCP.CurrentTypes? ToWWCP(this PowerTypes? PowerType)
+
+            => PowerType.HasValue
+                   ? PowerType.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this EnergyMeterId)
+
+        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
+
+            => EnergyMeter_Id.Parse(EnergyMeterId.ToString());
+
+        public static EnergyMeter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
+
+            => EnergyMeterId.HasValue
+                   ? EnergyMeterId.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this MeterId)
+
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id MeterId)
+
+            => WWCP.EnergyMeter_Id.Parse(MeterId.ToString());
+
+        public static WWCP.EnergyMeter_Id? ToWWCP(this EnergyMeter_Id? MeterId)
+
+            => MeterId.HasValue
+                   ? MeterId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
     }
 
 }
