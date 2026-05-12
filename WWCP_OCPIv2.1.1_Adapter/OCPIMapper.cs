@@ -1763,8 +1763,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (ChargeDetailRecord.AuthenticationStart is not null)
                 {
 
-                    if      (ChargeDetailRecord.AuthenticationStart.AuthToken.                  HasValue)
-                        authId = Auth_Id.Parse(ChargeDetailRecord.AuthenticationStart.AuthToken.                  Value.ToString());
+                    if      (ChargeDetailRecord.AuthenticationStart.AuthToken is not null)
+                        authId = Auth_Id.Parse(ChargeDetailRecord.AuthenticationStart.AuthToken.                        ToString());
 
                     else if (ChargeDetailRecord.AuthenticationStart.RemoteIdentification.       HasValue)
                         authId = Auth_Id.Parse(ChargeDetailRecord.AuthenticationStart.RemoteIdentification.       Value.ToString());

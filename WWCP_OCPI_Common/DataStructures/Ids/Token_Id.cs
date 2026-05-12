@@ -68,19 +68,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Indicates whether this token identification is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean  IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this token identification is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean  IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the token identification.
         /// </summary>
-        public UInt64 Length
+        public UInt64   Length
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion

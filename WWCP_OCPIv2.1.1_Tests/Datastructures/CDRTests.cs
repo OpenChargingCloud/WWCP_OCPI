@@ -595,7 +595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                               ),
 
                               AuthenticationStart:            LocalAuthentication.FromAuthToken(
-                                                                  AuthenticationToken.NewRandom7Bytes,
+                                                                  AuthenticationToken.NewRandomRFID7Bytes,
                                                                   AuthMethod.AUTH_REQUEST
                                                               ),
                               //AuthenticationStop

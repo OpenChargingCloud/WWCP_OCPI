@@ -1790,7 +1790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.RoamingTests
 
 
                 var authStartResult1 = await csoRoamingNetwork.AuthorizeStart(
-                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandomRFID7Bytes),
                                                  ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
                                                  ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
                                              );
