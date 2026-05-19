@@ -3592,10 +3592,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Convert and send charge detail record
 
-                    var session         = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
+                    var session          = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
 
-                    var wasAnRFIDAuth   = session?.CustomData["ocpi"] as JObject;
-                    var wasARemoteStart = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _);
+                    var wasAnRFIDAuth    = session?.CustomData["ocpi"] as JObject;
+                    var wasARemoteStart  = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _);
+
+                    var ocpiToken        = session?.AuthStartResult?.AdditionalContext?["token"] as JObject;
+                    if (ocpiToken is not null)
+                        wasARemoteStart  = true;
 
                     if (wasAnRFIDAuth is null && !wasARemoteStart)
                         continue;
@@ -3603,7 +3607,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var token = startSessionCommand?.Token;
 
                     if (wasAnRFIDAuth is not null && wasAnRFIDAuth["token"] is JObject tokenJSON)
-                        Token.TryParse(tokenJSON, out token, out _);
+                    {
+                        if (!Token.TryParse(tokenJSON, out token, out _))
+                            continue;
+                    }
+
+                    if (ocpiToken is not null)
+                    {
+                        if (!Token.TryParse(ocpiToken, out token, out _))
+                            continue;
+                    }
 
                     if (token is null)
                         continue;
