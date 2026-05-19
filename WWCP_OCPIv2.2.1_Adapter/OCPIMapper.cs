@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
+//using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
@@ -1860,6 +1861,83 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         }
 
         #endregion
+
+
+        #region ToRemoteAuthentication(this Token)
+
+        /// <summary>
+        /// Try to convert the given OCPI token into a WWCP remote authentication,
+        /// which can be used for remote start/stop of charging sessions.
+        /// Some use RFID UIDs for remote authentication which is awkwardly supported by OCPI!
+        /// </summary>
+        /// <param name="Token">The OCPI token to be converted.</param>
+        public static WWCP.RemoteAuthentication? ToRemoteAuthentication(this Token Token)
+        {
+
+            if (Token.Type == TokenType.RFID)
+                if (WWCP.AuthenticationToken.TryParseHEX(
+                        Token.Id.ToString(),
+                        out var rfidAuthenticationToken,
+                        WWCP.AuthTokenType.RFID))
+                {
+
+                    return WWCP.RemoteAuthentication.FromAuthToken(
+                               rfidAuthenticationToken,
+                               WWCP.AuthMethod.REMOTESTART
+                           );
+
+                }
+
+
+            if (Token.Type == TokenType.APP_USER)
+                if (WWCP.EMobilityAccount_Id.TryParse(
+                        Token.Id.ToString(),
+                        out var eMAId))
+                {
+
+                    return WWCP.RemoteAuthentication.FromRemoteIdentification(
+                               eMAId,
+                               WWCP.AuthMethod.REMOTESTART
+                           );
+
+                }
+
+
+            if (Token.Type == TokenType.AD_HOC_USER)
+                if (WWCP.AuthenticationToken.TryParse(
+                        Token.Id.ToString(),
+                        out var authenticationToken,
+                        WWCP.AuthTokenType.AD_HOC_USER))
+                {
+
+                    return WWCP.RemoteAuthentication.FromAuthToken(
+                               authenticationToken,
+                               WWCP.AuthMethod.REMOTESTART
+                           );
+
+                }
+
+
+            if (Token.Type == TokenType.OTHER)
+                if (WWCP.AuthenticationToken.TryParse(
+                        Token.Id.ToString(),
+                        out var authenticationToken,
+                        WWCP.AuthTokenType.OTHER))
+                {
+
+                    return WWCP.RemoteAuthentication.FromAuthToken(
+                               authenticationToken,
+                               WWCP.AuthMethod.REMOTESTART
+                           );
+
+                }
+
+            return null;
+
+        }
+
+        #endregion
+
 
     }
 

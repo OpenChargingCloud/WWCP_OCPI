@@ -571,26 +571,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                DisplayTexts.Create($"Invalid E-mobility provider identification '{from ?? remotePartyId.AsEMSPId()}'!")
                            );
 
-                // OCPI uses the AuthorizationReference as session identification...
-                var authorizationReference  = startSessionCommand.AuthorizationReference
-                                                  ?? AuthorizationReference.NewRandom(emspId.Value);
-
-                // ...but we need to ensure that the session identification is unique across all roaming providers!
-                if (!authorizationReference.StartsWith(emspId.Value.ToString()))
-                    authorizationReference  = AuthorizationReference.Parse($"{emspId.Value}-{authorizationReference}");
-
                 var result                  = await RoamingNetwork.RemoteStart(
 
                                                         ChargingLocation:         WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
                                                         ChargingProduct:          null,
                                                         ReservationId:            null,
-                                                        SessionId:                WWCP.ChargingSession_Id.Parse(authorizationReference.ToString()),
+                                                        SessionId:                startSessionCommand.AuthorizationReference.HasValue
+                                                                                      ? WWCP.ChargingSession_Id.Parse(startSessionCommand.AuthorizationReference.Value.ToString())
+                                                                                      : null,
                                                         ProviderId:               providerId,
-                                                        RemoteAuthentication:     WWCP.RemoteAuthentication.FromRemoteIdentification(
-                                                                                      WWCP.EMobilityAccount_Id.Parse(
-                                                                                          $"{startSessionCommand.Token.CountryCode}-{startSessionCommand.Token.PartyId}-{startSessionCommand.Token.Id}"
-                                                                                      )
-                                                                                  ),
+                                                        RemoteAuthentication:     startSessionCommand.Token.ToRemoteAuthentication(),
                                                         AdditionalSessionInfos:   JSONObject.Create(
                                                                                       new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
                                                                                   ),
