@@ -3621,6 +3621,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (token is null)
                         continue;
 
+             //       var remotePartyId = RemoteParty_Id.TryParse($"{chargeDetailRecord.ProviderIdStart?.ToString()}_EMSP");
+             //       a   ??= RemoteParty_Id.TryParse($"{chargeDetailRecord.ProviderIdStart?.ToString()}_HUB");
+
                     var cdr       = chargeDetailRecord.ToOCPI(
                                         CustomChargingPoolIdConverter,
                                         CustomEVSEUIdConverter,
@@ -3633,7 +3636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             token.ContractId
                                         ),
                                         CommonAPI.GetTariffIds,
-                                        RemoteParty_Id.TryParse(chargeDetailRecord.ProviderIdStart?.ToString()),
+                                        remotePartyId, //RemoteParty_Id.TryParse(chargeDetailRecord.ProviderIdStart?.ToString()),
                                         CommonAPI.GetTariff,
                                         ref warnings
                                     );
