@@ -98,15 +98,44 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) NewRandom (            Length = 30)
+        // OCPI v2.2+
+
+        #region (static) NewRandom ()
 
         /// <summary>
-        /// Create a new random authorization reference.
+        /// Create a new random authorization reference based on a UUIDv7.
+        /// </summary>
+        public static AuthorizationReference NewRandom()
+
+            => new (UUIDv7.Generate().ToString());
+
+        #endregion
+
+        #region (static) NewRandom (Length)
+
+        /// <summary>
+        /// Create a new random authorization reference based on a random string of the given length.
         /// </summary>
         /// <param name="Length">The expected length of the authorization reference.</param>
-        public static AuthorizationReference NewRandom(Byte Length = 30)
+        public static AuthorizationReference NewRandom(Byte Length)
 
             => new (RandomExtensions.RandomString(Length));
+
+        #endregion
+
+
+        // OCPI v2.1.1 and earlier...
+
+        #region (static) NewRandom (PartyId)
+
+        /// <summary>
+        /// Create a new random authorization reference for a specific provider based on a UUIDv7.
+        /// The provider identification is used as a prefix to ensure uniqueness across different providers.
+        /// </summary>
+        /// <param name="PartyId">The unique identification of the provider party.</param>
+        public static AuthorizationReference NewRandom(Party_Idv3 PartyId)
+
+            => new ($"{PartyId.AsEMSPId()}-{UUIDv7.Generate()}");
 
         #endregion
 
@@ -119,9 +148,22 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="PartyId">The unique identification of the provider party.</param>
         /// <param name="Length">The expected length of the authorization reference.</param>
         public static AuthorizationReference NewRandom(Party_Idv3  PartyId,
-                                                       Byte        Length = 31)
+                                                       Byte        Length)
 
             => new ($"{PartyId.AsEMSPId()}-{RandomExtensions.RandomString(Length)}");
+
+        #endregion
+
+        #region (static) NewRandom (ProviderId)
+
+        /// <summary>
+        /// Create a new random authorization reference for a specific provider based on a UUIDv7.
+        /// The provider identification is used as a prefix to ensure uniqueness across different providers.
+        /// </summary>
+        /// <param name="ProviderId">The unique identification of the provider.</param>
+        public static AuthorizationReference NewRandom(EMSP_Id ProviderId)
+
+            => new ($"{ProviderId}-{UUIDv7.Generate()}");
 
         #endregion
 
