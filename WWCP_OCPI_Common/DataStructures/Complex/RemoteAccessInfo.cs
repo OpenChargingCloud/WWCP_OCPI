@@ -530,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptionalJSONArray("tlsProtocols",
                                                 "TLS protocols",
-                                                TLSProtocolsExtensions.TryParseJSON,
+                                                TLSExtensions.TryParseJSON,
                                                 out SslProtocols? tlsProtocols,
                                                 out ErrorResponse))
                 {

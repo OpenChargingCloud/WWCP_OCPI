@@ -40,10 +40,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region Data
 
         protected  RoamingNetwork?            roamingNetwork;
-        protected  HTTPTestServerX?           httpServer;
-        protected  HTTPExtAPI?               httpAPI;
+        protected  HTTPServer?                httpServer;
+        protected  HTTPExtAPI?                httpAPI;
         protected  CommonAPI?                 commonAPI;
-        protected  CPO_HTTPAPI?                    cpoAPI;
+        protected  CPO_HTTPAPI?               cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
@@ -128,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Assert.That(roamingNetwork,  Is.Not.Null);
 
-            httpServer       = new HTTPTestServerX(
+            httpServer       = new HTTPServer(
                                    TCPPort:                   IPPort.Parse(3473)
                                );
 

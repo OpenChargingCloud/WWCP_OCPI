@@ -1180,7 +1180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                      SendTimeout:                           NewHTTPClient.SendTimeout,
                                      TransmissionRetryDelay:                NewHTTPClient.TransmissionRetryDelay,
                                      MaxNumberOfRetries:                    NewHTTPClient.MaxNumberOfRetries,
-                                     BufferSize:                            NewHTTPClient.BufferSize,
+                                     InternalBufferSize:                    NewHTTPClient.InternalBufferSize,
 
                                      ConsumeRequestChunkedTEImmediately:    NewHTTPClient.ConsumeRequestChunkedTEImmediately,
                                      ConsumeResponseChunkedTEImmediately:   NewHTTPClient.ConsumeResponseChunkedTEImmediately,

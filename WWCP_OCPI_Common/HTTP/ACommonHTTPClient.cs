@@ -28,6 +28,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -130,18 +131,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="HTTPLogger">An optional delegate to log HTTP(S) requests and responses.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
         public ACommonHTTPClient(URL                                                        VersionsURL,
-                                 Version_Id?                                                SelectedOCPIVersionId        = null,
-                                 AccessToken?                                               AccessToken                  = null,
-                                 Boolean?                                                   AccessTokenIsBase64Encoded   = null,
+                                 Version_Id?                                                SelectedOCPIVersionId                 = null,
+                                 AccessToken?                                               AccessToken                           = null,
+                                 Boolean?                                                   AccessTokenIsBase64Encoded            = null,
 
                                  I18NString?                                                Description                           = null,
                                  String?                                                    HTTPUserAgent                         = null,
+                                 //IHTTPAuthentication?                                       HTTPAuthentication                    = null,
                                  AcceptTypes?                                               Accept                                = null,
                                  HTTPContentType?                                           ContentType                           = null,
                                  ConnectionType?                                            Connection                            = null,
                                  DefaultRequestBuilderDelegate?                             DefaultRequestBuilder                 = null,
 
-                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidationHandler    = null,
+                                 RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator            = null,
                                  LocalCertificateSelectionHandler?                          LocalCertificateSelector              = null,
                                  IEnumerable<X509Certificate2>?                             ClientCertificates                    = null,
                                  SslStreamCertificateContext?                               ClientCertificateContext              = null,
@@ -157,91 +159,64 @@ namespace cloud.charging.open.protocols.OCPI
 
                                  UInt16?                                                    MaxNumberOfPooledClients              = null,
 
-                                 IPVersionPreference?                                       PreferIPv4                            = null,
+                                 IPVersionPreference?                                       IPVersionPreference                   = null,
                                  TimeSpan?                                                  ConnectTimeout                        = null,
                                  TimeSpan?                                                  ReceiveTimeout                        = null,
                                  TimeSpan?                                                  SendTimeout                           = null,
                                  TransmissionRetryDelayDelegate?                            TransmissionRetryDelay                = null,
                                  UInt16?                                                    MaxNumberOfRetries                    = null,
-                                 UInt32?                                                    BufferSize                            = null,
+                                 UInt32?                                                    InternalBufferSize                    = null,
 
                                  Boolean?                                                   ConsumeRequestChunkedTEImmediately    = null,
                                  Boolean?                                                   ConsumeResponseChunkedTEImmediately   = null,
 
                                  Boolean?                                                   DisableLogging                        = null,
-                                 IDNSClient?                                                DNSClient                             = null)
-
-                                 //TOTPConfig?                                                TOTPConfig                   = null,
-
-                                 //HTTPHostname?                                              VirtualHostname              = null,
-                                 //I18NString?                                                Description                  = null,
-                                 //IPVersionPreference?                                       PreferIPv4                   = null,
-                                 //RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                                 //LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
-                                 //IEnumerable<X509Certificate2>?                             ClientCertificates           = null,
-                                 //SslStreamCertificateContext?                               ClientCertificateContext     = null,
-                                 //IEnumerable<X509Certificate2>?                             ClientCertificateChain       = null,
-                                 //SslProtocols?                                              TLSProtocols                 = null,
-
-                                 //String?                                                    HTTPUserAgent                = DefaultHTTPUserAgent,
-                                 //AcceptTypes?                                               Accept                       = null,
-                                 //HTTPContentType?                                           ContentType                  = null,
-                                 //ConnectionType?                                            Connection                   = null,
-
-                                 //TimeSpan?                                                  RequestTimeout               = null,
-                                 //TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
-                                 //UInt16?                                                    MaxNumberOfRetries           = DefaultMaxNumberOfRetries,
-                                 //UInt32?                                                    InternalBufferSize           = 16000, //DefaultInternalBufferSize,
-                                 //Boolean?                                                   UseHTTPPipelining            = null,
-                                 //HTTPClientLogger?                                          HTTPLogger                   = null,
-
-                                 //Boolean?                                                   DisableLogging               = null,
-                                 //IDNSClient?                                                DNSClient                    = null)
+                                 IDNSClient?                                                DNSClient                             = null,
+                                 ILogger<AHTTPClient>?                                      Logger                                = null,
+                                 ILoggerFactory?                                            LoggerFactory                         = null)
 
             : base(VersionsURL,
                    Description,
                    HTTPUserAgent  ?? DefaultHTTPUserAgent,
-                   Accept         ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
-                   ContentType    ?? HTTPContentType.Application.JSON_UTF8,
-                   Connection     ?? ConnectionType.KeepAlive,
-                   null, //DefaultRequestBuilder,
-
-                   RemoteCertificateValidationHandler,
-                   LocalCertificateSelector,
-                   ClientCertificates,
-                   ClientCertificateContext,
-                   ClientCertificateChain,
-                   TLSProtocols,
-                   null, //CipherSuitesPolicy,
-                   null, //CertificateChainPolicy,
-                   null, //CertificateRevocationCheckMode,
-                   null, //ApplicationProtocols,
-                   null, //AllowRenegotiation,
-                   null, //AllowTLSResume,
-                   TOTPConfig,
-
                    AccessToken.HasValue
                        ? AccessTokenIsBase64Encoded ?? true
                              ? HTTPTokenAuthentication.Parse(AccessToken.Value.ToString().ToBase64())
                              : HTTPTokenAuthentication.Parse(AccessToken.Value.ToString())
                        : null,
+                   Accept         ?? AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8),
+                   ContentType    ?? HTTPContentType.Application.JSON_UTF8,
+                   Connection     ?? ConnectionType.KeepAlive,
+                   DefaultRequestBuilder,
 
-                   PreferIPv4,
-                   null, //ConnectTimeout,
-                   null, //ReceiveTimeout,
-                   null, //SendTimeout,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCertificates,
+                   ClientCertificateContext,
+                   ClientCertificateChain,
+                   TLSProtocols,
+                   CipherSuitesPolicy,
+                   CertificateChainPolicy,
+                   CertificateRevocationCheckMode,
+                   ApplicationProtocols,
+                   AllowRenegotiation,
+                   AllowTLSResume,
+                   TOTPConfig,
+
+                   IPVersionPreference,
+                   ConnectTimeout,
+                   ReceiveTimeout,
+                   SendTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
-                   null, //BufferSize,
+                   InternalBufferSize,
 
-                   null, //ConsumeRequestChunkedTEImmediately
-                   null, //ConsumeResponseChunkedTEImmediately
+                   ConsumeRequestChunkedTEImmediately,
+                   ConsumeResponseChunkedTEImmediately,
 
                    DisableLogging,
-                   DNSClient)
-
-            //       RequestTimeout ?? DefaultRequestTimeout,
-
+                   DNSClient,
+                   null,
+                   LoggerFactory)
 
         {
 
@@ -300,7 +275,7 @@ namespace cloud.charging.open.protocols.OCPI
                                               ConnectTimeout:                        null,
                                               ReceiveTimeout:                        null,
                                               SendTimeout:                           null,
-                                              BufferSize:                            null,
+                                              InternalBufferSize:                            null,
 
                                               DNSClient:                             this.DNSClient
 

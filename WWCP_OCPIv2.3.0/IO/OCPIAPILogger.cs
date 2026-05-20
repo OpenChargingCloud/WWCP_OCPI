@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// <param name="HTTPServer">A HTTP server.</param>
     /// <param name="Context">A context of this API.</param>
     /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-    public class OCPIAPILogger(HTTPTestServerX              HTTPServer,
+    public class OCPIAPILogger(HTTPServer                   HTTPServer,
                                String                       Context,
                                String?                      LoggingPath      = null,
                                OCPILogfileCreatorDelegate?  LogfileCreator   = null)
@@ -772,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The HTTP server of this logger.
         /// </summary>
-        public HTTPTestServerX             HTTPServer        { get; } = HTTPServer     ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
+        public HTTPServer                  HTTPServer        { get; } = HTTPServer     ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
 
         public String                      LoggingPath       { get; } = LoggingPath    ?? AppContext.BaseDirectory;
 

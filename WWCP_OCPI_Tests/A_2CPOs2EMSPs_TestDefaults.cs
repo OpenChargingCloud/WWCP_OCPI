@@ -339,8 +339,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region CPO #1
 
-        public          HTTPTestServerX?                                               cpo1HTTPServer;
-        protected       HTTPExtAPI?                                                   cpo1HTTPAPI;
+        public          HTTPServer?                                                    cpo1HTTPServer;
+        protected       HTTPExtAPI?                                                    cpo1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo1emsp1TLSClientKeyPair;
@@ -360,21 +360,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          cpo1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPO_HTTPAPI?                                        cpo1CPOAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo1Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo1APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo1APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          cpo1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPO_HTTPAPI?                                        cpo1CPOAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          cpo1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.CPO_HTTPAPI?                                             cpo1CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPO_HTTPAPI?                                        cpo1CPOAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo1APIResponseLogs_v2_3_0 = [];
@@ -394,8 +394,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region CPO #2
 
-        public          HTTPTestServerX?                                               cpo2HTTPServer;
-        protected       HTTPExtAPI?                                                   cpo2HTTPAPI;
+        public          HTTPServer?                                                    cpo2HTTPServer;
+        protected       HTTPExtAPI?                                                    cpo2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       cpo2TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       cpo2emsp1TLSClientKeyPair;
@@ -415,21 +415,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          cpo2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_1_1;
+        protected       OCPIv2_1_1.CPO_HTTPAPI?                                        cpo2CPOAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPICSOAdapter?                                     cpo2Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   cpo2APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  cpo2APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          cpo2CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_2_1;
+        protected       OCPIv2_2_1.CPO_HTTPAPI?                                        cpo2CPOAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPICSOAdapter?                                     cpo2Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   cpo2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  cpo2APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          cpo2CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  cpo2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.CPO_HTTPAPI?                                             cpo2CPOAPI_v2_3_0;
+        protected       OCPIv2_3_0.CPO_HTTPAPI?                                        cpo2CPOAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPICSOAdapter?                                     cpo2Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   cpo2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  cpo2APIResponseLogs_v2_3_0 = [];
@@ -449,8 +449,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region HUB #1
 
-        public          HTTPTestServerX?                                               hub1HTTPServer;
-        protected       HTTPExtAPI?                                                   hub1HTTPAPI;
+        public          HTTPServer?                                                    hub1HTTPServer;
+        protected       HTTPExtAPI?                                                    hub1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       hub1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       hub1cpo1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       hub1cpo2TLSClientKeyPair;
@@ -480,14 +480,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_2_1.CommonAPI?                                          hub1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.HUB_HTTPAPI?                                             hub1HUBAPI_v2_2_1;
+        protected       OCPIv2_2_1.HUB_HTTPAPI?                                        hub1HUBAPI_v2_2_1;
         //protected       OCPIv2_2_1.OCPICSOAdapter?                                     hub1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   hub1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  hub1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          hub1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  hub1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.HUB_HTTPAPI?                                             hub1HUBAPI_v2_3_0;
+        protected       OCPIv2_3_0.HUB_HTTPAPI?                                        hub1HUBAPI_v2_3_0;
         //protected       OCPIv2_3_0.OCPICSOAdapter?                                     hub1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   hub1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  hub1APIResponseLogs_v2_3_0 = [];
@@ -508,8 +508,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region EMSP #1
 
-        public          HTTPTestServerX?                                               emsp1HTTPServer;
-        protected       HTTPExtAPI?                                                   emsp1HTTPAPI;
+        public          HTTPServer?                                                    emsp1HTTPServer;
+        protected       HTTPExtAPI?                                                    emsp1HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp1TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp1cpo1TLSClientKeyPair;
@@ -529,21 +529,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          emsp1CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                       emsp1EMSPAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp1APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp1APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          emsp1CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                       emsp1EMSPAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp1Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp1APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp1APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          emsp1CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp1WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                            emsp1EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                       emsp1EMSPAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp1Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp1APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp1APIResponseLogs_v2_3_0 = [];
@@ -563,8 +563,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #region EMSP #2
 
-        public          HTTPTestServerX?                                               emsp2HTTPServer;
-        protected       HTTPExtAPI?                                                   emsp2HTTPAPI;
+        public          HTTPServer?                                                    emsp2HTTPServer;
+        protected       HTTPExtAPI?                                                    emsp2HTTPAPI;
         protected       AsymmetricCipherKeyPair?                                       emsp2TLSServerKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2hub1TLSClientKeyPair;
         protected       AsymmetricCipherKeyPair?                                       emsp2cpo1TLSClientKeyPair;
@@ -584,21 +584,21 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         protected       OCPIv2_1_1.CommonAPI?                                          emsp2CommonAPI_v2_1_1;
         protected       OCPIv2_1_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_1_1;
-        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_1_1;
+        protected       OCPIv2_1_1.EMSP_HTTPAPI?                                       emsp2EMSPAPI_v2_1_1;
         protected       OCPIv2_1_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_1_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIRequest>   emsp2APIRequestLogs_v2_1_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_1_1.OCPIResponse>  emsp2APIResponseLogs_v2_1_1 = [];
 
         protected       OCPIv2_2_1.CommonAPI?                                          emsp2CommonAPI_v2_2_1;
         protected       OCPIv2_2_1.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_2_1;
-        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_2_1;
+        protected       OCPIv2_2_1.EMSP_HTTPAPI?                                       emsp2EMSPAPI_v2_2_1;
         protected       OCPIv2_2_1.OCPIEMPAdapter?                                     emsp2Adapter_v2_2_1;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIRequest>   emsp2APIRequestLogs_v2_2_1  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_2_1.OCPIResponse>  emsp2APIResponseLogs_v2_2_1 = [];
 
         protected       OCPIv2_3_0.CommonAPI?                                          emsp2CommonAPI_v2_3_0;
         protected       OCPIv2_3_0.WebAPI.OCPIWebAPI?                                  emsp2WebAPI_v2_3_0;
-        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                            emsp2EMSPAPI_v2_3_0;
+        protected       OCPIv2_3_0.EMSP_HTTPAPI?                                       emsp2EMSPAPI_v2_3_0;
         protected       OCPIv2_3_0.OCPIEMPAdapter?                                     emsp2Adapter_v2_3_0;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIRequest>   emsp2APIRequestLogs_v2_3_0  = [];
         protected       ConcurrentDictionary<DateTimeOffset, OCPIv2_3_0.OCPIResponse>  emsp2APIResponseLogs_v2_3_0 = [];
@@ -1694,7 +1694,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
             #region Create cpo1/cpo2/hub1/emsp1/emsp2 HTTP Servers
 
-            cpo1HTTPServer           = new HTTPTestServerX(
+            cpo1HTTPServer           = new HTTPServer(
                                            TCPPort:                      IPPort.Parse(3301),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    cpo1TLSServerCertificate is not null
@@ -1749,7 +1749,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            AutoStart:                    true
                                        );
 
-            cpo2HTTPServer           = new HTTPTestServerX(
+            cpo2HTTPServer           = new HTTPServer(
                                            TCPPort:                      IPPort.Parse(3302),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    cpo2TLSServerCertificate is not null
@@ -1805,7 +1805,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                        );
 
 
-            hub1HTTPServer           = new HTTPTestServerX(
+            hub1HTTPServer           = new HTTPServer(
                                            TCPPort:                      IPPort.Parse(3401),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    hub1TLSServerCertificate is not null
@@ -1862,7 +1862,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            AutoStart:                    true
                                        );
 
-            emsp1HTTPServer          = new HTTPTestServerX(
+            emsp1HTTPServer          = new HTTPServer(
                                            TCPPort:                      IPPort.Parse(3501),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    (tcpServer, tcpClient) => {
@@ -1913,7 +1913,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                            AutoStart:                    true
                                        );
 
-            emsp2HTTPServer          = new HTTPTestServerX(
+            emsp2HTTPServer          = new HTTPServer(
                                            TCPPort:                      IPPort.Parse(3502),
                                            DNSClient:                    DNSClient,
                                            ServerCertificateSelector:    (tcpServer, tcpClient) => {
@@ -2071,7 +2071,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                  );
 
-            cpo1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+            cpo1CommonHTTPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -2120,7 +2120,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                  );
 
-            cpo2CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+            cpo2CommonHTTPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -2169,7 +2169,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                  );
 
-            hub1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+            hub1CommonHTTPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -2218,7 +2218,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                  );
 
-            emsp1CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+            emsp1CommonHTTPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 
@@ -2267,7 +2267,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                                  );
 
-            emsp2CommonHTTPAPI.Logger?.Debug("all", LogTargets.Debug);
+            emsp2CommonHTTPAPI.HTTPLogger?.Debug("all", LogTargets.Debug);
 
             #endregion
 

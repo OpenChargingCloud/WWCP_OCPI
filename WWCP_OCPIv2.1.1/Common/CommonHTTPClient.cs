@@ -365,6 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    //VirtualHostname,
                    Description,
                    RemoteParty.RemoteAccessInfos.First().HTTPUserAgent ?? DefaultHTTPUserAgent,
+
                    RemoteParty.RemoteAccessInfos.First().Accept,
                    RemoteParty.RemoteAccessInfos.First().ContentType,
                    RemoteParty.RemoteAccessInfos.First().ConnectionType,
@@ -1151,7 +1152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      SendTimeout:                           NewHTTPClient.SendTimeout,
                                      TransmissionRetryDelay:                NewHTTPClient.TransmissionRetryDelay,
                                      MaxNumberOfRetries:                    NewHTTPClient.MaxNumberOfRetries,
-                                     BufferSize:                            NewHTTPClient.BufferSize,
+                                     InternalBufferSize:                    NewHTTPClient.InternalBufferSize,
 
                                      ConsumeRequestChunkedTEImmediately:    NewHTTPClient.ConsumeRequestChunkedTEImmediately,
                                      ConsumeResponseChunkedTEImmediately:   NewHTTPClient.ConsumeResponseChunkedTEImmediately,

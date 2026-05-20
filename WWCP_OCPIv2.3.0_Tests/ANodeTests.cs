@@ -96,18 +96,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
         #region Data
 
-        protected       HTTPTestServerX?                                     cpoHTTPServer;
-        protected       HTTPTestServerX?                                     emsp1HTTPServer;
-        protected       HTTPTestServerX?                                     emsp2HTTPServer;
+        protected       HTTPServer?                                          cpoHTTPServer;
+        protected       HTTPServer?                                          emsp1HTTPServer;
+        protected       HTTPServer?                                          emsp2HTTPServer;
 
-        protected       HTTPExtAPI?                                         cpoHTTPAPI;
-        protected       HTTPExtAPI?                                         emsp1HTTPAPI;
-        protected       HTTPExtAPI?                                         emsp2HTTPAPI;
+        protected       HTTPExtAPI?                                          cpoHTTPAPI;
+        protected       HTTPExtAPI?                                          emsp1HTTPAPI;
+        protected       HTTPExtAPI?                                          emsp2HTTPAPI;
 
         //protected       HTTPAPI?                                             cpoHTTPAPI;
         protected       CommonAPI?                                           cpoCommonAPI;
         protected       OCPIWebAPI?                                          cpoWebAPI;
-        protected       CPO_HTTPAPI?                                              cpoCPOAPI;
+        protected       CPO_HTTPAPI?                                         cpoCPOAPI;
         protected       OCPICSOAdapter?                                      cpoAdapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    cpoAPIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   cpoAPIResponseLogs;
@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         //protected       HTTPAPI?                                             emsp1HTTPAPI;
         protected       CommonAPI?                                           emsp1CommonAPI;
         protected       OCPIWebAPI?                                          emsp1WebAPI;
-        protected       EMSP_HTTPAPI?                                             emsp1EMSPAPI;
+        protected       EMSP_HTTPAPI?                                        emsp1EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp1Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp1APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp1APIResponseLogs;
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         //protected       HTTPAPI?                                             emsp2HTTPAPI;
         protected       CommonAPI?                                           emsp2CommonAPI;
         protected       OCPIWebAPI?                                          emsp2WebAPI;
-        protected       EMSP_HTTPAPI?                                             emsp2EMSPAPI;
+        protected       EMSP_HTTPAPI?                                        emsp2EMSPAPI;
         protected       OCPIEMPAdapter?                                      emsp2Adapter;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp2APIResponseLogs;
@@ -181,15 +181,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             #region Create cpo/emsp1/emsp2 HTTP Servers
 
-            cpoHTTPServer         = new HTTPTestServerX(
+            cpoHTTPServer         = new HTTPServer(
                                         TCPPort:         IPPort.Parse(3301)
                                     );
 
-            emsp1HTTPServer       = new HTTPTestServerX(
+            emsp1HTTPServer       = new HTTPServer(
                                         TCPPort:         IPPort.Parse(3401)
                                     );
 
-            emsp2HTTPServer       = new HTTPTestServerX(
+            emsp2HTTPServer       = new HTTPServer(
                                         TCPPort:         IPPort.Parse(3402)
                                     );
 

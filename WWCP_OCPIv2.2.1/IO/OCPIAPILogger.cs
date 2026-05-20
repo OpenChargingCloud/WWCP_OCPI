@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// <summary>
     /// An OCPI/HTTP API logger.
     /// </summary>
-    public class OCPIAPILogger(HTTPTestServerX              HTTPServer,
+    public class OCPIAPILogger(HTTPServer                   HTTPServer,
                                String                       Context,
                                String?                      LoggingPath      = null,
                                OCPILogfileCreatorDelegate?  LogfileCreator   = null)
@@ -766,7 +766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The HTTP server of this logger.
         /// </summary>
-        public HTTPTestServerX             HTTPServer        { get; } = HTTPServer     ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
+        public HTTPServer                  HTTPServer        { get; } = HTTPServer     ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
 
         public String                      LoggingPath       { get; } = LoggingPath    ?? AppContext.BaseDirectory;
 

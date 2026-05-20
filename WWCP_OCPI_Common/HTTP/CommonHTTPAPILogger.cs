@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// A CommonHTTPAPI logger.
     /// </summary>
-    public class CommonHTTPAPILogger : HTTPServerLoggerX
+    public class CommonHTTPAPILogger : HTTPServerLogger
     {
 
         #region Data

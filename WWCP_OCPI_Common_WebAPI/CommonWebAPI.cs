@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPI.WebAPI
         /// <param name="RoamingNetwork">The roaming network.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         public static Boolean ParseRoamingNetwork(this HTTPRequest     HTTPRequest,
-                                                  HTTPTestServerX      HTTPServer,
+                                                  HTTPServer           HTTPServer,
                                                   out RoamingNetwork?  RoamingNetwork,
                                                   out HTTPResponse?    HTTPResponse)
         {

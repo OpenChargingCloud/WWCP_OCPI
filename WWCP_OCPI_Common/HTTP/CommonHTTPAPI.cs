@@ -253,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The OCPI Common HTTP API logger.
         /// </summary>
-        public CommonHTTPAPILogger?     Logger                     { get; set; }
+        public CommonHTTPAPILogger?     HTTPLogger                 { get; set; }
 
 
 
@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPI
             RegisterURLTemplates();
 
             if (!this.DisableLogging)
-                Logger                    = new CommonHTTPAPILogger(
+                HTTPLogger                = new CommonHTTPAPILogger(
                                                 this,
                                                 LoggingPath ?? AppContext.BaseDirectory,
                                                 LoggingContext,
