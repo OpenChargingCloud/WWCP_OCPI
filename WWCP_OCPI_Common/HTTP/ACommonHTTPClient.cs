@@ -188,6 +188,7 @@ namespace cloud.charging.open.protocols.OCPI
                    Connection     ?? ConnectionType.KeepAlive,
                    DefaultRequestBuilder,
 
+                   null,
                    RemoteCertificateValidator,
                    LocalCertificateSelector,
                    ClientCertificates,
