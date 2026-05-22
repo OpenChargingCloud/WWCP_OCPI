@@ -83,8 +83,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    Id:                                  RoamingNetwork_Id.Parse("test"),
                                    Name:                                I18NString.Create("EV Roaming Test Network"),
                                    Description:                         I18NString.Create("An EV roaming test network"),
-                                   InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
-                                   InitialStatus:                       RoamingNetworkStatusTypes.     Available,
+                                   InitialAdminStatus:                  RoamingNetworkAdminStatusType.Operational,
+                                   InitialStatus:                       RoamingNetworkStatusType.     Available,
                                    RoamingNetworkInfos:                 [
 
                                                                             //new RoamingNetworkInfo(

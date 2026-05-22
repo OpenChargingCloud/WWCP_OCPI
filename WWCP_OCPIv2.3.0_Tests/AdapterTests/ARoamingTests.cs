@@ -85,24 +85,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        Id:                  RoamingNetwork_Id.Parse("test_cso"),
                                        Name:                I18NString.Create("CSO EV Roaming Test Network"),
                                        Description:         I18NString.Create("The EV roaming test network at the charging station operator"),
-                                       InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
-                                       InitialStatus:       RoamingNetworkStatusTypes.Available
+                                       InitialAdminStatus:  RoamingNetworkAdminStatusType.Operational,
+                                       InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
             emp1RoamingNetwork   = new RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp1"),
                                        Name:                I18NString.Create("EV Roaming Test Network EMP1"),
                                        Description:         I18NString.Create("The EV roaming test network at the 1st e-mobility provider"),
-                                       InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
-                                       InitialStatus:       RoamingNetworkStatusTypes.Available
+                                       InitialAdminStatus:  RoamingNetworkAdminStatusType.Operational,
+                                       InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
             emp2RoamingNetwork   = new RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp2"),
                                        Name:                I18NString.Create("EV Roaming Test Network EMP2"),
                                        Description:         I18NString.Create("The EV roaming test network at the 2nd e-mobility provider"),
-                                       InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
-                                       InitialStatus:       RoamingNetworkStatusTypes.Available
+                                       InitialAdminStatus:  RoamingNetworkAdminStatusType.Operational,
+                                       InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
             ClassicAssert.IsNotNull(csoRoamingNetwork);
