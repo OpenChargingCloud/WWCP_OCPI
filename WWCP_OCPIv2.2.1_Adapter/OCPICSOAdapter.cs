@@ -3584,8 +3584,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var session          = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
 
-                    var wasAnRFIDAuth    = session?.CustomData["ocpi"] as JObject;
-                    var wasARemoteStart  = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"] as JObject ?? [], out var startSessionCommand, out _);
+                    var wasAnRFIDAuth    = session?.CustomData["ocpi"]?.ObjectValue;
+                    var wasARemoteStart  = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"]?.ObjectValue ?? [], out var startSessionCommand, out _);
 
                     var ocpiToken        = session?.AuthStartResult?.AdditionalContext?["token"] as JObject;
                     if (ocpiToken is not null)
@@ -3596,7 +3596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var token = startSessionCommand?.Token;
 
-                    if (wasAnRFIDAuth is not null && wasAnRFIDAuth["token"] is JObject tokenJSON)
+                    if (wasAnRFIDAuth is not null && wasAnRFIDAuth["token"]?.ObjectValue is CustomDataNew tokenJSON)
                     {
                         if (!Token.TryParse(tokenJSON, out token, out _))
                             continue;

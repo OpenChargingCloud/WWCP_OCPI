@@ -796,7 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 EVSE_UId? evseUId = null;
 
                 // Favour the OCPI EVSE Unique identification over the WWCP EVSE identification!
-                if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
+                if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.StringValue ?? "", out var uid))
                 {
                     evseUId = uid;
                 }
