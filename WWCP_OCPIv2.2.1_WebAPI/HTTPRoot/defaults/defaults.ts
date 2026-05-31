@@ -181,7 +181,7 @@ async function OCPIGetAsync(RessourceURI: string): Promise<[IOCPIResponse, (key:
 
                     }
                     catch (exception) {
-                        reject(new Error(exception));
+                        reject(new Error(String(exception)));
                     }
                 } else {
                     reject(new Error(`HTTP Status Code ${this.status}: ${ajax.responseText}`));

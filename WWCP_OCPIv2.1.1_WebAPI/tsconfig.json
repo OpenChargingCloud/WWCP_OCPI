@@ -1,11 +1,27 @@
-﻿{
+{
   "compileOnSave": true,
   "compilerOptions": {
-    "module": "system",
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+
+    "strict": false,
     "noImplicitAny": false,
-    "sourceMap": true,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
+
+    "isolatedModules": false,
+    "verbatimModuleSyntax": false,
     "allowJs": false,
-    "target": "ES2018"
+    "skipLibCheck": true,
+
+    "sourceMap": true,
+    "removeComments": false,
+    "newLine": "lf"
   },
   "files": [
 

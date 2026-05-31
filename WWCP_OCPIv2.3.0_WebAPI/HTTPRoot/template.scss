@@ -1,6 +1,6 @@
-﻿@import "defaults/_defaults.scss";
-//@import "../../../UsersAPI/UsersAPI/HTTPRoot/template.scss" as UsersAPI with ( $black: #222, $border-radius: 0.1rem );
-//@import "../../../OpenChargingCloudAPI/OpenChargingCloudAPI/HTTPRoot/template.scss";
+@use "defaults/_defaults.scss" as *;
+//@use "../../../UsersAPI/UsersAPI/HTTPRoot/template.scss" as UsersAPI with ( $black: #222, $border-radius: 0.1rem );
+//@use "../../../OpenChargingCloudAPI/OpenChargingCloudAPI/HTTPRoot/template.scss" as *;
 
 
 body {

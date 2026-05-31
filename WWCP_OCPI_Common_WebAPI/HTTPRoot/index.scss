@@ -1,4 +1,4 @@
-﻿@import "defaults/_defaults.scss";
+@use "defaults/_defaults.scss" as *;
 
 body {
     #page {
