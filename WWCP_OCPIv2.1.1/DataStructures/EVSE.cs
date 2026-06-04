@@ -508,7 +508,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out IEnumerable<Connector> Connectors,
                                              out ErrorResponse))
                 {
-                    return false;
+
+                    // Not defined within OCPI, but some CPOs might remove the connectors array when an EVSE is removed.
+                    // In this case we will just ignore the missing connectors and set it to an empty enumeration.
+                    if (Status        == StatusType.REMOVED &&
+                        ErrorResponse == "Missing property 'connectors'!")
+                    {
+                        Connectors     = [];
+                        ErrorResponse  = null;
+                    }
+
+                    else
+                        return false;
+
                 }
 
                 #endregion

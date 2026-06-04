@@ -501,7 +501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse Connectors             [mandatory]
+                #region Parse Connectors             [mandatory/optional]
 
                 if (!JSON.ParseMandatoryJSON<Connector, Connector_Id>("connectors",
                                                                       "connectors",
@@ -509,7 +509,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                       out IEnumerable<Connector> Connectors,
                                                                       out ErrorResponse))
                 {
-                    return false;
+
+                    // Not defined within OCPI, but some CPOs might remove the connectors array when an EVSE is removed.
+                    // In this case we will just ignore the missing connectors and set it to an empty enumeration.
+                    if (Status        == StatusType.REMOVED &&
+                        ErrorResponse == "Missing property 'connectors'!")
+                    {
+                        Connectors     = [];
+                        ErrorResponse  = null;
+                    }
+
+                    else
+                        return false;
+
                 }
 
                 #endregion
