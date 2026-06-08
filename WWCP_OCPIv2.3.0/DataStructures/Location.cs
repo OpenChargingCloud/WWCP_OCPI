@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// The optional enumeration of facilities this location directly belongs to.
         /// </summary>
         [Optional]
-        public IEnumerable<Facility>             Facilities               { get; }
+        public IEnumerable<Facility>               Facilities               { get; }
 
         /// <summary>
         /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).

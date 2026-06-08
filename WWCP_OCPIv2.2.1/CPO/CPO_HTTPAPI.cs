@@ -2086,15 +2086,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
-        #region (private) CallOCPICommandCallback(OCPIHTTPRequest, OCPICommand, CommandResultType, DisplayText, Runner)
+        #region (private) CallOCPICommandCallback(OCPIHTTPRequest, OCPICommand, CommandRunner)
 
         private async Task CallOCPICommandCallback(OCPIRequest                OCPIHTTPRequest,
                                                    IOCPICommand               OCPICommand,
-
-                                                   CommandResultTypes         CommandResultType,
-                                                   DisplayTexts               DisplayText,
-
-                                                   Func<Task<CommandResult>>  Runner)
+                                                   Func<Task<CommandResult>>  CommandRunner)
         {
 
             if (OCPIHTTPRequest.RemoteParty is null)
@@ -2105,7 +2101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             try
             {
 
-                var commandResult = await Runner();
+                var commandResult = await CommandRunner();
 
                 if      (OCPIHTTPRequest.LocalAccessInfo.Is(Role.EMSP))
                 {
@@ -2114,7 +2110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (emspClient is not null)
                     {
 
-                        var httpClient = new HTTPClient(
+                        var httpClient    = new HTTPClient(
                                                 URL:                                   responseURL,
                                                 Description:                           I18NString.Create($"OCPI Command Response Client for '{OCPIHTTPRequest.RemoteParty.Id}'"),
                                                 HTTPUserAgent:                         emspClient.HTTPUserAgent,
@@ -2149,28 +2145,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                 DNSClient:                             emspClient.DNSClient
                                             );
 
-                        var httpResponse = await httpClient.POST(
-                                                        responseURL.Path,
-                                                        new CommandResult(
-                                                            CommandResultType,
-                                                            DisplayText
-                                                        ).ToJSON().ToUTF8Bytes(),
-                                                        RequestBuilder: (HTTPResponseBuilder) => {
+                        var httpResponse  = await httpClient.POST(
+                                                      responseURL.Path,
+                                                      commandResult.ToJSON(
+                                                          CustomCommandResultSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ).ToUTF8Bytes(),
+                                                      RequestBuilder: (HTTPResponseBuilder) => {
 
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
 
-                                                            if (OCPIHTTPRequest.To.  HasValue) {
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
-                                                            }
+                                                          if (OCPIHTTPRequest.To.  HasValue) {
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
+                                                          }
 
-                                                            if (OCPIHTTPRequest.From.HasValue) {
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
-                                                            }
-                                                        }
-                                                    ).ConfigureAwait(false);
+                                                          if (OCPIHTTPRequest.From.HasValue) {
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
+                                                          }
+
+                                                      }
+                                                  ).ConfigureAwait(false);
 
                     }
 
@@ -2183,7 +2180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (hubClient is not null)
                     {
 
-                        var httpClient = new HTTPClient(
+                        var httpClient    = new HTTPClient(
                                                 URL:                                   responseURL,
                                                 Description:                           I18NString.Create($"OCPI Command Response Client for '{OCPIHTTPRequest.RemoteParty.Id}'"),
                                                 HTTPUserAgent:                         hubClient.HTTPUserAgent,
@@ -2218,28 +2215,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                 DNSClient:                             hubClient.DNSClient
                                             );
 
-                        var httpResponse = await httpClient.POST(
-                                                        responseURL.Path,
-                                                        new CommandResult(
-                                                            CommandResultType,
-                                                            DisplayText
-                                                        ).ToJSON().ToUTF8Bytes(),
-                                                        RequestBuilder: (HTTPResponseBuilder) => {
+                        var httpResponse  = await httpClient.POST(
+                                                      responseURL.Path,
+                                                      commandResult.ToJSON(
+                                                          CustomCommandResultSerializer,
+                                                          CustomDisplayTextSerializer
+                                                      ).ToUTF8Bytes(),
+                                                      RequestBuilder: (HTTPResponseBuilder) => {
 
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.X_Request_ID,            Request_Id.    NewRandom());
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.X_Correlation_ID,        Correlation_Id.NewRandom());
 
-                                                            if (OCPIHTTPRequest.To.  HasValue) {
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
-                                                            }
+                                                          if (OCPIHTTPRequest.To.  HasValue) {
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_Country_Code,  OCPIHTTPRequest.To.  Value.CountryCode);
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_From_PartyId,       OCPIHTTPRequest.To.  Value.PartyId);
+                                                          }
 
-                                                            if (OCPIHTTPRequest.From.HasValue) {
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
-                                                                HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
-                                                            }
-                                                        }
-                                                    ).ConfigureAwait(false);
+                                                          if (OCPIHTTPRequest.From.HasValue) {
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_Country_Code,    OCPIHTTPRequest.From.Value.CountryCode);
+                                                              HTTPResponseBuilder.Set(HTTPHeaders.OCPI_To_PartyId,         OCPIHTTPRequest.From.Value.PartyId);
+                                                          }
+
+                                                      }
+                                                  ).ConfigureAwait(false);
 
                     }
 
@@ -4299,9 +4297,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 request,
                                 reserveNowCommand,
 
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("Charging reservation started successfully!"),
-
                                 () => OnReserveNowCommand.Invoke(
                                           request.RemoteParty.Id,
                                           request.From.AsEMSPId(),
@@ -4439,9 +4434,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 request,
                                 cancelReservationCommand,
-
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("Charging reservation cancelled successfully!"),
 
                                 () => OnCancelReservationCommand.Invoke(
                                           request.RemoteParty.Id,
@@ -4587,9 +4579,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 request,
                                 startSessionCommand,
 
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("Charging session started successfully!"),
-
                                 () => OnStartSessionCommand.Invoke(
                                           request.RemoteParty.Id,
                                           request.From.AsEMSPId(),
@@ -4728,9 +4717,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 request,
                                 stopSessionCommand,
 
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("Charging session stopped successfully!"),
-
                                 () => OnStopSessionCommand.Invoke(
                                           request.RemoteParty.Id,
                                           request.From.AsEMSPId(),
@@ -4867,9 +4853,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 request,
                                 unlockConnectorCommand,
-
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("Connector unlocked successfully!"),
 
                                 () => OnUnlockConnectorCommand.Invoke(
                                           request.RemoteParty.Id,
@@ -5011,9 +4994,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 request,
                                 notifyWebPaymentsStartedCommand,
 
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("A web payment has been started successfully!"),
-
                                 () => OnNotifyWebPaymentsStartedCommand.Invoke(
                                           request.RemoteParty.Id,
                                           request.From.AsEMSPId(),
@@ -5150,9 +5130,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 request,
                                 notifyWebPaymentsFailedCommand,
-
-                                CommandResultTypes.ACCEPTED,
-                                DisplayTexts.Create("A web payment has failed!"),
 
                                 () => OnNotifyWebPaymentsFailedCommand.Invoke(
                                           request.RemoteParty.Id,
