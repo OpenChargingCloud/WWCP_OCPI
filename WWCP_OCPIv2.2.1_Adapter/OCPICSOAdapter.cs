@@ -3594,7 +3594,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         wasARemoteStart  = true;
 
                     if (wasAnRFIDAuth is null && !wasARemoteStart)
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"This CDR seems to be neither from an RFID authentication nor from a remote start session!")
+                            )
+                        );
                         continue;
+                    }
 
                     var token = startSessionCommand?.Token;
 
