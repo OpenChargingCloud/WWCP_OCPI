@@ -97,8 +97,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                                // Total Costs
                                new Price(
-                                   1.12,
-                                   2.24
+                                   1.12m,
+                                   2.24m
                                ),
 
                                DateTime.Parse("2020-09-21T00:00:00.000Z").ToUniversalTime()

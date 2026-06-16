@@ -1226,6 +1226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  CDRToken                                  CDRToken,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
                                   RemoteParty_Id?                           RemotePartyId,
                                   GetTariff2_Delegate?                      TariffGetter,
@@ -1238,6 +1239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 CustomChargingPoolIdConverter,
                                 CustomEVSEUIdConverter,
                                 CustomEVSEIdConverter,
+                                CDRToken,
                                 GetTariffIdsDelegate,
                                 RemotePartyId,
                                 TariffGetter,
@@ -1259,6 +1261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   ChargingPoolId_2_LocationId_Delegate?     CustomChargingPoolIdConverter,
                                   WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
+                                  CDRToken                                  CDRToken,
                                   GetTariffIds2_Delegate?                   GetTariffIdsDelegate,
                                   RemoteParty_Id?                           RemotePartyId,
                                   GetTariff2_Delegate?                      TariffGetter,
@@ -1334,6 +1337,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (!authMethod.HasValue)
                 {
                     Warnings.Add(Warning.Create("The authentication (verification) method used for starting of the given charge detail record is invalid!"));
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.ChargingPrice.HasValue)
+                {
+                    Warnings.Add("The charging price of the given charge detail record must not be null!".ToWarning());
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
+                {
+                    Warnings.Add("The currency of the charging price of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
@@ -1415,180 +1430,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 }
 
 
-                // Request the charging tariff from back at the session start time!
-                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(
-                                                                         partyIdv3,
-                                                                         tariffId,
-                                                                         ChargeDetailRecord.SessionTime.StartTime,
-                                                                         null
-                                                                     ))?.
-                                                  Where (tariff   => tariff is not null)?.
-                                                  Cast<Tariff>()
-                                       ?? [];
+                var tariffs = new List<Tariff>();
 
+                if (TariffGetter is not null)
+                {
+                    foreach (var tariffId in tariffIds)
+                    {
+
+                        var tariff2 = TariffGetter(
+                                          partyIdv3,
+                                          tariffId,
+                                          // Request the charging tariff from back at the session start time!
+                                          ChargeDetailRecord.SessionTime.StartTime,
+                                          null
+                                      );
+
+                        if (tariff2 is not null)
+                            tariffs.Add(tariff2);
+
+                    }
+                }
 
                 if (!tariffs.Any())
                 {
                     Warnings.Add("Could not find any charging tariff for the given charge detail record!".ToWarning());
                     return null;
                 }
-
-        //        var tariff   = tariffs.First();
-
-
-                var tempCDR  = new CDR(
-
-                                   CountryCode:             partyIdv3.CountryCode,
-                                   PartyId:                 partyIdv3.PartyId,
-                                   Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
-                                   Start:                   ChargeDetailRecord.SessionTime.StartTime,
-                                   End:                     ChargeDetailRecord.SessionTime.EndTime.Value,
-                                   CDRToken:                   new CDRToken(
-                                                                   CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                                                                   PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-                                                                   UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                   TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                   ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                               ),
-                                   AuthMethod:                 authMethod.Value,
-                                   Location:                new CDRLocation(          //ToDo: Might still have not required connectors!
-                                                                Id:                   filteredLocation.Id,
-                                                                Address:              filteredLocation.Address,
-                                                                City:                 filteredLocation.City,
-                                                                Country:              filteredLocation.Country,
-                                                                Coordinates:          filteredLocation.Coordinates,
-                                                                EVSEUId:              filteredLocation.EVSEUIds.First(),
-                                                                EVSEId:               filteredLocation.EVSEIds. First(),
-                                                                ConnectorId:          filteredLocation.EVSEs.First().Connectors.First().Id,          //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                ConnectorStandard:    filteredLocation.EVSEs.First().Connectors.First().Standard,    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                ConnectorFormat:      filteredLocation.EVSEs.First().Connectors.First().Format,      //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                                ConnectorPowerType:   filteredLocation.EVSEs.First().Connectors.First().PowerType,   //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                                                                Name:                 filteredLocation.Name,
-                                                                PostalCode:           filteredLocation.PostalCode,
-                                                                State:                filteredLocation.State
-                                                            ),
-                                   Currency:                Currency.EUR,
-                                   ChargingPeriods:         [
-                                                                ChargingPeriod.Create(
-                                                                    ChargeDetailRecord.SessionTime.StartTime,
-                                                                    [
-                                                                        CDRDimension.ENERGY(WattHour.Zero)
-                                                                    ]
-                                                                )
-                                                            ],
-                                   TotalCosts:              new Price(
-                                                                0  //ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
-                                                                //IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
-                                                            ),
-                                   TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
-                                   TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value
-
-                                   //MeterId:                 null,
-                                   //EnergyMeter:             null,                        // Our vendor extension!
-                                   //TransparencySoftware:    null,                        // Our vendor extension!
-                                   //Tariffs:                 tariffs,
-                                   //SignedData:              null,
-                                   //TotalParkingTime:        null,
-                                   //Remark:                  null,
-
-                                   //Created:                 ChargeDetailRecord.Created,  // Our vendor extension!
-                                   //LastUpdated:             ChargeDetailRecord.LastChangeDate
-
-                               );
-
-
-                var newCDR = tempCDR.SplittIntoChargingPeriods(
-                                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<WattHour>(mv.Timestamp, mv.WattHours)),
-                                 tariffs
-                             );
-
-
-                //// "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
-                //var chargingPeriods         = new List<ChargingPeriod>();
-                //var cdrDimensions           = new List<CDRDimension>();
-                //var totalCost               = 0M;
-
-                //foreach (var tariffElement in tariff.TariffElements)
-                //{
-
-                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
-                //    {
-
-                //        var energyPriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
-
-                //        if (energyPriceComponent.Price > 0)
-                //        {
-
-                //            var totalEnergy = ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value;
-
-                //            cdrDimensions.Add(CDRDimension.Create(
-                //                                  CDRDimensionType.ENERGY,
-                //                                  totalEnergy
-                //                              ));
-
-                //            var aa = totalEnergy / energyPriceComponent.StepSize;
-                //            var bb = totalEnergy % energyPriceComponent.StepSize;
-
-                //            if (aa > 0)
-                //                bb++;
-
-                //            var totalEnergyPrice = energyPriceComponent.Price * bb;
-
-                //            totalCost += totalEnergyPrice;
-
-                //        }
-
-                //    }
-
-                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
-                //    {
-
-                //        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
-
-                //        if (timePriceComponent.Price > 0)
-                //        {
-
-                //            var totalTime = ChargeDetailRecord.SessionTime.EndTime.Value - ChargeDetailRecord.SessionTime.StartTime;
-
-                //            cdrDimensions.Add(CDRDimension.Create(
-                //                                  CDRDimensionType.TIME,
-                //                                  Convert.ToDecimal(totalTime.TotalHours)
-                //                              ));
-
-
-
-                //            var aa = Convert.ToDecimal(totalTime.TotalSeconds) / timePriceComponent.StepSize;
-                //            var bb = Convert.ToDecimal(totalTime.TotalSeconds) % timePriceComponent.StepSize;
-
-                //            if (aa > 0)
-                //                bb++;
-
-                //            var totalEnergyPrice = timePriceComponent.Price * bb;
-
-                //            totalCost += totalEnergyPrice;
-
-                //        }
-
-                //    }
-
-                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.FLAT))
-                //    {
-
-                //        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.FLAT);
-
-                //        totalCost += timePriceComponent.Price;
-
-                //    }
-
-                //    chargingPeriods.Add(
-                //        new ChargingPeriod(
-                //            ChargeDetailRecord.SessionTime.StartTime,
-                //            cdrDimensions
-                //        )
-                //    );
-
-                //}
 
                 #region SignedData
 
@@ -1630,13 +1497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Id:                     CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
                            Start:                  ChargeDetailRecord.SessionTime.StartTime,
                            End:                    ChargeDetailRecord.SessionTime.EndTime.Value,
-                           CDRToken:               new CDRToken(
-                                                       CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                                                       PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-                                                       UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                       TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                       ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                                   ),
+                           CDRToken:               CDRToken,
                            AuthMethod:             authMethod.Value,
                            Location:               new CDRLocation(          //ToDo: Might still have not required connectors!
                                                        Id:                   filteredLocation.Id,
@@ -1655,10 +1516,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                        PostalCode:           filteredLocation.PostalCode,
                                                        State:                filteredLocation.State
                                                    ),
-                           Currency:               newCDR.Currency,
-                           ChargingPeriods:        newCDR.ChargingPeriods,
+                           Currency:               ChargeDetailRecord.ChargingPrice.Value.Currency ?? Currency.EUR,
+                           ChargingPeriods:        [   // ToDo: FixMe! Yet will always be overridden by customer implementation of the CustomCDRMapper delegate, so not that bad! But still...
+                                                       ChargingPeriod.Create(
+                                                           ChargeDetailRecord.SessionTime.StartTime,
+                                                           [
+                                                               CDRDimension.ENERGY(WattHour.Zero)
+                                                           ]
+                                                       )
+                                                   ],
                            TotalCosts:             new Price(
-                                                       0//ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
+                                                       BeforeTaxes:  ChargeDetailRecord.ChargingPrice.Value.Base
                                                        //IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
                                                    ),
                            TotalEnergy:            ChargeDetailRecord.ConsumedEnergy.      Value,
@@ -1693,136 +1561,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
             return null;
-
-
-
-
-
-
-
-
-
-
-
-            //    var chargingPeriods = new List<ChargingPeriod>();
-
-            //    foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
-            //    {
-            //        chargingPeriods.Add(
-            //            ChargingPeriod.Create(
-            //                energyMeteringValue.Timestamp,
-            //                [
-            //                    CDRDimension.Create(
-            //                        CDRDimensionType.ENERGY,
-            //                        energyMeteringValue.WattHours.kWh
-            //                    )
-            //                ]
-            //            )
-            //        );
-            //    }
-
-            //    if (!ChargeDetailRecord.ChargingPrice.HasValue)
-            //    {
-            //        Warnings.Add(Warning.Create("The charging price of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
-            //    {
-            //        Warnings.Add(Warning.Create("The currency of the charging price of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
-            //    {
-            //        Warnings.Add(Warning.Create("The consumed energy of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
-            //    {
-            //        Warnings.Add(Warning.Create("At least two energy metering values are expected!"));
-            //        return null;
-            //    }
-
-            //    return new CDR(
-
-            //               CountryCode:                CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-            //               PartyId:                    Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-            //               Id:                         CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
-            //               Start:                      ChargeDetailRecord.SessionTime.StartTime,
-            //               End:                        ChargeDetailRecord.SessionTime.EndTime. Value,
-            //               CDRToken:                   new CDRToken(
-            //                                               CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-            //                                               PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-            //                                               UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                           ),
-            //               AuthMethod:                 authMethod.Value,
-            //               Location:                   new CDRLocation(          //ToDo: Might still have not required connectors!
-            //                                               Id:                   filteredLocation.Id,
-            //                                               Address:              filteredLocation.Address,
-            //                                               City:                 filteredLocation.City,
-            //                                               Country:              filteredLocation.Country,
-            //                                               Coordinates:          filteredLocation.Coordinates,
-            //                                               EVSEUId:              filteredLocation.EVSEUIds.First(),
-            //                                               EVSEId:               filteredLocation.EVSEIds. First(),
-            //                                               ConnectorId:          filteredLocation.EVSEs.First().Connectors.First().Id,          //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorStandard:    filteredLocation.EVSEs.First().Connectors.First().Standard,    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorFormat:      filteredLocation.EVSEs.First().Connectors.First().Format,      //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorPowerType:   filteredLocation.EVSEs.First().Connectors.First().PowerType,   //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            //                                               Name:                 filteredLocation.Name,
-            //                                               PostalCode:           filteredLocation.PostalCode,
-            //                                               State:                filteredLocation.State
-            //                                           ),
-            //               Currency:                   ChargeDetailRecord.ChargingPrice.Value.Currency,
-            //               ChargingPeriods:            chargingPeriods,
-            //               TotalCosts:                 new Price(
-            //                                               ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
-            //                                               IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
-            //                                           ),
-            //               TotalEnergy:                ChargeDetailRecord.ConsumedEnergy.      Value,
-            //               TotalTime:                  ChargeDetailRecord.SessionTime.Duration.Value,
-
-            //               SessionId:                  null,
-            //               AuthorizationReference:     null,
-            //               EnergyMeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
-            //               EnergyMeter:                null,
-            //               TransparencySoftware:       null,
-            //               Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
-            //                                               ChargeDetailRecord.ChargingStationOperatorId,
-            //                                               ChargeDetailRecord.ChargingPoolId,
-            //                                               ChargeDetailRecord.ChargingStationId,
-            //                                               ChargeDetailRecord.EVSEId,
-            //                                               ChargeDetailRecord.ChargingConnectorId,
-            //                                               ChargeDetailRecord.ProviderIdStart
-            //                                           )),
-            //               SignedData:                 null,
-            //               TotalFixedCosts:            null,
-            //               TotalEnergyCost:            null,
-            //               TotalTimeCost:              null,
-            //               TotalParkingTime:           null,
-            //               TotalParkingCost:           null,
-            //               TotalReservationCost:       null,
-            //               Remark:                     null,
-            //               InvoiceReferenceId:         null,
-            //               Credit:                     null,
-            //               CreditReferenceId:          null,
-            //               HomeChargingCompensation:   null,
-
-            //               LastUpdated:                ChargeDetailRecord.LastChangeDate// Timestamp.Now
-
-            //           );
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Warnings.Add(Warning.Create("Could not convert the given charge detail record to OCPI: " + ex.Message));
-            //}
-
-            //return null;
 
         }
 

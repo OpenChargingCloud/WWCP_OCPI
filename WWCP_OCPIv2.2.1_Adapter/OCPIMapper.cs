@@ -1656,8 +1656,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                        )
                                                    ],
                            TotalCosts:             new Price(
-                                                       ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
-                                                       IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
+                                                       ExcludingVAT:  ChargeDetailRecord.ChargingPrice.Value.Base,
+                                                       IncludingVAT:  ChargeDetailRecord.ChargingPrice.Value.Total
                                                    ),
                            TotalEnergy:            ChargeDetailRecord.ConsumedEnergy.      Value,
                            TotalTime:              ChargeDetailRecord.SessionTime.Duration.Value,
@@ -1691,136 +1691,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             return null;
-
-
-
-
-
-
-
-
-
-
-
-            //    var chargingPeriods = new List<ChargingPeriod>();
-
-            //    foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
-            //    {
-            //        chargingPeriods.Add(
-            //            ChargingPeriod.Create(
-            //                energyMeteringValue.Timestamp,
-            //                [
-            //                    CDRDimension.Create(
-            //                        CDRDimensionType.ENERGY,
-            //                        energyMeteringValue.WattHours.kWh
-            //                    )
-            //                ]
-            //            )
-            //        );
-            //    }
-
-            //    if (!ChargeDetailRecord.ChargingPrice.HasValue)
-            //    {
-            //        Warnings.Add(Warning.Create("The charging price of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
-            //    {
-            //        Warnings.Add(Warning.Create("The currency of the charging price of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
-            //    {
-            //        Warnings.Add(Warning.Create("The consumed energy of the given charge detail record must not be null!"));
-            //        return null;
-            //    }
-
-            //    if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
-            //    {
-            //        Warnings.Add(Warning.Create("At least two energy metering values are expected!"));
-            //        return null;
-            //    }
-
-            //    return new CDR(
-
-            //               CountryCode:                CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-            //               PartyId:                    Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-            //               Id:                         CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
-            //               Start:                      ChargeDetailRecord.SessionTime.StartTime,
-            //               End:                        ChargeDetailRecord.SessionTime.EndTime. Value,
-            //               CDRToken:                   new CDRToken(
-            //                                               CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-            //                                               PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-            //                                               UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                           ),
-            //               AuthMethod:                 authMethod.Value,
-            //               Location:                   new CDRLocation(          //ToDo: Might still have not required connectors!
-            //                                               Id:                   filteredLocation.Id,
-            //                                               Address:              filteredLocation.Address,
-            //                                               City:                 filteredLocation.City,
-            //                                               Country:              filteredLocation.Country,
-            //                                               Coordinates:          filteredLocation.Coordinates,
-            //                                               EVSEUId:              filteredLocation.EVSEUIds.First(),
-            //                                               EVSEId:               filteredLocation.EVSEIds. First(),
-            //                                               ConnectorId:          filteredLocation.EVSEs.First().Connectors.First().Id,          //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorStandard:    filteredLocation.EVSEs.First().Connectors.First().Standard,    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorFormat:      filteredLocation.EVSEs.First().Connectors.First().Format,      //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //                                               ConnectorPowerType:   filteredLocation.EVSEs.First().Connectors.First().PowerType,   //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            //                                               Name:                 filteredLocation.Name,
-            //                                               PostalCode:           filteredLocation.PostalCode,
-            //                                               State:                filteredLocation.State
-            //                                           ),
-            //               Currency:                   ChargeDetailRecord.ChargingPrice.Value.Currency,
-            //               ChargingPeriods:            chargingPeriods,
-            //               TotalCosts:                 new Price(
-            //                                               ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
-            //                                               IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
-            //                                           ),
-            //               TotalEnergy:                ChargeDetailRecord.ConsumedEnergy.      Value,
-            //               TotalTime:                  ChargeDetailRecord.SessionTime.Duration.Value,
-
-            //               SessionId:                  null,
-            //               AuthorizationReference:     null,
-            //               EnergyMeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
-            //               EnergyMeter:                null,
-            //               TransparencySoftware:       null,
-            //               Tariffs:                    (IEnumerable<Tariff>?) (GetTariffIdsDelegate?.Invoke(
-            //                                               ChargeDetailRecord.ChargingStationOperatorId,
-            //                                               ChargeDetailRecord.ChargingPoolId,
-            //                                               ChargeDetailRecord.ChargingStationId,
-            //                                               ChargeDetailRecord.EVSEId,
-            //                                               ChargeDetailRecord.ChargingConnectorId,
-            //                                               ChargeDetailRecord.ProviderIdStart
-            //                                           )),
-            //               SignedData:                 null,
-            //               TotalFixedCosts:            null,
-            //               TotalEnergyCost:            null,
-            //               TotalTimeCost:              null,
-            //               TotalParkingTime:           null,
-            //               TotalParkingCost:           null,
-            //               TotalReservationCost:       null,
-            //               Remark:                     null,
-            //               InvoiceReferenceId:         null,
-            //               Credit:                     null,
-            //               CreditReferenceId:          null,
-            //               HomeChargingCompensation:   null,
-
-            //               LastUpdated:                ChargeDetailRecord.LastChangeDate// Timestamp.Now
-
-            //           );
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Warnings.Add(Warning.Create("Could not convert the given charge detail record to OCPI: " + ex.Message));
-            //}
-
-            //return null;
 
         }
 

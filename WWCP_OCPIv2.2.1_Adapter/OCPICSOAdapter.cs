@@ -3533,7 +3533,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         continue;
                     }
 
-                    if (chargingSession.AuthorizatorIdStart is null)
+                    var emspOrHub = chargingSession.AuthorizatorIdStart?.ToString()
+                                        ?? chargingSession.AuthenticationStartPath?.ToString();  // = DE-GDF_EMSP (when SessionStart with RFID!)
+                    if (emspOrHub is null)
                     {
                         sendCDRResults.Add(
                             WWCP.SendCDRResult.Error(
@@ -3546,7 +3548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         continue;
                     }
 
-                    var remotePartyId  = RemoteParty_Id.Parse(chargingSession.AuthorizatorIdStart.ToString());
+                    var remotePartyId  = RemoteParty_Id.Parse(emspOrHub);
                     if (!CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty))
                     {
                         sendCDRResults.Add(

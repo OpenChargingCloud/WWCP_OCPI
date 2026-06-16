@@ -367,8 +367,8 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
                                              // Total costs
                                              new OCPIv2_2_1.Price(
-                                                 10.00,
-                                                 11.60
+                                                 10.00m,
+                                                 11.60m
                                              ),
 
                                              // Total Energy
@@ -474,12 +474,12 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                                                      ],
                                                      URL.Parse("https://open.charging.cloud"),
                                                      new OCPIv2_2_1.Price( // Min Price
-                                                         1.10,
-                                                         1.26
+                                                         1.10m,
+                                                         1.26m
                                                      ),
                                                      new OCPIv2_2_1.Price( // Max Price
-                                                         2.20,
-                                                         2.52
+                                                         2.20m,
+                                                         2.52m
                                                      ),
                                                      DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
                                                      DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
@@ -534,20 +534,20 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
                                              // Total Fixed Costs
                                              new OCPIv2_2_1.Price(
-                                                 20.00,
-                                                 23.10
+                                                 20.00m,
+                                                 23.10m
                                              ),
 
                                              // Total Energy Cost
                                              new OCPIv2_2_1.Price(
-                                                 20.00,
-                                                 23.10
+                                                 20.00m,
+                                                 23.10m
                                              ),
 
                                              // Total Time Cost
                                              new OCPIv2_2_1.Price(
-                                                 20.00,
-                                                 23.10
+                                                 20.00m,
+                                                 23.10m
                                              ),
 
                                              // Total Parking Time
@@ -555,14 +555,14 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
                                              // Total Parking Cost
                                              new OCPIv2_2_1.Price(
-                                                 20.00,
-                                                 23.10
+                                                 20.00m,
+                                                 23.10m
                                              ),
 
                                              // Total Reservation Cost
                                              new OCPIv2_2_1.Price(
-                                                 20.00,
-                                                 23.10
+                                                 20.00m,
+                                                 23.10m
                                              ),
 
                                              "Remark!",

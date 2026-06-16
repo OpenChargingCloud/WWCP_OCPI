@@ -108,8 +108,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                            // Total costs
                            new Price(
-                               10.00,
-                               11.60
+                               10.00m,
+                               11.60m
                            ),
 
                            // Total Energy
@@ -209,24 +209,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                        )
                                    },
                                    TariffType.PROFILE_GREEN,
-                                   new[] {
+                                   [
                                        new DisplayText(Languages.de, "Hallo Welt!"),
                                        new DisplayText(Languages.en, "Hello world!"),
-                                   },
+                                   ],
                                    URL.Parse("https://open.charging.cloud"),
                                    new Price( // Min Price
-                                       1.10,
-                                       1.26
+                                       1.10m,
+                                       1.26m
                                    ),
                                    new Price( // Max Price
-                                       2.20,
-                                       2.52
+                                       2.20m,
+                                       2.52m
                                    ),
                                    DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
                                    DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
                                    new EnergyMix(
                                        true,
-                                       new[] {
+                                       [
                                            new EnergySource(
                                                EnergySourceCategory.SOLAR,
                                                80
@@ -235,13 +235,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                EnergySourceCategory.WIND,
                                                20
                                            )
-                                       },
-                                       new[] {
+                                       ],
+                                       [
                                            new EnvironmentalImpact(
                                                EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                0.1
                                            )
-                                       },
+                                       ],
                                        "Stadtwerke Jena-Ost",
                                        "New Green Deal"
                                    ),
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                            new SignedData(
                                EncodingMethod.GraphDefined,
-                               new[] {
+                               [
                                    new SignedValue(
                                        SignedValueNature.START,
                                        "PlainStartValue",
@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                        "PlainEndValue",
                                        "SignedEndValue"
                                    )
-                               },
+                               ],
                                1,     // Encoding method version
                                null,  // Public key
                                URL.Parse("https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey")
@@ -275,20 +275,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                            // Total Fixed Costs
                            new Price(
-                               20.00,
-                               23.10
+                               20.00m,
+                               23.10m
                            ),
 
                            // Total Energy Cost
                            new Price(
-                               20.00,
-                               23.10
+                               20.00m,
+                               23.10m
                            ),
 
                            // Total Time Cost
                            new Price(
-                               20.00,
-                               23.10
+                               20.00m,
+                               23.10m
                            ),
 
                            // Total Parking Time
@@ -296,14 +296,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
                            // Total Parking Cost
                            new Price(
-                               20.00,
-                               23.10
+                               20.00m,
+                               23.10m
                            ),
 
                            // Total Reservation Cost
                            new Price(
-                               20.00,
-                               23.10
+                               20.00m,
+                               23.10m
                            ),
 
                            "Remark!",

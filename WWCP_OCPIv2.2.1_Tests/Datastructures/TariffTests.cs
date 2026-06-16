@@ -54,15 +54,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
                               Currency.EUR,
-                              new TariffElement[] {
+                              [
                                   new TariffElement(
-                                      new[] {
+                                      [
                                           PriceComponent.ChargingTime(
                                               2.00M,
                                               0.10M,
                                               TimeSpan.FromSeconds(300)
                                           )
-                                      },
+                                      ],
                                       new TariffRestrictions(
                                           Time.FromHourMin(08,00),       // Start time
                                           Time.FromHourMin(18,00),       // End time
@@ -76,33 +76,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                           9.91M,                         // MaxPower
                                           TimeSpan.FromMinutes(10),      // MinDuration
                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                          new DayOfWeek[] {
+                                          [
                                               DayOfWeek.Monday,
                                               DayOfWeek.Tuesday
-                                          },
+                                          ],
                                           ReservationRestrictions.RESERVATION
                                       )
                                   )
-                              },
+                              ],
                               TariffType.PROFILE_GREEN,
-                              new[] {
+                              [
                                   new DisplayText(Languages.de, "Hallo Welt!"),
                                   new DisplayText(Languages.en, "Hello world!"),
-                              },
+                              ],
                               URL.Parse("https://open.charging.cloud"),
                               new Price( // Min Price
-                                  1.10,
-                                  1.26
+                                  1.10m,
+                                  1.26m
                               ),
                               new Price( // Max Price
-                                  2.20,
-                                  2.52
+                                  2.20m,
+                                  2.52m
                               ),
                               DateTime.Parse("2020-12-01"), // Start timestamp
                               DateTime.Parse("2020-12-31"), // End timestamp
                               new EnergyMix(
                                   true,
-                                  new[] {
+                                  [
                                       new EnergySource(
                                           EnergySourceCategory.SOLAR,
                                           80
@@ -111,13 +111,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                           EnergySourceCategory.WIND,
                                           20
                                       )
-                                  },
-                                  new[] {
+                                  ],
+                                  [
                                       new EnvironmentalImpact(
                                           EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                           0.1
                                       )
-                                  },
+                                  ],
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
@@ -130,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             ClassicAssert.AreEqual("GEF",                            JSON["party_id"].    Value<String>());
             ClassicAssert.AreEqual("TARIFF0001",                     JSON["id"].          Value<String>());
 
-            ClassicAssert.IsTrue(Tariff.TryParse(JSON, out Tariff TariffB, out String ErrorResponse));
+            ClassicAssert.IsTrue(Tariff.TryParse(JSON, out var TariffB, out var ErrorResponse));
             ClassicAssert.IsNull(ErrorResponse);
 
             ClassicAssert.AreEqual(TariffA.CountryCode,              TariffB.CountryCode);

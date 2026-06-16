@@ -2259,6 +2259,51 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         }
 
+        public Boolean SetupCPO2HUBClient(RemoteParty                                               RemoteParty,
+                                          [NotNullWhen(true)] out CPO.HUB.HTTP.CPO2HUB_HTTPClient?  CPO2HUBClient)
+        {
+
+            var remotePartyLoggingPath = Path.Combine(
+                                             ClientsLoggingPath,
+                                             RemoteParty.Id.ToString()
+                                         ) +
+                                         Path.DirectorySeparatorChar;
+
+            if (!Directory.Exists(remotePartyLoggingPath))
+                Directory.CreateDirectory(remotePartyLoggingPath);
+
+
+            if (RemoteParty.CPO2HUBClient is null)
+            {
+
+                RemoteParty.CPO2HUBClient = new CPO.HUB.HTTP.CPO2HUB_HTTPClient(
+
+                                                CPO_HTTPAPI,
+                                                RemoteParty,
+                                                null, // VirtualHostname
+                                                null, // Description
+                                                null, // HTTPLogger
+
+                                                DisableLogging,
+                                                remotePartyLoggingPath,
+                                                ClientsLoggingContext,
+                                                ClientsLogfileCreator,
+                                                DNSClient
+
+                                            );
+
+                //ToDo: Make client debugging more flexible!
+                RemoteParty.CPO2HUBClient.HTTPLogger.Debug("all", LogTargets.Disc);
+
+            }
+
+            CPO2HUBClient = RemoteParty.CPO2HUBClient;
+
+            return RemoteParty.CPO2HUBClient is not null;
+
+        }
+
+
 
         #region (private) PostToken     (LocalAuthentication, ...)
 
@@ -3415,29 +3460,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #region Setup remote party
 
-                    if (!chargeDetailRecord.ProviderIdStart.HasValue)
+                    if (!RoamingNetwork.TryGetChargingSessionById(chargeDetailRecord.SessionId, out var chargingSession))
                     {
                         sendCDRResults.Add(
-                            WWCP.SendCDRResult.UnknownProviderIdStart(
+                            WWCP.SendCDRResult.UnknownSessionId(
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"The ProviderIdStart of the charge detail record is not set!")
+                                I18NString.Create($"The charging session '{chargeDetailRecord.SessionId}' is unknown!")
                             )
                         );
                         continue;
                     }
 
-                    var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString().Replace("*", "-"));
-                    var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
-                    if (remoteParty is null)
+                    var emspOrHub = chargingSession.AuthorizatorIdStart?.ToString()
+                                        ?? chargingSession.AuthenticationStartPath?.ToString();  // = DE-GDF_EMSP (when SessionStart with RFID!)
+                    if (emspOrHub is null)
                     {
                         sendCDRResults.Add(
                             WWCP.SendCDRResult.Error(
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"Unknown remote party '{emspId}'!")
+                                I18NString.Create($"The AuthorizatorIdStart of the charging session is not set!")
+                            )
+                        );
+                        continue;
+                    }
+
+                    var remotePartyId  = RemoteParty_Id.Parse(emspOrHub);
+                    if (!CommonAPI.TryGetRemoteParty(remotePartyId, out var remoteParty))
+                    {
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.Error(
+                                Timestamp.Now,
+                                Id,
+                                chargeDetailRecord,
+                                I18NString.Create($"Unknown remote party '{remotePartyId}'!")
                             )
                         );
                         continue;
@@ -3451,20 +3510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 Timestamp.Now,
                                 Id,
                                 chargeDetailRecord,
-                                I18NString.Create($"Unknown remote access info for '{emspId}'!")
-                            )
-                        );
-                        break;
-                    }
-
-                    if (!SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
-                    {
-                        sendCDRResults.Add(
-                            WWCP.SendCDRResult.Error(
-                                Timestamp.Now,
-                                Id,
-                                chargeDetailRecord,
-                                I18NString.Create($"Could not create a CPO client for '{remoteParty.Id})'!")
+                                I18NString.Create($"Unknown remote access info for '{remotePartyId}'!")
                             )
                         );
                         break;
@@ -3472,17 +3518,60 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #endregion
 
+
+                    var operatorId = chargeDetailRecord.EVSEId?.OperatorId.ToOCPI_PartyIdv3();
+                    var providerId = chargeDetailRecord.ProviderIdStart?.  ToOCPI_PartyIdv3();
+
                     #region Convert and send charge detail record
 
-                    var cdr = chargeDetailRecord.ToOCPI(
-                                  CustomChargingPoolIdConverter,
-                                  CustomEVSEUIdConverter,
-                                  CustomEVSEIdConverter,
-                                  CommonAPI.GetTariffIds,
-                                  RemoteParty_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
-                                  CommonAPI.GetTariff,
-                                  ref warnings
-                              );
+                    var session          = RoamingNetwork.GetChargingSessionById(chargeDetailRecord.SessionId);
+
+                    var wasAnRFIDAuth    = session?.CustomData["ocpi"]?.ObjectValue;
+                    var wasARemoteStart  = StartSessionCommand.TryParse(session?.CustomData["startSessionCommand"]?.ObjectValue ?? [], out var startSessionCommand, out _);
+
+                    var ocpiToken        = session?.AuthStartResult?.AdditionalContext?["token"] as JObject;
+                    if (ocpiToken is not null)
+                        wasARemoteStart  = true;
+
+                    if (wasAnRFIDAuth is null && !wasARemoteStart)
+                        continue;
+
+                    var token = startSessionCommand?.Token;
+
+                    if (wasAnRFIDAuth is not null && wasAnRFIDAuth["token"]?.ObjectValue is CustomDataNew tokenJSON)
+                    {
+                        if (!Token.TryParse(tokenJSON, out token, out _))
+                            continue;
+                    }
+
+                    if (ocpiToken is not null)
+                    {
+                        if (!Token.TryParse(ocpiToken, out token, out _))
+                            continue;
+                    }
+
+                    if (token is null)
+                        continue;
+
+             //       var remotePartyId = RemoteParty_Id.TryParse($"{chargeDetailRecord.ProviderIdStart?.ToString()}_EMSP");
+             //       a   ??= RemoteParty_Id.TryParse($"{chargeDetailRecord.ProviderIdStart?.ToString()}_HUB");
+
+                    var cdr       = chargeDetailRecord.ToOCPI(
+                                        CustomChargingPoolIdConverter,
+                                        CustomEVSEUIdConverter,
+                                        CustomEVSEIdConverter,
+                                        new CDRToken(
+                                            token.CountryCode,
+                                            token.PartyId,
+                                            token.Id,
+                                            token.Type,
+                                            token.ContractId
+                                        ),
+                                        CommonAPI.GetTariffIds,
+                                        remotePartyId, //RemoteParty_Id.TryParse(chargeDetailRecord.ProviderIdStart?.ToString()),
+                                        CommonAPI.GetTariff,
+                                        ref warnings
+                                    );
 
                     if (cdr is not null && CustomCDRMapper is not null)
                         cdr = CustomCDRMapper(chargeDetailRecord, cdr);
@@ -3506,18 +3595,64 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
                     var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(
-                                                       CDR:                cdr,
-                                                       AllowDowngrades:    false,
-                                                       SkipNotifications:  false,
-                                                       EventTrackingId:    EventTrackingId,
-                                                       CancellationToken:  CancellationToken
+                                                       CDR:                 cdr,
+                                                       AllowDowngrades:     false,
+                                                       SkipNotifications:   false,
+                                                       EventTrackingId:     EventTrackingId,
+                                                       CancellationToken:   CancellationToken
                                                    );
 
-                    var response           = await cpo2EMSPClient.PostCDR(
-                                                       CDR:                cdr,
-                                                  //     EMSPId:             emspId,
-                                                       CancellationToken:  CancellationToken
-                                                   );
+                    OCPIResponse<org.GraphDefined.Vanaheimr.Hermod.HTTP.Location>? response = null;
+
+                    if (remotePartyId.Role == Role.EMSP)
+                    {
+
+                        if (!SetupCPO2EMSPClient(remoteParty, out var cpo2EMSPClient))
+                        {
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Error(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    I18NString.Create($"Could not create a CPO2EMSP HTTP client for '{remoteParty.Id})'!")
+                                )
+                            );
+                            break;
+                        }
+
+                        response = await cpo2EMSPClient.PostCDR(
+                                             CDR:                 cdr,
+                                             From:                operatorId,
+                                             To:                  providerId,
+                                             CancellationToken:   CancellationToken
+                                         );
+
+                    }
+
+                    else if (remotePartyId.Role == Role.HUB)
+                    {
+
+                        if (!SetupCPO2HUBClient(remoteParty, out var cpo2HUBClient))
+                        {
+                            sendCDRResults.Add(
+                                WWCP.SendCDRResult.Error(
+                                    Timestamp.Now,
+                                    Id,
+                                    chargeDetailRecord,
+                                    I18NString.Create($"Could not create a CPO2HUB HTTP client for '{remoteParty.Id})'!")
+                                )
+                            );
+                            break;
+                        }
+
+                        response = await cpo2HUBClient.PostCDR(
+                                             CDR:                 cdr,
+                                             From:                operatorId,
+                                             To:                  providerId,
+                                             CancellationToken:   CancellationToken
+                                         );
+
+                    }
 
                     #region Response handling
 

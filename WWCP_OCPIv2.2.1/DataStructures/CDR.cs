@@ -373,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            tariff.Currency,
                            chargingPeriods,
                            new Price(
-                               (Double) cdrCostDetails.TotalCost
+                               cdrCostDetails.TotalCost
                            ),
                            cdrCostDetails.TotalEnergy,
                            cdrCostDetails.TotalTime,

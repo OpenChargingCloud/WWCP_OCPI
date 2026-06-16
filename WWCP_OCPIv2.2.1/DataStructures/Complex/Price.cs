@@ -33,8 +33,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// </summary>
     /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
     /// <param name="IncludingVAT">Price/Cost including VAT.</param>
-    public readonly struct Price(Double   ExcludingVAT,
-                                 Double?  IncludingVAT   = null)
+    public readonly struct Price(Decimal   ExcludingVAT,
+                                 Decimal?  IncludingVAT   = null)
 
         : IEquatable<Price>,
           IComparable<Price>,
@@ -48,13 +48,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Price/Cost excluding VAT.
         /// </summary>
         [Mandatory]
-        public Double   ExcludingVAT    { get; } = ExcludingVAT;
+        public Decimal   ExcludingVAT    { get; } = ExcludingVAT;
 
         /// <summary>
         /// Price/Cost including VAT.
         /// </summary>
         [Optional]
-        public Double?  IncludingVAT    { get; } = IncludingVAT;
+        public Decimal?  IncludingVAT    { get; } = IncludingVAT;
 
         #endregion
 
@@ -158,7 +158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("excl_vat",
                                          "price excluding VAT",
-                                         out Double excludingVAT,
+                                         out Decimal excludingVAT,
                                          out ErrorResponse))
                 {
                     return false;
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("incl_vat",
                                        "price including VAT",
-                                       out Double? includingVAT,
+                                       out Decimal? includingVAT,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
