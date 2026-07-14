@@ -94,6 +94,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         TimeSpan?                                                ServiceCheckEvery                    = null,
                                         TimeSpan?                                                StatusCheckEvery                     = null,
                                         TimeSpan?                                                CDRCheckEvery                        = null,
+                                        TimeSpan?                                                EVSEStatusRefreshEvery               = null,
 
                                         Boolean                                                  DisablePushData                      = false,
                                         Boolean                                                  DisablePushStatus                    = false,
@@ -166,6 +167,7 @@ namespace cloud.charging.open.protocols.WWCP
                                          ServiceCheckEvery,
                                          StatusCheckEvery,
                                          CDRCheckEvery,
+                                         EVSEStatusRefreshEvery,
 
                                          DisablePushData,
                                          DisablePushAdminStatus,

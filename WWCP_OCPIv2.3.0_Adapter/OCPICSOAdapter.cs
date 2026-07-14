@@ -201,6 +201,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
+
+        public delegate void EVSEStatusRefreshEventDelegate(DateTimeOffset Timestamp, OCPICSOAdapter Sender, String Message);
+
+        public event EVSEStatusRefreshEventDelegate EVSEStatusRefreshEvent;
+
         #endregion
 
         #region Constructor(s)
@@ -238,6 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               TimeSpan?                                       FlushEVSEDataAndStatusEvery         = null,
                               TimeSpan?                                       FlushEVSEFastStatusEvery            = null,
                               TimeSpan?                                       FlushChargeDetailRecordsEvery       = null,
+                              TimeSpan?                                       EVSEStatusRefreshEvery              = null,
 
                               Boolean                                         DisablePushData                     = false,
                               Boolean                                         DisablePushAdminStatus              = false,
@@ -281,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    FlushEVSEDataAndStatusEvery,
                    FlushEVSEFastStatusEvery,
-                   null,
+                   EVSEStatusRefreshEvery,
                    FlushChargeDetailRecordsEvery,
 
                    DisablePushData,
@@ -1908,7 +1914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        async Task<WWCP.PushEVSEStatusResult>
+        Task<WWCP.PushEVSEStatusResult>
 
             WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
                                               WWCP.TransmissionTypes              TransmissionType,
@@ -1918,6 +1924,39 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               TimeSpan?                           RequestTimeout,
                                               User_Id?                            CurrentUserId,
                                               CancellationToken                   CancellationToken)
+
+                => _updateEVSEStatus(
+                       EVSEStatusUpdates,
+                       TransmissionType,
+
+                       RequestTimestamp,
+                       EventTrackingId,
+                       RequestTimeout,
+                       CurrentUserId,
+                       CancellationToken
+                   );
+
+
+        /// <summary>
+        /// Update the given enumeration of EVSE status updates.
+        /// </summary>
+        /// <param name="EVSEStatusUpdates">An enumeration of EVSE status updates.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        async Task<WWCP.PushEVSEStatusResult>
+
+            _updateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
+                              WWCP.TransmissionTypes              TransmissionType,
+
+                              DateTimeOffset?                     RequestTimestamp,
+                              EventTracking_Id?                   EventTrackingId,
+                              TimeSpan?                           RequestTimeout,
+                              User_Id?                            CurrentUserId,
+                              CancellationToken                   CancellationToken)
 
         {
 
@@ -3754,6 +3793,135 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             #endregion
 
             return sendCDRsResult;
+
+        }
+
+        #endregion
+
+
+        #region (override) RefreshEVSEStatus()
+
+        protected override async Task<WWCP.PushEVSEStatusResult> RefreshEVSEStatus()
+        {
+
+            #region Try to acquire the EVSE status refresh lock, or return...
+
+            if (!EVSEStatusRefreshLock.Wait(0))
+            {
+                DebugX.Log("Could not acquire EVSE status refresh lock!");
+                return WWCP.PushEVSEStatusResult.NoOperation(Id, this);
+            }
+
+            #endregion
+
+            #region Data
+
+            WWCP.PushEVSEStatusResult? result = null;
+
+            var sw                         = Stopwatch.StartNew();
+            var startTime                  = Timestamp.Now;
+            var warnings                   = new List<Warning>();
+            var allEVSEStatusRefreshments  = new List<WWCP.EVSEStatusUpdate>();
+            var cancellationTokenSource    = new CancellationTokenSource();
+
+            #endregion
+
+            #region Log EVSE status refresh event
+
+            EVSEStatusRefreshEvent?.Invoke(
+                startTime,
+                this,
+                $"EVSE status refresh, as every {EVSEStatusRefreshEvery?.TotalHours} hours!"
+            );
+
+            #endregion
+
+            var allEVSEStatus = RoamingNetwork.EVSEStatus();
+
+            try
+            {
+
+                #region Fetch EVSE status
+
+                foreach (var evsestatus in allEVSEStatus)
+                {
+
+                    try
+                    {
+
+                        if (IncludeEVSEIds(evsestatus.Id))
+                            allEVSEStatusRefreshments.Add(
+                                new WWCP.EVSEStatusUpdate(
+                                    evsestatus.Id,
+                                    evsestatus.Status,
+                                    evsestatus.Timestamp
+                                )
+                            );
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.Log(e.Message);
+                        warnings.Add(Warning.Create(e.Message, evsestatus));
+                    }
+
+                }
+
+                #endregion
+
+                #region Upload EVSE status
+
+                if (allEVSEStatusRefreshments.Count > 0)
+                {
+
+                     await _updateEVSEStatus(
+                               allEVSEStatusRefreshments,
+                               WWCP.TransmissionTypes.Enqueue,
+
+                               null, //RequestTimestamp,
+                               null, //EventTrackingId,
+                               null, //RequestTimeout,
+                               null, //CurrentUserId,
+                               cancellationTokenSource.Token
+                           );
+
+                }
+
+                #endregion
+
+            }
+            catch (Exception e)
+            {
+
+                while (e.InnerException is not null)
+                    e = e.InnerException;
+
+                DebugX.LogT($"{nameof(OCPICSOAdapter)} '{Id}' led to an exception: {e.Message}{Environment.NewLine}{e.StackTrace}");
+
+                result = WWCP.PushEVSEStatusResult.Error(
+                             Id,
+                             this,
+                             [.. allEVSEStatus.Select(evseStatus => new WWCP.EVSEStatusUpdate(evseStatus.Id, evseStatus.Status))],
+                             e.Message,
+                             warnings,
+                             sw.Elapsed
+                         );
+
+            }
+
+            finally
+            {
+                EVSEStatusRefreshLock.Release();
+            }
+
+            return result ?? WWCP.PushEVSEStatusResult.Error(
+                                 Id,
+                                 this,
+                                 [.. allEVSEStatus.Select(evseStatus => new WWCP.EVSEStatusUpdate(evseStatus.Id, evseStatus.Status))],
+                                 "General error during EVSE status refresh!",
+                                 warnings,
+                                 sw.Elapsed
+                             );
 
         }
 

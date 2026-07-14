@@ -691,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             throw new NotImplementedException();
         }
 
-        Task<StatusPull<EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
+        Task<StatusPull<WWCP.EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             throw new NotImplementedException();
         }

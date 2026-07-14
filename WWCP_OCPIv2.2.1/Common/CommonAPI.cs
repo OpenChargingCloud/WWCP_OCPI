@@ -9320,6 +9320,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         }
 
+        public IEnumerable<EVSE> EVSEs(Func<IEVSE, Boolean>? IncludeEVSEDelegate = null)
+        {
+            foreach (var locationKVP in parties.SelectMany(party => party.Value.Locations))
+            {
+                foreach (var evse in locationKVP.Value.EVSEs)
+                    if (IncludeEVSEDelegate is null || IncludeEVSEDelegate(evse))
+                        yield return evse;
+            }
+        }
+
         #endregion
 
         #region Connectors

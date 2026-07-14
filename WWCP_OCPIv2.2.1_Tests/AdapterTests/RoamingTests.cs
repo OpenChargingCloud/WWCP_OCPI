@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                              oldValue,
                                              dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as WWCP.IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
