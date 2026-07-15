@@ -83,9 +83,11 @@ namespace cloud.charging.open.protocols.WWCP
                                         IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
                                         ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
 
-                                        TimeSpan?                                                ServiceCheckEvery                    = null,
-                                        TimeSpan?                                                StatusCheckEvery                     = null,
-                                        TimeSpan?                                                CDRCheckEvery                        = null,
+                                        TimeSpan?                                                FlushEVSEDataAndStatusEvery          = null,
+                                        TimeSpan?                                                FlushEVSEFastStatusEvery             = null,
+                                        TimeSpan?                                                FlushChargeDetailRecordsEvery        = null,
+
+                                        TimeSpan?                                                EVSEStatusRefreshEvery               = null,
 
                                         Boolean                                                  DisablePushData                      = false,
                                         Boolean                                                  DisablePushStatus                    = false,
@@ -143,9 +145,11 @@ namespace cloud.charging.open.protocols.WWCP
                                          IncludeEVSEs,
                                          ChargeDetailRecordFilter,
 
-                                         ServiceCheckEvery,
-                                         StatusCheckEvery,
-                                         CDRCheckEvery,
+                                         FlushEVSEDataAndStatusEvery,
+                                         FlushEVSEFastStatusEvery,
+                                         FlushChargeDetailRecordsEvery,
+
+                                         EVSEStatusRefreshEvery,
 
                                          DisablePushData,
                                          DisablePushAdminStatus,

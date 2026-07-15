@@ -249,9 +249,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    IncludeChargingPools:                null,
                                    ChargeDetailRecordFilter:            null,
 
-                                   ServiceCheckEvery:                   null,
-                                   StatusCheckEvery:                    null,
-                                   CDRCheckEvery:                       null,
+                                   FlushEVSEDataAndStatusEvery:         null,
+                                   FlushEVSEFastStatusEvery:            null,
+                                   FlushChargeDetailRecordsEvery:       null,
+
+                                   EVSEStatusRefreshEvery:              null,
 
                                    DisablePushData:                     true,
                                    DisablePushStatus:                   true,

@@ -239,6 +239,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               TimeSpan?                                       FlushEVSEFastStatusEvery            = null,
                               TimeSpan?                                       FlushChargeDetailRecordsEvery       = null,
 
+                              TimeSpan?                                       EVSEStatusRefreshEvery              = null,
+
                               Boolean                                         DisablePushData                     = false,
                               Boolean                                         DisablePushAdminStatus              = false,
                               Boolean                                         DisablePushStatus                   = false,
@@ -277,12 +279,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    IncludeChargingPools,
                    IncludeChargingStationOperatorIds,
                    IncludeChargingStationOperators,
+                   null,
+                   null,
                    ChargeDetailRecordFilter,
 
                    FlushEVSEDataAndStatusEvery,
                    FlushEVSEFastStatusEvery,
-                   null,
                    FlushChargeDetailRecordsEvery,
+
+                   EVSEStatusRefreshEvery,
 
                    DisablePushData,
                    DisablePushAdminStatus,
