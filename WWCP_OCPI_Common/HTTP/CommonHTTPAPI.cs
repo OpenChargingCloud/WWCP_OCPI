@@ -435,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                              EMailAddress?                  APIRobotEMailAddress      = null,
                              String?                        APIRobotGPGPassphrase     = null,
-                             ISMTPClient?                   SMTPClient                = null,
+                             ISMTPSubmissionClient?         SMTPClient                = null,
 
                              HTTPPath?                      AdditionalURLPathPrefix   = null,
                              Boolean?                       LocationsAsOpenData       = null,
