@@ -10497,8 +10497,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.CPO, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -10506,9 +10507,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -10610,8 +10612,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.CPO, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -10619,9 +10622,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -10795,8 +10799,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.CPO, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -10804,9 +10809,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
@@ -11364,8 +11370,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #region Check access token
 
-                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
-                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    if ((request.LocalAccessInfo is not null || CommonAPI.BaseAPI.LocationsAsOpenData == false) &&
+                        (request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                         request.LocalAccessInfo.IsNot(Role.CPO, Role.HUB) == true))
                     {
 
                         return Task.FromResult(
@@ -11373,9 +11380,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 StatusCode           = StatusCode.ClientErrors.GenericClientError,
                                 StatusMessage        = "Invalid or blocked access token!",
                                 HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                    HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders   = [ "Authorization" ],
+                                    AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
                                 }
                             });
 
