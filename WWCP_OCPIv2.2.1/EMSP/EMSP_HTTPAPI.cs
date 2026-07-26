@@ -10460,6 +10460,119 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             // Receiver Interface for eMSPs and NSPs
 
+            #region ~/locations                                                          [NonStandard]
+
+            #region OPTIONS  ~/locations      [NonStandard]
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "locations",
+                request =>
+
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
+
+            );
+
+            #endregion
+
+            #region GET      ~/locations      [NonStandard]
+
+            CommonAPI.AddOCPIMethod(
+
+                HTTPMethod.GET,
+                URLPathPrefix + "locations",
+                HTTPEvents.GetLocationsHTTPRequest,
+                HTTPEvents.GetLocationsHTTPResponse,
+                request => {
+
+                    #region Check access token
+
+                    if (request.LocalAccessInfo.IsNot(Role.CPO) ||
+                        request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
+
+                    }
+
+                    #endregion
+
+
+                    var filters            = request.GetDateAndPaginationFilters();
+
+                    var allLocations       = GetRemoteLocations().ToArray();
+
+                    var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                          Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                          ToArray();
+
+
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               StatusCode           = StatusCode.Success,
+                               StatusMessage        = CommonAPI.DefaultStatusMessage,
+                               Data                 = new JArray(
+                                                          filteredLocations.
+                                                              SkipTakeFilter(filters.Offset,
+                                                                             filters.Limit).
+                                                              Select(location => location.ToJSON(
+                                                                                     request.RemoteParty?.Id,
+                                                                                     CustomLocationSerializer,
+                                                                                     CustomPublishTokenSerializer,
+                                                                                     CustomAdditionalGeoLocationSerializer,
+                                                                                     CustomEVSESerializer,
+                                                                                     CustomStatusScheduleSerializer,
+                                                                                     CustomConnectorSerializer,
+                                                                                     CustomLocationEnergyMeterSerializer,
+                                                                                     CustomEVSEEnergyMeterSerializer,
+                                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                                     CustomTransparencySoftwareSerializer,
+                                                                                     CustomDisplayTextSerializer,
+                                                                                     CustomBusinessDetailsSerializer,
+                                                                                     CustomHoursSerializer,
+                                                                                     CustomImageSerializer,
+                                                                                     CustomEnergyMixSerializer,
+                                                                                     CustomEnergySourceSerializer,
+                                                                                     CustomEnvironmentalImpactSerializer
+                                                                                 ))
+                                                      ),
+                               HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                                   //LastModified               = ?
+                               }.
+                               Set("X-Total-Count", allLocations.Length)
+                               // X-Limit               The maximum number of objects that the server WILL return.
+                               // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                        });
+
+                }
+            );
+
+            #endregion
+
+            #endregion
+
             #region ~/locations/{country_code}/{party_id}                                [NonStandard]
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}      [NonStandard]

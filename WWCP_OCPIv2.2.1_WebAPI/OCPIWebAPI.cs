@@ -843,6 +843,93 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                 #endregion
 
 
+                #region GET ~/v2.2.1/emsp/locations
+
+                CommonAPI.HTTPBaseAPI.AddHandler(
+                    HTTPMethod.GET,
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/emsp/locations",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
+
+                        // Appending "?download" to the URL within a web browser will open a download dialog.
+                        // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                        var download = request.QueryString.GetBoolean("download", false);
+
+                        return Task.FromResult(
+                            download
+
+                                ? new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPBaseAPI.HTTPServiceName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
+                                      ContentDisposition          = download
+                                                                        ? @"attachment; filename = ""locations.json"""
+                                                                        : null,
+                                      ContentType                 = HTTPContentType.Application.JSON_UTF8,
+                                      Content                     = new JArray(EMSPAPI?.GetRemoteLocations().Select(location => location.ToJSON()) ?? []).ToUTF8Bytes(),
+                                      Vary                        = "Accept",
+                                      Connection                  = ConnectionType.KeepAlive
+                                  }.AsImmutable
+
+                                : new HTTPResponse.Builder(request) {
+                                      HTTPStatusCode              = HTTPStatusCode.OK,
+                                      Server                      = HTTPBaseAPI.HTTPServiceName,
+                                      Date                        = Timestamp.Now,
+                                      AccessControlAllowOrigin    = "*",
+                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                      ContentType                 = HTTPContentType.Text.HTML_UTF8,
+                                      Content                     = MixWithHTMLTemplate(
+                                                                        "locations.locations.shtml",
+                                                                        htmlConverter
+                                                                    ).ToUTF8Bytes(),
+                                      Connection                  = ConnectionType.KeepAlive,
+                                      Vary                        = "Accept"
+                                  }.AsImmutable
+
+                        );
+
+                    }
+
+                );
+
+                #endregion
+
+                #region GET ~/v2.2.1/emsp/locationStatistics
+
+                CommonAPI.HTTPBaseAPI.AddHandler(
+                    HTTPMethod.GET,
+                    CommonWebAPI.OverlayURLPathPrefix.Value + Version.String + "/emsp/locationStatistics",
+                    HTTPContentType.Text.HTML_UTF8,
+                    HTTPDelegate: request => {
+
+                        return Task.FromResult(
+                            new HTTPResponse.Builder(request) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                Server                     = HTTPServiceName,
+                                Date                       = Timestamp.Now,
+                                AccessControlAllowOrigin   = "*",
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                Content                    = MixWithHTMLTemplate(
+                                                                 "locations.locationStatistics.shtml",
+                                                                 htmlConverter
+                                                             ).ToUTF8Bytes(),
+                                Connection                 = ConnectionType.KeepAlive,
+                                Vary                       = "Accept"
+                            }.AsImmutable);
+
+                    }
+                );
+
+                #endregion
+
+
                 #region GET ~/debugLog
 
                 if (UseHTTPSSE)
