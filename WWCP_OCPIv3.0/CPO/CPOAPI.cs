@@ -1819,7 +1819,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode              = HTTPStatusCode.OK,
 //                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders   = [ "Authorization" ],
 //                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
 //                               }
@@ -1858,7 +1858,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+//                                                        AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
 //                                                        AccessControlAllowHeaders   = [ "Authorization" ],
 //                                                        AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
 //                                                    }
@@ -1910,7 +1910,7 @@
 //                                                                       HTTPStatusCode              = HTTPStatusCode.OK,
 //                                                                       Server                      = DefaultHTTPServerName,
 //                                                                       Date                        = Timestamp.Now,
-//                                                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                                                       AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                                       AccessControlAllowHeaders   = [ "Authorization" ],
 //                                                                       AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
 //                                                                   }.
@@ -2006,7 +2006,7 @@
                                                                                                                                                
 //                                    //                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                    //                    HTTPStatusCode             = HTTPStatusCode.OK,
-//                                    //                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                    //                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                    //                    AccessControlAllowHeaders  = [ "Authorization" ]
 //                                    //                    //LastModified               = ?
 //                                    //                }.
@@ -2036,7 +2036,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode             = HTTPStatusCode.OK,
 //                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders  = [ "Authorization" ]
 //                               }
 //                        })
@@ -2067,7 +2067,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                        AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                    }
 //                                                });
@@ -2125,7 +2125,7 @@
 //                                                                                          CustomEnvironmentalImpactSerializer),
 //                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-//                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                       AccessControlAllowHeaders  = [ "Authorization" ],
 //                                                       LastModified               = location.LastUpdated,
 //                                                       ETag                       = location.ETag
@@ -2153,7 +2153,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode             = HTTPStatusCode.OK,
 //                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders  = [ "Authorization" ]
 //                               }
 //                        })
@@ -2182,7 +2182,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                        AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                    }
 //                                                });
@@ -2229,7 +2229,7 @@
 //                                                                                      CustomDisplayTextSerializer),
 //                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-//                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                       AccessControlAllowHeaders  = [ "Authorization" ],
 //                                                       LastModified               = evse.LastUpdated,
 //                                                       ETag                       = evse.ETag
@@ -2257,7 +2257,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode             = HTTPStatusCode.OK,
 //                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders  = [ "Authorization" ]
 //                               }
 //                        })
@@ -2286,7 +2286,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                        AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                    }
 //                                                });
@@ -2326,7 +2326,7 @@
 //                                                                                           CustomConnectorSerializer),
 //                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-//                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                       AccessControlAllowHeaders  = [ "Authorization" ],
 //                                                       LastModified               = connector.LastUpdated,
 //                                                       ETag                       = connector.ETag
@@ -2355,7 +2355,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode              = HTTPStatusCode.OK,
 //                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders   = [ "Authorization" ],
 //                                   AccessControlExposeHeaders  = [ HTTPHeaders.X_Request_ID, HTTPHeaders.X_Correlation_ID, "Link", "X-Total-Count", "X-Filtered-Count" ]
 //                               }
@@ -2386,7 +2386,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                        AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                    }
 //                                                });
@@ -2412,7 +2412,7 @@
 //                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
 //                                                                       Server                     = DefaultHTTPServerName,
 //                                                                       Date                       = Timestamp.Now,
-//                                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                                       AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                                   }.
 
@@ -2499,7 +2499,7 @@
 //                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
 //                                   HTTPStatusCode             = HTTPStatusCode.OK,
 //                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-//                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                   AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                   AccessControlAllowHeaders  = [ "Authorization" ]
 //                               }
 //                        })
@@ -2528,7 +2528,7 @@
 //                                                    StatusMessage        = "Invalid or blocked access token!",
 //                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-//                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                        AccessControlAllowHeaders  = [ "Authorization" ]
 //                                                    }
 //                                                });
@@ -2560,7 +2560,7 @@
 //                                                   Data                 = tariff.ToJSON(),
 //                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
 //                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-//                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+//                                                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                                       AccessControlAllowHeaders  = [ "Authorization" ],
 //                                                       LastModified               = tariff.LastUpdated,
 //                                                       ETag                       = tariff.ETag

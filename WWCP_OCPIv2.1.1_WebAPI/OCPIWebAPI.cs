@@ -491,7 +491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 Server                     = HTTPBaseAPI.HTTPServiceName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                      = HTTPServerName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
-                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentDisposition          = download
                                                                         ? @"attachment; filename = ""locations.json"""
@@ -543,7 +543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                      = HTTPServerName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
-                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
                                       AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
@@ -577,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 Server                     = HTTPBaseAPI.HTTPServiceName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
@@ -613,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentDisposition         = download
                                                                        ? @"attachment; filename = ""sessions.json"""
@@ -629,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
@@ -668,7 +668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                      = HTTPServerName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
-                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentDisposition          = download
                                                                         ? @"attachment; filename = ""tariffs.json"""
@@ -684,7 +684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                      = HTTPBaseAPI.HTTPServiceName,
                                       Date                        = Timestamp.Now,
                                       AccessControlAllowOrigin    = "*",
-                                      AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods   = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
                                       AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
                                       ContentType                 = HTTPContentType.Text.HTML_UTF8,
@@ -724,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentDisposition         = download
                                                                        ? @"attachment; filename = ""cdrs.json"""
@@ -740,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
@@ -773,7 +773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                 Server                     = HTTPBaseAPI.HTTPServiceName,
                                 Date                       = Timestamp.Now,
                                 AccessControlAllowOrigin   = "*",
-                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                 AccessControlAllowHeaders  = [ "Authorization" ],
                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                 Content                    = MixWithHTMLTemplate(
@@ -808,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentDisposition         = download
                                                                        ? @"attachment; filename = ""tokens.json"""
@@ -831,7 +831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                       Server                     = HTTPServerName,
                                       Date                       = Timestamp.Now,
                                       AccessControlAllowOrigin   = "*",
-                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                       AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                       ContentType                = HTTPContentType.Text.HTML_UTF8,
                                       Content                    = MixWithHTMLTemplate(
@@ -880,7 +880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Server                     = HTTPServerName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "ReserveNow", "CancelReservation", "StartSession", "StopSession", "UnlockConnector" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, CommonWebAPI.HTTP_ReserveNow, CommonWebAPI.HTTP_CancelReservation, CommonWebAPI.HTTP_StartSession, CommonWebAPI.HTTP_StopSession, CommonWebAPI.HTTP_UnlockConnector ],
                             Allow                      = new List<HTTPMethod> {
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST,
@@ -965,7 +965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      Server                     = HTTPServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                                                     AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = OCPIResponse<JArray>.Create(
@@ -1018,7 +1018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                 Server                     = HTTPServerName,
                                                                 Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = [ "GET" ],
+                                                                AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                                 AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                 ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                                 Content                    = MixWithHTMLTemplate("remoteParties.remoteParties.shtml",
@@ -1049,7 +1049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      Server                     = HTTPServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                                                     AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                                                      Allow                      = new List<HTTPMethod> {
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
@@ -1114,7 +1114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = remoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -1138,7 +1138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -1197,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "GET" ],
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteXXXParties.remoteParty.shtml",
@@ -1214,7 +1214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                                  //               Date                       = Timestamp.Now,
                                                  //               AccessControlAllowOrigin   = "*",
-                                                 //               AccessControlAllowMethods  = new[] { "GET" },
+                                                 //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                  //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                  //               Connection                 = ConnectionType.KeepAlive,
                                                  //               Vary                       = "Accept"
@@ -1243,7 +1243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      Server                     = HTTPServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                                                     AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                                                      Allow                      = new List<HTTPMethod> {
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST
@@ -1308,7 +1308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -1332,7 +1332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -1390,7 +1390,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "GET" },
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.reserveNow.shtml").ToUTF8Bytes(),
@@ -1406,7 +1406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
-                                             //               AccessControlAllowMethods  = new[] { "GET" },
+                                             //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                              //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
@@ -1475,7 +1475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(
@@ -1502,7 +1502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -1530,7 +1530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -1558,7 +1558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -1587,7 +1587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                 Server                     = HTTPServerName,
                                                                 Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                 AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                 ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -1613,7 +1613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
@@ -1642,7 +1642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -1666,7 +1666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
@@ -1693,7 +1693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Server                     = HTTPServerName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                             Allow                      = [
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST
@@ -1760,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -1784,7 +1784,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -1842,7 +1842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "GET" },
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.cancelReservation.shtml").ToUTF8Bytes(),
@@ -1858,7 +1858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
-                                             //               AccessControlAllowMethods  = new[] { "GET" },
+                                             //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                              //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
@@ -1927,7 +1927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -1953,7 +1953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
@@ -1978,7 +1978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2002,7 +2002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
@@ -2029,7 +2029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Server                     = HTTPServerName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                             Allow                      = new List<HTTPMethod> {
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST
@@ -2096,7 +2096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2120,7 +2120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -2178,7 +2178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "GET" },
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.startSession.shtml").ToUTF8Bytes(),
@@ -2194,7 +2194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
-                                             //               AccessControlAllowMethods  = new[] { "GET" },
+                                             //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                              //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
@@ -2263,7 +2263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(
@@ -2291,7 +2291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -2319,7 +2319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -2345,7 +2345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
@@ -2372,7 +2372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2396,7 +2396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
@@ -2423,7 +2423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Server                     = HTTPServerName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                             Allow                      = new List<HTTPMethod> {
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST
@@ -2490,7 +2490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2514,7 +2514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -2572,7 +2572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "GET" },
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.stopSession.shtml").ToUTF8Bytes(),
@@ -2588,7 +2588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
-                                             //               AccessControlAllowMethods  = new[] { "GET" },
+                                             //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                              //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
@@ -2657,7 +2657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -2683,7 +2683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
@@ -2708,7 +2708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2727,7 +2727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
@@ -2754,7 +2754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             Server                     = HTTPServerName,
                             Date                       = Timestamp.Now,
                             AccessControlAllowOrigin   = "*",
-                            AccessControlAllowMethods  = [ "GET", "OPTIONS" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.OPTIONS ],
                             Allow                      = new List<HTTPMethod> {
                                                              HTTPMethod.OPTIONS,
                                                              HTTPMethod.POST
@@ -2821,7 +2821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -2845,7 +2845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable);
@@ -2903,7 +2903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          Server                     = HTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "GET" },
+                                                         AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                                          AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.unlockConnector.shtml").ToUTF8Bytes(),
@@ -2919,7 +2919,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              //               Server                     = HTTPBaseAPI.HTTPTestServer.HTTPServerName,
                                              //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
-                                             //               AccessControlAllowMethods  = new[] { "GET" },
+                                             //               AccessControlAllowMethods  = [ HTTPMethod.GET ],
                                              //               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                              //               Connection                 = ConnectionType.KeepAlive,
                                              //               Vary                       = "Accept"
@@ -2988,7 +2988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -3016,7 +3016,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -3044,7 +3044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
@@ -3070,7 +3070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             Server                     = HTTPServerName,
                                                             Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                            AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                             AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
@@ -3097,7 +3097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" ],
                                                                   ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.Application.JSON_UTF8,
@@ -3116,7 +3116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   Server                     = HTTPServerName,
                                                                   Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
-                                                                  AccessControlAllowMethods  = [ "GET", "SET" ],
+                                                                  AccessControlAllowMethods  = [ HTTPMethod.GET, HTTPMethod.SET ],
                                                                   AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
                                                                   Connection                 = ConnectionType.KeepAlive
                                                             }.AsImmutable;
@@ -3146,7 +3146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             HTTPStatusCode             = HTTPStatusCode.OK,
                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                             Content                    = new JArray(clients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                             AccessControlAllowHeaders  = [ "Authorization" ]
                             //LastModified               = Location.LastUpdated.ToISO8601(),
                             //ETag                       = Location.SHA256Hash
@@ -3173,7 +3173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             HTTPStatusCode             = HTTPStatusCode.OK,
                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                             Content                    = new JArray(CPOAPI.CPO2EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                             AccessControlAllowHeaders  = [ "Authorization" ]
                             //LastModified               = Location.LastUpdated.ToISO8601(),
                             //ETag                       = Location.SHA256Hash
@@ -3198,7 +3198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                             HTTPStatusCode             = HTTPStatusCode.OK,
                             ContentType                = HTTPContentType.Application.JSON_UTF8,
                             Content                    = new JArray(EMSPAPI.EMSP2CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                            AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                            AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                             AccessControlAllowHeaders  = [ "Authorization" ]
                             //LastModified               = Location.LastUpdated.ToISO8601(),
                             //ETag                       = Location.SHA256Hash

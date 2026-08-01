@@ -148,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
                             if (ocpiRequest.AccessTokenErrorMessages.Any())
                             {
 
-                                  //             AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                  //             AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
                                   //             Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 
                                 return new HTTPResponse.Builder(httpRequest) {
