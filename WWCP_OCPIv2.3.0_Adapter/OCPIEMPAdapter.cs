@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               DateTimeOffset?                                   Created                             = null,
                               DateTimeOffset?                                   LastChange                          = null,
 
-                              JObject?                                          CustomData                          = null,
+                              CustomDataNew?                                    CustomData                          = null,
                               UserDefinedDictionary?                            InternalData                        = null)
 
 

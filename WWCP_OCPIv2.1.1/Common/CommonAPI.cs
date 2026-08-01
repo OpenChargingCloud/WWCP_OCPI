@@ -2108,7 +2108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 new VersionInformation(
                     Version.Id,
                     URL.Concat(
-                        BaseAPI.OurVersionsURL.Protocol.AsString(),
+                        (BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix),
                         BaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
                         BaseAPI.URLPathPrefix + URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
@@ -2227,7 +2227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new (
                                             Module_Id.Credentials,
                                             URL.Parse(
-                                                BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                                (BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                                 (request.Host + (prefix + "credentials")).Replace("//", "/")
                                             )
                                         )
@@ -2245,7 +2245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Locations,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))
                             )
                         );
@@ -2253,7 +2253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Tariffs,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))
                             )
                         );
@@ -2261,7 +2261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Sessions,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))
                             )
                         );
@@ -2269,7 +2269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.CDRs,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/cdrs")).Replace("//", "/"))
                             )
                         );
@@ -2277,7 +2277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Commands,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))
                             )
                         );
@@ -2285,7 +2285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Tokens,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))
                             )
                         );
@@ -2304,7 +2304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             endpoints.Add(
                                 new VersionEndpoint(
                                     Module_Id.Locations,
-                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                         (request.Host + (prefix + "cpo/locations")).Replace("//", "/")
                                     )
                                 )
@@ -2314,7 +2314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             endpoints.Add(
                                 new VersionEndpoint(
                                     Module_Id.Tariffs,
-                                    URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                    URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                         (request.Host + (prefix + "cpo/tariffs")).Replace("//", "/")
                                     )
                                 )
@@ -2332,7 +2332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Locations,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))
                             )
                         );
@@ -2340,7 +2340,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Tariffs,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/tariffs")).  Replace("//", "/"))
                             )
                         );
@@ -2348,7 +2348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Sessions,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/sessions")). Replace("//", "/"))
                             )
                         );
@@ -2356,7 +2356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.CDRs,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/cdrs")).     Replace("//", "/"))
                             )
                         );
@@ -2365,7 +2365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Commands,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/commands")). Replace("//", "/"))
                             )
                         );
@@ -2373,7 +2373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Tokens,
-                                URL.Parse(BaseAPI.OurVersionsURL.Protocol.AsString() +
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
                                     (request.Host + (prefix + "cpo/tokens")).   Replace("//", "/"))
                             )
                         );

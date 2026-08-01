@@ -4017,7 +4017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                              // Also when persistend HTPP connections are used, and the IP address is the same, but the
                                                                              // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
 
-                                                                             requestBuilder.Host = httpClient.RemoteURL.Hostname;
+                                                                             requestBuilder.Host = httpClient.RemoteURL.HostHeader;
 
                                                                              requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                              requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
@@ -4177,7 +4177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                             // Also when persistend HTPP connections are used, and the IP address is the same, but the
                                                                             // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
 
-                                                                            requestBuilder.Host = httpClient.RemoteURL.Hostname;
+                                                                            requestBuilder.Host = httpClient.RemoteURL.HostHeader;
 
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
@@ -4357,7 +4357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                             // Also when persistend HTPP connections are used, and the IP address is the same, but the
                                                                             // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
 
-                                                                            requestBuilder.Host = httpClient.RemoteURL.Hostname;
+                                                                            requestBuilder.Host = httpClient.RemoteURL.HostHeader;
 
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);
@@ -4522,7 +4522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                             // Also when persistend HTPP connections are used, and the IP address is the same, but the
                                                                             // HTTP hostnames are different, we have to set the HTTP hostname perhaps explicitly here!
 
-                                                                            requestBuilder.Host = httpClient.RemoteURL.Hostname;
+                                                                            requestBuilder.Host = httpClient.RemoteURL.HostHeader;
 
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
                                                                             requestBuilder.Set(HTTPHeaders.X_Correlation_ID, correlationId);

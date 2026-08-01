@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPI
                            DateTimeOffset?                           Created                     = null,
                            DateTimeOffset?                           LastUpdated                 = null,
 
-                           JObject?                                  CustomData                  = null,
+                           CustomDataNew?                            CustomData                  = null,
                            UserDefinedDictionary?                    InternalData                = null)
 
             : base(CustomData,

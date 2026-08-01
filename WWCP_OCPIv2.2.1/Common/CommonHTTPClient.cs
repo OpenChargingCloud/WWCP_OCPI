@@ -1146,7 +1146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 HTTPClient? httpClient = null;
 
-                if (remoteURL.Value.Hostname.ToString() == NewHTTPClient.DomainName?.ToString())
+                if (remoteURL.Value.Host.ToString() == NewHTTPClient.DomainName?.ToString())
                 {
                     httpClient = NewHTTPClient;
                 }
