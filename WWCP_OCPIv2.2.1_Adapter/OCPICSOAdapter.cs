@@ -592,8 +592,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                       : null,
                                                         ProviderId:               providerId,
                                                         RemoteAuthentication:     startSessionCommand.Token.ToRemoteAuthentication(),
-                                                        AdditionalSessionInfos:   JSONObject.Create(
-                                                                                      new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
+                                                        AdditionalSessionInfos:   CustomDataNew.ParseJObject(
+                                                                                      JSONObject.Create(
+                                                                                          new JProperty("startSessionCommand",  startSessionCommand.ToJSON())
+                                                                                      )
                                                                                   ),
                                                         AuthenticationPath:       WWCP.Auth_Path.Parse(  // Authentication path == CSO Roaming Provider identification!
                                                                                       remotePartyId.ToString()
@@ -645,8 +647,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         WWCP.ReservationHandling.Close,
                                         providerId,
                                         null,                                   // Remote authentication
-                                        JSONObject.Create(
-                                            new JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
+                                        CustomDataNew.ParseJObject(
+                                            JSONObject.Create(
+                                                new JProperty("stopSessionCommand",  stopSessionCommand.ToJSON())
+                                            )
                                         ),
                                         WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                             remotePartyId.ToString()//Id.ToString()

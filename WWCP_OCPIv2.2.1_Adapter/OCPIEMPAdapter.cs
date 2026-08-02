@@ -730,7 +730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              ChargingSession_Id?      SessionId,
                                                              EMobilityProvider_Id?    ProviderId,
                                                              RemoteAuthentication?    RemoteAuthentication,
-                                                             JObject?                 AdditionalSessionInfos,
+                                                             CustomDataNew?           AdditionalSessionInfos,
                                                              Auth_Path?               AuthenticationPath,
                                                              ICSORoamingProvider?     CSORoamingProvider,
 
@@ -746,7 +746,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            ReservationHandling?   ReservationHandling,
                                                            EMobilityProvider_Id?  ProviderId,
                                                            RemoteAuthentication?  RemoteAuthentication,
-                                                           JObject?               AdditionalSessionInfos,
+                                                           CustomDataNew?         AdditionalSessionInfos,
                                                            Auth_Path?             AuthenticationPath,
                                                            ICSORoamingProvider?   CSORoamingProvider,
 

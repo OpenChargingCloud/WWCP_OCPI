@@ -2806,14 +2806,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/sessions/{sessionId}      [NonStandard]
+            #region ~/sessions/{session_id}      [NonStandard]
 
-            #region OPTIONS  ~/sessions/{sessionId}
+            #region OPTIONS  ~/sessions/{session_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{session_id}",
                 request =>
 
                     Task.FromResult(
@@ -2830,12 +2830,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/sessions/{sessionId}
+            #region GET      ~/sessions/{session_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{session_id}",
                 GetSessionHTTPRequest,
                 GetSessionHTTPResponse,
                 request => {
