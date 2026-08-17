@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.RemoteAccessToken      = AccessToken;
             this.TokenAuth              = HTTPAuthentication as HTTPTokenAuthentication;
 
-            var httpHostname            = RemoteURL.HostHeader;
+            var httpHostname            = RemoteURL.Host;
 
             this.NewHTTPClient          = new HTTPClient(
 
