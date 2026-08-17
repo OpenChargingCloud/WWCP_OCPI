@@ -473,7 +473,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The HTTP query string.
         /// </summary>
-        public URLHost          Host
+        public HTTPHostname     Host
             => HTTPRequest.Host;
 
         /// <summary>
