@@ -2553,7 +2553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Token_Id>("token_Id", Token_Id.TryParse, out var tokenId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Token_Id>("tokenId", Token_Id.TryParse, out var tokenId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -4196,6 +4196,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     )
                 )
             ).GetAwaiter().GetResult();
+
+            // The versions list and the version details are served by the base
+            // API, and a partner presents its access token to both of them;
+            // the partners themselves live here. So the base API is told where
+            // to look rather than handed a copy - see AddRemotePartyProvider.
+            this.BaseAPI.AddRemotePartyProvider(() => remoteParties.Values);
 
             ReadRemotePartyDatabaseFile().GetAwaiter().GetResult();
             ReadAssetsDatabaseFile().     GetAwaiter().GetResult();

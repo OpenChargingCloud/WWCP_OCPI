@@ -2129,6 +2129,40 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               CommonAPI.Parties.Select(partyData => partyData.ToCredentialsRole())
                                           );
 
+                        #region CREDENTIALS_TOKEN_B opens our door before it leaves the house
+
+                        // The receiver of these credentials is expected to turn
+                        // around and fetch our versions with the token we are
+                        // about to send it - that is how it finds out which
+                        // versions we have in common - and this library's own
+                        // receiver does exactly that, before it answers. So the
+                        // token has to be one we already accept: storing it only
+                        // once the answer arrives would make it a token that was
+                        // not valid while the answer was being written, and the
+                        // registration would fail on our own doorstep.
+                        //
+                        // Added beside whatever local access this party already
+                        // had rather than replacing it, because the old token is
+                        // what the partner is still holding until this returns;
+                        // the AddOrUpdate below the response then settles both
+                        // sides on the new one.
+                        await CommonAPI.AddOrUpdateRemoteParty(
+                                  RemoteParty.Id,
+                                  RemoteParty.Roles,
+                                  [
+                                      .. RemoteParty.LocalAccessInfos,
+                                      new LocalAccessInfo(
+                                          credentialTokenB,
+                                          AccessStatus.ALLOWED
+                                      )
+                                  ],
+                                  RemoteParty.RemoteAccessInfos,
+                                  RemoteParty.Status,
+                                  EventTrackingId: eventTrackingId
+                              );
+
+                        #endregion
+
                         #region Upstream HTTP request...
 
                         var httpResponse = await NewHTTPClient.POST(

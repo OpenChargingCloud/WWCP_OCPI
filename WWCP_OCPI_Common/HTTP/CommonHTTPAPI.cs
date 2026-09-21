@@ -2786,6 +2786,67 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region AddRemotePartyProvider    (Provider)
+
+        private readonly List<Func<IEnumerable<RemoteParty>>> remotePartyProviders = [];
+
+        /// <summary>
+        /// Let a version API attached to this one say where its roaming
+        /// parties are, so that this one can recognise their access tokens.
+        /// </summary>
+        /// <remarks>
+        /// The versions list and the version details are served here, by the
+        /// API every version hangs off, and a partner presents its access
+        /// token to both of them - which is where an OCPI peering starts. The
+        /// parties themselves live in the CommonAPI of the version they were
+        /// added under, one store per version, because what a party is differs
+        /// between the versions. So this one asks them rather than keeping a
+        /// copy: a copy would be right until the first credentials exchange
+        /// replaced a token, and quietly wrong from then on.
+        /// </remarks>
+        public void AddRemotePartyProvider(Func<IEnumerable<RemoteParty>> Provider)
+        {
+            lock (remotePartyProviders)
+            {
+                remotePartyProviders.Add(Provider);
+            }
+        }
+
+        /// <summary>
+        /// The roaming parties of this API and of every version attached to
+        /// it, each identification once.
+        /// </summary>
+        private IEnumerable<RemoteParty> KnownRemoteParties
+        {
+            get
+            {
+
+                Func<IEnumerable<RemoteParty>>[] providers;
+
+                lock (remotePartyProviders)
+                {
+                    providers = [.. remotePartyProviders];
+                }
+
+                if (providers.Length == 0)
+                    return remoteParties.Values;
+
+                var seen   = new HashSet<RemoteParty_Id>();
+                var found  = new List<RemoteParty>();
+
+                foreach (var remoteParty in remoteParties.Values.Concat(providers.SelectMany(provider => provider())))
+                {
+                    if (seen.Add(remoteParty.Id))
+                        found.Add(remoteParty);
+                }
+
+                return found;
+
+            }
+        }
+
+        #endregion
+
         #region TryGetRemoteParties       (AccessToken, TOTP, TLSExporterMaterial, out RemoteParties, out ErrorMessage)
 
         public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
@@ -2797,7 +2858,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
-            foreach (var remoteParty in this.remoteParties.Values)
+            foreach (var remoteParty in KnownRemoteParties)
             {
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
