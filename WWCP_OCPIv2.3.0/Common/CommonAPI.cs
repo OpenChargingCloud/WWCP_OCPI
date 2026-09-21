@@ -3593,7 +3593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// <summary>
     /// The CommonAPI.
     /// </summary>
-    public class CommonAPI : AHTTPExtAPIExtension1<HTTPExtAPI>
+    public partial class CommonAPI : AHTTPExtAPIExtension1<HTTPExtAPI>
     {
 
         #region Data
@@ -3632,6 +3632,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The roaming hub this platform is behind, handed to every peer in
+        /// the credentials - new in OCPI 2.3.0, and null for a platform that
+        /// talks to its counterparts directly.
+        /// </summary>
+        /// <remarks>
+        /// A hub names itself here: the field is "the hub party of this
+        /// platform", and for a hub that is the hub.
+        /// </remarks>
+        public Party_Idv3?  HubPartyId    { get; }
+
 
         /// <summary>
         /// The Common HTTP API.
@@ -4112,6 +4124,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                          CommonHTTPAPI                BaseAPI,
 
+                         Party_Idv3?                  HubPartyId                = null,
+
                          I18NString?                  Description               = null,
                          HTTPPath?                    AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
@@ -4164,6 +4178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.BaseAPI                = BaseAPI;
             this.DefaultPartyId         = DefaultPartyId;
+            this.HubPartyId             = HubPartyId;
 
             this.KeepRemovedEVSEs       = KeepRemovedEVSEs          ?? (evse => true);
 
@@ -4217,6 +4232,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             ReadAssetsDatabaseFile().     GetAwaiter().GetResult();
 
             RegisterURLTemplates();
+
+            // The sender interface of the HubClientInfo module - see
+            // CommonAPI.HubClientInfo.cs. A no-op unless one of our own
+            // parties is a hub.
+            RegisterHubClientInfoURLs();
 
         }
 
@@ -4501,7 +4521,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     #endregion
 
-                    // hubclientinfo
+                    #region We are a  HUB...
+
+                    // The sender half of the HubClientInfo module, and only
+                    // that: the receiver half is what a CPO or an EMSP offers
+                    // so that a hub can push to it, and this platform is the
+                    // hub. See CommonAPI.HubClientInfo.cs.
+                    if (request.CommonAPI.Parties.Any(partyData => partyData.Role == Role.HUB))
+                    {
+
+                        endpoints.Add(
+                            new VersionEndpoint(
+                                Module_Id.HubClientInfo,
+                                InterfaceRoles.SENDER,
+                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
+                                    (request.Host + (prefix + "hubclientinfo")).Replace("//", "/"))
+                            )
+                        );
+
+                    }
+
+                    #endregion
 
 
                     return Task.FromResult(
@@ -4659,7 +4699,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    Data                 = new Credentials(
                                                               request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                               BaseAPI.OurVersionsURL,
-                                                              parties.Values.Select(partyData => partyData.ToCredentialsRole())
+                                                              CredentialsRoles(),
+                                                              HubPartyId
                                                           ).ToJSON(),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -5188,7 +5229,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
                                                       BaseAPI.OurVersionsURL,
-                                                      parties.Values.Select(partyData => partyData.ToCredentialsRole())
+                                                      CredentialsRoles(),
+                                                      HubPartyId
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,

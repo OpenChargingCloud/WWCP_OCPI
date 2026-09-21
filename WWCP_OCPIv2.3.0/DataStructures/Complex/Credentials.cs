@@ -56,8 +56,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <summary>
         /// The enumeration of roles a party provides.
         /// </summary>
+        /// <remarks>
+        /// New in OCPI 2.3.0: a roaming hub is expected to list the parties
+        /// that are reachable through it here, and not only itself. In 2.2
+        /// and 2.2.1 it listed its own roles and nothing else.
+        /// </remarks>
         [Mandatory]
-        public IEnumerable<CredentialsRole>  Roles     { get; }
+        public IEnumerable<CredentialsRole>  Roles         { get; }
+
+        /// <summary>
+        /// The roaming hub this platform is behind, as the two-letter country
+        /// code and the three-character party identification concatenated.
+        /// </summary>
+        /// <remarks>
+        /// New in OCPI 2.3.0, and optional: a platform that supports hub
+        /// functionality with the message routing headers SHALL name its hub
+        /// here. A platform that talks to its counterparts directly has none
+        /// and leaves it out.
+        /// </remarks>
+        [Optional]
+        public Party_Idv3?                   HubPartyId    { get; }
 
         #endregion
 
@@ -69,24 +87,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="Token">The credentials token for the other party to authenticate in your system.</param>
         /// <param name="URL">The URL to your API versions endpoint.</param>
         /// <param name="Roles">The enumeration of roles a party provides.</param>
+        /// <param name="HubPartyId">The roaming hub this platform is behind, when it is behind one.</param>
         public Credentials(AccessToken                   Token,
                            URL                           URL,
-                           IEnumerable<CredentialsRole>  Roles)
+                           IEnumerable<CredentialsRole>  Roles,
+                           Party_Idv3?                   HubPartyId   = null)
         {
 
             if (!Roles.SafeAny())
                 throw new ArgumentNullException(nameof(Roles),  "The given enumeration of roles must not be null or empty!");
 
-            this.Token  = Token;
-            this.URL    = URL;
-            this.Roles  = Roles?.Distinct() ?? [];
+            this.Token       = Token;
+            this.URL         = URL;
+            this.Roles       = Roles?.Distinct() ?? [];
+            this.HubPartyId  = HubPartyId;
 
             unchecked
             {
 
-                hashCode = this.Token.GetHashCode() * 5 ^
-                           this.URL.  GetHashCode() * 3 ^
-                           this.Roles.CalcHashCode();
+                hashCode = this.Token.      GetHashCode()       * 7 ^
+                           this.URL.        GetHashCode()       * 5 ^
+                           this.Roles.      CalcHashCode()      * 3 ^
+                          (this.HubPartyId?.GetHashCode() ?? 0);
 
             }
 
@@ -204,11 +226,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse HubPartyId  [optional]
+
+                if (JSON.ParseOptional("hub_party_id",
+                                       "hub party identification",
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? HubPartyId,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 Credentials = new Credentials(
                                   Token,
                                   URL,
-                                  Roles
+                                  Roles,
+                                  HubPartyId
                               );
 
 
@@ -245,11 +282,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             var json = JSONObject.Create(
 
-                           new JProperty("token",  Token.ToString()),
-                           new JProperty("url",    URL.  ToString()),
+                                 new JProperty("token",         Token.ToString()),
+                                 new JProperty("url",           URL.  ToString()),
 
-                           new JProperty("roles",  new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                               CustomBusinessDetailsSerializer))))
+                           HubPartyId.HasValue
+                               ? new JProperty("hub_party_id",  HubPartyId.Value.ToString())
+                               : null,
+
+                                 new JProperty("roles",         new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
+                                                                                                            CustomBusinessDetailsSerializer))))
 
                        );
 
@@ -271,7 +312,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             => new (
                    Token.Clone(),
                    URL.  Clone(),
-                   Roles.Select(role => role.Clone()).ToArray()
+                   Roles.Select(role => role.Clone()).ToArray(),
+                   HubPartyId?.Clone()
                );
 
         #endregion
@@ -456,6 +498,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                Token.Equals(Credentials.Token) &&
                URL.  Equals(Credentials.URL)   &&
 
+            ((!HubPartyId.HasValue && !Credentials.HubPartyId.HasValue) ||
+              (HubPartyId.HasValue &&  Credentials.HubPartyId.HasValue && HubPartyId.Value.Equals(Credentials.HubPartyId.Value))) &&
+
                Roles.Count().Equals(Credentials.Roles.Count()) &&
                Roles.All(role => Credentials.Roles.Contains(role));
 
@@ -487,6 +532,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Token.ToString().SubstringMax(5),
                    " : ",
                    URL,
+                   HubPartyId.HasValue
+                       ? " via " + HubPartyId.ToString()
+                       : "",
                    " => ",
                    Roles.AggregateWith(", ")
 
