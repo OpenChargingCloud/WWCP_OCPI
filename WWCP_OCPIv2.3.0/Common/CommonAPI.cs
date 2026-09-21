@@ -4203,13 +4203,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             // to look rather than handed a copy - see AddRemotePartyProvider.
             this.BaseAPI.AddRemotePartyProvider(() => remoteParties.Values);
 
+            // Our own parties first, and before the assets database is read
+            // back: every asset in it - a token, a location, a tariff - is
+            // filed under the party it belongs to, and the replay looks that
+            // party up and quietly drops what belongs to a party it does not
+            // know. Registered afterwards, our parties would come back empty at
+            // every start, and everything ever written to the file would be
+            // lost the moment the process ended.
+            foreach (var partyData in OurPartyData)
+                parties.TryAdd(partyData.Id, partyData);
+
             ReadRemotePartyDatabaseFile().GetAwaiter().GetResult();
             ReadAssetsDatabaseFile().     GetAwaiter().GetResult();
 
             RegisterURLTemplates();
-
-            foreach (var partyData in OurPartyData)
-                parties.TryAdd(partyData.Id, partyData);
 
         }
 
