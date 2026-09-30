@@ -85,6 +85,13 @@ namespace cloud.charging.open.protocols.OCPI
 
         private readonly           LogFileWriter  logFileWriter                   = new (10000);
 
+        /// <summary>
+        /// One lock per database file that lines are appended to directly - see
+        /// AppendToDatabase. For every API of this process: two of them on one
+        /// directory must not write to one file at the same moment either.
+        /// </summary>
+        private static readonly    ConcurrentDictionary<String, SemaphoreSlim>  databaseFileLocks  = new();
+
         #region Commands
 
         public const String addRemoteParty                     = "addRemoteParty";
@@ -3596,24 +3603,9 @@ namespace cloud.charging.open.protocols.OCPI
                                          CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
-
                    FileName,
-
-                   JSONObject.Create(
-
-                             // Command is always the first property!
-                             new JProperty(Command,            JToken),
-                             new JProperty("timestamp",        Timestamp.Now.      ToISO8601()),
-                             new JProperty("eventTrackingId",  EventTrackingId.    ToString()),
-
-                       CurrentUserId is not null
-                           ? new JProperty("userId",           CurrentUserId.Value.ToString())
-                           : null).
-
-                   ToString(Newtonsoft.Json.Formatting.None),
-
+                   DatabaseLine(Command, JToken, EventTrackingId, CurrentUserId),
                    CancellationToken
-
                );
 
         #endregion
@@ -3628,9 +3620,143 @@ namespace cloud.charging.open.protocols.OCPI
 
             => WriteToDatabase(
                    FileName,
-                   $"{CommentPrefix1}{Timestamp.Now.ToISO8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
+                   DatabaseComment(Text, EventTrackingId, CurrentUserId),
                    CancellationToken
                );
+
+        #endregion
+
+
+        #region AppendToDatabase                                 (FileName, Text,   ...)
+
+        /// <summary>
+        /// Append a line to a database file, and return when the file has it.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Not through the queue WriteToDatabase hands its lines to: that queue
+        /// tells nobody but the debug log that a file refused a line, long after
+        /// the caller was told the change was made, and a line waits there
+        /// behind everything handed to it before. A change that must not be
+        /// believed unless it was written down is written here, and a file that
+        /// refuses it says so to the caller - as the exception it threw.
+        /// </para>
+        /// <para>
+        /// One line at a time per file, so that no two lines are written into
+        /// one another and the file has them in the order they were handed over.
+        /// </para>
+        /// </remarks>
+        /// <param name="FileName">The database file.</param>
+        /// <param name="Text">The line.</param>
+        /// <param name="CancellationToken">An optional cancellation token.</param>
+        public async Task AppendToDatabase(String             FileName,
+                                           String             Text,
+                                           CancellationToken  CancellationToken   = default)
+        {
+
+            var fileLock = databaseFileLocks.GetOrAdd(
+                               Path.GetFullPath(FileName),
+                               _ => new SemaphoreSlim(1, 1)
+                           );
+
+            await fileLock.WaitAsync(CancellationToken);
+
+            try
+            {
+
+                await File.AppendAllTextAsync(
+                          FileName,
+                          Text + Environment.NewLine,
+                          Encoding.UTF8,
+                          CancellationToken
+                      );
+
+            }
+            finally
+            {
+                fileLock.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region AppendToDatabase                                 (FileName, JToken, ...)
+
+        /// <summary>
+        /// Append a command to a database file, and return when the file has it
+        /// - see AppendToDatabase(FileName, Text, ...).
+        /// </summary>
+        public Task AppendToDatabase(String             FileName,
+                                     String             Command,
+                                     JToken?            JToken,
+                                     EventTracking_Id   EventTrackingId,
+                                     User_Id?           CurrentUserId       = null,
+                                     CancellationToken  CancellationToken   = default)
+
+            => AppendToDatabase(
+                   FileName,
+                   DatabaseLine(Command, JToken, EventTrackingId, CurrentUserId),
+                   CancellationToken
+               );
+
+        #endregion
+
+        #region AppendCommentToDatabase                          (FileName, Text,   ...)
+
+        /// <summary>
+        /// Append a comment to a database file, and return when the file has it
+        /// - see AppendToDatabase(FileName, Text, ...).
+        /// </summary>
+        public Task AppendCommentToDatabase(String             FileName,
+                                            String             Text,
+                                            EventTracking_Id   EventTrackingId,
+                                            User_Id?           CurrentUserId       = null,
+                                            CancellationToken  CancellationToken   = default)
+
+            => AppendToDatabase(
+                   FileName,
+                   DatabaseComment(Text, EventTrackingId, CurrentUserId),
+                   CancellationToken
+               );
+
+        #endregion
+
+        #region (private static) DatabaseLine   (Command, JToken, EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// A command as a line of a database file.
+        /// </summary>
+        private static String DatabaseLine(String            Command,
+                                           JToken?           JToken,
+                                           EventTracking_Id  EventTrackingId,
+                                           User_Id?          CurrentUserId)
+
+            => JSONObject.Create(
+
+                         // Command is always the first property!
+                         new JProperty(Command,            JToken),
+                         new JProperty("timestamp",        Timestamp.Now.      ToISO8601()),
+                         new JProperty("eventTrackingId",  EventTrackingId.    ToString()),
+
+                   CurrentUserId is not null
+                       ? new JProperty("userId",           CurrentUserId.Value.ToString())
+                       : null).
+
+               ToString(Newtonsoft.Json.Formatting.None);
+
+        #endregion
+
+        #region (private static) DatabaseComment(Text,    EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// A comment as a line of a database file.
+        /// </summary>
+        private static String DatabaseComment(String            Text,
+                                              EventTracking_Id  EventTrackingId,
+                                              User_Id?          CurrentUserId)
+
+            => $"{CommentPrefix1}{Timestamp.Now.ToISO8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}";
 
         #endregion
 
