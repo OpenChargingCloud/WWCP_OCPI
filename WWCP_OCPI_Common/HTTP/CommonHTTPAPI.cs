@@ -48,7 +48,8 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The OCPI Common HTTP API.
     /// </summary>
-    public class CommonHTTPAPI : AHTTPExtAPIExtension1<HTTPExtAPI>
+    public class CommonHTTPAPI : AHTTPExtAPIExtension1<HTTPExtAPI>,
+                                 IAsyncDisposable
     {
 
         #region Data
@@ -83,6 +84,10 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public const               String         DefaultAssetsDBFileName         = "Assets.db";
 
+        /// <summary>
+        /// The queue WriteToDatabase hands its lines to - written out by
+        /// DisposeAsync.
+        /// </summary>
         private readonly           LogFileWriter  logFileWriter                   = new (10000);
 
         /// <summary>
@@ -3579,6 +3584,26 @@ namespace cloud.charging.open.protocols.OCPI
         const String CommentPrefix1  = "//";
         const String CommentPrefix2  = "#";
 
+        #region OnDatabaseLineNotWritten
+
+        /// <summary>
+        /// A line handed to WriteToDatabase is not in its file: the file
+        /// refused it, or DisposeAsync ran out of time before its turn came.
+        /// What the line said, the next start will not know.
+        /// </summary>
+        /// <remarks>
+        /// WriteToDatabase returned long before, so nobody else hears of it:
+        /// whoever made this API says it where somebody reads it. Raised on
+        /// the queue's own loop, which waits for every subscriber.
+        /// </remarks>
+        public event OnLineNotWrittenDelegate? OnDatabaseLineNotWritten
+        {
+            add    => logFileWriter.OnLineNotWritten += value;
+            remove => logFileWriter.OnLineNotWritten -= value;
+        }
+
+        #endregion
+
         #region WriteToDatabase                                  (FileName, Text,   ...)
 
         public ValueTask WriteToDatabase(String             FileName,
@@ -3635,9 +3660,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <remarks>
         /// <para>
         /// Not through the queue WriteToDatabase hands its lines to: that queue
-        /// tells nobody but the debug log that a file refused a line, long after
-        /// the caller was told the change was made, and a line waits there
-        /// behind everything handed to it before. A change that must not be
+        /// can only tell OnDatabaseLineNotWritten that a file refused a line,
+        /// long after the caller was told the change was made, and a line waits
+        /// there behind everything handed to it before. A change that must not be
         /// believed unless it was written down is written here, and a file that
         /// refuses it says so to the caller - as the exception it threw.
         /// </para>
@@ -4127,6 +4152,36 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
         #endregion
+
+        #endregion
+
+
+        #region DisposeAsync()
+
+        /// <summary>
+        /// Write out what WriteToDatabase still holds, and take no more lines:
+        /// once this returns, every line handed to it is in its file or has
+        /// been told to <see cref="OnDatabaseLineNotWritten"/>.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// For whoever made this API, once nothing changes any more - after its
+        /// HTTP server has stopped. A line handed over afterwards is refused
+        /// with a ChannelClosedException. Twice does no harm.
+        /// </para>
+        /// <para>
+        /// The locks AppendToDatabase takes are left alone: they belong to the
+        /// process, and another API on the same directory may still need them.
+        /// </para>
+        /// </remarks>
+        public async ValueTask DisposeAsync()
+        {
+
+            await logFileWriter.DisposeAsync();
+
+            GC.SuppressFinalize(this);
+
+        }
 
         #endregion
 
