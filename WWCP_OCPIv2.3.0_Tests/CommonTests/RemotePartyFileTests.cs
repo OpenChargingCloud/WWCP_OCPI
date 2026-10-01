@@ -43,6 +43,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
     /// token opening the API again.
     /// </para>
     /// <para>
+    /// Where a change is kept all the same - a registration the other side
+    /// has answered already - it is in effect, and written down later: with
+    /// the next line the file takes, when the base API is disposed, or when
+    /// asked to.
+    /// </para>
+    /// <para>
     /// The file is made unwritable the way that stops root as well: a
     /// directory where it would be. The next start is a Common API made anew
     /// on the same directory, which reads the file back as a node's start
@@ -673,6 +679,216 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         #endregion
 
 
+        #region ARefusedLineIsTold()
+
+        /// <summary>
+        /// Every line the file refuses is told to OnRemotePartyNotSaved: its
+        /// command, the file and why - for whoever made the API to log.
+        /// </summary>
+        [Test]
+        public async Task ARefusedLineIsTold()
+        {
+
+            var told = new List<(String Command, String FileName, Exception Exception)>();
+
+            api.OnRemotePartyNotSaved += (timestamp, command, fileName, exception) => {
+                told.Add((command, fileName, exception));
+                return Task.CompletedTask;
+            };
+
+            BlockTheFile();
+
+            var added = await AddAParty(partyId, AccessToken.NewRandom());
+
+            Assert.Multiple(() => {
+                Assert.That(added.NotSaved,                    Is.True,                                "The file refused the remote party, and the result does not say so.");
+                Assert.That(told,                              Has.Count.EqualTo(1),                   "The line the file refused is not told once.");
+                Assert.That(told.FirstOrDefault().Command,     Is.EqualTo(CommonHTTPAPI.addRemoteParty), "The command told is not the one refused.");
+                Assert.That(told.FirstOrDefault().FileName,    Is.EqualTo(api.RemotePartyDBFileName),  "The file told is not the one that refused.");
+                Assert.That(told.FirstOrDefault().Exception,   Is.Not.Null,                            "Why the file refused is not told.");
+            });
+
+        }
+
+        #endregion
+
+        #region AChangeKeptWhereItsFileRefusedItIsInEffect()
+
+        /// <summary>
+        /// A change kept where its file refused it - a registration the other
+        /// side has answered - is in effect, and said to be the file's.
+        /// </summary>
+        [Test]
+        public async Task AChangeKeptWhereItsFileRefusedItIsInEffect()
+        {
+
+            var token = AccessToken.NewRandom();
+
+            BlockTheFile();
+
+            var kept = await Keep(token);
+
+            Assert.Multiple(() => {
+                Assert.That(kept.IsSuccess,            Is.True,                      $"The change to keep was not made: {kept.ErrorResponse}");
+                Assert.That(kept.NotSaved,             Is.True,                      "The file refused the change, and the result does not say so.");
+                Assert.That(kept.ErrorResponse,        Does.Contain(FileName),       "The result does not name the file that refused the change.");
+                Assert.That(LocalTokensOf(api),        Is.EqualTo(new[] { token }),  "The change kept is not in effect.");
+                Assert.That(api.UnsavedRemoteParties,  Is.EqualTo(new[] { id }),     "The remote party kept is not said to be unsaved.");
+            });
+
+        }
+
+        #endregion
+
+        #region AKeptChangeIsWrittenDownWithTheNextLineTheFileTakes()
+
+        /// <summary>
+        /// Once the file takes a line again - of any remote party - the change
+        /// kept goes in after it.
+        /// </summary>
+        [Test]
+        public async Task AKeptChangeIsWrittenDownWithTheNextLineTheFileTakes()
+        {
+
+            var token = AccessToken.NewRandom();
+
+            BlockTheFile();
+            await Keep(token);
+            UnblockTheFile();
+
+            var other = await AddAParty(Party_Id.Parse("CCC"), AccessToken.NewRandom());
+
+            Assert.Multiple(() => {
+                Assert.That(other.IsSuccess,           Is.True,   $"The next change could not be made: {other.ErrorResponse}");
+                Assert.That(api.UnsavedRemoteParties,  Is.Empty,  "The remote party kept is still said to be unsaved.");
+            });
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { token }), "The next start does not know the change kept, though the file took a line after it.");
+
+        }
+
+        #endregion
+
+        #region AKeptChangeIsWrittenDownWhenTheBaseAPIIsDisposed()
+
+        /// <summary>
+        /// A change kept is written down when the base API is disposed, where
+        /// the file takes it by then.
+        /// </summary>
+        [Test]
+        public async Task AKeptChangeIsWrittenDownWhenTheBaseAPIIsDisposed()
+        {
+
+            var token = AccessToken.NewRandom();
+
+            BlockTheFile();
+            await Keep(token);
+            UnblockTheFile();
+
+            await api.BaseAPI.DisposeAsync();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { token }), "The next start does not know the change kept, though the file took lines when the API was disposed.");
+
+        }
+
+        #endregion
+
+        #region AKeptChangeIsWrittenDownWhenAsked()
+
+        /// <summary>
+        /// Asked to write down what was kept: refused and still unsaved while
+        /// the file refuses, written down once it takes it.
+        /// </summary>
+        [Test]
+        public async Task AKeptChangeIsWrittenDownWhenAsked()
+        {
+
+            var token = AccessToken.NewRandom();
+
+            BlockTheFile();
+            await Keep(token);
+
+            var refused = await api.WriteDownUnsavedRemoteParties();
+
+            Assert.Multiple(() => {
+                Assert.That(refused,                   Does.Contain(FileName),    "Writing down what was kept does not say which file still refuses it.");
+                Assert.That(api.UnsavedRemoteParties,  Is.EqualTo(new[] { id }),  "The remote party kept is no longer said to be unsaved, and its file still refuses it.");
+            });
+
+            UnblockTheFile();
+
+            var written = await api.WriteDownUnsavedRemoteParties();
+
+            Assert.Multiple(() => {
+                Assert.That(written,                   Is.Null,   $"Writing down what was kept failed, though its file takes it again: {written}");
+                Assert.That(api.UnsavedRemoteParties,  Is.Empty,  "The remote party kept is still said to be unsaved.");
+            });
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { token }), "The next start does not know the change kept and written down.");
+
+        }
+
+        #endregion
+
+        #region AKeptRemotePartyChangedSinceIsWrittenDownAsItIsNow()
+
+        /// <summary>
+        /// A remote party kept and changed since is written down as it is now:
+        /// the change after it is what the next start is to know.
+        /// </summary>
+        [Test]
+        public async Task AKeptRemotePartyChangedSinceIsWrittenDownAsItIsNow()
+        {
+
+            var kept     = AccessToken.NewRandom();
+            var changed  = AccessToken.NewRandom();
+
+            BlockTheFile();
+            await Keep(kept);
+            UnblockTheFile();
+
+            var replaced = await Replace(changed);
+
+            Assert.That(replaced.IsSuccess, Is.True, $"The remote party kept could not be changed: {replaced.ErrorResponse}");
+
+            await api.BaseAPI.DisposeAsync();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { changed }), "The next start knows the remote party as it was kept, not as it was changed since.");
+
+        }
+
+        #endregion
+
+        #region AKeptRemotePartyRemovedSinceStaysRemoved()
+
+        /// <summary>
+        /// A remote party kept and removed since is not written down again: it
+        /// stays removed, at the next start as well.
+        /// </summary>
+        [Test]
+        public async Task AKeptRemotePartyRemovedSinceStaysRemoved()
+        {
+
+            BlockTheFile();
+            await Keep(AccessToken.NewRandom());
+            UnblockTheFile();
+
+            var removed = await api.TryRemoveRemoteParty(id);
+
+            Assert.Multiple(() => {
+                Assert.That(removed.IsSuccess,         Is.True,   $"The remote party kept could not be removed: {removed.ErrorResponse}");
+                Assert.That(api.UnsavedRemoteParties,  Is.Empty,  "The remote party removed is still said to be unsaved.");
+            });
+
+            await api.BaseAPI.DisposeAsync();
+
+            Assert.That(ACommonAPI().RemoteParties.Select(party => party.Id), Does.Not.Contain(id), "The remote party removed after it was kept is back at the next start.");
+
+        }
+
+        #endregion
+
+
         #region (private) FileName
 
         /// <summary>
@@ -694,6 +910,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
             => api.AddRemoteParty(RemoteParty_Id.Parse($"DE-{PartyId}_CPO"), Roles,
                                   [ .. LocalTokens.Select(token => new LocalAccessInfo(token)) ],
                                   []);
+
+        #endregion
+
+        #region (private) Keep(LocalToken) / Replace(LocalToken)
+
+        /// <summary>
+        /// The remote party of this test's identification, with the given local
+        /// token and remote access, as a registration the other side has
+        /// answered leaves it: kept where its file refuses it.
+        /// </summary>
+        private Task<AddOrUpdateResult<RemoteParty>> Keep(AccessToken LocalToken)
+
+            => api.AddOrUpdateRemoteParty(id, Roles, LocalToken, theirURL, theirToken, KeepWhereNotSaved: true);
+
+        /// <summary>
+        /// The same, taken back where its file refuses it.
+        /// </summary>
+        private Task<AddOrUpdateResult<RemoteParty>> Replace(AccessToken LocalToken)
+
+            => api.AddOrUpdateRemoteParty(id, Roles, LocalToken, theirURL, theirToken);
 
         #endregion
 

@@ -4231,6 +4231,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             ReadRemotePartyDatabaseFile().GetAwaiter().GetResult();
             ReadAssetsDatabaseFile().     GetAwaiter().GetResult();
 
+            // What the file of the remote parties refused, and was kept all the
+            // same, is written down when the base API is disposed at the latest.
+            this.BaseAPI.BeforeDisposing(() => WriteDownUnsavedRemoteParties());
+
             RegisterURLTemplates();
 
             // The sender interface of the HubClientInfo module - see
@@ -5327,17 +5331,122 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
+        #region OnRemotePartyNotSaved
+
+        /// <summary>
+        /// A line the file of the remote parties refused: its command, the file
+        /// and why.
+        /// </summary>
+        public delegate Task OnRemotePartyNotSavedDelegate(DateTimeOffset  Timestamp,
+                                                           String          Command,
+                                                           String          FileName,
+                                                           Exception       Exception);
+
+        /// <summary>
+        /// The file of the remote parties refused a line.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The change is taken back, and whoever asked for it is told so as
+        /// NotSaved - or, where it was kept, it is written down later, see
+        /// UnsavedRemoteParties. A peer whose registration with this API the
+        /// file refused is told no more than that it was not done, and nothing
+        /// of the files here. This says it all, to whoever made this API, to
+        /// say it where somebody reads it.
+        /// </para>
+        /// <para>
+        /// Told while the change is under way and the remote parties are
+        /// locked: a handler that changes them waits for itself.
+        /// </para>
+        /// </remarks>
+        public event OnRemotePartyNotSavedDelegate? OnRemotePartyNotSaved;
+
+        #endregion
+
+        #region (private) LockRemoteParties         ()
+
+        /// <summary>
+        /// Hold every other change of the remote parties off until the one at
+        /// hand and its line are done.
+        /// </summary>
+        /// <remarks>
+        /// A remote party kept where its file refused the change is written
+        /// down with the next line the file takes, as it is in memory then. Two
+        /// changes at once could put that line behind a newer one of the same
+        /// party, and the next start would read the older. Not reentrant: what
+        /// holds it calls nothing that takes it again.
+        /// </remarks>
+        private async Task<IDisposable> LockRemoteParties()
+        {
+
+            await remotePartiesLock.WaitAsync();
+
+            return new RemotePartiesLock(remotePartiesLock);
+
+        }
+
+        private sealed class RemotePartiesLock(SemaphoreSlim Semaphore) : IDisposable
+        {
+
+            private Int32 released;
+
+            public void Dispose()
+            {
+                if (Interlocked.Exchange(ref released, 1) == 0)
+                    Semaphore.Release();
+            }
+
+        }
+
+        #endregion
+
         #region (private) SaveRemoteParty           (Command, JToken, EventTrackingId, CurrentUserId)
 
         /// <summary>
         /// Write a change of the remote parties down, and say why where their
-        /// file did not take it.
+        /// file did not take it. Where it did, the remote parties it refused
+        /// before and that were kept go in after it.
         /// </summary>
+        /// <remarks>
+        /// With the remote parties locked - see LockRemoteParties.
+        /// </remarks>
         /// <returns>Null where the file took it; otherwise why it did not.</returns>
         private async Task<String?> SaveRemoteParty(String            Command,
                                                     JToken?           JToken,
                                                     EventTracking_Id  EventTrackingId,
                                                     User_Id?          CurrentUserId)
+        {
+
+            var notSaved = await WriteRemotePartyLine(
+                                     Command,
+                                     JToken,
+                                     EventTrackingId,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is null && !unsavedRemoteParties.IsEmpty)
+                await WriteDownKeptRemoteParties(
+                          EventTrackingId,
+                          CurrentUserId
+                      );
+
+            return notSaved;
+
+        }
+
+        #endregion
+
+        #region (private) WriteRemotePartyLine      (Command, JToken, EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// One line into the file of the remote parties, first-hand. Where the
+        /// file refuses it, OnRemotePartyNotSaved is told, and why is answered.
+        /// </summary>
+        /// <returns>Null where the file took it; otherwise why it did not.</returns>
+        private async Task<String?> WriteRemotePartyLine(String            Command,
+                                                         JToken?           JToken,
+                                                         EventTracking_Id  EventTrackingId,
+                                                         User_Id?          CurrentUserId)
         {
 
             try
@@ -5356,8 +5465,97 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
             catch (Exception e)
             {
+
+                await LogEvent(
+                          OnRemotePartyNotSaved,
+                          loggingDelegate => loggingDelegate.Invoke(
+                              Timestamp.Now,
+                              Command,
+                              RemotePartyDBFileName,
+                              e
+                          )
+                      );
+
                 return $"'{Path.GetFileName(RemotePartyDBFileName)}' could not be written: {e.Message}";
+
             }
+
+        }
+
+        #endregion
+
+        #region (private) WriteDownKeptRemoteParties(EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// Write down every remote party that was kept where its file refused
+        /// the change, as it is in memory now, and forget it as kept once the
+        /// file took it.
+        /// </summary>
+        /// <remarks>
+        /// With the remote parties locked. As it is now, because that is what
+        /// the next start is to read - whatever changed since: a change the
+        /// file took is written twice, which does no harm. One removed since is
+        /// not written: its removal is in the file, or it would be back.
+        /// </remarks>
+        /// <returns>Null where the file took every one of them; otherwise why it did not.</returns>
+        private async Task<String?> WriteDownKeptRemoteParties(EventTracking_Id  EventTrackingId,
+                                                               User_Id?          CurrentUserId)
+        {
+
+            foreach (var remotePartyId in unsavedRemoteParties.Keys.ToArray())
+            {
+
+                if (!remoteParties.TryGetValue(remotePartyId, out var remoteParty))
+                {
+                    unsavedRemoteParties.TryRemove(remotePartyId, out _);
+                    continue;
+                }
+
+                var notSaved = await WriteRemotePartyLine(
+                                         CommonHTTPAPI.addOrUpdateRemoteParty,
+                                         remoteParty.ToJSON(true),
+                                         EventTrackingId,
+                                         CurrentUserId
+                                     );
+
+                if (notSaved is not null)
+                    return notSaved;
+
+                unsavedRemoteParties.TryRemove(remotePartyId, out _);
+
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region WriteDownUnsavedRemoteParties       (EventTrackingId = null, CurrentUserId = null)
+
+        /// <summary>
+        /// Write down every remote party whose last change its file refused and
+        /// that was kept in memory all the same, as it is now - see
+        /// UnsavedRemoteParties.
+        /// </summary>
+        /// <remarks>
+        /// The next line the file takes does so as well, and DisposeAsync of the
+        /// base API at the latest: this is for whoever repaired the file and
+        /// does not want to wait for either.
+        /// </remarks>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <returns>Null where the file took them, or there were none; otherwise why it did not.</returns>
+        public async Task<String?> WriteDownUnsavedRemoteParties(EventTracking_Id?  EventTrackingId   = null,
+                                                                 User_Id?           CurrentUserId     = null)
+        {
+
+            using var locked = await LockRemoteParties();
+
+            return await WriteDownKeptRemoteParties(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             CurrentUserId
+                         );
 
         }
 
@@ -5379,6 +5577,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                    EventTracking_Id  EventTrackingId,
                                                    User_Id?          CurrentUserId)
         {
+
+            using var locked = await LockRemoteParties();
 
             var notSaved = await SaveRemoteParty(
                                      Command,
@@ -6991,6 +7191,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                     User_Id?           CurrentUserId     = null)
         {
 
+            using var locked = await LockRemoteParties();
+
             var changed = new List<RemoteParty>();
 
             foreach (var remoteParty in remoteParties.Values.Where(party => party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)))
@@ -7168,10 +7370,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new();
 
         /// <summary>
+        /// One change of the remote parties at a time, its line in their file
+        /// with it - see LockRemoteParties.
+        /// </summary>
+        private readonly SemaphoreSlim remotePartiesLock = new (1, 1);
+
+        /// <summary>
+        /// The remote parties kept in memory where their file refused the
+        /// change - see KeepWhereNotSaved - for the next line the file takes to
+        /// write down, or DisposeAsync of the base API.
+        /// </summary>
+        private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> unsavedRemoteParties = new();
+
+        /// <summary>
         /// Return an enumeration of all remote parties.
         /// </summary>
         public IEnumerable<RemoteParty> RemoteParties
             => remoteParties.Values;
+
+        /// <summary>
+        /// The remote parties whose last change is in memory and not in their
+        /// file: in effect now, and gone at the next start unless the file
+        /// takes them before - see WriteDownUnsavedRemoteParties.
+        /// </summary>
+        public IEnumerable<RemoteParty_Id> UnsavedRemoteParties
+            => unsavedRemoteParties.Keys;
 
         #endregion
 
@@ -7601,6 +7824,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                   EventTracking_Id?  EventTrackingId,
                                                                   User_Id?           CurrentUserId)
         {
+
+            using var locked = await LockRemoteParties();
 
             if (!remoteParties.TryAdd(NewRemoteParty.Id,
                                       NewRemoteParty))
@@ -8132,6 +8357,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                              User_Id?           CurrentUserId)
         {
 
+            using var locked = await LockRemoteParties();
+
             if (!remoteParties.TryAdd(NewRemoteParty.Id,
                                       NewRemoteParty))
             {
@@ -8426,6 +8653,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #region AddOrUpdateRemoteParty    (Id, CredentialsRoles, LocalAccessToken, RemoteVersionsURL, RemoteAccessToken, ...)
 
+        /// <summary>
+        /// Add a remote party, or replace the one of its identification: one
+        /// local and one remote access, as a registration leaves them.
+        /// </summary>
+        /// <param name="KeepWhereNotSaved">Keep the change in memory where its file refuses it, for a registration the other side has answered already - see the core of this method.</param>
         public async Task<AddOrUpdateResult<RemoteParty>>
 
             AddOrUpdateRemoteParty(RemoteParty_Id                                             Id,
@@ -8475,7 +8707,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    DateTimeOffset?                                            Created                           = null,
                                    DateTimeOffset?                                            LastUpdated                       = null,
                                    EventTracking_Id?                                          EventTrackingId                   = null,
-                                   User_Id?                                                   CurrentUserId                     = null)
+                                   User_Id?                                                   CurrentUserId                     = null,
+                                   Boolean                                                    KeepWhereNotSaved                 = false)
 
         {
 
@@ -8533,7 +8766,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             return await AddOrUpdateRemoteParty(
                              newRemoteParty,
                              EventTrackingId,
-                             CurrentUserId
+                             CurrentUserId,
+                             KeepWhereNotSaved
                          );
 
         }
@@ -8605,7 +8839,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// answered already. Both sides use the new tokens from then on, and
         /// the party as it was, the old tokens with it, reaches nobody. The
         /// change stays in memory, and the result says that its file did not
-        /// take it: in effect now, and gone at the next start.
+        /// take it: in effect now, and written down with the next line the
+        /// file takes, or when the base API is disposed - gone at the next
+        /// start only where the file takes neither.
         /// </para>
         /// </remarks>
         /// <param name="NewRemoteParty">The remote party.</param>
@@ -8617,6 +8853,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                    User_Id?           CurrentUserId,
                                                                                    Boolean            KeepWhereNotSaved   = false)
         {
+
+            using var locked = await LockRemoteParties();
 
             var          added     = false;
             RemoteParty? replaced  = null;
@@ -8670,6 +8908,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        );
 
             }
+
+            // Kept: written down with the next line the file takes, or when the
+            // base API is disposed - see WriteDownUnsavedRemoteParties.
+            if (notSaved is not null)
+                unsavedRemoteParties[NewRemoteParty.Id] = NewRemoteParty;
 
             return added
                        ? AddOrUpdateResult<RemoteParty>.Created(
@@ -9115,6 +9358,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                         User_Id?           CurrentUserId)
         {
 
+            using var locked = await LockRemoteParties();
+
             if (!remoteParties.TryUpdate(NewRemoteParty.Id,
                                          NewRemoteParty,
                                          ExistingRemoteParty))
@@ -9486,6 +9731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           User_Id?           CurrentUserId     = null)
         {
 
+            using var locked = await LockRemoteParties();
+
             if (!remoteParties.TryRemove(RemotePartyId, out var remoteParty))
                 return RemoveResult<RemoteParty>.Failed(
                            EventTracking_Id.New,
@@ -9566,6 +9813,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public async Task<RemoveResult<IEnumerable<RemoteParty>>> RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
                                                                                       User_Id?           CurrentUserId     = null)
         {
+
+            using var locked = await LockRemoteParties();
 
             var removed = new List<RemoteParty>();
 

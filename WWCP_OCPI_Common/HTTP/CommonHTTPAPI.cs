@@ -2798,6 +2798,25 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region BeforeDisposing           (Action)
+
+        private readonly List<Func<Task>> beforeDisposing = [];
+
+        /// <summary>
+        /// Something DisposeAsync is to do first, while the files can still be
+        /// written: a version API attached to this one writes down there what
+        /// it kept in memory where its file refused it.
+        /// </summary>
+        public void BeforeDisposing(Func<Task> Action)
+        {
+            lock (beforeDisposing)
+            {
+                beforeDisposing.Add(Action);
+            }
+        }
+
+        #endregion
+
         #region AddRemotePartyProvider    (Provider)
 
         private readonly List<Func<IEnumerable<RemoteParty>>> remotePartyProviders = [];
@@ -4191,9 +4210,11 @@ namespace cloud.charging.open.protocols.OCPI
         #region DisposeAsync()
 
         /// <summary>
-        /// Write out what WriteToDatabase still holds, and take no more lines:
-        /// once this returns, every line handed to it is in its file or has
-        /// been told to <see cref="OnDatabaseLineNotWritten"/>.
+        /// Let the version APIs attached to this one write down what they kept
+        /// where their files refused it - see BeforeDisposing - then write out
+        /// what WriteToDatabase still holds, and take no more lines: once this
+        /// returns, every line handed to it is in its file or has been told to
+        /// <see cref="OnDatabaseLineNotWritten"/>.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -4208,6 +4229,27 @@ namespace cloud.charging.open.protocols.OCPI
         /// </remarks>
         public async ValueTask DisposeAsync()
         {
+
+            Func<Task>[] actions;
+
+            lock (beforeDisposing)
+            {
+                actions = [.. beforeDisposing];
+            }
+
+            // Each on its own: one that throws keeps neither the others nor the
+            // queue below from their turn.
+            foreach (var action in actions)
+            {
+                try
+                {
+                    await action();
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.{nameof(DisposeAsync)}");
+                }
+            }
 
             await logFileWriter.DisposeAsync();
 
