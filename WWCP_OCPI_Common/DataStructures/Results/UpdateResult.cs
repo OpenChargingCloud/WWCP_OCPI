@@ -45,6 +45,12 @@ namespace cloud.charging.open.protocols.OCPI
 
         public EventTracking_Id  EventTrackingId    { get; }
 
+        /// <summary>
+        /// True where nothing was wrong with the update, and the file it is
+        /// kept in could not be written: nothing was updated.
+        /// </summary>
+        public Boolean           NotSaved           { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -56,16 +62,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Data">The data of the operation.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        /// <param name="NotSaved">Whether it was the file that refused.</param>
         private UpdateResult(Boolean           IsSuccess,
                              T?                Data,
                              String?           ErrorResponse,
-                             EventTracking_Id  EventTrackingId)
+                             EventTracking_Id  EventTrackingId,
+                             Boolean           NotSaved   = false)
         {
 
             this.IsSuccess        = IsSuccess;
             this.Data             = Data;
             this.ErrorResponse    = ErrorResponse;
             this.EventTrackingId  = EventTrackingId;
+            this.NotSaved         = NotSaved;
 
             unchecked
             {
@@ -73,7 +82,8 @@ namespace cloud.charging.open.protocols.OCPI
                 hashCode = this.IsSuccess.      GetHashCode()       * 7 ^
                           (this.Data?.          GetHashCode() ?? 0) * 5 ^
                           (this.ErrorResponse?. GetHashCode() ?? 0) * 3 ^
-                           this.EventTrackingId.GetHashCode();
+                           this.EventTrackingId.GetHashCode()           ^
+                           this.NotSaved.       GetHashCode()       * 11;
 
             }
 
@@ -120,16 +130,19 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Failed      (EventTrackingId, Data, ErrorResponse)
+        #region (static) Failed      (EventTrackingId, Data, ErrorResponse, NotSaved = false)
 
+        /// <param name="NotSaved">Whether nothing was wrong with the update, and the file it is kept in could not be written.</param>
         public static UpdateResult<T> Failed(EventTracking_Id  EventTrackingId,
                                              T?                Data,
-                                             String            ErrorResponse)
+                                             String            ErrorResponse,
+                                             Boolean           NotSaved   = false)
 
             => new (false,
                     Data,
                     ErrorResponse,
-                    EventTrackingId);
+                    EventTrackingId,
+                    NotSaved);
 
         #endregion
 
@@ -203,6 +216,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => IsSuccess.      Equals(UpdateResult.IsSuccess)       &&
                EventTrackingId.Equals(UpdateResult.EventTrackingId) &&
+               NotSaved.       Equals(UpdateResult.NotSaved)        &&
 
              ((Data          is null                 && UpdateResult.Data          is null) ||
               (Data          is IEnumerable<T> dataT && UpdateResult.Data          is IEnumerable<T> updateDataT && dataT.SequenceEqual (updateDataT)) ||

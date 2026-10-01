@@ -50,6 +50,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         public EventTracking_Id  EventTrackingId    { get; }
 
+        /// <summary>
+        /// True where nothing was wrong with what was to be added or updated,
+        /// and the file it is kept in could not be written. Failed, nothing was
+        /// changed; succeeded all the same, the change was made where nothing
+        /// could take it back - it is in effect, and gone at the next start.
+        /// </summary>
+        public Boolean           NotSaved           { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -62,11 +70,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="WasCreated">Whether the object was created or updated.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        /// <param name="NotSaved">Whether it was the file that refused.</param>
         private AddOrUpdateResult(Boolean           IsSuccess,
                                   T?                Data,
                                   Boolean?          WasCreated,
                                   String?           ErrorResponse,
-                                  EventTracking_Id  EventTrackingId)
+                                  EventTracking_Id  EventTrackingId,
+                                  Boolean           NotSaved   = false)
         {
 
             this.IsSuccess        = IsSuccess;
@@ -74,6 +84,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.WasCreated       = WasCreated;
             this.ErrorResponse    = ErrorResponse;
             this.EventTrackingId  = EventTrackingId;
+            this.NotSaved         = NotSaved;
 
             unchecked
             {
@@ -82,7 +93,8 @@ namespace cloud.charging.open.protocols.OCPI
                           (this.Data?.          GetHashCode() ?? 0) *  7 ^
                           (this.WasCreated?.    GetHashCode() ?? 0) *  5 ^
                           (this.ErrorResponse?. GetHashCode() ?? 0) *  3 ^
-                           this.EventTrackingId.GetHashCode();
+                           this.EventTrackingId.GetHashCode()            ^
+                           this.NotSaved.       GetHashCode()       * 13;
 
             }
 
@@ -103,31 +115,37 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        #region (static) Created     (EventTrackingId, Data, ErrorResponse = null)
+        #region (static) Created     (EventTrackingId, Data, ErrorResponse = null, NotSaved = false)
 
+        /// <param name="NotSaved">Whether it was made, and the file it is kept in could not be written: in effect, and gone at the next start.</param>
         public static AddOrUpdateResult<T> Created(EventTracking_Id  EventTrackingId,
                                                    T                 Data,
-                                                   String?           ErrorResponse = null)
+                                                   String?           ErrorResponse   = null,
+                                                   Boolean           NotSaved        = false)
 
             => new (true,
                     Data,
                     true,
                     ErrorResponse,
-                    EventTrackingId);
+                    EventTrackingId,
+                    NotSaved);
 
         #endregion
 
-        #region (static) Updated     (EventTrackingId, Data, ErrorResponse = null)
+        #region (static) Updated     (EventTrackingId, Data, ErrorResponse = null, NotSaved = false)
 
+        /// <param name="NotSaved">Whether it was made, and the file it is kept in could not be written: in effect, and gone at the next start.</param>
         public static AddOrUpdateResult<T> Updated(EventTracking_Id  EventTrackingId,
                                                    T                 Data,
-                                                   String?           ErrorResponse = null)
+                                                   String?           ErrorResponse   = null,
+                                                   Boolean           NotSaved        = false)
 
             => new (true,
                     Data,
                     false,
                     ErrorResponse,
-                    EventTrackingId);
+                    EventTrackingId,
+                    NotSaved);
 
         #endregion
 
@@ -158,17 +176,20 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Failed      (EventTrackingId, Data, ErrorResponse)
+        #region (static) Failed      (EventTrackingId, Data, ErrorResponse, NotSaved = false)
 
+        /// <param name="NotSaved">Whether nothing was wrong with what was to be added or updated, and the file it is kept in could not be written.</param>
         public static AddOrUpdateResult<T> Failed(EventTracking_Id  EventTrackingId,
                                                   T?                Data,
-                                                  String            ErrorResponse)
+                                                  String            ErrorResponse,
+                                                  Boolean           NotSaved   = false)
 
             => new (false,
                     Data,
                     null,
                     ErrorResponse,
-                    EventTrackingId);
+                    EventTrackingId,
+                    NotSaved);
 
         #endregion
 
@@ -243,6 +264,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => IsSuccess.      Equals(AddOrUpdateResult.IsSuccess)       &&
                EventTrackingId.Equals(AddOrUpdateResult.EventTrackingId) &&
+               NotSaved.       Equals(AddOrUpdateResult.NotSaved)        &&
 
              ((Data          is null                 &&  AddOrUpdateResult.Data          is null)  ||
               (Data          is IEnumerable<T> dataT &&  AddOrUpdateResult.Data          is IEnumerable<T> addOrUpdateDataT && dataT.   SequenceEqual (addOrUpdateDataT)) ||

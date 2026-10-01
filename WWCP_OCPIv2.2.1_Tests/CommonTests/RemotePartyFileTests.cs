@@ -31,9 +31,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 {
 
     /// <summary>
-    /// A remote party added or removed while the file the remote parties are
-    /// kept in cannot be written: not added or removed, neither now nor at the
-    /// next start, and said to be the file's doing.
+    /// A remote party added, changed or removed while the file the remote
+    /// parties are kept in cannot be written: not added, changed or removed,
+    /// neither now nor at the next start, and said to be the file's doing.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -135,6 +135,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         public static IEnumerable<String> Removes
             => removes.Keys;
+
+        #endregion
+
+        #region AddsIfNotExists, AddsOrUpdates, Updates
+
+        /// <summary>
+        /// Each way to add a remote party where there is none of its
+        /// identification, by what it is handed.
+        /// </summary>
+        private static readonly Dictionary<String, Func<CommonAPI, AccessToken, Task<AddResult<RemoteParty>>>> addsIfNotExists = new() {
+
+            ["LocalAccessToken"]                                        = (api, theirToken) => api.AddRemotePartyIfNotExists(id, Roles, AccessToken.NewRandom()),
+            ["RemoteVersionsURL, RemoteAccessToken"]                    = (api, theirToken) => api.AddRemotePartyIfNotExists(id, Roles, theirURL, theirToken),
+            ["LocalAccessToken, RemoteVersionsURL, RemoteAccessToken"]  = (api, theirToken) => api.AddRemotePartyIfNotExists(id, Roles, AccessToken.NewRandom(), theirURL, theirToken),
+            ["LocalAccessInfos, RemoteAccessInfos"]                     = (api, theirToken) => api.AddRemotePartyIfNotExists(id, Roles, [ new LocalAccessInfo(AccessToken.NewRandom()) ],
+                                                                                                                                        [ new RemoteAccessInfo(VersionsURL: theirURL, AccessToken: theirToken) ])
+
+        };
+
+        public static IEnumerable<String> AddsIfNotExists
+            => addsIfNotExists.Keys;
+
+        /// <summary>
+        /// Each way to add a remote party or replace the one of its
+        /// identification, by what it is handed.
+        /// </summary>
+        private static readonly Dictionary<String, Func<CommonAPI, AccessToken, Task<AddOrUpdateResult<RemoteParty>>>> addsOrUpdates = new() {
+
+            ["LocalAccessToken"]                                        = (api, theirToken) => api.AddOrUpdateRemoteParty(id, Roles, AccessToken.NewRandom()),
+            ["RemoteVersionsURL, RemoteAccessToken"]                    = (api, theirToken) => api.AddOrUpdateRemoteParty(id, Roles, theirURL, theirToken),
+            ["LocalAccessToken, RemoteVersionsURL, RemoteAccessToken"]  = (api, theirToken) => api.AddOrUpdateRemoteParty(id, Roles, AccessToken.NewRandom(), theirURL, theirToken),
+            ["LocalAccessInfos, RemoteAccessInfos"]                     = (api, theirToken) => api.AddOrUpdateRemoteParty(id, Roles, [ new LocalAccessInfo(AccessToken.NewRandom()) ],
+                                                                                                                                     [ new RemoteAccessInfo(VersionsURL: theirURL, AccessToken: theirToken) ])
+
+        };
+
+        public static IEnumerable<String> AddsOrUpdates
+            => addsOrUpdates.Keys;
+
+        /// <summary>
+        /// Each way to replace a remote party that is there, by what it is
+        /// handed.
+        /// </summary>
+        private static readonly Dictionary<String, Func<CommonAPI, RemoteParty, AccessToken, Task<UpdateResult<RemoteParty>>>> updates = new() {
+
+            ["LocalAccessToken"]                                        = (api, party, theirToken) => api.UpdateRemoteParty(party, Roles, AccessToken.NewRandom()),
+            ["RemoteVersionsURL, RemoteAccessToken"]                    = (api, party, theirToken) => api.UpdateRemoteParty(party, Roles, theirURL, theirToken),
+            ["LocalAccessToken, RemoteVersionsURL, RemoteAccessToken"]  = (api, party, theirToken) => api.UpdateRemoteParty(party, Roles, AccessToken.NewRandom(), theirURL, theirToken),
+            ["LocalAccessInfos, RemoteAccessInfos"]                     = (api, party, theirToken) => api.UpdateRemoteParty(party, Roles, [ new LocalAccessInfo(AccessToken.NewRandom()) ],
+                                                                                                                                         [ new RemoteAccessInfo(VersionsURL: theirURL, AccessToken: theirToken) ])
+
+        };
+
+        public static IEnumerable<String> Updates
+            => updates.Keys;
 
         #endregion
 
@@ -397,6 +452,265 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                ];
 
         #endregion
+
+        #region AnAddIfNotExistsItsFileCannotTakeIsNotMade(Add)
+
+        [TestCaseSource(nameof(AddsIfNotExists))]
+        public async Task AnAddIfNotExistsItsFileCannotTakeIsNotMade(String Add)
+        {
+
+            BlockTheFile();
+
+            var added = await addsIfNotExists[Add](api, theirToken);
+
+            Assert.Multiple(() => {
+                Assert.That(added.IsSuccess,                              Is.False,             "The file refused the remote party, and it was added all the same.");
+                Assert.That(added.NotSaved,                               Is.True,              "The file refused the remote party, and the result does not say so.");
+                Assert.That(added.ErrorResponse,                          Does.Contain(FileName), "The result does not name the file that refused the remote party.");
+                Assert.That(api.RemoteParties.Select(party => party.Id),  Does.Not.Contain(id), "The remote party the file refused is kept all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(ACommonAPI().RemoteParties.Select(party => party.Id), Does.Not.Contain(id), "The next start knows the remote party its file refused.");
+
+        }
+
+        #endregion
+
+        #region AnAddOrUpdateItsFileCannotTakeIsNotMade(AddOrUpdate)
+
+        /// <summary>
+        /// Where there is no remote party of its identification yet: it is not
+        /// added.
+        /// </summary>
+        [TestCaseSource(nameof(AddsOrUpdates))]
+        public async Task AnAddOrUpdateItsFileCannotTakeIsNotMade(String AddOrUpdate)
+        {
+
+            BlockTheFile();
+
+            var added = await addsOrUpdates[AddOrUpdate](api, theirToken);
+
+            Assert.Multiple(() => {
+                Assert.That(added.IsSuccess,                              Is.False,             "The file refused the remote party, and it was added all the same.");
+                Assert.That(added.NotSaved,                               Is.True,              "The file refused the remote party, and the result does not say so.");
+                Assert.That(added.ErrorResponse,                          Does.Contain(FileName), "The result does not name the file that refused the remote party.");
+                Assert.That(api.RemoteParties.Select(party => party.Id),  Does.Not.Contain(id), "The remote party the file refused is kept all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(ACommonAPI().RemoteParties.Select(party => party.Id), Does.Not.Contain(id), "The next start knows the remote party its file refused.");
+
+        }
+
+        #endregion
+
+        #region AReplacementItsFileCannotTakeIsNotMade(AddOrUpdate)
+
+        /// <summary>
+        /// Where there is a remote party of its identification already: it
+        /// stays as it was, its token with it.
+        /// </summary>
+        [TestCaseSource(nameof(AddsOrUpdates))]
+        public async Task AReplacementItsFileCannotTakeIsNotMade(String AddOrUpdate)
+        {
+
+            var token     = AccessToken.NewRandom();
+            var existing  = await AddAParty(partyId, token);
+
+            Assert.That(existing.IsSuccess, Is.True, $"The remote party to replace could not be added: {existing.ErrorResponse}");
+
+            BlockTheFile();
+
+            var replaced  = await addsOrUpdates[AddOrUpdate](api, theirToken);
+
+            Assert.Multiple(() => {
+                Assert.That(replaced.IsSuccess,  Is.False,               "The file refused the replacement, and it was made all the same.");
+                Assert.That(replaced.NotSaved,   Is.True,                "The file refused the replacement, and the result does not say so.");
+                Assert.That(LocalTokensOf(api),  Is.EqualTo(new[] { token }), "The remote party the file would not let go of is replaced all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { token }), "The next start knows the replacement its file refused.");
+
+        }
+
+        #endregion
+
+        #region AnUpdateItsFileCannotTakeIsNotMade(Update)
+
+        [TestCaseSource(nameof(Updates))]
+        public async Task AnUpdateItsFileCannotTakeIsNotMade(String Update)
+        {
+
+            var token     = AccessToken.NewRandom();
+            var existing  = await AddAParty(partyId, token);
+
+            Assert.That(existing.IsSuccess, Is.True, $"The remote party to update could not be added: {existing.ErrorResponse}");
+
+            BlockTheFile();
+
+            var updated   = await updates[Update](api, existing.Data!, theirToken);
+
+            Assert.Multiple(() => {
+                Assert.That(updated.IsSuccess,       Is.False,               "The file refused the update, and it was made all the same.");
+                Assert.That(updated.NotSaved,        Is.True,                "The file refused the update, and the result does not say so.");
+                Assert.That(updated.ErrorResponse,   Does.Contain(FileName), "The result does not name the file that refused the update.");
+                Assert.That(LocalTokensOf(api),      Is.EqualTo(new[] { token }), "The remote party the file would not let go of is updated all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { token }), "The next start knows the update its file refused.");
+
+        }
+
+        #endregion
+
+        #region ATokenTakenWhileItsFileCannotTakeItStays(Others)
+
+        /// <summary>
+        /// A token taken from a remote party that has no other, which removes
+        /// the party, and from one that has another, which keeps it: neither
+        /// is changed while the file cannot be written, and the token still
+        /// opens what it opened.
+        /// </summary>
+        [TestCase(0)]
+        [TestCase(1)]
+        public async Task ATokenTakenWhileItsFileCannotTakeItStays(Int32 Others)
+        {
+
+            var token   = AccessToken.NewRandom();
+            var tokens  = new[] { token }.Concat(Enumerable.Range(0, Others).Select(_ => AccessToken.NewRandom())).ToArray();
+            var added   = await AddAParty(partyId, tokens);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote party could not be added: {added.ErrorResponse}");
+
+            BlockTheFile();
+
+            var taken   = await api.TryRemoveAccessToken(token);
+
+            Assert.Multiple(() => {
+                Assert.That(taken.IsSuccess,      Is.False,               "The file refused the token's removal, and it was removed all the same.");
+                Assert.That(taken.NotSaved,       Is.True,                "The file refused the token's removal, and the result does not say so.");
+                Assert.That(taken.ErrorResponse,  Does.Contain(FileName), "The result does not name the file that refused the token's removal.");
+                Assert.That(LocalTokensOf(api),   Is.EqualTo(tokens),     "The token the file would not let go of is gone all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(tokens), "The next start has lost the token whose removal the file refused.");
+
+        }
+
+        #endregion
+
+        #region ATokenTakenIsGoneAtTheNextStart(Others)
+
+        /// <summary>
+        /// A token taken while the file can be written is gone, now and at the
+        /// next start: with the remote party that had no other, from the one
+        /// that has another.
+        /// </summary>
+        [TestCase(0)]
+        [TestCase(1)]
+        public async Task ATokenTakenIsGoneAtTheNextStart(Int32 Others)
+        {
+
+            var token   = AccessToken.NewRandom();
+            var others  = Enumerable.Range(0, Others).Select(_ => AccessToken.NewRandom()).ToArray();
+            var added   = await AddAParty(partyId, [ token, .. others ]);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote party could not be added: {added.ErrorResponse}");
+
+            var taken   = await api.TryRemoveAccessToken(token);
+
+            Assert.Multiple(() => {
+                Assert.That(taken.IsSuccess,                    Is.True,           $"The token could not be removed: {taken.ErrorResponse}");
+                Assert.That(taken.Data?.Select(party => party.Id), Is.EqualTo(new[] { added.Data!.Id }), "what the token was taken from");
+                Assert.That(LocalTokensOf(api),                 Is.EqualTo(others), "The token taken is still there.");
+            });
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(others), "The next start knows the token that was taken.");
+
+        }
+
+        #endregion
+
+        #region EveryRemotePartyRemovedAtOnceWhileItsFileCannotTakeItIsBack()
+
+        [Test]
+        public async Task EveryRemotePartyRemovedAtOnceWhileItsFileCannotTakeItIsBack()
+        {
+
+            var first   = await AddAParty(partyId,              AccessToken.NewRandom());
+            var second  = await AddAParty(Party_Id.Parse("CCC"), AccessToken.NewRandom());
+
+            Assert.That(first.IsSuccess && second.IsSuccess, Is.True, "The remote parties to remove could not be added.");
+
+            var ids     = new[] { first.Data!.Id, second.Data!.Id }.OrderBy(remotePartyId => remotePartyId.ToString()).ToArray();
+
+            BlockTheFile();
+
+            var removed = await api.RemoveAllRemoteParties();
+
+            Assert.Multiple(() => {
+                Assert.That(removed.IsSuccess,                                     Is.False,               "The file refused the removal of every remote party, and they were removed all the same.");
+                Assert.That(removed.NotSaved,                                      Is.True,                "The file refused the removal of every remote party, and the result does not say so.");
+                Assert.That(removed.ErrorResponse,                                 Does.Contain(FileName), "The result does not name the file that refused the removal.");
+                Assert.That(api.RemoteParties.Select(party => party.Id).OrderBy(remotePartyId => remotePartyId.ToString()),  Is.EqualTo(ids),        "The remote parties the file would not let go of are gone all the same.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(ACommonAPI().RemoteParties.Select(party => party.Id).OrderBy(remotePartyId => remotePartyId.ToString()), Is.EqualTo(ids), "The next start has lost the remote parties whose removal the file refused.");
+
+        }
+
+        #endregion
+
+
+        #region (private) FileName
+
+        /// <summary>
+        /// The name of the file of the remote parties, which a refusal names.
+        /// </summary>
+        private String FileName
+            => Path.GetFileName(api.RemotePartyDBFileName);
+
+        #endregion
+
+        #region (private) AddAParty(PartyId, params LocalTokens)
+
+        /// <summary>
+        /// A remote party of the given party identification, with the given
+        /// local tokens and no remote access.
+        /// </summary>
+        private Task<AddResult<RemoteParty>> AddAParty(Party_Id PartyId, params AccessToken[] LocalTokens)
+
+            => api.AddRemoteParty(RemoteParty_Id.Parse($"DE-{PartyId}_CPO"), Roles,
+                                  [ .. LocalTokens.Select(token => new LocalAccessInfo(token)) ],
+                                  []);
+
+        #endregion
+
+        #region (private static) LocalTokensOf(API)
+
+        /// <summary>
+        /// The local tokens of the remote party of this test's identification.
+        /// </summary>
+        private static AccessToken[] LocalTokensOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.LocalAccessInfos.Select(info => info.AccessToken)).
+                   ToArray();
+
+        #endregion
+
 
         #region (private) ACommonAPI()
 

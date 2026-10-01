@@ -4578,29 +4578,63 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         // An access token might be used by more than one CountryCode + PartyId + Role combination!
 
-        #region RemoveAccessToken(AccessToken)
+        #region TryRemoveAccessToken(AccessToken, ...)
 
-        public async Task<CommonAPI> RemoveAccessToken(AccessToken        AccessToken,
-                                                       EventTracking_Id?  EventTrackingId   = null,
-                                                       User_Id?           CurrentUserId     = null)
+        /// <summary>
+        /// Take a local access token from every remote party that has it - a
+        /// party that has no other is removed, any other keeps the rest - and
+        /// keep each change only where the file of the remote parties took it.
+        /// </summary>
+        /// <remarks>
+        /// One line per party. Where the file refuses one, that party is put
+        /// back as it was, and nothing more is changed: the token still opens
+        /// what the parties not reached yet have it for. The parties changed
+        /// before stay changed, their lines in the file.
+        /// </remarks>
+        /// <param name="AccessToken">The local access token.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <returns>The remote parties the token was taken from, as they were; failed, and NotSaved, where the file refused.</returns>
+        public async Task<RemoveResult<IEnumerable<RemoteParty>>> TryRemoveAccessToken(AccessToken        AccessToken,
+                                                                                    EventTracking_Id?  EventTrackingId   = null,
+                                                                                    User_Id?           CurrentUserId     = null)
         {
+
+            var changed = new List<RemoteParty>();
 
             foreach (var remoteParty in remoteParties.Values.Where(party => party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)))
             {
+
+                String? notSaved;
 
                 #region The remote party has only a single local access token, or...
 
                 if (remoteParty.LocalAccessInfos.Count() <= 1)
                 {
 
-                    remoteParties.TryRemove(remoteParty.Id, out _);
+                    // Changed meanwhile: that change decides.
+                    if (!remoteParties.TryRemove(
+                             new KeyValuePair<RemoteParty_Id, RemoteParty>(
+                                 remoteParty.Id,
+                                 remoteParty
+                             )
+                         ))
+                    {
+                        continue;
+                    }
 
-                    await LogAsset(
-                              CommonHTTPAPI.removeRemoteParty,
-                              remoteParty.ToJSON(true),
-                              EventTrackingId ?? EventTracking_Id.New,
-                              CurrentUserId
-                          );
+                    notSaved = await SaveRemoteParty(
+                                         CommonHTTPAPI.removeRemoteParty,
+                                         remoteParty.ToJSON(true),
+                                         EventTrackingId ?? EventTracking_Id.New,
+                                         CurrentUserId
+                                     );
+
+                    if (notSaved is not null)
+                        remoteParties.TryAdd(
+                            remoteParty.Id,
+                            remoteParty
+                        );
 
                 }
 
@@ -4611,36 +4645,82 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 else
                 {
 
-                    remoteParties.TryRemove(remoteParty.Id, out _);
-
                     var newRemoteParty = new RemoteParty(
-                                                remoteParty.CountryCode,
-                                                remoteParty.PartyId,
-                                                remoteParty.Role,
-                                                remoteParty.BusinessDetails,
-                                                remoteParty.LocalAccessInfos.Where(localAccessInfo => localAccessInfo.AccessToken != AccessToken),
-                                                remoteParty.RemoteAccessInfos,
-                                                remoteParty.Status
-                                            );
+                                             remoteParty.CountryCode,
+                                             remoteParty.PartyId,
+                                             remoteParty.Role,
+                                             remoteParty.BusinessDetails,
+                                             remoteParty.LocalAccessInfos.Where(localAccessInfo => localAccessInfo.AccessToken != AccessToken),
+                                             remoteParty.RemoteAccessInfos,
+                                             remoteParty.Status
+                                         );
 
-                    if (remoteParties.TryAdd(newRemoteParty.Id,
-                                                newRemoteParty))
+                    // Changed meanwhile: that change decides.
+                    if (!remoteParties.TryUpdate(remoteParty.Id,
+                                                 newRemoteParty,
+                                                 remoteParty))
                     {
-
-                        await LogRemoteParty(
-                                  CommonHTTPAPI.updateRemoteParty,
-                                  newRemoteParty.ToJSON(true),
-                                  EventTrackingId ?? EventTracking_Id.New,
-                                  CurrentUserId
-                              );
-
+                        continue;
                     }
+
+                    notSaved = await SaveRemoteParty(
+                                         CommonHTTPAPI.updateRemoteParty,
+                                         newRemoteParty.ToJSON(true),
+                                         EventTrackingId ?? EventTracking_Id.New,
+                                         CurrentUserId
+                                     );
+
+                    if (notSaved is not null)
+                        remoteParties.TryUpdate(
+                            remoteParty.Id,
+                            remoteParty,
+                            newRemoteParty
+                        );
 
                 }
 
                 #endregion
 
+                if (notSaved is not null)
+                    return RemoveResult<IEnumerable<RemoteParty>>.Failed(
+                               EventTracking_Id.New,
+                               changed,
+                               notSaved,
+                               NotSaved: true
+                           );
+
+                changed.Add(remoteParty);
+
             }
+
+            return RemoveResult<IEnumerable<RemoteParty>>.Success(
+                       EventTracking_Id.New,
+                       changed
+                   );
+
+        }
+
+        #endregion
+
+        #region RemoveAccessToken(AccessToken)
+
+        /// <summary>
+        /// Take a local access token from every remote party that has it - see
+        /// TryRemoveAccessToken, which also says whether their file took it.
+        /// </summary>
+        public async Task<CommonAPI> RemoveAccessToken(AccessToken        AccessToken,
+                                                       EventTracking_Id?  EventTrackingId   = null,
+                                                       User_Id?           CurrentUserId     = null)
+        {
+
+            var removed = await TryRemoveAccessToken(
+                                    AccessToken,
+                                    EventTrackingId,
+                                    CurrentUserId
+                                );
+
+            if (removed.NotSaved)
+                DebugX.Log($"[ERROR] {removed.ErrorResponse}");
 
             return this;
 
@@ -5252,29 +5332,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryAdd(newRemoteParty.Id,
-                                     newRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return AddResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return AddResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be added!"
-                   );
+            return await AddRemotePartyIfNotExists(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -5369,31 +5431,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            var result = remoteParties.GetOrAdd(newRemoteParty.Id,
-                                                value => newRemoteParty);
-
-            if (result == newRemoteParty)
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return AddResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return AddResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be added!"
-                   );
+            return await AddRemotePartyIfNotExists(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -5508,29 +5550,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryAdd(newRemoteParty.Id,
-                                     newRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return AddResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return AddResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be added!"
-                   );
+            return await AddRemotePartyIfNotExists(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -5582,28 +5606,67 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryAdd(newRemoteParty.Id,
-                                     newRemoteParty))
+            return await AddRemotePartyIfNotExists(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
+
+        }
+
+        #endregion
+
+
+        #region (private) AddRemotePartyIfNotExists (NewRemoteParty, EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// Add a remote party where there is none of its identification, and
+        /// keep it only where its file took it - see AddRemoteParty.
+        /// </summary>
+        private async Task<AddResult<RemoteParty>> AddRemotePartyIfNotExists(RemoteParty        NewRemoteParty,
+                                                                             EventTracking_Id?  EventTrackingId,
+                                                                             User_Id?           CurrentUserId)
+        {
+
+            if (!remoteParties.TryAdd(NewRemoteParty.Id,
+                                      NewRemoteParty))
+            {
+                return AddResult<RemoteParty>.Failed(
+                           EventTracking_Id.New,
+                           NewRemoteParty,
+                           "The remote party could not be added!"
+                       );
+            }
+
+            var notSaved = await SaveRemoteParty(
+                                     CommonHTTPAPI.addRemotePartyIfNotExists,
+                                     NewRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is not null)
             {
 
-                await LogRemoteParty(
-                          CommonHTTPAPI.addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
+                remoteParties.TryRemove(
+                    new KeyValuePair<RemoteParty_Id, RemoteParty>(
+                        NewRemoteParty.Id,
+                        NewRemoteParty
+                    )
+                );
 
-                return AddResult<RemoteParty>.Success(
+                return AddResult<RemoteParty>.Failed(
                            EventTracking_Id.New,
-                           newRemoteParty
+                           NewRemoteParty,
+                           notSaved,
+                           NotSaved: true
                        );
 
             }
 
-            return AddResult<RemoteParty>.Failed(
+            return AddResult<RemoteParty>.Success(
                        EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be added!"
+                       NewRemoteParty
                    );
 
         }
@@ -5718,38 +5781,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            var added = false;
-
-            remoteParties.AddOrUpdate(
-                newRemoteParty.Id,
-
-                // Add
-                id => {
-                    added = true;
-                    return newRemoteParty;
-                },
-
-                // Update
-                (id, oldRemoteParty) => {
-                    return newRemoteParty;
-                }
-            );
-
-            await LogRemoteParty(
-                      CommonHTTPAPI.addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
-
-            return added
-                       ? AddOrUpdateResult<RemoteParty>.Created(
-                             EventTracking_Id.New,
-                             newRemoteParty
-                         )
-                       : AddOrUpdateResult<RemoteParty>.Updated(
-                             EventTracking_Id.New,
-                             newRemoteParty
+            return await AddOrUpdateRemoteParty(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
                          );
 
         }
@@ -5808,38 +5843,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            var added = false;
-
-            remoteParties.AddOrUpdate(
-                newRemoteParty.Id,
-
-                // Add
-                id => {
-                    added = true;
-                    return newRemoteParty;
-                },
-
-                // Update
-                (id, oldRemoteParty) => {
-                    return newRemoteParty;
-                }
-            );
-
-            await LogRemoteParty(
-                      CommonHTTPAPI.addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
-
-            return added
-                       ? AddOrUpdateResult<RemoteParty>.Created(
-                             EventTracking_Id.New,
-                             newRemoteParty
-                         )
-                       : AddOrUpdateResult<RemoteParty>.Updated(
-                             EventTracking_Id.New,
-                             newRemoteParty
+            return await AddOrUpdateRemoteParty(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
                          );
 
         }
@@ -5937,38 +5944,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            var added = false;
-
-            remoteParties.AddOrUpdate(
-                newRemoteParty.Id,
-
-                // Add
-                id => {
-                    added = true;
-                    return newRemoteParty;
-                },
-
-                // Update
-                (id, oldRemoteParty) => {
-                    return newRemoteParty;
-                }
-            );
-
-            await LogRemoteParty(
-                      CommonHTTPAPI.addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
-
-            return added
-                       ? AddOrUpdateResult<RemoteParty>.Created(
-                             EventTracking_Id.New,
-                             newRemoteParty
-                         )
-                       : AddOrUpdateResult<RemoteParty>.Updated(
-                             EventTracking_Id.New,
-                             newRemoteParty
+            return await AddOrUpdateRemoteParty(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
                          );
 
         }
@@ -6014,38 +5993,113 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            var added = false;
+            return await AddOrUpdateRemoteParty(
+                             newRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
+
+        }
+
+        #endregion
+
+
+        #region (internal) AddOrUpdateRemoteParty   (NewRemoteParty, EventTrackingId, CurrentUserId, KeepWhereNotSaved = false)
+
+        /// <summary>
+        /// Add a remote party, or replace the one of its identification, and
+        /// keep the change only where its file took it - unless it has been
+        /// acted upon already where nothing can take it back.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Into memory first, as AddRemoteParty does, then written down. Where
+        /// the file refused, what was there before is put back: the party it
+        /// replaced, or none where it added one.
+        /// </para>
+        /// <para>
+        /// Not where KeepWhereNotSaved: a registration the other side has
+        /// answered already. Both sides use the new tokens from then on, and
+        /// the party as it was, the old tokens with it, reaches nobody. The
+        /// change stays in memory, and the result says that its file did not
+        /// take it: in effect now, and gone at the next start.
+        /// </para>
+        /// </remarks>
+        /// <param name="NewRemoteParty">The remote party.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="KeepWhereNotSaved">Keep the change in memory where its file refused it.</param>
+        internal async Task<AddOrUpdateResult<RemoteParty>> AddOrUpdateRemoteParty(RemoteParty        NewRemoteParty,
+                                                                                   EventTracking_Id?  EventTrackingId,
+                                                                                   User_Id?           CurrentUserId,
+                                                                                   Boolean            KeepWhereNotSaved   = false)
+        {
+
+            var          added     = false;
+            RemoteParty? replaced  = null;
 
             remoteParties.AddOrUpdate(
-                newRemoteParty.Id,
-
+                NewRemoteParty.Id,
                 // Add
                 id => {
-                    added = true;
-                    return newRemoteParty;
+                    added     = true;
+                    replaced  = null;
+                    return NewRemoteParty;
                 },
-
                 // Update
                 (id, oldRemoteParty) => {
-                    return newRemoteParty;
+                    added     = false;
+                    replaced  = oldRemoteParty;
+                    return NewRemoteParty;
                 }
             );
 
-            await LogRemoteParty(
-                      CommonHTTPAPI.addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true),
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
+            var notSaved = await SaveRemoteParty(
+                                     CommonHTTPAPI.addOrUpdateRemoteParty,
+                                     NewRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is not null && !KeepWhereNotSaved)
+            {
+
+                if (replaced is null)
+                    remoteParties.TryRemove(
+                        new KeyValuePair<RemoteParty_Id, RemoteParty>(
+                            NewRemoteParty.Id,
+                            NewRemoteParty
+                        )
+                    );
+
+                else
+                    remoteParties.TryUpdate(
+                        NewRemoteParty.Id,
+                        replaced,
+                        NewRemoteParty
+                    );
+
+                return AddOrUpdateResult<RemoteParty>.Failed(
+                           EventTracking_Id.New,
+                           NewRemoteParty,
+                           notSaved,
+                           NotSaved: true
+                       );
+
+            }
 
             return added
                        ? AddOrUpdateResult<RemoteParty>.Created(
                              EventTracking_Id.New,
-                             newRemoteParty
+                             NewRemoteParty,
+                             notSaved,
+                             NotSaved: notSaved is not null
                          )
                        : AddOrUpdateResult<RemoteParty>.Updated(
                              EventTracking_Id.New,
-                             newRemoteParty
+                             NewRemoteParty,
+                             notSaved,
+                             NotSaved: notSaved is not null
                          );
 
         }
@@ -6158,30 +6212,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return UpdateResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return UpdateResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be updated!"
-                   );
+            return await UpdateRemoteParty(
+                             newRemoteParty,
+                             ExistingRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -6237,30 +6273,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return UpdateResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return UpdateResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be updated!"
-                   );
+            return await UpdateRemoteParty(
+                             newRemoteParty,
+                             ExistingRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -6354,30 +6372,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
-            {
-
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
-
-                return UpdateResult<RemoteParty>.Success(
-                           EventTracking_Id.New,
-                           newRemoteParty
-                       );
-
-            }
-
-            return UpdateResult<RemoteParty>.Failed(
-                       EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be updated!"
-                   );
+            return await UpdateRemoteParty(
+                             newRemoteParty,
+                             ExistingRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
 
         }
 
@@ -6420,29 +6420,69 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  );
 
-            if (remoteParties.TryUpdate(newRemoteParty.Id,
-                                        newRemoteParty,
-                                        ExistingRemoteParty))
+            return await UpdateRemoteParty(
+                             newRemoteParty,
+                             ExistingRemoteParty,
+                             EventTrackingId,
+                             CurrentUserId
+                         );
+
+        }
+
+        #endregion
+
+
+        #region (private) UpdateRemoteParty         (NewRemoteParty, ExistingRemoteParty, EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// Replace a remote party, and keep the change only where its file took
+        /// it: where the file refused, the party it replaced is put back.
+        /// </summary>
+        private async Task<UpdateResult<RemoteParty>> UpdateRemoteParty(RemoteParty        NewRemoteParty,
+                                                                        RemoteParty        ExistingRemoteParty,
+                                                                        EventTracking_Id?  EventTrackingId,
+                                                                        User_Id?           CurrentUserId)
+        {
+
+            if (!remoteParties.TryUpdate(NewRemoteParty.Id,
+                                         NewRemoteParty,
+                                         ExistingRemoteParty))
+            {
+                return UpdateResult<RemoteParty>.Failed(
+                           EventTracking_Id.New,
+                           NewRemoteParty,
+                           "The remote party could not be updated!"
+                       );
+            }
+
+            var notSaved = await SaveRemoteParty(
+                                     CommonHTTPAPI.updateRemoteParty,
+                                     NewRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is not null)
             {
 
-                await LogRemoteParty(
-                          CommonHTTPAPI.updateRemoteParty,
-                          newRemoteParty.ToJSON(true),
-                          EventTrackingId ?? EventTracking_Id.New,
-                          CurrentUserId
-                      );
+                remoteParties.TryUpdate(
+                    NewRemoteParty.Id,
+                    ExistingRemoteParty,
+                    NewRemoteParty
+                );
 
-                return UpdateResult<RemoteParty>.Success(
+                return UpdateResult<RemoteParty>.Failed(
                            EventTracking_Id.New,
-                           newRemoteParty
+                           NewRemoteParty,
+                           notSaved,
+                           NotSaved: true
                        );
 
             }
 
-            return UpdateResult<RemoteParty>.Failed(
+            return UpdateResult<RemoteParty>.Success(
                        EventTracking_Id.New,
-                       newRemoteParty,
-                       "The remote party could not be updated!"
+                       NewRemoteParty
                    );
 
         }
@@ -6821,17 +6861,59 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region RemoveAllRemoteParties    ()
 
-        public async Task RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
-                                                 User_Id?           CurrentUserId     = null)
+        /// <summary>
+        /// Remove every remote party, and keep that only where their file took
+        /// it: where the file refused, every one of them is put back.
+        /// </summary>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <returns>The remote parties removed; failed, and NotSaved, where the file refused.</returns>
+        public async Task<RemoveResult<IEnumerable<RemoteParty>>> RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
+                                                                                      User_Id?           CurrentUserId     = null)
         {
 
-            remoteParties.Clear();
+            var removed = new List<RemoteParty>();
 
-            await LogRemoteParty(
-                      CommonHTTPAPI.removeAllRemoteParties,
-                      EventTrackingId ?? EventTracking_Id.New,
-                      CurrentUserId
-                  );
+            foreach (var remoteParty in remoteParties.Values)
+                if (remoteParties.TryRemove(
+                        new KeyValuePair<RemoteParty_Id, RemoteParty>(
+                            remoteParty.Id,
+                            remoteParty
+                        )
+                    ))
+                {
+                    removed.Add(remoteParty);
+                }
+
+            var notSaved = await SaveRemoteParty(
+                                     CommonHTTPAPI.removeAllRemoteParties,
+                                     null,
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is not null)
+            {
+
+                foreach (var remoteParty in removed)
+                    remoteParties.TryAdd(
+                        remoteParty.Id,
+                        remoteParty
+                    );
+
+                return RemoveResult<IEnumerable<RemoteParty>>.Failed(
+                           EventTracking_Id.New,
+                           removed,
+                           notSaved,
+                           NotSaved: true
+                       );
+
+            }
+
+            return RemoveResult<IEnumerable<RemoteParty>>.Success(
+                       EventTracking_Id.New,
+                       removed
+                   );
 
         }
 
