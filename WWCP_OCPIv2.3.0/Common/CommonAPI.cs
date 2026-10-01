@@ -6525,6 +6525,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region removeAllTokens
 
+                // RemoveAllTokens writes "removeAllTokens", and only
+                // "removeAllTokenStatus" was replayed: every token removed at
+                // once was there again at the next start. Either name clears
+                // them.
+                case CommonHTTPAPI.removeAllTokens:
                 case CommonHTTPAPI.removeAllTokenStatus:
                     foreach (var party in parties.Values)
                         party.Tokens.Clear();

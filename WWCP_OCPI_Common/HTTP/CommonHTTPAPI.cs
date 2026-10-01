@@ -3750,25 +3750,38 @@ namespace cloud.charging.open.protocols.OCPI
         #region (private static) DatabaseLine   (Command, JToken, EventTrackingId, CurrentUserId)
 
         /// <summary>
-        /// A command as a line of a database file.
+        /// A command as a line of a database file: the command first, with a
+        /// JSON null where it carries no data.
         /// </summary>
+        /// <remarks>
+        /// Not JSONObject.Create, which leaves out every property whose value is
+        /// null - the command's as well. A command without data was written as
+        /// a line without its command - "removeAllRemoteParties",
+        /// "removeAllLocations", "removeAllTokens" and the like - and the next
+        /// start passed over it: what had been removed at once was there again
+        /// (found by the roaming hub).
+        /// </remarks>
         private static String DatabaseLine(String            Command,
                                            JToken?           JToken,
                                            EventTracking_Id  EventTrackingId,
                                            User_Id?          CurrentUserId)
+        {
 
-            => JSONObject.Create(
+            var line = new JObject(
 
-                         // Command is always the first property!
-                         new JProperty(Command,            JToken),
-                         new JProperty("timestamp",        Timestamp.Now.      ToISO8601()),
-                         new JProperty("eventTrackingId",  EventTrackingId.    ToString()),
+                           // Command is always the first property!
+                           new JProperty(Command,            JToken ?? JValue.CreateNull()),
+                           new JProperty("timestamp",        Timestamp.Now.  ToISO8601()),
+                           new JProperty("eventTrackingId",  EventTrackingId.ToString())
 
-                   CurrentUserId is not null
-                       ? new JProperty("userId",           CurrentUserId.Value.ToString())
-                       : null).
+                       );
 
-               ToString(Newtonsoft.Json.Formatting.None);
+            if (CurrentUserId is not null)
+                line.Add(new JProperty("userId", CurrentUserId.Value.ToString()));
+
+            return line.ToString(Newtonsoft.Json.Formatting.None);
+
+        }
 
         #endregion
 
@@ -4055,6 +4068,14 @@ namespace cloud.charging.open.protocols.OCPI
                                command.Value<Boolean>()
                            );
 
+                // A command without data, written with a JSON null - see
+                // DatabaseLine.
+                else if (command.Value.Type == JTokenType.Null)
+                    return new Command(
+                               command.Name,
+                               (String?) null
+                           );
+
             }
             catch (Exception e)
             {
@@ -4136,6 +4157,17 @@ namespace cloud.charging.open.protocols.OCPI
                     return new CommandWithMetadata(
                                command.Name,
                                command.Value<Boolean>(),
+                               timestamp,
+                               eventTrackingId,
+                               userId
+                           );
+
+                // A command without data, written with a JSON null - see
+                // DatabaseLine.
+                else if (command.Value.Type == JTokenType.Null)
+                    return new CommandWithMetadata(
+                               command.Name,
+                               (String?) null,
                                timestamp,
                                eventTrackingId,
                                userId
