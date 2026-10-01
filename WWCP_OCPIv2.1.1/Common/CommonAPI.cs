@@ -2745,7 +2745,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #endregion
 
-                        await RemoveAccessToken(request.LocalAccessInfo.AccessToken);
+                        var removed = await TryRemoveAccessToken(
+                                                request.LocalAccessInfo.AccessToken,
+                                                request.HTTPRequest.EventTrackingId,
+                                                request.HTTPRequest.User?.Id
+                                            );
+
+                        // The file refused it: the token still opens this API.
+                        if (removed.NotSaved)
+                            return new OCPIResponse.Builder(request) {
+                                       StatusCode           = StatusCode.ServerErrors.GenericServerError,
+                                       StatusMessage        = $"The given access token '{request.LocalAccessInfo.AccessToken}' could not be deleted here, and is still valid. Please try again later.",
+                                       HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                           HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                                           AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                                           AccessControlAllowHeaders  = [ "Authorization" ]
+                                       }
+                                   };
 
                         return new OCPIResponse.Builder(request) {
                                    StatusCode           = StatusCode.Success,
@@ -3015,65 +3031,80 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var CREDENTIALS_TOKEN_C       = AccessToken.NewRandom();
 
-            // Remove the old access token
+            // The credentials of the other side, CREDENTIALS_TOKEN_C in place
+            // of CREDENTIALS_TOKEN_A, in one line: where the file refuses it,
+            // nothing has changed, and token A is still valid.
+            var stored = await AddOrUpdateRemoteParty(
+
+                                   receivedCredentials.CountryCode,
+                                   receivedCredentials.PartyId,
+                                   oldRemoteParty.     Role,
+                                   receivedCredentials.BusinessDetails,
+
+                                   CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
+                                   receivedCredentials.URL,                                  // RemoteVersionsURL
+                                   receivedCredentials.Token,                                // RemoteAccessToken
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.AccessTokenIsBase64Encoded,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TOTPConfig,
+
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.PreferIPv4,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.RemoteCertificateValidator,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.LocalCertificateSelector,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificates,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificateContext,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ClientCertificateChain,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TLSProtocols,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.ContentType,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.Accept,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.HTTPUserAgent,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.RequestTimeout,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.TransmissionRetryDelay,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.MaxNumberOfRetries,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.InternalBufferSize,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.UseHTTPPipelining,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.OUT,
+
+                                   RemoteAccessStatus.ONLINE,                                // RemoteStatus
+                                   otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
+                                   Version.Id,                                               // SelectedVersionId
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotBefore,
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotAfter,
+                                   null,                                                     // RemoteAllowDowngrades
+
+                                   null,                                                     // LocalAccessTokenBase64Encoding
+                                   null,                                                     // LocalTOTPConfig
+                                   null,                                                     // HTTP Modifiers
+                                   null,                                                     // LocalAccessNotBefore
+                                   null,                                                     // LocalAccessNotAfter
+                                   null,                                                     // LocalAllowDowngrades
+                                   AccessStatus.ALLOWED,                                     // LocalAccessStatus
+
+                                   PartyStatus.ENABLED,                                      // PartyStatus
+                                   oldRemoteParty.VisibleVersionIds,
+
+                                   oldRemoteParty.Created,
+                                   Timestamp.Now,                                            // LastUpdated
+                                   Request.HTTPRequest.EventTrackingId,
+                                   Request.HTTPRequest.User?.Id                              // CurrentUserId
+
+                               );
+
+            if (!stored.IsSuccess)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = StatusCode.ServerErrors.GenericServerError,
+                           StatusMessage        = "The credentials could not be stored here, and nothing was changed: the token of this request is still valid. Please try again later.",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                               AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                               AccessControlAllowHeaders  = [ "Authorization" ]
+                           }
+                       };
+
+            // Token A, from any other remote party that still has it.
             await RemoveAccessToken(
-                      CREDENTIALS_TOKEN_A.Value
-                  );
-
-            // Store credential of the other side!
-            await AddOrUpdateRemoteParty(
-
-                      receivedCredentials.CountryCode,
-                      receivedCredentials.PartyId,
-                      oldRemoteParty.     Role,
-                      receivedCredentials.BusinessDetails,
-
-                      CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
-                      receivedCredentials.URL,                                  // RemoteVersionsURL
-                      receivedCredentials.Token,                                // RemoteAccessToken
-                      oldRemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded,
-                      oldRemoteParty.RemoteAccessInfos.First().TOTPConfig,
-
-                      oldRemoteParty.RemoteAccessInfos.First().PreferIPv4,
-                      oldRemoteParty.RemoteAccessInfos.First().RemoteCertificateValidator,
-                      oldRemoteParty.RemoteAccessInfos.First().LocalCertificateSelector,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificates,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificateContext,
-                      oldRemoteParty.RemoteAccessInfos.First().ClientCertificateChain,
-                      oldRemoteParty.RemoteAccessInfos.First().TLSProtocols,
-                      oldRemoteParty.RemoteAccessInfos.First().ContentType,
-                      oldRemoteParty.RemoteAccessInfos.First().Accept,
-                      oldRemoteParty.RemoteAccessInfos.First().HTTPUserAgent,
-                      oldRemoteParty.RemoteAccessInfos.First().RequestTimeout,
-                      oldRemoteParty.RemoteAccessInfos.First().TransmissionRetryDelay,
-                      oldRemoteParty.RemoteAccessInfos.First().MaxNumberOfRetries,
-                      oldRemoteParty.RemoteAccessInfos.First().InternalBufferSize,
-                      oldRemoteParty.RemoteAccessInfos.First().UseHTTPPipelining,
-                      oldRemoteParty.RemoteAccessInfos.First().OUT,
-
-                      RemoteAccessStatus.ONLINE,                                // RemoteStatus
-                      otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
-                      Version.Id,                                               // SelectedVersionId
-                      oldRemoteParty.RemoteAccessInfos.First().NotBefore,
-                      oldRemoteParty.RemoteAccessInfos.First().NotAfter,
-                      null,                                                     // RemoteAllowDowngrades
-
-                      null,                                                     // LocalAccessTokenBase64Encoding
-                      null,                                                     // LocalTOTPConfig
-                      null,                                                     // HTTP Modifiers
-                      null,                                                     // LocalAccessNotBefore
-                      null,                                                     // LocalAccessNotAfter
-                      null,                                                     // LocalAllowDowngrades
-                      AccessStatus.ALLOWED,                                     // LocalAccessStatus
-
-                      PartyStatus.ENABLED,                                      // PartyStatus
-                      oldRemoteParty.VisibleVersionIds,
-
-                      oldRemoteParty.Created,
-                      Timestamp.Now,                                            // LastUpdated
+                      CREDENTIALS_TOKEN_A.Value,
                       Request.HTTPRequest.EventTrackingId,
-                      Request.HTTPRequest.User?.Id                              // CurrentUserId
-
+                      Request.HTTPRequest.User?.Id
                   );
 
 

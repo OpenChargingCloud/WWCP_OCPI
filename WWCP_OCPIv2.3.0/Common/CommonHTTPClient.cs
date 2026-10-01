@@ -1574,11 +1574,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
         #endregion
 
-        #region PutCredentials      (Credentials, ...)
+        #region TryPutCredentials   (Credentials, ...)
 
         /// <summary>
-        /// Put our credentials onto the remote API.
+        /// Put our credentials onto the remote API, take its own from the
+        /// answer - and say whether the file of the remote parties took what
+        /// that changed.
         /// </summary>
+        /// <remarks>
+        /// Where the other side accepted and the file refuses what its answer
+        /// changed, the change is kept, because both sides use the new tokens
+        /// already: in effect, and written down with the next line the file
+        /// takes, or when the base API is disposed. NotSaved, and the response
+        /// is the other side's.
+        /// </remarks>
         /// <param name="Credentials">The credentials to store/put at/onto the remote API.</param>
         /// 
         /// <param name="VersionId">An optional OCPI version identification.</param>
@@ -1589,18 +1598,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<OCPIResponse<Credentials>>
+        public async Task<CredentialsResult>
 
-            PutCredentials(Credentials        Credentials,
+            TryPutCredentials(Credentials        Credentials,
 
-                           Version_Id?        VersionId           = null,
-                           Request_Id?        RequestId           = null,
-                           Correlation_Id?    CorrelationId       = null,
+                              Version_Id?        VersionId           = null,
+                              Request_Id?        RequestId           = null,
+                              Correlation_Id?    CorrelationId       = null,
 
-                           DateTimeOffset?    RequestTimestamp    = null,
-                           EventTracking_Id?  EventTrackingId     = null,
-                           TimeSpan?          RequestTimeout      = null,
-                           CancellationToken  CancellationToken   = default)
+                              DateTimeOffset?    RequestTimestamp    = null,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              TimeSpan?          RequestTimeout      = null,
+                              CancellationToken  CancellationToken   = default)
 
         {
 
@@ -1647,6 +1656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
+            String?                    notSaved          = null;
 
             do
             {
@@ -1759,8 +1769,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                            RemoteVersionIds:    [Version.Id ],
                                                            SelectedVersionId:   Version.Id,
 
-                                                           LocalAccessStatus:   AccessStatus.ALLOWED
+                                                           LocalAccessStatus:   AccessStatus.ALLOWED,
+                                                           KeepWhereNotSaved:   true
                                                        );
+
+                                    if (result.NotSaved)
+                                        notSaved = result.ErrorResponse;
 
                                     if (!result.IsSuccess)
                                         DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
@@ -1821,9 +1835,46 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            return response;
+            return new CredentialsResult(
+                       response,
+                       notSaved is not null,
+                       notSaved
+                   );
 
         }
+
+        #endregion
+
+        #region PutCredentials      (Credentials, ...)
+
+        /// <summary>
+        /// Put our credentials onto the remote API - see TryPutCredentials,
+        /// which also says whether the file of the remote parties took what
+        /// that changed.
+        /// </summary>
+        public async Task<OCPIResponse<Credentials>>
+
+            PutCredentials(Credentials        Credentials,
+
+                           Version_Id?        VersionId           = null,
+                           Request_Id?        RequestId           = null,
+                           Correlation_Id?    CorrelationId       = null,
+
+                           DateTimeOffset?    RequestTimestamp    = null,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           TimeSpan?          RequestTimeout      = null,
+                           CancellationToken  CancellationToken   = default)
+
+            => (await TryPutCredentials(
+                          Credentials,
+                          VersionId,
+                          RequestId,
+                          CorrelationId,
+                          RequestTimestamp,
+                          EventTrackingId,
+                          RequestTimeout,
+                          CancellationToken
+                      )).Response;
 
         #endregion
 
@@ -2005,7 +2056,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #endregion
 
 
-        #region Register            (VersionId = null, ...)
+        #region TryRegister         (VersionId = null, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -2030,25 +2081,41 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
         /// <summary>
-        /// Post the given credentials.
+        /// Register at the remote party: send it our credentials, take its own
+        /// from the answer - and say whether the file of the remote parties
+        /// took what that changed.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The token the other side is to call back with is stored before
+        /// anything is sent. Where the file refuses it, nothing is sent, and
+        /// nothing has changed: NotSaved, and the response says why.
+        /// </para>
+        /// <para>
+        /// Where the other side accepted and the file refuses what its answer
+        /// changed, the change is kept, because both sides use the new tokens
+        /// already: in effect, and written down with the next line the file
+        /// takes, or when the base API is disposed. NotSaved, and the response
+        /// is the other side's.
+        /// </para>
+        /// </remarks>
         /// <param name="RequestTimestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<OCPIResponse<Credentials>>
+        public async Task<CredentialsResult>
 
-            Register(Version_Id?        VersionId             = null,
-                     Boolean            SetAsDefaultVersion   = true,
-                     AccessToken?       CredentialTokenB      = null,
+            TryRegister(Version_Id?        VersionId             = null,
+                        Boolean            SetAsDefaultVersion   = true,
+                        AccessToken?       CredentialTokenB      = null,
 
-                     Request_Id?        RequestId             = null,
-                     Correlation_Id?    CorrelationId         = null,
+                        Request_Id?        RequestId             = null,
+                        Correlation_Id?    CorrelationId         = null,
 
-                     DateTimeOffset?    RequestTimestamp      = null,
-                     EventTracking_Id?  EventTrackingId       = null,
-                     TimeSpan?          RequestTimeout        = null,
-                     CancellationToken  CancellationToken     = default)
+                        DateTimeOffset?    RequestTimestamp      = null,
+                        EventTracking_Id?  EventTrackingId       = null,
+                        TimeSpan?          RequestTimeout        = null,
+                        CancellationToken  CancellationToken     = default)
 
         {
 
@@ -2094,6 +2161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
+            String?                    notSaved          = null;
 
             var credentialTokenB = CredentialTokenB ?? AccessToken.NewRandom();
 
@@ -2120,6 +2188,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     else if (!remoteURL.HasValue)
                         response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
 
+                    // CREDENTIALS_TOKEN_B opens our door before it leaves the house -
+                    // and where the file refuses it, nothing leaves the house.
+                    else if ((notSaved = await StoreCredentialTokenB(credentialTokenB, eventTrackingId)) is not null)
+                        response = OCPIResponse<String, Credentials>.Error($"Nothing was sent: the token the other side would call back with could not be stored - {notSaved}");
+
                     else
                     {
 
@@ -2128,40 +2201,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                               CommonAPI.BaseAPI.OurVersionsURL,
                                               CommonAPI.Parties.Select(partyData => partyData.ToCredentialsRole())
                                           );
-
-                        #region CREDENTIALS_TOKEN_B opens our door before it leaves the house
-
-                        // The receiver of these credentials is expected to turn
-                        // around and fetch our versions with the token we are
-                        // about to send it - that is how it finds out which
-                        // versions we have in common - and this library's own
-                        // receiver does exactly that, before it answers. So the
-                        // token has to be one we already accept: storing it only
-                        // once the answer arrives would make it a token that was
-                        // not valid while the answer was being written, and the
-                        // registration would fail on our own doorstep.
-                        //
-                        // Added beside whatever local access this party already
-                        // had rather than replacing it, because the old token is
-                        // what the partner is still holding until this returns;
-                        // the AddOrUpdate below the response then settles both
-                        // sides on the new one.
-                        await CommonAPI.AddOrUpdateRemoteParty(
-                                  RemoteParty.Id,
-                                  RemoteParty.Roles,
-                                  [
-                                      .. RemoteParty.LocalAccessInfos,
-                                      new LocalAccessInfo(
-                                          credentialTokenB,
-                                          AccessStatus.ALLOWED
-                                      )
-                                  ],
-                                  RemoteParty.RemoteAccessInfos,
-                                  RemoteParty.Status,
-                                  EventTrackingId: eventTrackingId
-                              );
-
-                        #endregion
 
                         #region Upstream HTTP request...
 
@@ -2310,9 +2349,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           oldRemoteParty.Created,     // Created
                                                                           Timestamp.Now,              // LastUpdated
                                                                           eventTrackingId,            // EventTrackingId
-                                                                          null                        // CurrentUserId
+                                                                          null,                       // CurrentUserId
+                                                                          KeepWhereNotSaved: true
 
                                                                       );
+
+                                        if (addOrUpdateResult.NotSaved)
+                                            notSaved = addOrUpdateResult.ErrorResponse;
 
                                         if (!addOrUpdateResult.IsSuccess)
                                             DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after Register(...)!");
@@ -2374,7 +2417,93 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            return response;
+            return new CredentialsResult(
+                       response,
+                       notSaved is not null,
+                       notSaved
+                   );
+
+        }
+
+        #endregion
+
+        #region Register            (VersionId = null, ...)
+
+        /// <summary>
+        /// Register at the remote party - see TryRegister, which also says
+        /// whether the file of the remote parties took what that changed.
+        /// </summary>
+        public async Task<OCPIResponse<Credentials>>
+
+            Register(Version_Id?        VersionId             = null,
+                     Boolean            SetAsDefaultVersion   = true,
+                     AccessToken?       CredentialTokenB      = null,
+
+                     Request_Id?        RequestId             = null,
+                     Correlation_Id?    CorrelationId         = null,
+
+                     DateTimeOffset?    RequestTimestamp      = null,
+                     EventTracking_Id?  EventTrackingId       = null,
+                     TimeSpan?          RequestTimeout        = null,
+                     CancellationToken  CancellationToken     = default)
+
+            => (await TryRegister(
+                          VersionId,
+                          SetAsDefaultVersion,
+                          CredentialTokenB,
+                          RequestId,
+                          CorrelationId,
+                          RequestTimestamp,
+                          EventTrackingId,
+                          RequestTimeout,
+                          CancellationToken
+                      )).Response;
+
+        #endregion
+
+        #region (private) StoreCredentialTokenB(CredentialTokenB, EventTrackingId)
+
+        /// <summary>
+        /// CREDENTIALS_TOKEN_B opens our door before it leaves the house.
+        /// </summary>
+        /// <returns>Null where the file of the remote parties took it; otherwise why it did not.</returns>
+        private async Task<String?> StoreCredentialTokenB(AccessToken       CredentialTokenB,
+                                                          EventTracking_Id  EventTrackingId)
+        {
+
+            // The receiver of these credentials is expected to turn
+            // around and fetch our versions with the token we are
+            // about to send it - that is how it finds out which
+            // versions we have in common - and this library's own
+            // receiver does exactly that, before it answers. So the
+            // token has to be one we already accept: storing it only
+            // once the answer arrives would make it a token that was
+            // not valid while the answer was being written, and the
+            // registration would fail on our own doorstep.
+            //
+            // Added beside whatever local access this party already
+            // had rather than replacing it, because the old token is
+            // what the partner is still holding until it answers;
+            // the AddOrUpdate after its answer then settles both
+            // sides on the new one.
+            var stored = await CommonAPI.AddOrUpdateRemoteParty(
+                                   RemoteParty.Id,
+                                   RemoteParty.Roles,
+                                   [
+                                       .. RemoteParty.LocalAccessInfos,
+                                       new LocalAccessInfo(
+                                           CredentialTokenB,
+                                           AccessStatus.ALLOWED
+                                       )
+                                   ],
+                                   RemoteParty.RemoteAccessInfos,
+                                   RemoteParty.Status,
+                                   EventTrackingId: EventTrackingId
+                               );
+
+            return stored.NotSaved
+                       ? stored.ErrorResponse ?? "The file of the remote parties refused the token."
+                       : null;
 
         }
 
