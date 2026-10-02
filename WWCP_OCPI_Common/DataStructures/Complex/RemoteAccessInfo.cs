@@ -563,6 +563,52 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
+                #region Parse ContentType                   [optional]
+
+                HTTPContentType? contentType = null;
+
+                if (JSON.ParseOptionalText("contentType",
+                                           "HTTP content type",
+                                           out String? contentTypeText,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                    if (!HTTPContentType.TryParse(contentTypeText, out contentType))
+                    {
+                        ErrorResponse = "Invalid value for 'HTTP content type'!";
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
+                #region Parse Accept                        [optional]
+
+                AcceptTypes? accept = null;
+
+                if (JSON.ParseOptionalText("accept",
+                                           "HTTP accept header",
+                                           out String? acceptText,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                    if (!AcceptTypes.TryParse(acceptText, out accept))
+                    {
+                        ErrorResponse = "Invalid value for 'HTTP accept header'!";
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
                 #region Parse HTTPUserAgent                 [optional]
 
                 if (JSON.ParseOptionalText("httpUserAgent",
@@ -608,6 +654,20 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
                 // ...
+
+                #region Parse VersionIds                    [optional]
+
+                if (JSON.ParseOptionalHashSet("versionIds",
+                                              "version identifications",
+                                              Version_Id.TryParse,
+                                              out HashSet<Version_Id> versionIds,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
 
                 #region Parse SelectedVersionId             [optional]
 
@@ -679,8 +739,8 @@ namespace cloud.charging.open.protocols.OCPI
                                        null,  // clientCertificateContext
                                        clientCertificateChain,
                                        tlsProtocols,
-                                       null,  // contentType
-                                       null,  // accept
+                                       contentType,
+                                       accept,
                                        httpUserAgent,
                                        requestTimeout,
                                        null,  // transmissionRetryDelay
@@ -690,7 +750,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                                        null,  // OUT
 
-                                       null,  // VersionIds
+                                       versionIds,
                                        selectedVersionId,
                                        notBefore,
                                        notAfter,

@@ -65,11 +65,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         private const           String          tokenC  = "their-token-c";
 
         // How the other side is reached, beside its tokens.
-        private static readonly DateTimeOffset  notAfter   = new (2036, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        private const           String          userAgent  = "Our OCPI client";
-        private static readonly TimeSpan        timeout    = TimeSpan.FromSeconds(23);
-        private const           UInt16          retries    = 2;
-        private const           SslProtocols    tls        = SslProtocols.Tls12 | SslProtocols.Tls13;
+        private static readonly DateTimeOffset  notAfter    = new (2036, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private const           String          userAgent   = "Our OCPI client";
+        private static readonly TimeSpan        timeout     = TimeSpan.FromSeconds(23);
+        private const           UInt16          retries     = 2;
+        private const           SslProtocols    tls         = SslProtocols.Tls12 | SslProtocols.Tls13;
+        private static readonly HTTPContentType contentType = HTTPContentType.Application.JSON_UTF8;
+        private static readonly AcceptTypes     accept      = AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8);
 
         private String       directory  = default!;
         private CommonAPI    api        = default!;
@@ -786,8 +788,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// <summary>
         /// The same, reached as a peer may ask to be: with the given client
         /// certificate, over the TLS versions it takes, IPv4 first, with a
-        /// timeout, retries and a user agent of its own, and its token not to
-        /// be used after a given time.
+        /// timeout, retries, a content type, the types it accepts and a user
+        /// agent of its own, and its token not to be used after a given time.
         /// </summary>
         private async Task<RemoteParty> AddTheOtherSide(AccessToken       OurToken,
                                                         X509Certificate2  ClientCertificate)
@@ -803,6 +805,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                                                 PreferIPv4:             IPVersionPreference.PreferIPv4,
                                                 ClientCertificates:     [ ClientCertificate ],
                                                 TLSProtocols:           tls,
+                                                ContentType:            contentType,
+                                                Accept:                 accept,
                                                 HTTPUserAgent:          userAgent,
                                                 RequestTimeout:         timeout,
                                                 MaxNumberOfRetries:     retries,
@@ -877,6 +881,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 Assert.That(now?.RequestTimeout,                                   Is.EqualTo(timeout),                              "The timeout is not the one it was.");
                 Assert.That(now?.MaxNumberOfRetries,                               Is.EqualTo(retries),                              "The retries are not the ones they were.");
                 Assert.That(now?.HTTPUserAgent,                                    Is.EqualTo(userAgent),                            "The user agent is not the one it was.");
+                Assert.That(now?.ContentType?.ToString(),                          Is.EqualTo(contentType.ToString()),               "The content type is not the one it was.");
+                Assert.That(now?.Accept?.ToString(),                               Is.EqualTo(accept.ToString()),                    "The types it accepts are not the ones they were.");
+                Assert.That(now?.VersionIds,                                       Is.EqualTo(new[] { Version.Id }),                 "The versions of the other side are not the one it speaks.");
                 Assert.That(now?.NotAfter,                                         Is.EqualTo(notAfter),                             "The token of the other side may be used for another time than it might.");
                 Assert.That(CreatedOf(api),                                        Is.EqualTo(Party.Created),                        "The other side is said to have been added anew.");
                 Assert.That(VisibleVersionsOf(api),                                Is.EqualTo(new[] { Version.Id }),                 "The other side sees other versions than it saw.");
@@ -892,6 +899,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 Assert.That(again?.RequestTimeout,                                 Is.EqualTo(timeout),                              "The next start does not know the timeout.");
                 Assert.That(again?.MaxNumberOfRetries,                             Is.EqualTo(retries),                              "The next start does not know the retries.");
                 Assert.That(again?.HTTPUserAgent,                                  Is.EqualTo(userAgent),                            "The next start does not know the user agent.");
+                Assert.That(again?.ContentType?.ToString(),                        Is.EqualTo(contentType.ToString()),               "The next start does not know the content type.");
+                Assert.That(again?.Accept?.ToString(),                             Is.EqualTo(accept.ToString()),                    "The next start does not know the types it accepts.");
+                Assert.That(again?.VersionIds,                                     Is.EqualTo(new[] { Version.Id }),                 "The next start does not know the versions of the other side.");
                 Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                             "The next start does not know until when the token of the other side may be used.");
             });
 
