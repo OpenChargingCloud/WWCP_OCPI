@@ -5989,6 +5989,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session?      session;
             TokenStatus?  tokenStatus;
             CDR?          cdr;
+            Booking?      booking;
 
             var errorResponses = new List<Tuple<Command, String>>();
 
@@ -6940,6 +6941,210 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 case CommonHTTPAPI.removeAllChargeDetailRecords:
                     foreach (var party in parties.Values)
                         party.CDRs.Clear();
+                    break;
+
+                #endregion
+
+
+                #region addBooking
+
+                case CommonHTTPAPI.addBooking:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Booking.TryParse(
+                                        command.JSONObject,
+                                        out booking,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        Party_Idv3.From(
+                                            booking.CountryCode,
+                                            booking.PartyId
+                                        ),
+                                        out var party
+                                    ))
+                        {
+                            party.Bookings.TryAdd(booking.Id, booking);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addBookingIfNotExists
+
+                case CommonHTTPAPI.addBookingIfNotExists:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Booking.TryParse(
+                                        command.JSONObject,
+                                        out booking,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        Party_Idv3.From(
+                                            booking.CountryCode,
+                                            booking.PartyId
+                                        ),
+                                        out var party
+                                    ))
+                        {
+                            party.Bookings.TryAdd(booking.Id, booking);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region addOrUpdateBooking
+
+                case CommonHTTPAPI.addOrUpdateBooking:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Booking.TryParse(
+                                        command.JSONObject,
+                                        out booking,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        Party_Idv3.From(
+                                            booking.CountryCode,
+                                            booking.PartyId
+                                        ),
+                                        out var party
+                                    ))
+                        {
+
+                            if (party.Bookings.ContainsKey(booking.Id))
+                                party.Bookings.Remove(booking.Id, out _);
+
+                            party.Bookings.TryAdd(booking.Id, booking);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateBooking
+
+                case CommonHTTPAPI.updateBooking:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Booking.TryParse(
+                                        command.JSONObject,
+                                        out booking,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        Party_Idv3.From(
+                                            booking.CountryCode,
+                                            booking.PartyId
+                                        ),
+                                        out var party
+                                    ))
+                        {
+                            party.Bookings.Remove(booking.Id, out _);
+                            party.Bookings.TryAdd(booking.Id, booking);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeBooking
+
+                case CommonHTTPAPI.removeBooking:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Booking.TryParse(
+                                        command.JSONObject,
+                                        out booking,
+                                        out errorResponse
+                                    ) &&
+                            parties.TryGetValue(
+                                        Party_Idv3.From(
+                                            booking.CountryCode,
+                                            booking.PartyId
+                                        ),
+                                        out var party
+                                    ))
+                        {
+                            party.Bookings.Remove(booking.Id, out _);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region removeAllBookings
+
+                // RemoveAllBookings writes down the bookings it removed - with
+                // a filter or for one party, only some of them - and only these
+                // are removed again.
+                case CommonHTTPAPI.removeAllBookings:
+                    foreach (var bookingJSON in command.JSONArray?.OfType<JObject>() ?? [])
+                    {
+                        try
+                        {
+                            if (Booking.TryParse(
+                                            bookingJSON,
+                                            out booking,
+                                            out errorResponse
+                                        ) &&
+                                parties.TryGetValue(
+                                            Party_Idv3.From(
+                                                booking.CountryCode,
+                                                booking.PartyId
+                                            ),
+                                            out var party
+                                        ))
+                            {
+                                party.Bookings.Remove(booking.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    }
                     break;
 
                 #endregion
