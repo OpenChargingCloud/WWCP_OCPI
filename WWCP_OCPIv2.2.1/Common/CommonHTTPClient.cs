@@ -2535,20 +2535,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // what the partner is still holding until it answers;
             // the AddOrUpdate after its answer then settles both
             // sides on the new one.
-            var stored = await CommonAPI.AddOrUpdateRemoteParty(
-                                   RemoteParty.Id,
-                                   RemoteParty.Roles,
-                                   [
-                                       .. RemoteParty.LocalAccessInfos,
-                                       new LocalAccessInfo(
-                                           CredentialTokenB,
-                                           AccessStatus.ALLOWED
-                                       )
-                                   ],
-                                   RemoteParty.RemoteAccessInfos,
-                                   RemoteParty.Status,
-                                   EventTrackingId: EventTrackingId
-                               );
+            //
+            // The party as it is now, not as this client found it
+            // when it was made: a cached client outlives a renewal,
+            // and the tokens that renewal put in effect are the ones
+            // both sides hold until the next one is answered.
+            var party   = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
+
+            // Already there where the same request is sent once more.
+            if (party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == CredentialTokenB))
+                return null;
+
+            var stored  = await CommonAPI.AddOrUpdateRemoteParty(
+                                    party.Id,
+                                    party.Roles,
+                                    [
+                                        .. party.LocalAccessInfos,
+                                        new LocalAccessInfo(
+                                            CredentialTokenB,
+                                            AccessStatus.ALLOWED
+                                        )
+                                    ],
+                                    party.RemoteAccessInfos,
+                                    party.Status,
+                                    party.VisibleVersionIds,
+                                    party.Created,
+                                    EventTrackingId: EventTrackingId
+                                );
 
             return stored.NotSaved
                        ? stored.ErrorResponse ?? "The file of the remote parties refused the token."

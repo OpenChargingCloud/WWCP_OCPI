@@ -381,6 +381,111 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARenewalSentOnceMoreAddsItsTokenOnce()
+
+        /// <summary>
+        /// A renewal sent once more - its first answer a gateway timeout, a
+        /// reason to send it again - adds its new token once, not once for
+        /// every time it was sent.
+        /// </summary>
+        [Test]
+        public async Task ARenewalSentOnceMoreAddsItsTokenOnce()
+        {
+
+            var ourToken  = AccessToken.NewRandom();
+            var newToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSide(ourToken);
+
+            other.TimesOutOnce     = true;
+            other.RefusesRenewals  = true;
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.Multiple(() => {
+                Assert.That(other.Renewals,                     Is.EqualTo(2),                             "The renewal was not sent once more after the gateway timed out.");
+                Assert.That(renewed.Response.StatusCode.Value,  Is.EqualTo(3000),                          $"The refusal of the other side is not handed back: {renewed.Response.StatusMessage}");
+                Assert.That(LocalTokensOf(api),                 Is.EqualTo(new[] { ourToken, newToken }),  "The new token is not there once, beside the one the other side holds.");
+            });
+
+        }
+
+        #endregion
+
+        #region ARefusedRenewalLeavesTheRestOfThePartyAsItWas()
+
+        /// <summary>
+        /// A renewal the other side refused leaves the rest of the party as it
+        /// was, though its new token was stored before it was sent: when it was
+        /// added, and the versions it sees.
+        /// </summary>
+        [Test]
+        public async Task ARefusedRenewalLeavesTheRestOfThePartyAsItWas()
+        {
+
+            await Listening();
+
+            var party    = await AddTheOtherSide(AccessToken.NewRandom());
+
+            other.RefusesRenewals = true;
+
+            var renewed  = await AClient(party).TryPutCredentials(OurCredentials(AccessToken.NewRandom()));
+
+            Assert.Multiple(() => {
+                Assert.That(renewed.Response.StatusCode.Value,  Is.EqualTo(3000),                  $"The refusal of the other side is not handed back: {renewed.Response.StatusMessage}");
+                Assert.That(CreatedOf(api),                     Is.EqualTo(party.Created),         "The other side is said to have been added when its renewal was sent.");
+                Assert.That(VisibleVersionsOf(api),             Is.EqualTo(new[] { Version.Id }),  "The other side sees other versions than it saw.");
+            });
+
+        }
+
+        #endregion
+
+        #region ASecondRenewalTheOtherSideRefusedLeavesTheTokensOfTheFirstInEffect()
+
+        /// <summary>
+        /// A second renewal through the same client - made before the first,
+        /// as a cached client is - which the other side refused after it called
+        /// back: the tokens of the first renewal are still in effect, not those
+        /// the client found when it was made.
+        /// </summary>
+        [Test]
+        public async Task ASecondRenewalTheOtherSideRefusedLeavesTheTokensOfTheFirstInEffect()
+        {
+
+            var firstToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var client      = AClient(await AddTheOtherSide(AccessToken.NewRandom()));
+
+            var first       = await client.TryPutCredentials(OurCredentials(firstToken));
+
+            Assert.That(first.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The first renewal did not go through: {first.Response.StatusMessage}");
+
+            other.RefusesRenewals = true;
+
+            var second      = await client.TryPutCredentials(OurCredentials(AccessToken.NewRandom()));
+
+            Assert.Multiple(() => {
+                Assert.That(second.Response.StatusCode.Value,  Is.EqualTo(3000),          $"The refusal of the other side is not handed back: {second.Response.StatusMessage}");
+                Assert.That(LocalTokensOf(api),                Does.Contain(firstToken),  "The token the other side holds since the first renewal does not open our door any more.");
+                Assert.That(RemoteTokenOf(api),                Is.EqualTo(tokenC),        "The token the other side handed out at the first renewal is not the one we call it with any more.");
+            });
+
+            var again = ACommonAPI();
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(again),  Does.Contain(firstToken),  "The next start does not know the token the other side holds since the first renewal.");
+                Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenC),        "The next start does not know the token the other side handed out at the first renewal.");
+            });
+
+        }
+
+        #endregion
+
 
         #region TheOtherSideRegisteringWhileTheFileRefusesKeepsItsToken()
 
@@ -585,7 +690,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         /// <summary>
         /// The other side as a remote party: the given token of ours, and its
-        /// versions URL and token A to start the registration with.
+        /// versions URL and token A to start the registration with - and, as
+        /// one may be kept to it, this version the only one it sees.
         /// </summary>
         private async Task<RemoteParty> AddTheOtherSide(AccessToken OurToken)
         {
@@ -596,7 +702,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                                                 new BusinessDetails("Their EMSP"),
                                                 OurToken,
                                                 other.VersionsURL,
-                                                AccessToken.Parse(tokenA));
+                                                AccessToken.Parse(tokenA),
+                                                VisibleVersionIds: [ Version.Id ]);
 
             Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
 
@@ -630,7 +737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
-        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API) / NameOf(API)
+        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API) / NameOf(API) / CreatedOf(API) / VisibleVersionsOf(API)
 
         /// <summary>
         /// The name of the file of the remote parties, which a refusal names.
@@ -667,6 +774,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    Where     (party => party.Id == id).
                    Select    (party => party.BusinessDetails.Name).
                    FirstOrDefault();
+
+        /// <summary>
+        /// When the other side was added, as this API has it, or null.
+        /// </summary>
+        private static DateTimeOffset? CreatedOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   Select    (party => (DateTimeOffset?) party.Created).
+                   FirstOrDefault();
+
+        /// <summary>
+        /// The versions the other side sees, as this API has them.
+        /// </summary>
+        private static Version_Id[] VisibleVersionsOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.VisibleVersionIds).
+                   ToArray();
 
         #endregion
 
@@ -778,6 +905,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             /// <summary>Whether a renewal is refused once it has called back - OCPI 3000 with HTTP 500, as this library's own receiver refuses one its file cannot take: nothing changed there.</summary>
             public Boolean                             RefusesRenewals        { get; set; }
 
+            /// <summary>Whether the first renewal is answered as a gateway answers one that took too long: HTTP 504, a reason to send it once more.</summary>
+            public Boolean                             TimesOutOnce           { get; set; }
+
+            /// <summary>How many renewals arrived.</summary>
+            public Int32                               Renewals               { get; private set; }
+
             private OtherSide(HTTPServer Server, URL VersionsURL)
             {
                 this.server       = Server;
@@ -875,6 +1008,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                     async request => {
 
                         other.ReceivedCredentials = JObject.Parse(request.HTTPBodyAsUTF8String ?? "{}");
+
+                        if (++other.Renewals == 1 && other.TimesOutOnce)
+                            return Refused(request, HTTPStatusCode.GatewayTimeout,       3000, "The gateway timed out.");
+
                         other.WhenCredentialsArrive?.Invoke();
 
                         other.CalledBack = await CallBack(other.ReceivedCredentials);
