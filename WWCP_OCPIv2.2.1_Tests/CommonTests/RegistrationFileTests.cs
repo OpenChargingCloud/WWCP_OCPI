@@ -912,6 +912,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                 Assert.That(again?.AccessToken?.ToString(),                        Is.EqualTo(tokenC),                               "The next start does not know the token the other side handed out.");
                 Assert.That(again?.ClientCertificates.Select(c => c.Thumbprint),   Is.EqualTo(new[] { ClientCertificate.Thumbprint }), "The next start does not know the client certificate the other side asks for.");
                 Assert.That(again?.TLSProtocols,                                   Is.EqualTo(tls),                                  "The next start does not know the TLS versions.");
+                Assert.That(again?.PreferIPv4,                                     Is.EqualTo(IPVersionPreference.PreferIPv4),       "The next start does not prefer IPv4.");
+                Assert.That(again?.RequestTimeout,                                 Is.EqualTo(timeout),                              "The next start does not know the timeout.");
+                Assert.That(again?.MaxNumberOfRetries,                             Is.EqualTo(retries),                              "The next start does not know the retries.");
                 Assert.That(again?.HTTPUserAgent,                                  Is.EqualTo(userAgent),                            "The next start does not know the user agent.");
                 Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                             "The next start does not know until when the token of the other side may be used.");
             });

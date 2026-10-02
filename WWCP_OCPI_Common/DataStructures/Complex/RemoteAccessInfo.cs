@@ -455,6 +455,29 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
+                #region Parse PreferIPv4                    [optional]
+
+                // Written as the number of its value.
+                IPVersionPreference? preferIPv4 = null;
+
+                if (JSON.TryGetValue("preferIPv4", out var preferIPv4JSON) &&
+                    preferIPv4JSON.Type != JTokenType.Null)
+                {
+
+                    if (preferIPv4JSON.Type == JTokenType.Integer &&
+                        Enum.IsDefined(typeof(IPVersionPreference), preferIPv4JSON.Value<Int32>()))
+                        preferIPv4 = (IPVersionPreference) preferIPv4JSON.Value<Int32>();
+
+                    else
+                    {
+                        ErrorResponse = "Invalid value for 'prefer IPv4'!";
+                        return false;
+                    }
+
+                }
+
+                #endregion
+
                 // ...
 
                 #region Parse ClientCertificates            [optional]
@@ -553,6 +576,37 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
+                #region Parse RequestTimeout                [optional]
+
+                // Written in milliseconds.
+                if (JSON.ParseOptional("requestTimeout",
+                                       "request timeout in milliseconds",
+                                       out UInt32? requestTimeoutMilliseconds,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                var requestTimeout = requestTimeoutMilliseconds.HasValue
+                                         ? TimeSpan.FromMilliseconds(requestTimeoutMilliseconds.Value)
+                                         : new TimeSpan?();
+
+                #endregion
+
+                #region Parse MaxNumberOfRetries            [optional]
+
+                if (JSON.ParseOptional("maxNumberOfRetries",
+                                       "maximum number of retries",
+                                       out UInt16? maxNumberOfRetries,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 // ...
 
                 #region Parse SelectedVersionId             [optional]
@@ -618,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPI
                                        accessTokenIsBase64Encoded,
                                        totpConfig,
 
-                                       null,  // preferIPv4
+                                       preferIPv4,
                                        null,  // remoteCertificateValidator
                                        null,  // localCertificateSelector
                                        clientCertificates,
@@ -628,9 +682,9 @@ namespace cloud.charging.open.protocols.OCPI
                                        null,  // contentType
                                        null,  // accept
                                        httpUserAgent,
-                                       null,  // requestTimeout
+                                       requestTimeout,
                                        null,  // transmissionRetryDelay
-                                       null,  // maxNumberOfRetries
+                                       maxNumberOfRetries,
                                        null,  // internalBufferSize
                                        null,  // useHTTPPipelining
 
