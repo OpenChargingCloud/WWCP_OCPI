@@ -198,13 +198,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Timestamp    [optional]
 
-                if (!JSON.ParseOptional("timestamp",
-                                        "timestamp",
-                                        out DateTimeOffset? Timestamp,
-                                        out ErrorResponse))
-                {
+                JSON.ParseOptional("timestamp",
+                                   "timestamp",
+                                   out DateTimeOffset? Timestamp,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
                     return false;
-                }
 
                 #endregion
 
@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
-                           new JProperty("id",         Id.       ToString()),
+                           new JProperty("uid",        Id.       ToString()),
                            new JProperty("status",     Status.   ToString()),
                            new JProperty("timestamp",  Timestamp.ToISO8601())
 

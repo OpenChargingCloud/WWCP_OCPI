@@ -254,14 +254,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse StepSize              [optional]
 
-                if (!JSON.ParseOptional("step_size",
-                                        "step size",
-                                        out UInt32? stepSize,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptional("step_size",
+                                   "step size",
+                                   out UInt32? stepSize,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

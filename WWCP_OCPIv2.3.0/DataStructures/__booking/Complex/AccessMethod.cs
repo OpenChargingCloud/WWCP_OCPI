@@ -164,14 +164,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse Value             [optional]
 
-                if (!JSON.ParseOptionalText("value",
-                                            "location access value",
-                                            out String? value,
-                                            out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptionalText("value",
+                                       "location access value",
+                                       out String? value,
+                                       out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

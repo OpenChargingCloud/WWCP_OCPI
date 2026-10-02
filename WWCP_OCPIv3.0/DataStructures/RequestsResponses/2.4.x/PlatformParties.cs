@@ -163,29 +163,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse HubPartyId    [optional]
 
-                if (!JSON.ParseOptional("hub_party_id",
-                                        "hub party identification",
-                                        Party_Idv3.TryParse,
-                                        out Party_Idv3 HubPartyId,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptional("hub_party_id",
+                                   "hub party identification",
+                                   Party_Idv3.TryParse,
+                                   out Party_Idv3 HubPartyId,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 
                 #region Parse Parties       [optional]
 
-                if (!JSON.ParseOptionalHashSet("parties",
-                                               "platform parties",
-                                               PlatformParty.TryParse,
-                                               out HashSet<PlatformParty> Parties,
-                                               out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptionalHashSet("parties",
+                                          "platform parties",
+                                          PlatformParty.TryParse,
+                                          out HashSet<PlatformParty> Parties,
+                                          out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

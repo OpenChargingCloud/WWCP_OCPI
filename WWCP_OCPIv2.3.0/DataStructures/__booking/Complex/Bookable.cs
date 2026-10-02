@@ -164,14 +164,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse AdHoc                  [optional]
 
-                if (!JSON.ParseOptional("ad_hoc",
-                                        "ad hoc",
-                                        out Byte? adHoc,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptional("ad_hoc",
+                                   "ad hoc",
+                                   out Byte? adHoc,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

@@ -272,15 +272,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse ErrorMessage     [optional]
 
-                if (!JSON.ParseOptionalJSONArray("error_message",
-                                                 "web payment error message",
-                                                 DisplayTexts.TryParse,
-                                                 out DisplayTexts? errorMessage,
-                                                 out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptionalJSONArray("error_message",
+                                            "web payment error message",
+                                            DisplayTexts.TryParse,
+                                            out DisplayTexts? errorMessage,
+                                            out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

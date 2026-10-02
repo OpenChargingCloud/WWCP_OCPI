@@ -202,14 +202,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse ParallelismLimit    [optional]
 
-                if (!JSON.ParseOptional("parallelism_limit",
-                                        "parallelism limit",
-                                        out UInt16? ParallelismLimit,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptional("parallelism_limit",
+                                   "parallelism limit",
+                                   out UInt16? ParallelismLimit,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 
