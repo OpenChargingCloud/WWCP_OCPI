@@ -160,6 +160,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
         /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/session_example_1_simple_start.json
+        /// Its total cost is written as a price of 2.3.0 is - with before_taxes:
+        /// the example writes it as 2.2.1 did, with excl_vat, which is refused -
+        /// see Session_TotalCostAsBefore_IsRefused.
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test01()
@@ -186,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                            ""connector_id"":    ""1"",
                            ""currency"":        ""EUR"",
                            ""total_cost"": {
-                               ""excl_vat"":      2.5
+                               ""before_taxes"":  2.5
                            },
                            ""status"":          ""PENDING"",
                            ""last_updated"":    ""2020-03-09T10:17:09Z""
@@ -229,6 +232,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
         /// https://github.com/ocpi/ocpi/blob/release-2.3.0.1-bugfixes/examples/session_example_2_short_finished.json
+        /// Its total cost is written as a price of 2.3.0 is - with before_taxes
+        /// and taxes: the example writes it as 2.2.1 did, with excl_vat and
+        /// incl_vat, which is refused - see Session_TotalCostAsBefore_IsRefused.
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test02()
@@ -282,8 +288,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                              ""tariff_id"":         ""12""
                            }],
                            ""total_cost"": {
-                             ""excl_vat"":            8.50,
-                             ""incl_vat"":            9.35
+                             ""before_taxes"":        8.50,
+                             ""taxes"": [{
+                               ""name"":              ""VAT"",
+                               ""amount"":            0.85
+                             }]
                            },
                            ""status"":              ""COMPLETED"",
                            ""last_updated"":        ""2015-06-29T23:50:17Z""
@@ -295,6 +304,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             ClassicAssert.IsTrue   (result, errorResponse);
             ClassicAssert.IsNotNull(parsedSession);
             ClassicAssert.IsNull   (errorResponse);
+
+            ClassicAssert.AreEqual(8.50M, parsedSession?.TotalCosts?.BeforeTaxes);
 
             ClassicAssert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
             ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);
@@ -316,6 +327,54 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             //ClassicAssert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
             //ClassicAssert.AreEqual(Session1.Status,                   parsedSession.Status);
             //ClassicAssert.AreEqual(Session1.LastUpdated.ToISO8601(),  parsedSession.LastUpdated.ToISO8601());
+
+        }
+
+        #endregion
+
+        #region Session_TotalCostAsBefore_IsRefused()
+
+        /// <summary>
+        /// A session whose total cost is written as 2.2.1 wrote a price - with
+        /// excl_vat and incl_vat, as the examples of GitHub still do - is
+        /// refused, and said why: a price of 2.3.0 has before_taxes and taxes.
+        /// It was read before, its total cost passed over without a word.
+        /// </summary>
+        [Test]
+        public static void Session_TotalCostAsBefore_IsRefused()
+        {
+
+            var JSON = @"{
+                           ""country_code"":    ""NL"",
+                           ""party_id"":        ""STK"",
+                           ""id"":              ""101"",
+                           ""start_date_time"": ""2020-03-09T10:17:09Z"",
+                           ""kwh"":               0.0,
+                           ""cdr_token"": {
+                               ""country_code"":  ""NL"",
+                               ""party_id"":      ""TST"",
+                               ""uid"":           ""123abc"",
+                               ""type"":          ""RFID"",
+                               ""contract_id"":   ""NL-TST-C12345678-S""
+                           },
+                           ""auth_method"":     ""WHITELIST"",
+                           ""location_id"":     ""LOC1"",
+                           ""evse_uid"":        ""3256"",
+                           ""connector_id"":    ""1"",
+                           ""currency"":        ""EUR"",
+                           ""total_cost"": {
+                               ""excl_vat"":      8.50,
+                               ""incl_vat"":      9.35
+                           },
+                           ""status"":          ""PENDING"",
+                           ""last_updated"":    ""2020-03-09T10:17:09Z""
+                         }";
+
+            var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
+
+            ClassicAssert.IsFalse  (result, "A session with a total cost as before is read.");
+            ClassicAssert.IsNull   (parsedSession);
+            StringAssert.Contains  ("total_cost", errorResponse ?? "", "Why the session is refused is not said.");
 
         }
 

@@ -848,15 +848,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Address               [mandatory]
 
-                if (!JSON.ParseOptionalJSON("address",
-                                            "address",
-                                            OCPIv3_0.Address.TryParse,
-                                            out Address? Address,
-                                            out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptionalJSON("address",
+                                       "address",
+                                       OCPIv3_0.Address.TryParse,
+                                       out Address? Address,
+                                       out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

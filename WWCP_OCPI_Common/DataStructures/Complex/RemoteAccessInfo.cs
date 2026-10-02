@@ -709,14 +709,13 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse AllowDowngrades               [optional]
 
-                if (!JSON.ParseOptional("allowDowngrades",
-                                        "allow downgrades",
-                                        out Boolean? allowDowngrades,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptional("allowDowngrades",
+                                   "allow downgrades",
+                                   out Boolean? allowDowngrades,
+                                   out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 
