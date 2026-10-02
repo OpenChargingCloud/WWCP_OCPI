@@ -4144,6 +4144,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         {
                             tariffs.Remove(tariff.Id);
                         }
+
+                        // RemoveSession wrote its line as "removeTariff", with
+                        // the session: such a line still removes that session.
+                        else if (command.JSONObject is not null &&
+                                 Session.TryParse(command.JSONObject,
+                                                  out session,
+                                                  out _))
+                        {
+                            chargingSessions.Remove(session.Id, out _);
+                            errorResponse = null;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -11860,7 +11871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 await LogAsset(
-                          CommonHTTPAPI.removeTariff,
+                          CommonHTTPAPI.removeSession,
                           session.ToJSON(
                               true,
                               true,
