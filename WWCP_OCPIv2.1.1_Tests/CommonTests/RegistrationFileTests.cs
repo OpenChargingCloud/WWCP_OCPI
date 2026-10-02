@@ -36,19 +36,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 {
 
     /// <summary>
-    /// A registration with the other side while the file the remote parties
-    /// are kept in cannot be written: nothing sent where it cannot take the
-    /// token the other side would call back with; kept where the other side
-    /// accepted, because it uses the new tokens already, and written down
-    /// once the file takes lines again.
+    /// A registration with the other side - or its renewal - while the file
+    /// the remote parties are kept in cannot be written: nothing sent where it
+    /// cannot take the token the other side would call back with; kept where
+    /// the other side accepted, because it uses the new tokens already, and
+    /// written down once the file takes lines again.
     /// </summary>
     /// <remarks>
     /// The other side is a stub with the three routes a registration walks -
     /// the versions, the details of one, the credentials - which answers with
     /// credentials of its own, and makes the file unwritable on request just
     /// before. Unwritable the way that stops root as well: a directory where
-    /// the file would be. The next start is a Common API made anew on the
-    /// same directory.
+    /// the file would be. A renewal it calls back before it answers, with the
+    /// token it was sent, as this library's own receiver does. The next start
+    /// is a Common API made anew on the same directory.
     /// </remarks>
     [TestFixture]
     public class RegistrationFileTests
@@ -217,6 +218,170 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
+        #region ARenewalItsFileTakesIsSaved()
+
+        /// <summary>
+        /// A renewal - our credentials put onto the other side once more, with
+        /// a new token - which the other side calls back with that token before
+        /// it answers: the token opens our door already, the renewal goes
+        /// through, and the next start knows the new tokens of both sides.
+        /// </summary>
+        [Test]
+        public async Task ARenewalItsFileTakesIsSaved()
+        {
+
+            var newToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSide(AccessToken.NewRandom());
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.Multiple(() => {
+                Assert.That(other.CalledBack?.StatusCode,                 Is.EqualTo(1000),               $"The other side called back with the new token, and was answered {other.CalledBack}.");
+                Assert.That(renewed.Response.Data?.Token.ToString(),      Is.EqualTo(tokenC),             $"The renewal did not go through: {renewed.Response.StatusMessage}");
+                Assert.That(renewed.NotSaved,                             Is.False,                       $"The renewal is said to be unsaved: {renewed.Reason}");
+                Assert.That(LocalTokensOf(api),                           Is.EqualTo(new[] { newToken }), "The token the other side calls back with is not the new one alone.");
+                Assert.That(RemoteTokenOf(api),                           Is.EqualTo(tokenC),             "The token the other side handed out is not the one in effect.");
+                Assert.That(NameOf(api),                                  Is.EqualTo("Their EMSP"),       "The other side is not named as its answer names it.");
+                Assert.That(api.UnsavedRemoteParties,                     Is.Empty,                       "Something is said to be kept, though the file took everything.");
+            });
+
+            var again = ACommonAPI();
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(again),  Is.EqualTo(new[] { newToken }),  "The next start does not know the token the other side calls back with.");
+                Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenC),              "The next start does not know the token the other side handed out.");
+            });
+
+        }
+
+        #endregion
+
+        #region NothingIsSentWhereTheNewTokenOfARenewalCannotBeStored()
+
+        /// <summary>
+        /// The new token of a renewal is stored before anything is sent; where
+        /// the file refuses it, nothing is sent, and nothing has changed.
+        /// </summary>
+        [Test]
+        public async Task NothingIsSentWhereTheNewTokenOfARenewalCannotBeStored()
+        {
+
+            var ourToken  = AccessToken.NewRandom();
+            var party     = await AddTheOtherSide(ourToken);
+
+            BlockTheFile();
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(AccessToken.NewRandom()));
+
+            Assert.Multiple(() => {
+                Assert.That(renewed.NotSaved,          Is.True,                         "The file refused the new token, and the result does not say so.");
+                Assert.That(renewed.Reason,            Does.Contain(FileName),          "The result does not name the file that refused.");
+                Assert.That(renewed.Response.Data,     Is.Null,                         "The other side answered, though nothing was to be sent.");
+                Assert.That(other.ReceivedCredentials, Is.Null,                         "The credentials were sent, though their new token could not be stored.");
+                Assert.That(LocalTokensOf(api),        Is.EqualTo(new[] { ourToken }),  "The new token is kept, though its file refused it.");
+                Assert.That(RemoteTokenOf(api),        Is.EqualTo(tokenA),              "The token the other side has is not the one in effect any more.");
+                Assert.That(api.UnsavedRemoteParties,  Is.Empty,                        "Something is said to be kept, though nothing was.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { ourToken }), "The next start knows a token its file refused.");
+
+        }
+
+        #endregion
+
+        #region ARenewalTheOtherSideAcceptedIsKept()
+
+        /// <summary>
+        /// Where the other side accepted a renewal and the file refuses what
+        /// its answer changed, the change is kept - in effect, said to be
+        /// unsaved - and written down once the file takes lines again.
+        /// </summary>
+        [Test]
+        public async Task ARenewalTheOtherSideAcceptedIsKept()
+        {
+
+            var newToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSide(AccessToken.NewRandom());
+
+            other.WhenCredentialsArrive = BlockTheFile;
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.Multiple(() => {
+                Assert.That(renewed.NotSaved,                             Is.True,                        "The file refused what the answer changed, and the result does not say so.");
+                Assert.That(renewed.Reason,                               Does.Contain(FileName),         "The result does not name the file that refused.");
+                Assert.That(renewed.Response.Data?.Token.ToString(),      Is.EqualTo(tokenC),             $"The answer of the other side is not handed back: {renewed.Response.StatusMessage}");
+                Assert.That(LocalTokensOf(api),                           Is.EqualTo(new[] { newToken }), "The token the other side calls back with is not the one in effect.");
+                Assert.That(RemoteTokenOf(api),                           Is.EqualTo(tokenC),             "The token the other side handed out is not the one in effect.");
+                Assert.That(api.UnsavedRemoteParties,                     Is.EqualTo(new[] { id }),       "The renewal kept is not said to be unsaved.");
+            });
+
+            UnblockTheFile();
+
+            Assert.That(await api.WriteDownUnsavedRemoteParties(), Is.Null, "The renewal kept could not be written down, though its file takes lines again.");
+
+            var again = ACommonAPI();
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(again),  Is.EqualTo(new[] { newToken }),  "The next start does not know the token the other side calls back with.");
+                Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenC),              "The next start does not know the token the other side handed out.");
+            });
+
+        }
+
+        #endregion
+
+        #region ARenewalTheOtherSideRefusedLeavesTheTokensInEffect()
+
+        /// <summary>
+        /// A renewal the other side refused after it called back - as this
+        /// library's own receiver refuses one its file cannot take - changed
+        /// nothing there: the token it holds still opens our door, now and at
+        /// the next start, and the one it handed out is still the one we call
+        /// it with.
+        /// </summary>
+        [Test]
+        public async Task ARenewalTheOtherSideRefusedLeavesTheTokensInEffect()
+        {
+
+            var ourToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSide(ourToken);
+
+            other.RefusesRenewals = true;
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(AccessToken.NewRandom()));
+
+            Assert.Multiple(() => {
+                Assert.That(other.CalledBack?.StatusCode,        Is.EqualTo(1000),          $"The other side called back with the new token, and was answered {other.CalledBack}.");
+                Assert.That(renewed.Response.StatusCode.Value,   Is.EqualTo(3000),          $"The refusal of the other side is not handed back: {renewed.Response.StatusMessage}");
+                Assert.That(renewed.NotSaved,                    Is.False,                  $"The renewal is said to be unsaved: {renewed.Reason}");
+                Assert.That(LocalTokensOf(api),                  Does.Contain(ourToken),    "The token the other side still holds does not open our door any more.");
+                Assert.That(RemoteTokenOf(api),                  Is.EqualTo(tokenA),        "The token the other side still has is not the one we call it with any more.");
+            });
+
+            var again = ACommonAPI();
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(again),  Does.Contain(ourToken),  "The next start does not know the token the other side still holds.");
+                Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenA),      "The next start does not know the token the other side still has.");
+            });
+
+        }
+
+        #endregion
+
+
         #region TheOtherSideRegisteringWhileTheFileRefusesKeepsItsToken()
 
         /// <summary>
@@ -306,14 +471,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
-        #region (private) Listening(TokenOfOurs) / CredentialsURL(Token) / Send(Method, URL, Token)
+        #region (private) Listening() / Listening(TokenOfOurs) / CredentialsURL(Token) / Send(Method, URL, Token)
 
         /// <summary>
         /// This test's Common API made anew, listening on a port nobody was
-        /// listening on a moment ago, with the other side to come: the given
-        /// token of ours, handed out and not yet used.
+        /// listening on a moment ago.
         /// </summary>
-        private async Task Listening(AccessToken TokenOfOurs)
+        private async Task Listening()
         {
 
             for (var attempt = 1; ; attempt++)
@@ -332,6 +496,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 { }
 
             }
+
+        }
+
+        /// <summary>
+        /// The same, with the other side to come: the given token of ours,
+        /// handed out and not yet used.
+        /// </summary>
+        private async Task Listening(AccessToken TokenOfOurs)
+        {
+
+            await Listening();
 
             var added = await api.AddRemoteParty(CountryCode.Parse("DE"),
                                                 Party_Id.   Parse("BBB"),
@@ -406,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
-        #region (private) AddTheOtherSide(OurToken) / AClient(Party)
+        #region (private) AddTheOtherSide(OurToken) / AClient(Party) / OurCredentials(Token)
 
         /// <summary>
         /// The other side as a remote party: the given token of ours, and its
@@ -439,9 +614,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    RemoteParty:  Party
                );
 
+        /// <summary>
+        /// Our credentials, as a renewal puts them onto the other side: the
+        /// given new token, and where our versions are.
+        /// </summary>
+        private Credentials OurCredentials(AccessToken Token)
+
+            => new (
+                   Token,
+                   api.BaseAPI.OurVersionsURL,
+                   new BusinessDetails("GraphDefined CSO"),
+                   CountryCode.Parse("DE"),
+                   Party_Id.   Parse("GEF")
+               );
+
         #endregion
 
-        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API)
+        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API) / NameOf(API)
 
         /// <summary>
         /// The name of the file of the remote parties, which a refusal names.
@@ -469,6 +658,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    SelectMany(party => party.RemoteAccessInfos.Select(info => info.AccessToken.ToString())).
                    FirstOrDefault();
 
+        /// <summary>
+        /// The name of the other side, as this API has it, or null.
+        /// </summary>
+        private static String? NameOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   Select    (party => party.BusinessDetails.Name).
+                   FirstOrDefault();
+
         #endregion
 
         #region (private) ACommonAPI()
@@ -483,7 +682,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         /// <summary>
         /// The same on the given HTTP server, which says it is on the given
-        /// port.
+        /// port. A token it does not know is refused, as a hub refuses it by
+        /// default - not let through with the locations as open data.
         /// </summary>
         private CommonAPI ACommonAPI(HTTPServer  Server,
                                      UInt16      Port)
@@ -496,14 +696,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    OurRole:             Role.CPO,
 
                    BaseAPI:             new CommonHTTPAPI(
-                                          HTTPAPI:          new HTTPExtAPI(
-                                                                HTTPServer: Server
-                                                            ),
-                                          OurBaseURL:       URL.Parse($"http://127.0.0.1:{Port}/ocpi"),
-                                          OurVersionsURL:   URL.Parse($"http://127.0.0.1:{Port}/ocpi/versions"),
-                                          RootPath:         HTTPPath.Parse("/ocpi"),
-                                          DisableLogging:   true,
-                                          LoggingPath:      directory
+                                          HTTPAPI:              new HTTPExtAPI(
+                                                                    HTTPServer: Server
+                                                                ),
+                                          OurBaseURL:           URL.Parse($"http://127.0.0.1:{Port}/ocpi"),
+                                          OurVersionsURL:       URL.Parse($"http://127.0.0.1:{Port}/ocpi/versions"),
+                                          RootPath:             HTTPPath.Parse("/ocpi"),
+                                          LocationsAsOpenData:  false,
+                                          DisableLogging:       true,
+                                          LoggingPath:          directory
                                       ),
 
                    URLPathPrefix:       HTTPPath.Parse("/ocpi/v2.1.1"),
@@ -553,7 +754,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// The other side of a registration: the versions, the details of
         /// 2.1.1 and the credentials, on a port nobody was listening on a
         /// moment ago. It records the credentials it was sent, and answers
-        /// with its own.
+        /// with its own - a renewal only once it has called back, as this
+        /// library's own receiver does: the versions of the sender, fetched
+        /// with the token it sent.
         /// </summary>
         private sealed class OtherSide : IAsyncDisposable
         {
@@ -561,13 +764,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             private readonly HTTPServer server;
 
             /// <summary>Where it says its versions are.</summary>
-            public URL       VersionsURL            { get; }
+            public URL                                 VersionsURL            { get; }
 
             /// <summary>The credentials it was sent, if any.</summary>
-            public JObject?  ReceivedCredentials    { get; private set; }
+            public JObject?                            ReceivedCredentials    { get; private set; }
 
             /// <summary>Something to do once credentials have arrived, before the answer goes back.</summary>
-            public Action?   WhenCredentialsArrive  { get; set; }
+            public Action?                             WhenCredentialsArrive  { get; set; }
+
+            /// <summary>What the versions of the sender of a renewal answered the token it sent: the HTTP status and the OCPI status code.</summary>
+            public (Int32 Status, Int32? StatusCode)?  CalledBack             { get; private set; }
+
+            /// <summary>Whether a renewal is refused once it has called back - OCPI 3000 with HTTP 500, as this library's own receiver refuses one its file cannot take: nothing changed there.</summary>
+            public Boolean                             RefusesRenewals        { get; set; }
 
             private OtherSide(HTTPServer Server, URL VersionsURL)
             {
@@ -655,23 +864,101 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                         other.ReceivedCredentials = JObject.Parse(request.HTTPBodyAsUTF8String ?? "{}");
                         other.WhenCredentialsArrive?.Invoke();
 
-                        return Task.FromResult(JSON(request, new JObject(
-                                   new JProperty("token",  tokenC),
-                                   new JProperty("url",    $"{origin}/versions"),
-                                   new JProperty("business_details",  new JObject(
-                                       new JProperty("name",  "Their EMSP")
-                                   )),
-                                   new JProperty("party_id",      "BBB"),
-                                   new JProperty("country_code",  "DE")
-                               )));
+                        return Task.FromResult(JSON(request, TheirCredentials(origin)));
 
                     },
                     HTTPMethod.POST
                 );
 
+                api.AddHandler(
+                    HTTPPath.Parse("/2.1.1/credentials"),
+                    async request => {
+
+                        other.ReceivedCredentials = JObject.Parse(request.HTTPBodyAsUTF8String ?? "{}");
+                        other.WhenCredentialsArrive?.Invoke();
+
+                        other.CalledBack = await CallBack(other.ReceivedCredentials);
+
+                        if (other.CalledBack.Value.StatusCode != 1000)
+                            return Refused(request, HTTPStatusCode.MethodNotAllowed,     2000, "Could not fetch VERSIONS information!");
+
+                        if (other.RefusesRenewals)
+                            return Refused(request, HTTPStatusCode.InternalServerError,  3000, "The credentials could not be stored here, and nothing was changed.");
+
+                        return JSON(request, TheirCredentials(origin));
+
+                    },
+                    HTTPMethod.PUT
+                );
+
                 return other;
 
             }
+
+            /// <summary>
+            /// The credentials it answers with: token C, and where its versions
+            /// are.
+            /// </summary>
+            private static JObject TheirCredentials(String Origin)
+
+                => new (
+                       new JProperty("token",  tokenC),
+                       new JProperty("url",    $"{Origin}/versions"),
+                       new JProperty("business_details",  new JObject(
+                           new JProperty("name",  "Their EMSP")
+                       )),
+                       new JProperty("party_id",      "BBB"),
+                       new JProperty("country_code",  "DE")
+                   );
+
+            /// <summary>
+            /// The versions of the sender of the given credentials, fetched with
+            /// the token they carry - and what they answered: the HTTP status and
+            /// the OCPI status code, none where nobody answered.
+            /// </summary>
+            private static async Task<(Int32 Status, Int32? StatusCode)> CallBack(JObject Credentials)
+            {
+
+                try
+                {
+
+                    using var http     = new HttpClient();
+                    using var request  = new HttpRequestMessage(HttpMethod.Get, Credentials.Value<String>("url"));
+
+                    request.Headers.TryAddWithoutValidation("Authorization", $"Token {Credentials.Value<String>("token")}");
+
+                    using var response = await http.SendAsync(request);
+
+                    var text   = await response.Content.ReadAsStringAsync();
+                    var answer = text.StartsWith('{') ? JObject.Parse(text) : null;
+
+                    return ((Int32) response.StatusCode, answer?.Value<Int32?>("status_code"));
+
+                }
+                catch (HttpRequestException)
+                {
+                    return (0, null);
+                }
+
+            }
+
+            private static HTTPResponse Refused(HTTPRequest     Request,
+                                                HTTPStatusCode  Status,
+                                                Int32           StatusCode,
+                                                String          Message)
+
+                => new HTTPResponse.Builder(Request) {
+                       HTTPStatusCode  = Status,
+                       ContentType     = HTTPContentType.Application.JSON_UTF8,
+                       Content         = Encoding.UTF8.GetBytes(
+                                             new JObject(
+                                                 new JProperty("status_code",     StatusCode),
+                                                 new JProperty("status_message",  Message),
+                                                 new JProperty("timestamp",       DateTimeOffset.UtcNow.ToString("o"))
+                                             ).ToString()
+                                         ),
+                       Connection      = ConnectionType.Close
+                   }.AsImmutable;
 
             private static HTTPResponse JSON(HTTPRequest Request, JToken Data)
 

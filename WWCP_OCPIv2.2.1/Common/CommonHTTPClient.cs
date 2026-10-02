@@ -1588,11 +1588,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// that changed.
         /// </summary>
         /// <remarks>
+        /// <para>
+        /// The token of the credentials, the one the other side is to call
+        /// back with, is stored before anything is sent, beside the one it
+        /// holds until it answers. Where the file refuses it, nothing is sent,
+        /// and nothing has changed: NotSaved, and the response says why.
+        /// </para>
+        /// <para>
         /// Where the other side accepted and the file refuses what its answer
         /// changed, the change is kept, because both sides use the new tokens
         /// already: in effect, and written down with the next line the file
         /// takes, or when the base API is disposed. NotSaved, and the response
         /// is the other side's.
+        /// </para>
         /// </remarks>
         /// <param name="Credentials">The credentials to store/put at/onto the remote API.</param>
         /// 
@@ -1686,6 +1694,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     else if (!remoteURL.HasValue)
                         response = OCPIResponse<Credentials>.Error("No remote URL available!");
+
+                    // The new token opens our door before it leaves the house, as
+                    // CREDENTIALS_TOKEN_B does for TryRegister - and where the file
+                    // refuses it, nothing leaves the house.
+                    else if ((notSaved = await StoreCredentialTokenB(Credentials.Token, eventTrackingId)) is not null)
+                        response = OCPIResponse<Credentials>.Error($"Nothing was sent: the token the other side would call back with could not be stored - {notSaved}");
 
                     else
                     {
@@ -2497,7 +2511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (private) StoreCredentialTokenB(CredentialTokenB, EventTrackingId)
 
         /// <summary>
-        /// CREDENTIALS_TOKEN_B opens our door before it leaves the house.
+        /// CREDENTIALS_TOKEN_B - or the new token of a renewal - opens our
+        /// door before it leaves the house.
         /// </summary>
         /// <returns>Null where the file of the remote parties took it; otherwise why it did not.</returns>
         private async Task<String?> StoreCredentialTokenB(AccessToken       CredentialTokenB,
@@ -2512,7 +2527,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             // token has to be one we already accept: storing it only
             // once the answer arrives would make it a token that was
             // not valid while the answer was being written, and the
-            // registration would fail on our own doorstep.
+            // registration - or its renewal by TryPutCredentials -
+            // would fail on our own doorstep.
             //
             // Added beside whatever local access this party already
             // had rather than replacing it, because the old token is
