@@ -195,6 +195,132 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARemoteTariffAddedIfNotThereIsThereAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteTariffAddedIfNotThereIsThereAtTheNextStart()
+        {
+
+            var tariff  = ATariff();
+            var added   = await emsp.AddRemoteTariffIfNotExists(tariff);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote tariff could not be added: {added.ErrorResponse}");
+
+            Assert.That((await NextStart()).GetRemoteTariffs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(tariff) }),
+                        "The next start does not know the remote tariff added if it was not there.");
+
+        }
+
+        #endregion
+
+        #region ARemoteTariffAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+
+        /// <summary>
+        /// A remote tariff added, and updated, both through AddOrUpdate: the
+        /// next start knows it as it was updated.
+        /// </summary>
+        [Test]
+        public async Task ARemoteTariffAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+        {
+
+            var tariff   = ATariff();
+            var updated  = ATariff(Updated: true);
+
+            var added    = await emsp.AddOrUpdateRemoteTariff(tariff);
+            var update   = await emsp.AddOrUpdateRemoteTariff(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote tariff could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote tariff could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteTariffs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote tariff as it was last added or updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteTariffUpdatedIsThereAsUpdatedAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteTariffUpdatedIsThereAsUpdatedAtTheNextStart()
+        {
+
+            var tariff   = ATariff();
+            var updated  = ATariff(Updated: true);
+
+            var added    = await emsp.AddRemoteTariff   (tariff);
+            var update   = await emsp.UpdateRemoteTariff(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote tariff could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote tariff could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteTariffs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote tariff as it was updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteTariffRemovedIsGoneAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteTariffRemovedIsGoneAtTheNextStart()
+        {
+
+            var removed  = ATariff("TARIFF0001");
+            var kept     = ATariff("TARIFF0002");
+
+            var added1   = await emsp.AddRemoteTariff(removed);
+            var added2   = await emsp.AddRemoteTariff(kept);
+            var removal  = await emsp.RemoveRemoteTariff(remoteCPOId, removed.Id);
+
+            Assert.Multiple(() => {
+                Assert.That(added1. IsSuccess, Is.True, $"The remote tariff to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(added2. IsSuccess, Is.True, $"The remote tariff to keep could not be added: {added2.ErrorResponse}");
+                Assert.That(removal.IsSuccess, Is.True, $"The remote tariff could not be removed: {removal.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteTariffs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(kept) }),
+                        "The next start knows the remote tariff removed, or not the one kept.");
+
+        }
+
+        #endregion
+
+        #region EveryRemoteTariffRemovedIsGoneAtTheNextStart()
+
+        /// <summary>
+        /// Every remote tariff removed at once is gone at the next start - and
+        /// one added after is there.
+        /// </summary>
+        [Test]
+        public async Task EveryRemoteTariffRemovedIsGoneAtTheNextStart()
+        {
+
+            var before   = ATariff("TARIFF0001");
+            var after    = ATariff("TARIFF0002");
+
+            var added1   = await emsp.AddRemoteTariff(before);
+            var removal  = await emsp.RemoveAllRemoteTariffs();
+            var added2   = await emsp.AddRemoteTariff(after);
+
+            Assert.Multiple(() => {
+                Assert.That(added1. IsSuccess, Is.True, $"The remote tariff to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(removal.IsSuccess, Is.True, $"The remote tariffs could not be removed: {removal.ErrorResponse}");
+                Assert.That(added2. IsSuccess, Is.True, $"The remote tariff added after could not be added: {added2.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteTariffs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(after) }),
+                        "The next start knows a remote tariff removed at once, or not the one added after.");
+
+        }
+
+        #endregion
+
         #region ARemoteSessionAddedIsThereAtTheNextStart()
 
         [Test]
@@ -213,6 +339,132 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARemoteSessionAddedIfNotThereIsThereAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteSessionAddedIfNotThereIsThereAtTheNextStart()
+        {
+
+            var session  = ASession();
+            var added    = await emsp.AddRemoteSessionIfNotExists(session);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote session could not be added: {added.ErrorResponse}");
+
+            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(session) }),
+                        "The next start does not know the remote session added if it was not there.");
+
+        }
+
+        #endregion
+
+        #region ARemoteSessionAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+
+        /// <summary>
+        /// A remote session added, and updated, both through AddOrUpdate: the
+        /// next start knows it as it was updated.
+        /// </summary>
+        [Test]
+        public async Task ARemoteSessionAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+        {
+
+            var session  = ASession();
+            var updated  = ASession(Updated: true);
+
+            var added    = await emsp.AddOrUpdateRemoteSession(session);
+            var update   = await emsp.AddOrUpdateRemoteSession(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote session could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote session could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote session as it was last added or updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteSessionUpdatedIsThereAsUpdatedAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteSessionUpdatedIsThereAsUpdatedAtTheNextStart()
+        {
+
+            var session  = ASession();
+            var updated  = ASession(Updated: true);
+
+            var added    = await emsp.AddRemoteSession   (session);
+            var update   = await emsp.UpdateRemoteSession(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote session could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote session could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote session as it was updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteSessionRemovedIsGoneAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteSessionRemovedIsGoneAtTheNextStart()
+        {
+
+            var removed  = ASession("SESSION0001");
+            var kept     = ASession("SESSION0002");
+
+            var added1   = await emsp.AddRemoteSession(removed);
+            var added2   = await emsp.AddRemoteSession(kept);
+            var removal  = await emsp.RemoveRemoteSession(remoteCPOId, removed.Id);
+
+            Assert.Multiple(() => {
+                Assert.That(added1. IsSuccess, Is.True, $"The remote session to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(added2. IsSuccess, Is.True, $"The remote session to keep could not be added: {added2.ErrorResponse}");
+                Assert.That(removal.IsSuccess, Is.True, $"The remote session could not be removed: {removal.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(kept) }),
+                        "The next start knows the remote session removed, or not the one kept.");
+
+        }
+
+        #endregion
+
+        #region EveryRemoteSessionRemovedIsGoneAtTheNextStart()
+
+        /// <summary>
+        /// Every remote session removed at once is gone at the next start -
+        /// and one added after is there.
+        /// </summary>
+        [Test]
+        public async Task EveryRemoteSessionRemovedIsGoneAtTheNextStart()
+        {
+
+            var before   = ASession("SESSION0001");
+            var after    = ASession("SESSION0002");
+
+            var added1   = await emsp.AddRemoteSession(before);
+            var removal  = await emsp.RemoveAllRemoteSessions();
+            var added2   = await emsp.AddRemoteSession(after);
+
+            Assert.Multiple(() => {
+                Assert.That(added1. IsSuccess, Is.True, $"The remote session to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(removal.IsSuccess, Is.True, $"The remote sessions could not be removed: {removal.ErrorResponse}");
+                Assert.That(added2. IsSuccess, Is.True, $"The remote session added after could not be added: {added2.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(after) }),
+                        "The next start knows a remote session removed at once, or not the one added after.");
+
+        }
+
+        #endregion
+
         #region ARemoteCDRAddedIsThereAtTheNextStart()
 
         [Test]
@@ -226,6 +478,102 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
             Assert.That((await NextStart()).GetRemoteCDRs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(cdr) }),
                         "The next start does not know the remote CDR added.");
+
+        }
+
+        #endregion
+
+        #region ARemoteCDRAddedIfNotThereIsThereAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteCDRAddedIfNotThereIsThereAtTheNextStart()
+        {
+
+            var cdr    = ACDR(remoteCPOId, "CDR0001");
+            var added  = await emsp.AddRemoteCDRIfNotExists(cdr);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote CDR could not be added: {added.ErrorResponse}");
+
+            Assert.That((await NextStart()).GetRemoteCDRs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(cdr) }),
+                        "The next start does not know the remote CDR added if it was not there.");
+
+        }
+
+        #endregion
+
+        #region ARemoteCDRAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+
+        /// <summary>
+        /// A remote CDR added, and updated, both through AddOrUpdate: the next
+        /// start knows it as it was updated.
+        /// </summary>
+        [Test]
+        public async Task ARemoteCDRAddedOrUpdatedIsThereAsLastWrittenAtTheNextStart()
+        {
+
+            var cdr      = ACDR(remoteCPOId, "CDR0001");
+            var updated  = ACDR(remoteCPOId, "CDR0001", Updated: true);
+
+            var added    = await emsp.AddOrUpdateRemoteCDR(cdr);
+            var update   = await emsp.AddOrUpdateRemoteCDR(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote CDR could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote CDR could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteCDRs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote CDR as it was last added or updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteCDRUpdatedIsThereAsUpdatedAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteCDRUpdatedIsThereAsUpdatedAtTheNextStart()
+        {
+
+            var cdr      = ACDR(remoteCPOId, "CDR0001");
+            var updated  = ACDR(remoteCPOId, "CDR0001", Updated: true);
+
+            var added    = await emsp.AddRemoteCDR   (cdr);
+            var update   = await emsp.UpdateRemoteCDR(updated);
+
+            Assert.Multiple(() => {
+                Assert.That(added. IsSuccess, Is.True, $"The remote CDR could not be added: {added.ErrorResponse}");
+                Assert.That(update.IsSuccess, Is.True, $"The remote CDR could not be updated: {update.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteCDRs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(updated) }),
+                        "The next start does not know the remote CDR as it was updated.");
+
+        }
+
+        #endregion
+
+        #region ARemoteCDRRemovedIsGoneAtTheNextStart()
+
+        [Test]
+        public async Task ARemoteCDRRemovedIsGoneAtTheNextStart()
+        {
+
+            var removed  = ACDR(remoteCPOId, "CDR0001");
+            var kept     = ACDR(remoteCPOId, "CDR0002");
+
+            var added1   = await emsp.AddRemoteCDR(removed);
+            var added2   = await emsp.AddRemoteCDR(kept);
+            var removal  = await emsp.RemoveRemoteCDR(remoteCPOId, removed.Id);
+
+            Assert.Multiple(() => {
+                Assert.That(added1. IsSuccess, Is.True, $"The remote CDR to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(added2. IsSuccess, Is.True, $"The remote CDR to keep could not be added: {added2.ErrorResponse}");
+                Assert.That(removal.IsSuccess, Is.True, $"The remote CDR could not be removed: {removal.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetRemoteCDRs(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(kept) }),
+                        "The next start knows the remote CDR removed, or not the one kept.");
 
         }
 
@@ -310,39 +658,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         /// <summary>
         /// A tariff of the remote CPO. Its prices have no zeros at their ends,
         /// which a price read back does not keep: JSON compares them as text.
+        /// A tariff updated has a price of its own and is an hour younger.
         /// </summary>
-        private static Tariff ATariff()
+        private static Tariff ATariff(String   Id        = "TARIFF0001",
+                                      Boolean  Updated   = false)
 
             => new (
                    CountryCode:     remoteCPOId.CountryCode,
                    PartyId:         remoteCPOId.PartyId,
-                   Id:              Tariff_Id.Parse("TARIFF0001"),
+                   Id:              Tariff_Id.Parse(Id),
                    Currency:        Currency.EUR,
                    TariffElements:  [
                                         new TariffElement(
                                             [
                                                 PriceComponent.ChargingTime(
-                                                    2.5M,
+                                                    Updated ? 3.5M : 2.5M,
                                                     0.1M,
                                                     TimeSpan.FromSeconds(300)
                                                 )
                                             ]
                                         )
                                     ],
-                   LastUpdated:     start
+                   LastUpdated:     Updated ? start + TimeSpan.FromHours(1) : start
                );
 
         /// <summary>
-        /// A session at a location of the remote CPO.
+        /// A session at a location of the remote CPO. A session updated has
+        /// charged more and is an hour younger.
         /// </summary>
-        private static Session ASession()
+        private static Session ASession(String   Id        = "SESSION0001",
+                                        Boolean  Updated   = false)
 
             => new (
                    CountryCode:  remoteCPOId.CountryCode,
                    PartyId:      remoteCPOId.PartyId,
-                   Id:           Session_Id.Parse("SESSION0001"),
+                   Id:           Session_Id.Parse(Id),
                    Start:        start,
-                   kWh:          WattHour.FromKWh(1.11M),
+                   kWh:          WattHour.FromKWh(Updated ? 2.22M : 1.11M),
                    CDRToken:     ACDRToken(),
                    AuthMethod:   AuthMethod.AUTH_REQUEST,
                    LocationId:   Location_Id. Parse("LOCATION0001"),
@@ -350,14 +702,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                    ConnectorId:  Connector_Id.Parse("1"),
                    Currency:     Currency.EUR,
                    Status:       SessionStatusType.ACTIVE,
-                   LastUpdated:  start
+                   LastUpdated:  Updated ? start + TimeSpan.FromHours(1) : start
                );
 
         /// <summary>
         /// A charge detail record of the given party, its costs without zeros
-        /// at their ends - see ATariff.
+        /// at their ends - see ATariff. A CDR updated costs more and is an
+        /// hour younger.
         /// </summary>
-        private static CDR ACDR(Party_Idv3 PartyId, String Id)
+        private static CDR ACDR(Party_Idv3  PartyId,
+                                String      Id,
+                                Boolean     Updated   = false)
 
             => new (
                    CountryCode:      PartyId.CountryCode,
@@ -389,10 +744,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                                              [ CDRDimension.Create(CDRDimensionType.ENERGY, 1.33M) ]
                                          )
                                      ],
-                   TotalCosts:       new Price(10.5M, 11.6M),
+                   TotalCosts:       Updated ? new Price(12.5M, 14.9M) : new Price(10.5M, 11.6M),
                    TotalEnergy:      WattHour.FromKWh(1.33M),
                    TotalTime:        TimeSpan.FromMinutes(30),
-                   LastUpdated:      start
+                   LastUpdated:      Updated ? start + TimeSpan.FromHours(1) : start
                );
 
         /// <summary>

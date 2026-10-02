@@ -462,32 +462,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region removeRemoteTariff
 
+                // RemoveRemoteTariff writes down every version of the tariff it
+                // removed, as an array.
                 case CommonHTTPAPI.removeRemoteTariff:
-                    try
+                    foreach (var tariffJSON in command.JSONArray?.OfType<JObject>() ?? [])
                     {
-                        if (command.JSONObject is not null &&
-                            Tariff. TryParse(
-                                        command.JSONObject,
-                                        out tariff,
-                                        out errorResponse
-                                    ) &&
-                            RemoteCPOs.TryGetValue(
-                                        Party_Idv3.From(
-                                            tariff.CountryCode,
-                                            tariff.PartyId
-                                        ),
-                                        out var party
-                                    ))
+                        try
                         {
-                            party.Tariffs.Remove(tariff.Id);
+                            if (Tariff. TryParse(
+                                            tariffJSON,
+                                            out tariff,
+                                            out errorResponse
+                                        ) &&
+                                RemoteCPOs.TryGetValue(
+                                            Party_Idv3.From(
+                                                tariff.CountryCode,
+                                                tariff.PartyId
+                                            ),
+                                            out var party
+                                        ))
+                            {
+                                party.Tariffs.Remove(tariff.Id);
+                            }
                         }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
                     }
-                    catch (Exception e)
-                    {
-                        errorResponse ??= e.Message;
-                    }
-                    if (errorResponse is not null)
-                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
                     break;
 
                 #endregion
