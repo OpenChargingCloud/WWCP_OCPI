@@ -703,13 +703,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Connector                 [optional]
 
-                if (!JSON.ParseOptionalJSON("connector",
-                                            "session connector",
-                                            SessionConnector.TryParse,
-                                            out SessionConnector Connector,
-                                            out ErrorResponse))
+                if (JSON.ParseOptionalJSON("connector",
+                                           "session connector",
+                                           SessionConnector.TryParse,
+                                           out SessionConnector? Connector,
+                                           out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion

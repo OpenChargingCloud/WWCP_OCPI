@@ -4028,9 +4028,50 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region removeAllSessions
 
+                // RemoveAllSessions writes down the sessions it removed - with a
+                // filter or for one party, only some of them - and only these
+                // are removed again. RemoveAllTokens wrote its line under this
+                // name before, with the tokens it removed: such a line removes
+                // these tokens, and no session. A line without a list removes
+                // every session, as before.
                 case CommonHTTPAPI.removeAllSessions:
-                    foreach (var party in parties.Values)
-                        party.Sessions.Clear();
+                    if (command.JSONArray is null)
+                    {
+                        foreach (var party in parties.Values)
+                            party.Sessions.Clear();
+                    }
+                    else
+                        foreach (var sessionJSON in command.JSONArray.OfType<JObject>())
+                        {
+                            try
+                            {
+                                if (Session.TryParse(
+                                                sessionJSON,
+                                                out session,
+                                                out errorResponse
+                                            ))
+                                {
+                                    if (parties.TryGetValue(session.PartyId, out var sessionParty))
+                                        sessionParty.Sessions.Remove(session.Id, out _);
+                                }
+                                else if (Token.TryParse(
+                                                   sessionJSON,
+                                                   out var token,
+                                                   out _
+                                               ))
+                                {
+                                    if (parties.TryGetValue(token.PartyId, out var tokenParty))
+                                        tokenParty.Tokens.Remove(token.Id, out _);
+                                    errorResponse = null;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorResponse ??= e.Message;
+                            }
+                            if (errorResponse is not null)
+                                errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        }
                     break;
 
                 #endregion
@@ -4158,24 +4199,41 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region updateToken
+                #region removeToken
 
+                // RemoveToken writes down the token it removed, not its status:
+                // a line of a token status is taken as well.
                 case CommonHTTPAPI.removeToken:
                     try
                     {
+
+                        Token? removedToken = null;
+
                         if (command.JSONObject is not null &&
+                            !Token.     TryParse(
+                                            command.JSONObject,
+                                            out removedToken,
+                                            out errorResponse
+                                        ) &&
                             TokenStatus.TryParse(
                                             command.JSONObject,
                                             out tokenStatus,
-                                            out errorResponse
-                                        ) &&
-                            parties.    TryGetValue(
-                                            tokenStatus.Token.PartyId,
-                                            out var party
+                                            out _
                                         ))
                         {
-                            party.Tokens.Remove(tokenStatus.Token.Id, out _);
+                            removedToken   = tokenStatus.Token;
+                            errorResponse  = null;
                         }
+
+                        if (removedToken is not null &&
+                            parties.TryGetValue(
+                                        removedToken.PartyId,
+                                        out var party
+                                    ))
+                        {
+                            party.Tokens.Remove(removedToken.Id, out _);
+                        }
+
                     }
                     catch (Exception e)
                     {
@@ -4190,13 +4248,42 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 #region removeAllTokens
 
                 // RemoveAllTokens writes "removeAllTokens", and only
-                // "removeAllTokenStatus" was replayed: every token removed at
-                // once was there again at the next start. Either name clears
-                // them.
+                // "removeAllTokenStatus" was replayed before: either name is
+                // taken. It writes down the tokens it removed - with a filter or
+                // for one party, only some of them - and only these are removed
+                // again. A line without a list removes every token, as before.
                 case CommonHTTPAPI.removeAllTokens:
                 case CommonHTTPAPI.removeAllTokenStatus:
-                    foreach (var party in parties.Values)
-                        party.Tokens.Clear();
+                    if (command.JSONArray is null)
+                    {
+                        foreach (var party in parties.Values)
+                            party.Tokens.Clear();
+                    }
+                    else
+                        foreach (var tokenJSON in command.JSONArray.OfType<JObject>())
+                        {
+                            try
+                            {
+                                if (Token.TryParse(
+                                              tokenJSON,
+                                              out var token,
+                                              out errorResponse
+                                          ) &&
+                                    parties.TryGetValue(
+                                              token.PartyId,
+                                              out var party
+                                          ))
+                                {
+                                    party.Tokens.Remove(token.Id, out _);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorResponse ??= e.Message;
+                            }
+                            if (errorResponse is not null)
+                                errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        }
                     break;
 
                 #endregion
@@ -4355,9 +4442,41 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region removeAllCDRs
 
+                // RemoveAllCDRs writes down the CDRs it removed - with a filter
+                // or for one party, only some of them - and only these are
+                // removed again. A line without a list removes every CDR, as
+                // before.
                 case CommonHTTPAPI.removeAllChargeDetailRecords:
-                    foreach (var party in parties.Values)
-                        party.CDRs.Clear();
+                    if (command.JSONArray is null)
+                    {
+                        foreach (var party in parties.Values)
+                            party.CDRs.Clear();
+                    }
+                    else
+                        foreach (var cdrJSON in command.JSONArray.OfType<JObject>())
+                        {
+                            try
+                            {
+                                if (CDR.TryParse(
+                                            cdrJSON,
+                                            out cdr,
+                                            out errorResponse
+                                        ) &&
+                                    parties.TryGetValue(
+                                            cdr.PartyId,
+                                            out var party
+                                        ))
+                                {
+                                    party.CDRs.Remove(cdr.Id, out _);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorResponse ??= e.Message;
+                            }
+                            if (errorResponse is not null)
+                                errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        }
                     break;
 
                 #endregion
@@ -10857,7 +10976,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
 
             await LogAsset(
-                      CommonHTTPAPI.removeAllSessions,
+                      CommonHTTPAPI.removeAllTokens,
                       new JArray(
                           removedTokens.Select(
                               token => token.ToJSON(
