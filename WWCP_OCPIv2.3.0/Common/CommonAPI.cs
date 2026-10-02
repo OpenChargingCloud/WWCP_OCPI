@@ -5989,6 +5989,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session?      session;
             TokenStatus?  tokenStatus;
             CDR?          cdr;
+            Terminal?     terminal;
             Booking?      booking;
 
             var errorResponses = new List<Tuple<Command, String>>();
@@ -6941,6 +6942,81 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 case CommonHTTPAPI.removeAllChargeDetailRecords:
                     foreach (var party in parties.Values)
                         party.CDRs.Clear();
+                    break;
+
+                #endregion
+
+
+                #region addOrUpdateTerminal
+
+                case CommonHTTPAPI.addOrUpdateTerminal:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Terminal.TryParse(
+                                         command.JSONObject,
+                                         out terminal,
+                                         out errorResponse
+                                     ) &&
+                            terminal.CountryCode.HasValue &&
+                            terminal.PartyId.    HasValue &&
+                            parties. TryGetValue(
+                                         Party_Idv3.From(
+                                             terminal.CountryCode.Value,
+                                             terminal.PartyId.    Value
+                                         ),
+                                         out var party
+                                     ))
+                        {
+
+                            if (party.PaymentTerminals.ContainsKey(terminal.Id))
+                                party.PaymentTerminals.Remove(terminal.Id, out _);
+
+                            party.PaymentTerminals.TryAdd(terminal.Id, terminal);
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+                #region updateTerminal
+
+                case CommonHTTPAPI.updateTerminal:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            Terminal.TryParse(
+                                         command.JSONObject,
+                                         out terminal,
+                                         out errorResponse
+                                     ) &&
+                            terminal.CountryCode.HasValue &&
+                            terminal.PartyId.    HasValue &&
+                            parties. TryGetValue(
+                                         Party_Idv3.From(
+                                             terminal.CountryCode.Value,
+                                             terminal.PartyId.    Value
+                                         ),
+                                         out var party
+                                     ))
+                        {
+                            party.PaymentTerminals.Remove(terminal.Id, out _);
+                            party.PaymentTerminals.TryAdd(terminal.Id, terminal);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
                     break;
 
                 #endregion
