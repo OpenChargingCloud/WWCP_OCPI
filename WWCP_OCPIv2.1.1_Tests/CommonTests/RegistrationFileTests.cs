@@ -448,32 +448,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             var renewed  = await AClient(party).TryPutCredentials(OurCredentials(newToken));
 
             Assert.That(renewed.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The renewal did not go through: {renewed.Response.StatusMessage}");
+            Assert.That(LocalTokensOf(api), Is.EqualTo(new[] { newToken }), "The token the other side calls back with is not the new one alone.");
 
-            var now = RemoteAccessOf(api);
+            ReachedAsItWas(party, certificate);
 
-            Assert.Multiple(() => {
-                Assert.That(LocalTokensOf(api),                                    Is.EqualTo(new[] { newToken }),             "The token the other side calls back with is not the new one alone.");
-                Assert.That(now?.AccessToken?.ToString(),                          Is.EqualTo(tokenC),                         "The token the other side handed out is not the one in effect.");
-                Assert.That(now?.ClientCertificates.Select(c => c.Thumbprint),     Is.EqualTo(new[] { certificate.Thumbprint }), "The client certificate the other side asks for is gone.");
-                Assert.That(now?.TLSProtocols,                                     Is.EqualTo(tls),                            "The TLS versions are not the ones they were.");
-                Assert.That(now?.PreferIPv4,                                       Is.EqualTo(IPVersionPreference.PreferIPv4), "IPv4 is not preferred any more.");
-                Assert.That(now?.RequestTimeout,                                   Is.EqualTo(timeout),                        "The timeout is not the one it was.");
-                Assert.That(now?.MaxNumberOfRetries,                               Is.EqualTo(retries),                        "The retries are not the ones they were.");
-                Assert.That(now?.HTTPUserAgent,                                    Is.EqualTo(userAgent),                      "The user agent is not the one it was.");
-                Assert.That(now?.NotAfter,                                         Is.EqualTo(notAfter),                       "The token of the other side may be used for another time than it might.");
-                Assert.That(CreatedOf(api),                                        Is.EqualTo(party.Created),                  "The other side is said to have been added when it was renewed.");
-                Assert.That(VisibleVersionsOf(api),                                Is.EqualTo(new[] { Version.Id }),           "The other side sees other versions than it saw.");
-            });
+        }
 
-            var again = RemoteAccessOf(ACommonAPI());
+        #endregion
 
-            Assert.Multiple(() => {
-                Assert.That(again?.AccessToken?.ToString(),                        Is.EqualTo(tokenC),                         "The next start does not know the token the other side handed out.");
-                Assert.That(again?.ClientCertificates.Select(c => c.Thumbprint),   Is.EqualTo(new[] { certificate.Thumbprint }), "The next start does not know the client certificate the other side asks for.");
-                Assert.That(again?.TLSProtocols,                                   Is.EqualTo(tls),                            "The next start does not know the TLS versions.");
-                Assert.That(again?.HTTPUserAgent,                                  Is.EqualTo(userAgent),                      "The next start does not know the user agent.");
-                Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                       "The next start does not know until when the token of the other side may be used.");
-            });
+        #region ARegistrationKeepsHowTheOtherSideIsReached()
+
+        /// <summary>
+        /// A registration changes the tokens, and nothing else of how the other
+        /// side is reached: its client certificate - without which a peer that
+        /// asks for one would shut us out - the TLS versions, IPv4 first, the
+        /// timeout, the retries, the user agent and until when its token may be
+        /// used are as they were, and so are when it was added and the versions
+        /// it sees. The next start knows what its file reads back of them.
+        /// </summary>
+        [Test]
+        public async Task ARegistrationKeepsHowTheOtherSideIsReached()
+        {
+
+            using var certificate  = AClientCertificate();
+
+            var party       = await AddTheOtherSide(AccessToken.NewRandom(), certificate);
+
+            var registered  = await AClient(party).TryRegister();
+            var tokenB      = other.ReceivedCredentials?.Value<String>("token");
+
+            Assert.That(registered.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The registration did not go through: {registered.Response.StatusMessage}");
+            Assert.That(LocalTokensOf(api).Select(token => token.ToString()), Is.EqualTo(new[] { tokenB }), "The token the other side calls back with is not token B alone.");
+
+            ReachedAsItWas(party, certificate);
 
         }
 
@@ -845,6 +852,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    CountryCode.Parse("DE"),
                    Party_Id.   Parse("GEF")
                );
+
+        #endregion
+
+        #region (private) ReachedAsItWas(Party, ClientCertificate)
+
+        /// <summary>
+        /// Everything but the tokens of how this API reaches the other side is
+        /// as it was when the given party was added with the given client
+        /// certificate, and the other side has handed out token C - now, and at
+        /// the next start for what its file reads back.
+        /// </summary>
+        private void ReachedAsItWas(RemoteParty       Party,
+                                    X509Certificate2  ClientCertificate)
+        {
+
+            var now = RemoteAccessOf(api);
+
+            Assert.Multiple(() => {
+                Assert.That(now?.AccessToken?.ToString(),                          Is.EqualTo(tokenC),                               "The token the other side handed out is not the one in effect.");
+                Assert.That(now?.ClientCertificates.Select(c => c.Thumbprint),     Is.EqualTo(new[] { ClientCertificate.Thumbprint }), "The client certificate the other side asks for is gone.");
+                Assert.That(now?.TLSProtocols,                                     Is.EqualTo(tls),                                  "The TLS versions are not the ones they were.");
+                Assert.That(now?.PreferIPv4,                                       Is.EqualTo(IPVersionPreference.PreferIPv4),       "IPv4 is not preferred any more.");
+                Assert.That(now?.RequestTimeout,                                   Is.EqualTo(timeout),                              "The timeout is not the one it was.");
+                Assert.That(now?.MaxNumberOfRetries,                               Is.EqualTo(retries),                              "The retries are not the ones they were.");
+                Assert.That(now?.HTTPUserAgent,                                    Is.EqualTo(userAgent),                            "The user agent is not the one it was.");
+                Assert.That(now?.NotAfter,                                         Is.EqualTo(notAfter),                             "The token of the other side may be used for another time than it might.");
+                Assert.That(CreatedOf(api),                                        Is.EqualTo(Party.Created),                        "The other side is said to have been added anew.");
+                Assert.That(VisibleVersionsOf(api),                                Is.EqualTo(new[] { Version.Id }),                 "The other side sees other versions than it saw.");
+            });
+
+            var again = RemoteAccessOf(ACommonAPI());
+
+            Assert.Multiple(() => {
+                Assert.That(again?.AccessToken?.ToString(),                        Is.EqualTo(tokenC),                               "The next start does not know the token the other side handed out.");
+                Assert.That(again?.ClientCertificates.Select(c => c.Thumbprint),   Is.EqualTo(new[] { ClientCertificate.Thumbprint }), "The next start does not know the client certificate the other side asks for.");
+                Assert.That(again?.TLSProtocols,                                   Is.EqualTo(tls),                                  "The next start does not know the TLS versions.");
+                Assert.That(again?.HTTPUserAgent,                                  Is.EqualTo(userAgent),                            "The next start does not know the user agent.");
+                Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                             "The next start does not know until when the token of the other side may be used.");
+            });
+
+        }
 
         #endregion
 

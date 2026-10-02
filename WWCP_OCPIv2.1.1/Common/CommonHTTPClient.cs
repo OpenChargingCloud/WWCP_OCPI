@@ -2241,6 +2241,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         RemoteAccessToken      = response.Data.Token;
                         TokenAuth              = HTTPTokenAuthentication.Parse(RemoteAccessToken.Value.ToString());
 
+                        // How the other side is reached stays as it is - its client
+                        // certificates above all, without which a peer that asks for
+                        // them would shut us out after the registration - and so does
+                        // the rest of the party, when it was added and the versions it
+                        // sees: only the tokens and the versions it speaks are new.
+                        var party   = CommonAPI.GetRemoteParty(this.RemoteParty.Id) ?? this.RemoteParty;
+                        var remote  = party.RemoteAccessInfos.FirstOrDefault();
+
                         var addOrUpdateResult  = await CommonAPI.AddOrUpdateRemoteParty(
 
                                                            response.Data.CountryCode,
@@ -2250,51 +2258,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                               : Role.EMSP),
                                                            response.Data.BusinessDetails,
 
-                                                           credentialTokenB,           // LocalAccessToken
-                                                           response.Data.URL,          // RemoteVersionsURL
-                                                           response.Data.Token,        // RemoteAccessToken
-                                                           null,                       // RemoteAccessTokenBase64Encoding
-                                                           null,                       // RemoteTOTPConfig
+                                                           credentialTokenB,                    // LocalAccessToken
+                                                           response.Data.URL,                   // RemoteVersionsURL
+                                                           response.Data.Token,                 // RemoteAccessToken
+                                                           remote?.AccessTokenIsBase64Encoded,  // RemoteAccessTokenBase64Encoding
+                                                           remote?.TOTPConfig,                  // RemoteTOTPConfig
 
-                                                           null,                       // PreferIPv4
-                                                           null,                       // RemoteCertificateValidator
-                                                           null,                       // LocalCertificateSelector
-                                                           null,                       // ClientCertificates
-                                                           null,                       // ClientCertificateContext
-                                                           null,                       // ClientCertificateChain
-                                                           null,                       // TLSProtocols
-                                                           null,                       // ContentType
-                                                           null,                       // Accept
-                                                           null,                       // HTTPUserAgent
-                                                           null,                       // RequestTimeout
-                                                           null,                       // TransmissionRetryDelay
-                                                           null,                       // MaxNumberOfRetries
-                                                           null,                       // InternalBufferSize
-                                                           null,                       // UseHTTPPipelining
-                                                           null,                       // HTTP Modifiers
+                                                           remote?.PreferIPv4,                  // PreferIPv4
+                                                           remote?.RemoteCertificateValidator,  // RemoteCertificateValidator
+                                                           remote?.LocalCertificateSelector,    // LocalCertificateSelector
+                                                           remote?.ClientCertificates,          // ClientCertificates
+                                                           remote?.ClientCertificateContext,    // ClientCertificateContext
+                                                           remote?.ClientCertificateChain,      // ClientCertificateChain
+                                                           remote?.TLSProtocols,                // TLSProtocols
+                                                           remote?.ContentType,                 // ContentType
+                                                           remote?.Accept,                      // Accept
+                                                           remote?.HTTPUserAgent,               // HTTPUserAgent
+                                                           remote?.RequestTimeout,              // RequestTimeout
+                                                           remote?.TransmissionRetryDelay,      // TransmissionRetryDelay
+                                                           remote?.MaxNumberOfRetries,          // MaxNumberOfRetries
+                                                           remote?.InternalBufferSize,          // InternalBufferSize
+                                                           remote?.UseHTTPPipelining,           // UseHTTPPipelining
+                                                           remote?.OUT,                         // HTTP Modifiers
 
-                                                           RemoteAccessStatus.ONLINE,  // RemoteStatus
-                                                           [ versionId.Value ],        // RemoteVersionIds
-                                                           versionId.Value,            // SelectedVersionId
-                                                           null,                       // RemoteAccessNotBefore
-                                                           null,                       // RemoteAccessNotAfter
-                                                           null,                       // RemoteAllowDowngrades
+                                                           RemoteAccessStatus.ONLINE,           // RemoteStatus
+                                                           [ versionId.Value ],                 // RemoteVersionIds
+                                                           versionId.Value,                     // SelectedVersionId
+                                                           remote?.NotBefore,                   // RemoteAccessNotBefore
+                                                           remote?.NotAfter,                    // RemoteAccessNotAfter
+                                                           remote?.AllowDowngrades,             // RemoteAllowDowngrades
 
-                                                           null,                       // LocalAccessTokenBase64Encoding
-                                                           null,                       // LocalTOTPConfig
-                                                           null,                       // HTTP Modifiers
-                                                           null,                       // LocalAccessNotBefore
-                                                           null,                       // LocalAccessNotAfter
-                                                           null,                       // LocalAllowDowngrades
-                                                           AccessStatus.ALLOWED,       // LocalAccessStatus
+                                                           null,                                // LocalAccessTokenBase64Encoding
+                                                           null,                                // LocalTOTPConfig
+                                                           null,                                // HTTP Modifiers
+                                                           null,                                // LocalAccessNotBefore
+                                                           null,                                // LocalAccessNotAfter
+                                                           null,                                // LocalAllowDowngrades
+                                                           AccessStatus.ALLOWED,                // LocalAccessStatus
 
-                                                           PartyStatus.ENABLED,        // PartyStatus
-                                                           null,                       // VisibleVersionIds
+                                                           PartyStatus.ENABLED,                 // PartyStatus
+                                                           party.VisibleVersionIds,             // VisibleVersionIds
 
-                                                           null,                       // Created
-                                                           Timestamp.Now,              // LastUpdated
-                                                           eventTrackingId,            // EventTrackingId
-                                                           null,                       // CurrentUserId
+                                                           party.Created,                       // Created
+                                                           Timestamp.Now,                       // LastUpdated
+                                                           eventTrackingId,                     // EventTrackingId
+                                                           null,                                // CurrentUserId
                                                            KeepWhereNotSaved: true
 
                                                        );
