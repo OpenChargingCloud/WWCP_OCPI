@@ -1704,7 +1704,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 response.Data.PartyId     == RemoteParty.PartyId)
                             {
 
-                                TokenAuth = HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
+                                TokenAuth = TokenAuthFor(response.Data.Token);
 
 
                                 // How the other side is reached stays as it is - its client
@@ -2239,7 +2239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         SelectedOCPIVersionId  = versionId;
                         RemoteAccessToken      = response.Data.Token;
-                        TokenAuth              = HTTPTokenAuthentication.Parse(RemoteAccessToken.Value.ToString());
+                        TokenAuth              = TokenAuthFor(response.Data.Token);
 
                         // How the other side is reached stays as it is - its client
                         // certificates above all, without which a peer that asks for
@@ -2403,6 +2403,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           RequestTimeout,
                           CancellationToken
                       )).Response;
+
+        #endregion
+
+        #region (private) TokenAuthFor(Token)
+
+        /// <summary>
+        /// The given token of the other side as this client sends it: encoded
+        /// as its party says - Base64 where it says nothing - by the rule the
+        /// client is made with, so that it is sent the same way now and after
+        /// the next start.
+        /// </summary>
+        private HTTPTokenAuthentication TokenAuthFor(AccessToken Token)
+        {
+
+            var party = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
+
+            return party.RemoteAccessInfos.FirstOrDefault()?.AccessTokenIsBase64Encoded ?? true
+                       ? HTTPTokenAuthentication.Parse(Token.ToString().ToBase64())
+                       : HTTPTokenAuthentication.Parse(Token.ToString());
+
+        }
 
         #endregion
 

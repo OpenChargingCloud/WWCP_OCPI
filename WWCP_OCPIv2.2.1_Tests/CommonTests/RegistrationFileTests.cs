@@ -487,6 +487,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #endregion
 
+        #region TheTokenHandedOutIsSentAsTheNextStartSendsIt(Renewal, Base64Encoded)
+
+        /// <summary>
+        /// The token the other side hands out - at a registration, or at a
+        /// renewal - is sent as its party says it is to be: raw where it says
+        /// so, Base64 where it says nothing; as the client the next start makes
+        /// sends it, so that the other side is not asked one way now and
+        /// another after a restart.
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(false, null)]
+        [TestCase(true,  false)]
+        [TestCase(true,  null)]
+        public async Task TheTokenHandedOutIsSentAsTheNextStartSendsIt(Boolean   Renewal,
+                                                                       Boolean?  Base64Encoded)
+        {
+
+            await Listening();
+
+            var client    = AClient(await AddTheOtherSide(AccessToken.NewRandom(), Base64Encoded));
+
+            var answer    = Renewal
+                                ? (await client.TryPutCredentials(OurCredentials(AccessToken.NewRandom()))).Response
+                                : (await client.TryRegister()).Response;
+
+            Assert.That(answer.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The other side did not answer with its token: {answer.StatusMessage}");
+
+            await client.GetVersions();
+
+            var again     = ACommonAPI();
+
+            await new CommonHTTPClient(
+                      CommonAPI:    again,
+                      RemoteParty:  again.RemoteParties.First(party => party.Id == id)
+                  ).GetVersions();
+
+            var expected  = Base64Encoded == false
+                                ? tokenC
+                                : Convert.ToBase64String(Encoding.UTF8.GetBytes(tokenC));
+
+            Assert.That(other.VersionsAskedWith.TakeLast(2),
+                        Is.EqualTo(new[] { expected, expected }),
+                        "The token the other side handed out is not sent as its party says, now and after the next start.");
+
+        }
+
+        #endregion
+
         #region ARefusedRenewalLeavesTheRestOfThePartyAsItWas()
 
         /// <summary>
@@ -774,9 +822,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         /// <summary>
         /// The other side as a remote party: the given token of ours, and its
         /// versions URL and token A to start the registration with - and, as
-        /// one may be kept to it, this version the only one it sees.
+        /// one may be kept to it, this version the only one it sees. Its token
+        /// encoded as given: Base64 where nothing is given.
         /// </summary>
-        private async Task<RemoteParty> AddTheOtherSide(AccessToken OurToken)
+        private async Task<RemoteParty> AddTheOtherSide(AccessToken  OurToken,
+                                                        Boolean?     Base64Encoded   = null)
         {
 
             var added = await api.AddRemoteParty(id,
@@ -791,7 +841,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                                                 OurToken,
                                                 other.VersionsURL,
                                                 AccessToken.Parse(tokenA),
-                                                VisibleVersionIds: [ Version.Id ]);
+                                                RemoteAccessTokenBase64Encoding:  Base64Encoded,
+                                                VisibleVersionIds:                [ Version.Id ]);
 
             Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
 
@@ -1111,6 +1162,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
             /// <summary>How many renewals arrived.</summary>
             public Int32                               Renewals               { get; private set; }
 
+            /// <summary>The tokens its versions were asked with, as they arrived.</summary>
+            public List<String?>                       VersionsAskedWith      { get; } = [];
+
             private OtherSide(HTTPServer Server, URL VersionsURL)
             {
                 this.server       = Server;
@@ -1167,12 +1221,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
                 api.AddHandler(
                     HTTPPath.Parse("/versions"),
-                    request => Task.FromResult(JSON(request, new JArray(
+                    request => {
+
+                        other.VersionsAskedWith.Add((request.Authorization as HTTPTokenAuthentication)?.Token);
+
+                        return Task.FromResult(JSON(request, new JArray(
                                    new JObject(
                                        new JProperty("version",  "2.2.1"),
                                        new JProperty("url",      $"{origin}/versions/2.2.1")
                                    )
-                               ))),
+                               )));
+
+                    },
                     HTTPMethod.GET
                 );
 
