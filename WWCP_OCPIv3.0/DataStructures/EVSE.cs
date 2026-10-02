@@ -597,11 +597,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse CalibrationInfoURL     [optional]
 
-                if (JSON.ParseOptional("calibration_info_url",
-                                       "calibration info URL",
-                                       URL.TryParse,
-                                       out URL? CalibrationInfoURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("calibration_info_url",
+                                          "calibration info URL",
+                                          out URL? CalibrationInfoURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

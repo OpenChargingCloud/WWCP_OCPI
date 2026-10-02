@@ -346,11 +346,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse ModelURL                      [optional]
 
-                if (JSON.ParseOptional("model_url",
-                                       "energy meter model URL",
-                                       URL.TryParse,
-                                       out URL? ModelURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("model_url",
+                                          "energy meter model URL",
+                                          out URL? ModelURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -378,11 +377,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse ManufacturerURL               [optional]
 
-                if (JSON.ParseOptional("manufacturer_url",
-                                       "energy meter manufacturer URL",
-                                       URL.TryParse,
-                                       out URL? ManufacturerURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("manufacturer_url",
+                                          "energy meter manufacturer URL",
+                                          out URL? ManufacturerURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

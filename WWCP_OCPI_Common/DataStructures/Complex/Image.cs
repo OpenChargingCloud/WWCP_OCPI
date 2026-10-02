@@ -257,11 +257,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse Thumbnail   [optional]
 
-                if (JSON.ParseOptional("thumbnail",
-                                       "image thumbnail",
-                                       URL.TryParse,
-                                       out URL? Thumbnail,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("thumbnail",
+                                          "image thumbnail",
+                                          out URL? Thumbnail,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

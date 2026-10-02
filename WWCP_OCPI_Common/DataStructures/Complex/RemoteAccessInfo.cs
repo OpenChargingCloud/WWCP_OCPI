@@ -401,15 +401,13 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse VersionsURL                   [optional]
 
-                if (!JSON.ParseOptional("versionsURL",
-                                        "versions URL",
-                                        URL.TryParse,
-                                        out URL? versionsURL,
-                                        out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
+                JSON.ParseOptionalURL("versionsURL",
+                                      "versions URL",
+                                      out URL? versionsURL,
+                                      out ErrorResponse);
+
+                if (ErrorResponse is not null)
+                    return false;
 
                 #endregion
 

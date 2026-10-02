@@ -466,11 +466,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region TermsAndConditionsURL     [optional]
 
-                if (JSON.ParseOptional("terms_and_conditions",
-                                       "terms and conditions",
-                                       URL.TryParse,
-                                       out URL? TermsAndConditionsURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("terms_and_conditions",
+                                          "terms and conditions",
+                                          out URL? TermsAndConditionsURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

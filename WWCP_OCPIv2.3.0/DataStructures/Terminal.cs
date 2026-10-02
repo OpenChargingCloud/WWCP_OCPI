@@ -647,11 +647,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse InvoiceBaseURL       [optional]
 
-                if (JSON.ParseOptional("invoice_base_url",
-                                       "invoice base URL",
-                                       URL.TryParse,
-                                       out URL? invoiceBaseURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("invoice_base_url",
+                                          "invoice base URL",
+                                          out URL? invoiceBaseURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

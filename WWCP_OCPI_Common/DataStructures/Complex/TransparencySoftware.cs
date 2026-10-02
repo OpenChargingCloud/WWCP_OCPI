@@ -252,11 +252,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse Logo                      [optional]
 
-                if (JSON.ParseOptional("logo",
-                                       "logo",
-                                       URL.TryParse,
-                                       out URL? Logo,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("logo",
+                                          "logo",
+                                          out URL? Logo,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -266,11 +265,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse HowToUse                  [optional]
 
-                if (JSON.ParseOptional("how_to_use",
-                                       "how to use",
-                                       URL.TryParse,
-                                       out URL? HowToUse,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("how_to_use",
+                                          "how to use",
+                                          out URL? HowToUse,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -280,11 +278,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse MoreInformation           [optional]
 
-                if (JSON.ParseOptional("more_information",
-                                       "more information",
-                                       URL.TryParse,
-                                       out URL? MoreInformation,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("more_information",
+                                          "more information",
+                                          out URL? MoreInformation,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -294,11 +291,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse SourceCodeRepository      [optional]
 
-                if (JSON.ParseOptional("source_code_repository",
-                                       "source code repository",
-                                       URL.TryParse,
-                                       out URL? SourceCodeRepository,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("source_code_repository",
+                                          "source code repository",
+                                          out URL? SourceCodeRepository,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

@@ -196,11 +196,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse Website             [optional]
 
-                if (JSON.ParseOptional("website",
-                                       "website",
-                                       URL.TryParse,
-                                       out URL? Website,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("website",
+                                          "website",
+                                          out URL? Website,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

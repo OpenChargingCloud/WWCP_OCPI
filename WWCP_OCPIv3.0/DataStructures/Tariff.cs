@@ -557,11 +557,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse TariffAltURL      [optional]
 
-                if (JSON.ParseOptional("tariff_alt_url",
-                                       "tariff alternative URL",
-                                       URL.TryParse,
-                                       out URL? TariffAltURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("tariff_alt_url",
+                                          "tariff alternative URL",
+                                          out URL? TariffAltURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

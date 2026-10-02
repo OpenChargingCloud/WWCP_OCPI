@@ -24,6 +24,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_3_0
@@ -470,11 +472,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #region Parse BookingTermsURL               [optional]
 
-                if (JSON.ParseOptional("booking_terms",
-                                       "booking terms URL",
-                                       URL.TryParse,
-                                       out URL? bookingTermsURL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("booking_terms",
+                                          "booking terms URL",
+                                          out URL? bookingTermsURL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

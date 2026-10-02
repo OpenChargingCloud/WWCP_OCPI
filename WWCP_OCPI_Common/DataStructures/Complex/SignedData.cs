@@ -241,11 +241,10 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse URL                      [optional]
 
-                if (JSON.ParseOptional("url",
-                                       "url",
-                                       org.GraphDefined.Vanaheimr.Hermod.HTTP.URL.TryParse,
-                                       out URL? URL,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalURL("url",
+                                          "url",
+                                          out URL? URL,
+                                          out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
