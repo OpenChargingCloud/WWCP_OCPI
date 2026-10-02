@@ -4725,6 +4725,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             RegisterURLTemplates();
 
+            // The remote CPOs and their assets, as the file of the assets
+            // of the Common API has them - see RemoteCPOAssets.
+            RemoteCPOAssets.Read(CommonAPI, remoteCPOs).GetAwaiter().GetResult();
+
         }
 
         #endregion
@@ -4922,6 +4926,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         private readonly ConcurrentDictionary<Party_Idv3, PartyData> remoteCPOs = [];
 
+        /// <summary>
+        /// The remote CPOs, with their assets.
+        /// </summary>
+        public IEnumerable<PartyData> RemoteCPOs
+            => remoteCPOs.Values;
+
 
         public delegate Task OnRemoteCPOAddedDelegate  (PartyData PartyData);
         public delegate Task OnRemoteCPOChangedDelegate(PartyData PartyData);
@@ -4952,10 +4962,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 await CommonAPI.LogAsset(
-                          "addRemoteCPO",
-                          JSONObject.Create(
-                              new JProperty("id",  RemoteCPOPartyData.Id.ToString())
-                          ),
+                          CommonHTTPAPI.addRemoteCPO,
+                          CommonAPI.PartyJSON(RemoteCPOPartyData),
                           EventTrackingId,
                           CurrentUserId
                       );
@@ -5016,10 +5024,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 await CommonAPI.LogAsset(
-                          "addRemoteCPO",
-                          JSONObject.Create(
-                              new JProperty("id",  Id.ToString())
-                          ),
+                          CommonHTTPAPI.addRemoteCPO,
+                          CommonAPI.PartyJSON(newRemoteCPO),
                           EventTrackingId,
                           CurrentUserId
                       );
@@ -9272,7 +9278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteCDR.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.addChargeDetailRecord,
+                              CommonHTTPAPI.addRemoteChargeDetailRecord,
                               RemoteCDR.ToJSON(
                                   //true,
                                   //true,
@@ -9386,7 +9392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteCDR.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.addChargeDetailRecordIfNotExists,
+                              CommonHTTPAPI.addRemoteChargeDetailRecordIfNotExists,
                               RemoteCDR.ToJSON(
                                   //true,
                                   //true,
@@ -9516,7 +9522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         RemoteCDR.CommonAPI = CommonAPI;
 
                         await CommonAPI.LogAsset(
-                                  CommonHTTPAPI.addOrUpdateChargeDetailRecord,
+                                  CommonHTTPAPI.addOrUpdateRemoteChargeDetailRecord,
                                   RemoteCDR.ToJSON(
                                       //true,
                                       //true,
@@ -9583,7 +9589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteCDR.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.addOrUpdateChargeDetailRecord,
+                              CommonHTTPAPI.addOrUpdateRemoteChargeDetailRecord,
                               RemoteCDR.ToJSON(
                                   //true,
                                   //true,
@@ -9715,7 +9721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteCDR.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.updateChargeDetailRecord,
+                              CommonHTTPAPI.updateRemoteChargeDetailRecord,
                               RemoteCDR.ToJSON(
                                   //true,
                                   //true,
@@ -9933,7 +9939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 {
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.removeChargeDetailRecord,
+                              CommonHTTPAPI.removeRemoteChargeDetailRecord,
                               cdr.ToJSON(
                                   //true,
                                   //true,
@@ -10027,7 +10033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             await CommonAPI.LogAsset(
-                      CommonHTTPAPI.removeAllChargeDetailRecords,
+                      CommonHTTPAPI.removeAllRemoteChargeDetailRecords,
                       EventTrackingId,
                       CurrentUserId,
                       CancellationToken

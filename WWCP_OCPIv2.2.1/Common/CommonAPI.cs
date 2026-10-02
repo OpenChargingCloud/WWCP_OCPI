@@ -8065,13 +8065,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (private static) PartyJSON        (PartyData)
+        #region (internal static) PartyJSON        (PartyData)
 
         /// <summary>
         /// A party as its line in the file of the assets: all the next start
         /// needs to make it again.
         /// </summary>
-        private static JObject PartyJSON(PartyData PartyData)
+        internal static JObject PartyJSON(PartyData PartyData)
 
             => JSONObject.Create(
                    new JProperty("id",                PartyData.Id.             ToString()),
@@ -8082,7 +8082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region (private static) TryParsePartyJSON(JSON, out PartyData, out ErrorResponse)
+        #region (internal static) TryParsePartyJSON(JSON, out PartyData, out ErrorResponse)
 
         /// <summary>
         /// A party from its line in the file of the assets.
@@ -8091,9 +8091,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// AddParty wrote down only a party's identification before: such a
         /// line cannot make the party again, and is passed over.
         /// </remarks>
-        private static Boolean TryParsePartyJSON(JObject                                JSON,
-                                                 [NotNullWhen(true)]  out PartyData?    PartyData,
-                                                 [NotNullWhen(false)] out String?       ErrorResponse)
+        internal static Boolean TryParsePartyJSON(JObject                                JSON,
+                                                  [NotNullWhen(true)]  out PartyData?    PartyData,
+                                                  [NotNullWhen(false)] out String?       ErrorResponse)
         {
 
             PartyData = null;
