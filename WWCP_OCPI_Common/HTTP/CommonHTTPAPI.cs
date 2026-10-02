@@ -106,6 +106,8 @@ namespace cloud.charging.open.protocols.OCPI
         public const String removeRemoteParty                  = "removeRemoteParty";
         public const String removeAllRemoteParties             = "removeAllRemoteParties";
 
+        public const String addParty                           = "addParty";
+
         public const String addLocation                        = "addLocation";
         public const String addLocationIfNotExists             = "addLocationIfNotExists";
         public const String addOrUpdateLocation                = "addOrUpdateLocation";

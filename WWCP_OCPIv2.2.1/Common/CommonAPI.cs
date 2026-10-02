@@ -4117,6 +4117,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             switch (command.CommandName)
             {
 
+                #region addParty
+
+                // A party already known - given at the start, or made by a line
+                // before - stays as it is.
+                case CommonHTTPAPI.addParty:
+                    try
+                    {
+                        if (command.JSONObject is not null &&
+                            TryParsePartyJSON(
+                                command.JSONObject,
+                                out var partyData,
+                                out errorResponse
+                            ))
+                        {
+                            parties.TryAdd(partyData.Id, partyData);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        errorResponse ??= e.Message;
+                    }
+                    if (errorResponse is not null)
+                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                    break;
+
+                #endregion
+
+
                 #region addLocation
 
                 case CommonHTTPAPI.addLocation:
@@ -8037,6 +8065,88 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
+        #region (private static) PartyJSON        (PartyData)
+
+        /// <summary>
+        /// A party as its line in the file of the assets: all the next start
+        /// needs to make it again.
+        /// </summary>
+        private static JObject PartyJSON(PartyData PartyData)
+
+            => JSONObject.Create(
+                   new JProperty("id",                PartyData.Id.             ToString()),
+                   new JProperty("role",              PartyData.Role.           ToString()),
+                   new JProperty("business_details",  PartyData.BusinessDetails.ToJSON()),
+                   new JProperty("allow_downgrades",  PartyData.AllowDowngrades)
+               );
+
+        #endregion
+
+        #region (private static) TryParsePartyJSON(JSON, out PartyData, out ErrorResponse)
+
+        /// <summary>
+        /// A party from its line in the file of the assets.
+        /// </summary>
+        /// <remarks>
+        /// AddParty wrote down only a party's identification before: such a
+        /// line cannot make the party again, and is passed over.
+        /// </remarks>
+        private static Boolean TryParsePartyJSON(JObject                                JSON,
+                                                 [NotNullWhen(true)]  out PartyData?    PartyData,
+                                                 [NotNullWhen(false)] out String?       ErrorResponse)
+        {
+
+            PartyData = null;
+
+            if (!JSON.ParseMandatory("id",
+                                     "party identification",
+                                     Party_Idv3.TryParse,
+                                     out Party_Idv3 id,
+                                     out ErrorResponse))
+            {
+                return false;
+            }
+
+            if (!JSON.ParseMandatory("role",
+                                     "role",
+                                     Role.TryParse,
+                                     out Role role,
+                                     out ErrorResponse))
+            {
+                return false;
+            }
+
+            if (!JSON.ParseMandatoryJSON("business_details",
+                                         "business details",
+                                         BusinessDetails.TryParse,
+                                         out BusinessDetails? businessDetails,
+                                         out ErrorResponse))
+            {
+                return false;
+            }
+
+            if (JSON.ParseOptional("allow_downgrades",
+                                   "allow downgrades",
+                                   out Boolean? allowDowngrades,
+                                   out ErrorResponse))
+            {
+                if (ErrorResponse is not null)
+                    return false;
+            }
+
+            PartyData = new PartyData(
+                            id,
+                            role,
+                            businessDetails,
+                            allowDowngrades
+                        );
+
+            return true;
+
+        }
+
+        #endregion
+
         #region AddParty            (Id, Role, BusinessDetails, AllowDowngrades = null, ...)
 
         public async Task<AddResult<PartyData>>
@@ -8055,10 +8165,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 await LogAsset(
-                          "addParty",
-                          JSONObject.Create(
-                              new JProperty("id",  PartyData.Id.ToString())
-                          ),
+                          CommonHTTPAPI.addParty,
+                          PartyJSON(PartyData),
                           EventTrackingId,
                           CurrentUserId
                       );
@@ -8119,10 +8227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 await LogAsset(
-                          "addParty",
-                          JSONObject.Create(
-                              new JProperty("id",  Id.ToString())
-                          ),
+                          CommonHTTPAPI.addParty,
+                          PartyJSON(newParty),
                           EventTrackingId,
                           CurrentUserId
                       );
