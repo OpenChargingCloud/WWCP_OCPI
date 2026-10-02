@@ -303,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           (this.End?.           GetHashCode() ?? 0) *  7 ^
                           (this.MeterId?.       GetHashCode() ?? 0) *  5 ^
                            this.ChargingPeriods.CalcHashCode()      *  3 ^
-                           this.TotalCost?.     GetHashCode() ?? 0;
+                          (this.TotalCost?.     GetHashCode() ?? 0);
 
             }
 

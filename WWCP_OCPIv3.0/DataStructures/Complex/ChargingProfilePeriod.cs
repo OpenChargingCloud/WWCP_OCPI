@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 hashCode = this.StartPeriod.    GetHashCode()       * 7 ^
                            this.Limit.          GetHashCode()       * 5 ^
                           (this.NumberOfPhases?.GetHashCode() ?? 0) * 3 ^
-                           this.PhaseToUse?.    GetHashCode() ?? 0;
+                          (this.PhaseToUse?.    GetHashCode() ?? 0);
 
             }
 

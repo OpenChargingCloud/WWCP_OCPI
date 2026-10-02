@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 hashCode = CallbackId.GetHashCode() * 3 ^
-                           Payload?.  GetHashCode() ?? 0;
+                          (Payload?.  GetHashCode() ?? 0);
 
             }
 

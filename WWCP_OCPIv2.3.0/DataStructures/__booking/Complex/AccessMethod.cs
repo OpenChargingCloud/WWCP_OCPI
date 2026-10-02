@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 hashCode = this.LocationAccess.GetHashCode() * 3 ^
-                           this.Value?.        GetHashCode() ?? 0;
+                          (this.Value?.        GetHashCode() ?? 0);
 
             }
 

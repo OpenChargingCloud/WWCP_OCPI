@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return Allowed.  GetHashCode()       * 5 ^
                       (Location?.GetHashCode() ?? 0) * 3 ^
-                       Info?.    GetHashCode() ?? 0;
+                      (Info?.    GetHashCode() ?? 0);
 
             }
         }

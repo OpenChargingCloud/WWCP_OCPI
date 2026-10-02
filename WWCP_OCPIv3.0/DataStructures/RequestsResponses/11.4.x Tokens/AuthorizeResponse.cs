@@ -193,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.MaxEnergy?.             GetHashCode() ?? 0) *  7 ^
                           (this.MaxTime?.               GetHashCode() ?? 0) *  5 ^
                           (this.Info?.                  GetHashCode() ?? 0) *  3 ^
-                           this.DisplayTariff?.         GetHashCode() ?? 0;
+                          (this.DisplayTariff?.         GetHashCode() ?? 0);
 
             }
 

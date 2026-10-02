@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPI
                 hashCode = this.PartyId.         GetHashCode() *  7 ^
                            this.Role.            GetHashCode() *  5 ^
                            this.BusinessDetails. GetHashCode() *  3 ^
-                           this.AllowDowngrades?.GetHashCode() ?? 0;
+                          (this.AllowDowngrades?.GetHashCode() ?? 0);
 
             }
 

@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            this.Unit.          GetHashCode() *  7 ^
                            this.ComponentLevel.GetHashCode() *  5 ^
                            this.Location.      GetHashCode() *  3 ^
-                           this.Phase?.        GetHashCode() ?? 0;
+                          (this.Phase?.        GetHashCode() ?? 0);
 
             }
 

@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           (this.AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
                           (this.EnergyMeterId?.         GetHashCode() ?? 0) *  5 ^
                            this.ChargingPeriods.        GetHashCode()       *  3 ^
-                           this.TotalCosts?.            GetHashCode() ?? 0;
+                          (this.TotalCosts?.            GetHashCode() ?? 0);
 
             }
 

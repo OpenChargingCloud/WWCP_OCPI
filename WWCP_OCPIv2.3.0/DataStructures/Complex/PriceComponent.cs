@@ -557,7 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 return Type.    GetHashCode() * 7 ^
                        Price.   GetHashCode() * 5 ^
                        StepSize.GetHashCode() * 3 ^
-                       VAT?.    GetHashCode() ?? 0;
+                      (VAT?.    GetHashCode() ?? 0);
 
             }
         }

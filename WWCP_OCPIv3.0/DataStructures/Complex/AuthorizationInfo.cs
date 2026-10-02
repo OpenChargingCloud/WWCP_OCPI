@@ -465,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       (Token?.                 GetHashCode() ?? 0) *  7 ^
                       (Location?.              GetHashCode() ?? 0) *  5 ^
                       (AuthorizationReference?.GetHashCode() ?? 0) *  3^
-                       Info?.                  GetHashCode() ?? 0;
+                      (Info?.                  GetHashCode() ?? 0);
 
             }
         }

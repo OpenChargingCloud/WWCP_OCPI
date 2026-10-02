@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.RFIDAuthRequired?.          GetHashCode() ?? 0) *  7 ^
                           (this.TokenGroupsSupported?.      GetHashCode() ?? 0) *  5 ^
                           (this.RemoteAuthSupported?.       GetHashCode() ?? 0) *  3 ^
-                           this.BookingTermsURL?.           GetHashCode() ?? 0;
+                          (this.BookingTermsURL?.           GetHashCode() ?? 0);
 
             }
 

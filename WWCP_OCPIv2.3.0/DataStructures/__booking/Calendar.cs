@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            this.EndBefore.         GetHashCode()  *  7 ^
                            this.AvailableTimeSlots.CalcHashCode() *  5 ^
                            this.LastUpdated.       GetHashCode()  *  3 ^
-                           this.StepSize?.         GetHashCode() ?? 0;
+                          (this.StepSize?.         GetHashCode() ?? 0);
 
             }
 

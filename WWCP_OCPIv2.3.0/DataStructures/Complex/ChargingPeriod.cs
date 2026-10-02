@@ -852,7 +852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 return StartTimestamp.GetHashCode()  * 5 ^
                        Dimensions.    CalcHashCode() * 3 ^
-                       TariffId?.     GetHashCode() ?? 0;
+                      (TariffId?.     GetHashCode() ?? 0);
 
             }
         }

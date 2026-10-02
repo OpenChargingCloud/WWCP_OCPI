@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.Lighting?.             GetHashCode() ?? 0) *   7 ^
                           (this.RefrigerationOutlet?.  GetHashCode() ?? 0) *   5 ^
                            this.Standards.             CalcHashCode()      *   3 ^
-                           this.APDSReference?.        GetHashCode() ?? 0;
+                          (this.APDSReference?.        GetHashCode() ?? 0);
 
             }
 

@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            this.LastUpdated.   GetHashCode()        *  7 ^
                            this.TariffAltText. CalcHashCode()       *  5 ^
                           (this.TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
-                           this.EnergyMix?.    GetHashCode()  ?? 0;
+                          (this.EnergyMix?.    GetHashCode()  ?? 0);
 
             }
 

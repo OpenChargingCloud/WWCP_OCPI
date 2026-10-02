@@ -496,7 +496,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 return Hour.   GetHashCode() * 5 ^
                        Minute. GetHashCode() * 3 ^
-                       Second?.GetHashCode() ?? 0;
+                      (Second?.GetHashCode() ?? 0);
 
             }
         }

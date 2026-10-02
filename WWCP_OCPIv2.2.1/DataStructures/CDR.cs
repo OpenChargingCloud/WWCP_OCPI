@@ -896,7 +896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           (this.InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
                           (this.Credit?.                  GetHashCode()  ?? 0) *   5 ^
                           (this.CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
-                           this.HomeChargingCompensation?.GetHashCode()  ?? 0;
+                          (this.HomeChargingCompensation?.GetHashCode()  ?? 0);
 
             }
 

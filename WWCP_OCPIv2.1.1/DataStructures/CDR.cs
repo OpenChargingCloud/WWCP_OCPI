@@ -792,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            this.TransparencySoftware.CalcHashCode()       *  7 ^
                           (this.SignedData?.          GetHashCode()  ?? 0) *  5 ^
                           (this.TotalParkingTime?.    GetHashCode()  ?? 0) *  3 ^
-                           this.Remark?.              GetHashCode()  ?? 0;
+                          (this.Remark?.              GetHashCode()  ?? 0);
 
             }
 

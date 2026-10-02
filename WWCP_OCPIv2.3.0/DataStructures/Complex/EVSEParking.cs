@@ -432,7 +432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public override Int32 GetHashCode()
 
             => ParkingId.    GetHashCode() * 3 ^
-               EVSEPosition?.GetHashCode() ?? 0;
+              (EVSEPosition?.GetHashCode() ?? 0);
 
         #endregion
 

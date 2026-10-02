@@ -547,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPI
                       (Certificate?.        GetHashCode() ?? 0) * 7 ^
                       (CertificateIssuer?.  GetHashCode() ?? 0) * 5 ^
                       (NotBefore?.          GetHashCode() ?? 0) * 3 ^
-                       NotAfter?.           GetHashCode() ?? 0;
+                      (NotAfter?.           GetHashCode() ?? 0);
 
             }
         }

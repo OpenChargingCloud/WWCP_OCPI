@@ -107,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPI
                            this.SignedValues.          CalcHashCode()      *  7 ^
                           (this.EncodingMethodVersion?.GetHashCode() ?? 0) *  5 ^
                           (this.PublicKey?.            GetHashCode() ?? 0) *  3 ^
-                           this.URL?.                  GetHashCode() ?? 0;
+                          (this.URL?.                  GetHashCode() ?? 0);
 
             }
 

@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            this.Readings.          CalcHashCode()      *  7 ^
                           (this.EVSEUId?.          GetHashCode() ?? 0) *  5 ^
                           (this.SessionId?.        GetHashCode() ?? 0) *  3 ^
-                           this.ChargingProfileId?.GetHashCode() ?? 0;
+                          (this.ChargingProfileId?.GetHashCode() ?? 0);
 
             }
 

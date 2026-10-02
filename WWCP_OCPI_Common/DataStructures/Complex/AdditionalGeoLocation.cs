@@ -363,7 +363,7 @@ namespace cloud.charging.open.protocols.OCPI
             {
 
                 return GeoLocation.GetHashCode() * 3 ^
-                       Name?.      GetHashCode() ?? 0;
+                      (Name?.      GetHashCode() ?? 0);
 
             }
         }

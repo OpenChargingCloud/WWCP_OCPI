@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.BookableParkingOptions?.GetHashCode() ?? 0) *  7 ^
                           (this.EVSEUId?.               GetHashCode() ?? 0) *  5 ^
                           (this.PowerRequired?.         GetHashCode() ?? 0) *  3 ^
-                           this.Canceled?.              GetHashCode() ?? 0;
+                          (this.Canceled?.              GetHashCode() ?? 0);
 
             }
 

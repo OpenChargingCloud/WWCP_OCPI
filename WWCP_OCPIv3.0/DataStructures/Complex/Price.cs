@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 return ExcludingVAT. GetHashCode() * 3 ^
-                       IncludingVAT?.GetHashCode() ?? 0;
+                      (IncludingVAT?.GetHashCode() ?? 0);
 
             }
         }

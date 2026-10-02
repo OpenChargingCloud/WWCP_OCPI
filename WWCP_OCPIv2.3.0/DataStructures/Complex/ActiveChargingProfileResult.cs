@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 return Result.  GetHashCode() * 3 ^
-                       Profile?.GetHashCode() ?? 0;
+                      (Profile?.GetHashCode() ?? 0);
 
             }
         }

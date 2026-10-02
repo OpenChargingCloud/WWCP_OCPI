@@ -100,7 +100,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 hashCode = RetryInterval.    GetHashCode() * 5 ^
                            MaxQueueSize.     GetHashCode() * 3 ^
-                           ParallelismLimit?.GetHashCode() ?? 0;
+                          (ParallelismLimit?.GetHashCode() ?? 0);
 
             }
 

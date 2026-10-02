@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.DangerousGoodsAllowed?.GetHashCode() ?? 0) *  7 ^
                           (this.DriveThrough?.         GetHashCode() ?? 0) *  5 ^
                           (this.RestrictedToType?.     GetHashCode() ?? 0) *  3 ^
-                           this.RefrigerationOutlet?.  GetHashCode() ?? 0;
+                          (this.RefrigerationOutlet?.  GetHashCode() ?? 0);
 
             }
 

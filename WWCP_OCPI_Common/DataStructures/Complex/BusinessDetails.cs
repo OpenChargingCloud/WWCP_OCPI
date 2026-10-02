@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPI
                 hashCode = this.Name.             GetHashCode()       * 7 ^
                           (this.Website?.         GetHashCode() ?? 0) * 5 ^
                           (this.Logo?.            GetHashCode() ?? 0) * 3 ^
-                           this.TechnicalContact?.GetHashCode() ?? 0;
+                          (this.TechnicalContact?.GetHashCode() ?? 0);
 
             }
 

@@ -784,7 +784,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                ConnectorPowerType.GetHashCode()       *  7 ^
               (Name?.             GetHashCode() ?? 0) *  5 ^
               (PostalCode?.       GetHashCode() ?? 0) *  3 ^
-               State?.            GetHashCode() ?? 0;
+              (State?.            GetHashCode() ?? 0);
 
         #endregion
 

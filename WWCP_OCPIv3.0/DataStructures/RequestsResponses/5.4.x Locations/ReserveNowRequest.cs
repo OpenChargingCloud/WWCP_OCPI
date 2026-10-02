@@ -134,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            this.ReservationId.          GetHashCode()       *  7 ^
                            this.LocationId.             GetHashCode()       *  5 ^
                           (this.EVSEUId?.               GetHashCode() ?? 0) *  3 ^
-                           this.AuthorizationReference?.GetHashCode() ?? 0;
+                          (this.AuthorizationReference?.GetHashCode() ?? 0);
 
             }
 

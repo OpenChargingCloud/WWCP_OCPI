@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 hashCode = ResultType.GetHashCode()       * 5 ^
                           (Error?.    GetHashCode() ?? 0) * 3 ^
-                           Payload?.  GetHashCode() ?? 0;
+                          (Payload?.  GetHashCode() ?? 0);
 
             }
 

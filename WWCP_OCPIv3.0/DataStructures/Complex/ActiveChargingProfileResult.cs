@@ -398,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
 
                 return Result.  GetHashCode() * 3 ^
-                       Profile?.GetHashCode() ?? 0;
+                      (Profile?.GetHashCode() ?? 0);
 
             }
         }

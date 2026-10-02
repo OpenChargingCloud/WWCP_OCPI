@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 hashCode = this.Token.             GetHashCode() * 5 ^
                            this.Status.            GetHashCode() * 3 ^
-                           this.LocationReference?.GetHashCode() ?? 0;
+                          (this.LocationReference?.GetHashCode() ?? 0);
 
             }
 

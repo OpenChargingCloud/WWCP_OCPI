@@ -534,7 +534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            this.Images.             CalcHashCode()       *   5 ^
                           (this.EnergyMix?.         GetHashCode()  ?? 0) *   3 ^
                            this.EnergyMeters.       CalcHashCode()       *   3 ^
-                           this.HelpPhone?.         GetHashCode() ?? 0;
+                          (this.HelpPhone?.         GetHashCode() ?? 0);
 
             }
 

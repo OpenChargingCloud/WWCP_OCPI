@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.hashCode = this.Name.          GetHashCode()       * 7 ^
                                 this.Amount.        GetHashCode()       * 5 ^
                                (this.AccountNumber?.GetHashCode() ?? 0) * 3 ^
-                                this.Percentage?.   GetHashCode() ?? 0;
+                               (this.Percentage?.   GetHashCode() ?? 0);
 
             }
 

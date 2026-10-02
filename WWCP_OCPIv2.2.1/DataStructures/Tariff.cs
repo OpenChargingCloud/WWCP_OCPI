@@ -300,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           (this.MaxPrice?.     GetHashCode()  ?? 0) *  7 ^
                           (this.Start?.        GetHashCode()  ?? 0) *  5 ^
                           (this.End?.          GetHashCode()  ?? 0) *  3 ^
-                           this.EnergyMix?.    GetHashCode()  ?? 0;
+                          (this.EnergyMix?.    GetHashCode()  ?? 0);
 
             }
 

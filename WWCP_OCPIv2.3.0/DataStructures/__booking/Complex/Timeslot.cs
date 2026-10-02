@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            this.End.                GetHashCode()       *  7 ^
                           (this.MinPower?.          GetHashCode() ?? 0) *  5 ^
                           (this.MaxPower?.          GetHashCode() ?? 0) *  3 ^
-                           this.GreenEnergySupport?.GetHashCode() ?? 0;
+                          (this.GreenEnergySupport?.GetHashCode() ?? 0);
 
             }
 

@@ -420,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 return BeforeTaxes.GetHashCode() * 3 ^
-                       AfterTaxes?.GetHashCode() ?? 0;
+                      (AfterTaxes?.GetHashCode() ?? 0);
 
             }
         }

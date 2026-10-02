@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             {
 
                 hashCode = this.ReservationRequired.GetHashCode() * 3 ^
-                           this.AdHoc?.             GetHashCode() ?? 0;
+                          (this.AdHoc?.             GetHashCode() ?? 0);
 
             }
 
