@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("evse_position",
                                        "relative EVSE position",
                                        OCPIv2_3_0.EVSEPosition.TryParse,
-                                       out EVSEPosition evsePosition,
+                                       out EVSEPosition? evsePosition,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

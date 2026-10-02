@@ -240,10 +240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
-                #region Parse EndBefore             [mandatory]
+                #region Parse LastUpdated           [mandatory]
 
-                if (!JSON.ParseMandatory("end_before",
-                                         "end before",
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
                                          out DateTimeOffset lastUpdated,
                                          out ErrorResponse))
                 {

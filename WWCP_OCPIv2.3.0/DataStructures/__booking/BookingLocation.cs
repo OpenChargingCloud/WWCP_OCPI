@@ -557,7 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            BookableParkingOptions.Any()
-                               ? new JProperty("bookable_parking_options",   new JArray(BookableParkingOptions.Select(bookableParkingOption => bookableParkingOption.ToString())))
+                               ? new JProperty("bookable_parking_options",   new JArray(BookableParkingOptions.Select(bookableParkingOption => bookableParkingOption.ToJSON())))
                                : null,
 
                            Bookable is not null
@@ -569,11 +569,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                : null,
 
                            BookingTerms.Any()
-                               ? new JProperty("booking_terms",              new JArray(BookingTerms.          Select(bookingTerm           => bookingTerm.          ToString())))
+                               ? new JProperty("booking_terms",              new JArray(BookingTerms.          Select(bookingTerm           => bookingTerm.          ToJSON())))
                                : null,
 
                            Calendar.Any()
-                               ? new JProperty("calendar",                   new JArray(Calendar.              Select(calendar              => calendar.             ToString())))
+                               ? new JProperty("calendar",                   new JArray(Calendar.              Select(calendar              => calendar.             ToJSON())))
                                : null,
 
                                  new JProperty("created",                    Created.    ToISO8601()),
