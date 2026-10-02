@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   CancellationToken
                                               ))
                 {
-                    Process(command, RemoteCPOs);
+                    Process(command, RemoteCPOs, CommonAPI);
                 }
 
             }
@@ -95,14 +95,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region Process(Command, RemoteCPOs)
+        #region Process(Command, RemoteCPOs, CommonAPI)
 
         /// <summary>
         /// One line of the file of the assets: what it says of a remote CPO.
         /// Every other line is the Common API's own, and is passed over.
         /// </summary>
+        /// <remarks>
+        /// A line of a remote command that cannot be made is told to the
+        /// Common HTTP API's OnDatabaseLineNotRead. A line of a CDR written
+        /// with the Common API's own command, as before, is told by the Common
+        /// API, which reads it as well.
+        /// </remarks>
         public static void Process(Command                                      command,
-                                   ConcurrentDictionary<Party_Idv3, PartyData>  RemoteCPOs)
+                                   ConcurrentDictionary<Party_Idv3, PartyData>  RemoteCPOs,
+                                   CommonAPI                                    CommonAPI)
         {
 
             String?       errorResponse   = null;
@@ -863,6 +870,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
+            }
+
+            foreach (var notRead in errorResponses)
+            {
+                if (notRead.Item1.CommandName.Contains("Remote"))
+                    CommonAPI.BaseAPI.DatabaseLineNotRead(
+                        CommonAPI.AssetsDBFileName,
+                        notRead.Item1,
+                        notRead.Item2
+                    );
             }
 
         }

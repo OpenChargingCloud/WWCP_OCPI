@@ -3130,7 +3130,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                   CancellationToken
                                               ))
                 {
-                    ProcessRemotePartyCommand(command);
+                    ProcessRemotePartyCommand(command, DatabaseFileName ?? RemotePartyDBFileName);
                 }
 
             }
@@ -3143,9 +3143,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region ProcessRemotePartyCommand   (Command)
+        #region ProcessRemotePartyCommand   (Command, FileName = null)
 
-        public void ProcessRemotePartyCommand(Command command)
+        /// <summary>
+        /// One command of the given file - by default RemotePartyDBFileName. What
+        /// it said that cannot be made is told to OnDatabaseLineNotRead.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="FileName">The file the command was read from.</param>
+        public void ProcessRemotePartyCommand(Command  command,
+                                              String?  FileName   = null)
         {
 
             String?      errorResponse   = null;
@@ -3287,6 +3294,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             }
 
+            foreach (var notRead in errorResponses)
+                BaseAPI.DatabaseLineNotRead(
+                    FileName ?? RemotePartyDBFileName,
+                    notRead.Item1,
+                    notRead.Item2
+                );
+
         }
 
         #endregion
@@ -3423,7 +3437,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                   CancellationToken
                                               ))
                 {
-                    ProcessAssetsCommand(command);
+                    ProcessAssetsCommand(command, DatabaseFileName ?? AssetsDBFileName);
                 }
 
             }
@@ -3436,9 +3450,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region ProcessAssetsCommand   (Command)
+        #region ProcessAssetsCommand   (Command, FileName = null)
 
-        public void ProcessAssetsCommand(Command command)
+        /// <summary>
+        /// One command of the given file - by default AssetsDBFileName. What
+        /// it said that cannot be made is told to OnDatabaseLineNotRead.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="FileName">The file the command was read from.</param>
+        public void ProcessAssetsCommand(Command  command,
+                                         String?  FileName   = null)
         {
 
             String?       errorResponse   = null;
@@ -4487,6 +4508,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     break;
 
             }
+
+            foreach (var notRead in errorResponses)
+                BaseAPI.DatabaseLineNotRead(
+                    FileName ?? AssetsDBFileName,
+                    notRead.Item1,
+                    notRead.Item2
+                );
 
         }
 

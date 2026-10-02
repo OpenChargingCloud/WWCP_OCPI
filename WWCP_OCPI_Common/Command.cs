@@ -183,6 +183,28 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region ToJSON()
+
+        /// <summary>
+        /// The command as the JSON of its line: its name, and its data.
+        /// </summary>
+        public JObject ToJSON()
+
+            => new (
+                   new JProperty(
+                       CommandName,
+                       JSONObject is not null ? (JToken) JSONObject
+                     : JSONArray  is not null ? JSONArray
+                     : Message    is not null ? new JValue(Message)
+                     : Integer.   HasValue    ? new JValue(Integer.Value)
+                     : Single.    HasValue    ? new JValue(Single. Value)
+                     : Boolean.   HasValue    ? new JValue(Boolean.Value)
+                     :                          JValue.CreateNull()
+                   )
+               );
+
+        #endregion
+
         #region (override) ToString()
 
         /// <summary>

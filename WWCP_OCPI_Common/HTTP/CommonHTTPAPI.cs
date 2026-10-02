@@ -46,6 +46,22 @@ namespace cloud.charging.open.protocols.OCPI
 
 
     /// <summary>
+    /// A line of a database file that was not read at the start: what it said,
+    /// the API does not know.
+    /// </summary>
+    /// <param name="Timestamp">When the line was not read.</param>
+    /// <param name="Sender">The Common HTTP API whose files are read.</param>
+    /// <param name="FileName">The database file.</param>
+    /// <param name="Line">The line, or - for a command that was not read - the command as JSON.</param>
+    /// <param name="Reason">Why it was not read.</param>
+    public delegate void OnDatabaseLineNotReadDelegate(DateTimeOffset  Timestamp,
+                                                       CommonHTTPAPI   Sender,
+                                                       String          FileName,
+                                                       String          Line,
+                                                       String          Reason);
+
+
+    /// <summary>
     /// The OCPI Common HTTP API.
     /// </summary>
     public class CommonHTTPAPI : AHTTPExtAPIExtension1<HTTPExtAPI>,
@@ -3563,7 +3579,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                   CancellationToken
                                               ))
                 {
-                    ProcessRemotePartyCommand(command);
+                    ProcessRemotePartyCommand(command, DatabaseFileName ?? RemotePartyDBFileName);
                 }
 
             }
@@ -3576,9 +3592,16 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ProcessRemotePartyCommand  (Command)
+        #region ProcessRemotePartyCommand  (Command, FileName = null)
 
-        public void ProcessRemotePartyCommand(Command command)
+        /// <summary>
+        /// One command of the given file - by default RemotePartyDBFileName. What
+        /// it said that cannot be made is told to OnDatabaseLineNotRead.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="FileName">The file the command was read from.</param>
+        public void ProcessRemotePartyCommand(Command  command,
+                                              String?  FileName   = null)
         {
 
             String?      errorResponse   = null;
@@ -3720,6 +3743,13 @@ namespace cloud.charging.open.protocols.OCPI
 
             }
 
+            foreach (var notRead in errorResponses)
+                DatabaseLineNotRead(
+                    FileName ?? RemotePartyDBFileName,
+                    notRead.Item1,
+                    notRead.Item2
+                );
+
         }
 
         #endregion
@@ -3730,6 +3760,78 @@ namespace cloud.charging.open.protocols.OCPI
 
         const String CommentPrefix1  = "//";
         const String CommentPrefix2  = "#";
+
+        #region OnDatabaseLineNotRead
+
+        /// <summary>
+        /// A line of a database file was not read - it was no command, or what
+        /// the command said could not be made - and is passed over. What it
+        /// said, the API does not know.
+        /// </summary>
+        /// <remarks>
+        /// The Common API of a version reads its files while it is made, and
+        /// the EMSP and the hub of 2.2.1 the remote CPOs' lines while they are:
+        /// subscribe on this API before they are made. Lines of a command the
+        /// reader does not know are not told: a file may hold the lines of
+        /// another reader as well.
+        /// </remarks>
+        public event OnDatabaseLineNotReadDelegate? OnDatabaseLineNotRead;
+
+        #endregion
+
+        #region DatabaseLineNotRead                              (FileName, Line,    Reason)
+
+        /// <summary>
+        /// Tell OnDatabaseLineNotRead that the given line of the given file was
+        /// not read. A subscriber that throws is told to the debug log, and the
+        /// others are told all the same.
+        /// </summary>
+        /// <param name="FileName">The database file.</param>
+        /// <param name="Line">The line.</param>
+        /// <param name="Reason">Why it was not read.</param>
+        public void DatabaseLineNotRead(String  FileName,
+                                        String  Line,
+                                        String  Reason)
+        {
+
+            var timestamp = Timestamp.Now;
+
+            foreach (var subscriber in OnDatabaseLineNotRead?.GetInvocationList().Cast<OnDatabaseLineNotReadDelegate>() ?? [])
+            {
+                try
+                {
+                    subscriber(timestamp, this, FileName, Line, Reason);
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.{nameof(OnDatabaseLineNotRead)}");
+                }
+            }
+
+        }
+
+        #endregion
+
+        #region DatabaseLineNotRead                              (FileName, Command, Reason)
+
+        /// <summary>
+        /// Tell OnDatabaseLineNotRead that the given command of the given file
+        /// was not read: what it said could not be made.
+        /// </summary>
+        /// <param name="FileName">The database file.</param>
+        /// <param name="Command">The command.</param>
+        /// <param name="Reason">Why it was not read.</param>
+        public void DatabaseLineNotRead(String   FileName,
+                                        Command  Command,
+                                        String   Reason)
+
+            => DatabaseLineNotRead(
+                   FileName,
+                   Command.ToJSON().ToString(Newtonsoft.Json.Formatting.None),
+                   Reason
+               );
+
+        #endregion
 
         #region OnDatabaseLineNotWritten
 
@@ -3979,15 +4081,15 @@ namespace cloud.charging.open.protocols.OCPI
                 catch (Exception e)
                 {
                     DebugX.LogException(e, $"{nameof(CommonHTTPAPI)}.{nameof(LoadCommandsFromDatabaseFile)}('{DBFileName}')!");
-                    // Option A: silently skip bad line          → continue;
-                    // Option B: yield some error command        → yield return Command.FromException(ex);
-                    // Option C: stop whole stream               → yield break;
-                    // Option D: rethrow → caller sees exception → throw;
-                    continue;   // ← most common choice in streaming parsers
+                    DatabaseLineNotRead(DBFileName, line, e.Message);
+                    continue;
                 }
 
                 if (command is not null)
                     yield return command;
+
+                else
+                    DatabaseLineNotRead(DBFileName, line, "The line is no JSON object with a command.");
 
             }
 
@@ -4043,11 +4145,15 @@ namespace cloud.charging.open.protocols.OCPI
                 catch (Exception ex)
                 {
                     DebugX.LogException(ex, $"{nameof(LoadCommandsFromDatabaseFileBuffered)}('{DBFileName}') failed!");
+                    DatabaseLineNotRead(DBFileName, line, ex.Message);
                     continue;
                 }
 
                 if (command is not null)
                     yield return command;
+
+                else
+                    DatabaseLineNotRead(DBFileName, line, "The line is no JSON object with a command.");
 
             }
 
