@@ -50,6 +50,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
     /// hands neither itself nor its remote parties to the API every version
     /// hangs off, so the list does not read their tokens; the other versions
     /// test it.
+    ///
+    /// And a Basic authentication whose password is no TOTP, which threw the
+    /// same way before its token was looked at, does not fail at all.
     /// </remarks>
     [TestFixture]
     public class FailedRequestTests
@@ -325,6 +328,72 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
+        #region ABasicPasswordThatIsNoTOTPIsNoServerError()
+
+        /// <summary>
+        /// A Basic authentication whose password is no TOTP - an empty one
+        /// among them - is no server error, in the versions list and in this
+        /// version: the token in it is looked at as any other.
+        /// </summary>
+        [Test]
+        public async Task ABasicPasswordThatIsNoTOTPIsNoServerError()
+        {
+
+            await AddTheOtherSide();
+
+            var credentials = await CredentialsURL();
+
+            Listen();
+
+            foreach (var url in new[] { $"http://127.0.0.1:{port}/ocpi/versions", credentials })
+            {
+                foreach (var password in new[] { "not-a-totp", "" })
+                {
+
+                    var answer = await Send(url, Basic("an-unknown-token", password));
+
+                    Assert.Multiple(() => {
+                        Assert.That(answer.Status,                              Is.Not.EqualTo(500),   $"'{password}' as the password is a server error at {url}: {answer.Text}");
+                        Assert.That(answer.JSON?.Value<Int32?>("status_code"),  Is.Not.EqualTo(3000),  $"'{password}' as the password is a server error at {url}: {answer.Text}");
+                    });
+
+                }
+            }
+
+            Assert.That(reports, Is.Empty, "A password that is no TOTP is said to OnRequestFailed.");
+
+        }
+
+        #endregion
+
+        #region AKnownTokenAsBasicUserWithoutAPasswordIsLetIn()
+
+        /// <summary>
+        /// A known token as the user of a Basic authentication without a
+        /// password is let in, as it is with a Token authentication: the
+        /// credentials it is answered with are its own.
+        /// </summary>
+        [Test]
+        public async Task AKnownTokenAsBasicUserWithoutAPasswordIsLetIn()
+        {
+
+            await AddTheOtherSide();
+
+            var credentials  = await CredentialsURL();
+
+            var answer       = await Send(credentials, Basic(token.ToString(), ""));
+
+            Assert.Multiple(() => {
+                Assert.That(answer.Status,                                 Is.EqualTo(200),               $"The known token without a password is answered {answer.Status}: {answer.Text}");
+                Assert.That(answer.JSON?.Value<Int32?>("status_code"),     Is.EqualTo(1000),              $"The known token without a password is answered: {answer.Text}");
+                Assert.That(answer.JSON?["data"]?.Value<String>("token"),  Is.EqualTo(token.ToString()),  "The known token without a password is not let in.");
+            });
+
+        }
+
+        #endregion
+
+
         #region (private) SaysNothingButItsIds(Answer, What)
 
         /// <summary>
@@ -422,6 +491,45 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
             Assert.That(added.IsSuccess, Is.True, $"The party with a broken TOTP could not be added: {added.ErrorResponse}");
 
         }
+
+        #endregion
+
+        #region (private) CredentialsURL() / Basic(User, Password)
+
+        /// <summary>
+        /// Where this version's credentials are, as the other side finds them
+        /// with its token: the details of this version, which the versions
+        /// list does not list - see the remarks of this class.
+        /// </summary>
+        /// <remarks>
+        /// The credentials name this API's own parties, which its constructor
+        /// does not add: without one, they cannot be made at all.
+        /// </remarks>
+        private async Task<String> CredentialsURL()
+        {
+
+            var ours         = await api.AddParty(Party_Idv3.From(CountryCode.Parse("DE"), Party_Id.Parse("GEF")),
+                                                  Role.CPO,
+                                                  new BusinessDetails("GraphDefined CSO"));
+
+            Assert.That(ours.IsSuccess, Is.True, $"Our own party could not be added: {ours.ErrorResponse}");
+
+            var version      = await Send($"http://127.0.0.1:{port}/ocpi/v3.0/versions/3.0", $"Token {token}");
+            var credentials  = (version.JSON?["data"]?["endpoints"] as JArray)?.FirstOrDefault(endpoint => endpoint.Value<String>("identifier") == "credentials")?.Value<String>("url");
+
+            Assert.That(credentials,  Is.Not.Null, $"This version has no credentials endpoint: {version.Text}");
+
+            return credentials!;
+
+        }
+
+        /// <summary>
+        /// A Basic authentication of the given user and password.
+        /// </summary>
+        private static String Basic(String  User,
+                                    String  Password)
+
+            => "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes($"{User}:{Password}"));
 
         #endregion
 

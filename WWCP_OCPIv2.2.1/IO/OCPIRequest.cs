@@ -494,7 +494,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
                     accessTokenBASE64  = decodedAccessToken;
 
-                totp                   = TOTPHTTPHeader.Parse(basicAuth.Password);
+                // The password is a TOTP only where it reads as one. Anything
+                // else, an empty one among them, is none - and not an exception
+                // thrown at whoever sent it, before its token was looked at.
+                if (TOTPHTTPHeader.TryParse(basicAuth.Password, out var totpOfThePassword, out _))
+                    totp               = totpOfThePassword;
 
             }
 
