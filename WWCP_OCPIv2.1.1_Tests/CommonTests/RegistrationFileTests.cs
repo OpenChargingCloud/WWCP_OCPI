@@ -19,6 +19,9 @@
 
 using System.Text;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -60,6 +63,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         private static readonly RemoteParty_Id  id      = RemoteParty_Id.Parse("DE-BBB_EMSP");
         private const           String          tokenA  = "their-token-a";
         private const           String          tokenC  = "their-token-c";
+
+        // How the other side is reached, beside its tokens.
+        private static readonly DateTimeOffset  notAfter   = new (2036, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private const           String          userAgent  = "Our OCPI client";
+        private static readonly TimeSpan        timeout    = TimeSpan.FromSeconds(23);
+        private const           UInt16          retries    = 2;
+        private const           SslProtocols    tls        = SslProtocols.Tls12 | SslProtocols.Tls13;
 
         private String       directory  = default!;
         private CommonAPI    api        = default!;
@@ -414,6 +424,61 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARenewalKeepsHowTheOtherSideIsReached()
+
+        /// <summary>
+        /// A renewal changes the tokens, and nothing else of how the other side
+        /// is reached: its client certificate - without which a peer that asks
+        /// for one would shut us out - the TLS versions, IPv4 first, the
+        /// timeout, the retries, the user agent and until when its token may be
+        /// used are as they were, and so are when it was added and the versions
+        /// it sees. The next start knows what its file reads back of them.
+        /// </summary>
+        [Test]
+        public async Task ARenewalKeepsHowTheOtherSideIsReached()
+        {
+
+            var       newToken     = AccessToken.NewRandom();
+            using var certificate  = AClientCertificate();
+
+            await Listening();
+
+            var party    = await AddTheOtherSide(AccessToken.NewRandom(), certificate);
+
+            var renewed  = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.That(renewed.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The renewal did not go through: {renewed.Response.StatusMessage}");
+
+            var now = RemoteAccessOf(api);
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(api),                                    Is.EqualTo(new[] { newToken }),             "The token the other side calls back with is not the new one alone.");
+                Assert.That(now?.AccessToken?.ToString(),                          Is.EqualTo(tokenC),                         "The token the other side handed out is not the one in effect.");
+                Assert.That(now?.ClientCertificates.Select(c => c.Thumbprint),     Is.EqualTo(new[] { certificate.Thumbprint }), "The client certificate the other side asks for is gone.");
+                Assert.That(now?.TLSProtocols,                                     Is.EqualTo(tls),                            "The TLS versions are not the ones they were.");
+                Assert.That(now?.PreferIPv4,                                       Is.EqualTo(IPVersionPreference.PreferIPv4), "IPv4 is not preferred any more.");
+                Assert.That(now?.RequestTimeout,                                   Is.EqualTo(timeout),                        "The timeout is not the one it was.");
+                Assert.That(now?.MaxNumberOfRetries,                               Is.EqualTo(retries),                        "The retries are not the ones they were.");
+                Assert.That(now?.HTTPUserAgent,                                    Is.EqualTo(userAgent),                      "The user agent is not the one it was.");
+                Assert.That(now?.NotAfter,                                         Is.EqualTo(notAfter),                       "The token of the other side may be used for another time than it might.");
+                Assert.That(CreatedOf(api),                                        Is.EqualTo(party.Created),                  "The other side is said to have been added when it was renewed.");
+                Assert.That(VisibleVersionsOf(api),                                Is.EqualTo(new[] { Version.Id }),           "The other side sees other versions than it saw.");
+            });
+
+            var again = RemoteAccessOf(ACommonAPI());
+
+            Assert.Multiple(() => {
+                Assert.That(again?.AccessToken?.ToString(),                        Is.EqualTo(tokenC),                         "The next start does not know the token the other side handed out.");
+                Assert.That(again?.ClientCertificates.Select(c => c.Thumbprint),   Is.EqualTo(new[] { certificate.Thumbprint }), "The next start does not know the client certificate the other side asks for.");
+                Assert.That(again?.TLSProtocols,                                   Is.EqualTo(tls),                            "The next start does not know the TLS versions.");
+                Assert.That(again?.HTTPUserAgent,                                  Is.EqualTo(userAgent),                      "The next start does not know the user agent.");
+                Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                       "The next start does not know until when the token of the other side may be used.");
+            });
+
+        }
+
+        #endregion
+
         #region ARefusedRenewalLeavesTheRestOfThePartyAsItWas()
 
         /// <summary>
@@ -686,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
-        #region (private) AddTheOtherSide(OurToken) / AClient(Party) / OurCredentials(Token)
+        #region (private) AddTheOtherSide(OurToken[, ClientCertificate]) / AClientCertificate() / AClient(Party) / OurCredentials(Token)
 
         /// <summary>
         /// The other side as a remote party: the given token of ours, and its
@@ -708,6 +773,52 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
 
             return added.Data!;
+
+        }
+
+        /// <summary>
+        /// The same, reached as a peer may ask to be: with the given client
+        /// certificate, over the TLS versions it takes, IPv4 first, with a
+        /// timeout, retries and a user agent of its own, and its token not to
+        /// be used after a given time.
+        /// </summary>
+        private async Task<RemoteParty> AddTheOtherSide(AccessToken       OurToken,
+                                                        X509Certificate2  ClientCertificate)
+        {
+
+            var added = await api.AddRemoteParty(CountryCode.Parse("DE"),
+                                                Party_Id.   Parse("BBB"),
+                                                Role.EMSP,
+                                                new BusinessDetails("Their EMSP"),
+                                                OurToken,
+                                                other.VersionsURL,
+                                                AccessToken.Parse(tokenA),
+                                                PreferIPv4:             IPVersionPreference.PreferIPv4,
+                                                ClientCertificates:     [ ClientCertificate ],
+                                                TLSProtocols:           tls,
+                                                HTTPUserAgent:          userAgent,
+                                                RequestTimeout:         timeout,
+                                                MaxNumberOfRetries:     retries,
+                                                RemoteAccessNotAfter:   notAfter,
+                                                VisibleVersionIds:      [ Version.Id ]);
+
+            Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
+
+            return added.Data!;
+
+        }
+
+        /// <summary>
+        /// A client certificate of ours, made for the test, with its private
+        /// key, as the file of the remote parties keeps one.
+        /// </summary>
+        private static X509Certificate2 AClientCertificate()
+        {
+
+            using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+
+            return new CertificateRequest("CN=Our OCPI client", key, HashAlgorithmName.SHA256).
+                       CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddYears(1));
 
         }
 
@@ -737,7 +848,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         #endregion
 
-        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API) / NameOf(API) / CreatedOf(API) / VisibleVersionsOf(API)
+        #region (private) FileName / LocalTokensOf(API) / RemoteTokenOf(API) / NameOf(API) / CreatedOf(API) / VisibleVersionsOf(API) / RemoteAccessOf(API)
 
         /// <summary>
         /// The name of the file of the remote parties, which a refusal names.
@@ -794,6 +905,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                    Where     (party => party.Id == id).
                    SelectMany(party => party.VisibleVersionIds).
                    ToArray();
+
+        /// <summary>
+        /// How this API reaches the other side, or null.
+        /// </summary>
+        private static RemoteAccessInfo? RemoteAccessOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.RemoteAccessInfos).
+                   FirstOrDefault();
 
         #endregion
 

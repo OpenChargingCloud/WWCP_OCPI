@@ -1707,6 +1707,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 TokenAuth = HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
 
 
+                                // How the other side is reached stays as it is - its client
+                                // certificates above all, without which a peer that asks for
+                                // them would shut us out after the renewal - and so does the
+                                // rest of the party, when it was added and the versions it sees:
+                                // only the tokens and the versions it speaks are new.
+                                var party   = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
+                                var remote  = party.RemoteAccessInfos.FirstOrDefault();
+
                                 // Only the access token and the business details are allowed to be changed!
                                 var result = await CommonAPI.AddOrUpdateRemoteParty(
 
@@ -1725,6 +1733,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        RemoteStatus:        RemoteAccessStatus.ONLINE,
                                                        RemoteVersionIds:    [ Version.Id ],
                                                        SelectedVersionId:   Version.Id,
+
+                                                       RemoteAccessTokenBase64Encoding:  remote?.AccessTokenIsBase64Encoded,
+                                                       RemoteTOTPConfig:                 remote?.TOTPConfig,
+                                                       PreferIPv4:                       remote?.PreferIPv4,
+                                                       RemoteCertificateValidator:       remote?.RemoteCertificateValidator,
+                                                       LocalCertificateSelector:         remote?.LocalCertificateSelector,
+                                                       ClientCertificates:               remote?.ClientCertificates,
+                                                       ClientCertificateContext:         remote?.ClientCertificateContext,
+                                                       ClientCertificateChain:           remote?.ClientCertificateChain,
+                                                       TLSProtocols:                     remote?.TLSProtocols,
+                                                       ContentType:                      remote?.ContentType,
+                                                       Accept:                           remote?.Accept,
+                                                       HTTPUserAgent:                    remote?.HTTPUserAgent,
+                                                       RequestTimeout:                   remote?.RequestTimeout,
+                                                       TransmissionRetryDelay:           remote?.TransmissionRetryDelay,
+                                                       MaxNumberOfRetries:               remote?.MaxNumberOfRetries,
+                                                       InternalBufferSize:               remote?.InternalBufferSize,
+                                                       UseHTTPPipelining:                remote?.UseHTTPPipelining,
+                                                       OUT:                              remote?.OUT,
+                                                       RemoteAccessNotBefore:            remote?.NotBefore,
+                                                       RemoteAccessNotAfter:             remote?.NotAfter,
+                                                       RemoteAllowDowngrades:            remote?.AllowDowngrades,
+                                                       VisibleVersionIds:                party.VisibleVersionIds,
+                                                       Created:                          party.Created,
 
                                                        LocalAccessStatus:   AccessStatus.ALLOWED,
                                                        KeepWhereNotSaved:   true
