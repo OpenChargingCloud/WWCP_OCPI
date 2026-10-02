@@ -192,8 +192,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.VisualNumber   = VisualNumber;
             this.UILanguage     = UILanguage;
 
-            this.Created        = Created     ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated    = LastUpdated ?? Created     ?? Timestamp.Now;
+            var created         = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created        = created;
+            this.LastUpdated    = LastUpdated ?? created;
 
             this.ETag           = SHA256.HashData(ToJSON(true,
                                                          CustomTokenSerializer).ToUTF8Bytes()).ToBase64();

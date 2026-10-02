@@ -227,8 +227,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.TransparencySoftware      = TransparencySoftware?.Distinct() ?? [];
             this.Description                = Description?.         Distinct() ?? [];
 
-            this.Created                    = Created                           ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated                = LastUpdated                       ?? Created     ?? Timestamp.Now;
+            var created                     = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.Created                    = created;
+            this.LastUpdated                = LastUpdated ?? created;
 
             unchecked
             {
