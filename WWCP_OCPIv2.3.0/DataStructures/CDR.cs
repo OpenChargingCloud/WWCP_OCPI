@@ -1653,7 +1653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                                                                      CustomTaxAmountSerializer))
                                : null,
 
-                                 new JProperty("total_energy",                 TotalEnergy.Value),
+                                 new JProperty("total_energy",                 TotalEnergy.kWh),
 
                            TotalEnergyCost is not null
                                ? new JProperty("total_energy_cost",            TotalEnergyCost.               ToJSON(CustomPriceSerializer,
