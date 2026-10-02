@@ -110,12 +110,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             unchecked
             {
 
-                hashCode = this.CountryCode.  GetHashCode() * 13 ^
-                           this.PartyId.      GetHashCode() * 11 ^
-                           this.UID.          GetHashCode() *  7 ^
-                           this.Type.         GetHashCode() *  5 ^
-                           this.ContractId.   GetHashCode() *  3 ^
-                           this.LicensePlate?.GetHashCode() ?? 0;
+                hashCode = this.CountryCode.  GetHashCode()       * 13 ^
+                           this.PartyId.      GetHashCode()       * 11 ^
+                           this.UID.          GetHashCode()       *  7 ^
+                           this.Type.         GetHashCode()       *  5 ^
+                           this.ContractId.   GetHashCode()       *  3 ^
+                          (this.LicensePlate?.GetHashCode() ?? 0);
 
             }
 
