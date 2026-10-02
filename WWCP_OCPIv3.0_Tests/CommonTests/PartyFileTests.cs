@@ -33,7 +33,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 {
 
     /// <summary>
-    /// A party added is there at the next start.
+    /// A party added is there at the next start, and so is every asset filed
+    /// under it.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -41,9 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
     /// start passed over that line: the party was gone, and every asset of it
     /// with it, as the replay drops what belongs to a party it does not know.
     /// In 3.0 no party is given at the start, so every party was gone at
-    /// every start, and every asset with it. (A token of 3.0 does not come
-    /// back from the file yet for a reason of its own: Token.ToJSON writes
-    /// valid_from, and Token.TryParse asks for valid.)
+    /// every start, and every asset with it.
     /// </para>
     /// <para>
     /// The next start is a Common API made anew on the same directory, which
@@ -125,6 +124,31 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
         #endregion
 
+        #region TheAssetsOfAPartyAddedAreThereAtTheNextStart()
+
+        /// <summary>
+        /// A token filed under a party added is there at the next start: the
+        /// party it belongs to is known again before the token is read back.
+        /// </summary>
+        [Test]
+        public async Task TheAssetsOfAPartyAddedAreThereAtTheNextStart()
+        {
+
+            var added  = await api.AddParty(addedPartyId, Role.CPO, new BusinessDetails("XYZ Charging"));
+            var token  = await api.AddToken(AToken());
+
+            Assert.Multiple(() => {
+                Assert.That(added.IsSuccess, Is.True, $"The party could not be added: {added.ErrorResponse}");
+                Assert.That(token.IsSuccess, Is.True, $"The token could not be added: {token.ErrorResponse}");
+            });
+
+            Assert.That((await NextStart()).GetTokens(addedPartyId).Select(token => token.Id.ToString()), Is.EquivalentTo(new[] { "TOKEN0001" }),
+                        "The next start does not know the token of the party added.");
+
+        }
+
+        #endregion
+
         #region ALineWithOnlyAPartysIdentificationIsPassedOver()
 
         /// <summary>
@@ -152,7 +176,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
-        #region (private static) AsText(PartyData)
+        #region (private static) AToken() / AsText(PartyData)
+
+        /// <summary>
+        /// A token of the party added.
+        /// </summary>
+        private static Token AToken()
+
+            => new (
+                   PartyId:     addedPartyId,
+                   Id:          Token_Id.   Parse("TOKEN0001"),
+                   VersionId:   1,
+                   Type:        TokenType.RFID,
+                   ContractId:  Contract_Id.Parse("DE-XYZ-C12345678-X"),
+                   Issuer:      "XYZ Charging",
+                   ValidFrom:   new DateTimeOffset(2026, 10, 1, 8, 0, 0, TimeSpan.Zero),
+                   Whitelist:   WhitelistType.NEVER
+               );
 
         /// <summary>
         /// All a party says, as one text.

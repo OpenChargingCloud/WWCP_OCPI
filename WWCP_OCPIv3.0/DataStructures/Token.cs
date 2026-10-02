@@ -577,25 +577,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse ValidUntil        [optional]
 
-                if (JSON.ParseOptionalEnum("valid_until",
-                                           "valid until",
-                                           out DateTimeOffset? ValidUntil,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("valid_until",
+                                       "valid until",
+                                       out DateTimeOffset? ValidUntil,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
-                }
-
-                #endregion
-
-                #region Parse IsValid           [mandatory]
-
-                if (!JSON.ParseMandatory("valid",
-                                         "token is valid",
-                                         out Boolean IsValid,
-                                         out ErrorResponse))
-                {
-                    return false;
                 }
 
                 #endregion
