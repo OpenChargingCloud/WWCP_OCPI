@@ -233,26 +233,33 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     catch (Exception e)
                     {
 
-                        return new HTTPResponse.Builder(httpRequest) {
-                                   HTTPStatusCode  = HTTPStatusCode.InternalServerError,
-                                   ContentType     = HTTPContentType.Application.JSON_UTF8,
-                                   Content         = new OCPIResponse<JObject>(
-                                                         JSONObject.Create(
-                                                             new JProperty("description",  e.Message),
-                                                             new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? [])),
-                                                             new JProperty("source",       e.TargetSite?.Module.Name),
-                                                             new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
-                                                         ),
-                                                         StatusCode.ClientErrors.GenericClientError,
-                                                         e.Message,
-                                                         null,
-                                                         Timestamp.Now,
-                                                         null,
-                                                         (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
-                                                         (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
-                                                     ).ToJSON(json => json).ToUTF8Bytes(),
-                                   Connection      = ConnectionType.Close
-                               };
+                        // What was thrown goes to whoever made this API, not
+                        // to whoever asked: see CommonHTTPAPI.AnswerFailedRequest.
+                        // Null where the request could not even be read.
+                        var ocpiRequest   = httpRequest.SubprotocolRequest as OCPIRequest;
+
+                        var httpResponse  = await CommonAPI.BaseAPI.AnswerFailedRequest(
+                                                      httpRequest,
+                                                      ocpiRequest?.RequestId,
+                                                      ocpiRequest?.CorrelationId,
+                                                      ocpiRequest?.RemoteParty?.Id,
+                                                      e
+                                                  );
+
+                        // For the response logger, which hears of read requests only
+                        if (ocpiRequest is not null)
+                            httpResponse.SubprotocolResponse = new OCPIResponse(
+                                                                   ocpiRequest,
+                                                                   StatusCode.ServerErrors.GenericServerError,
+                                                                   CommonHTTPAPI.FailedRequestMessage,
+                                                                   null,
+                                                                   httpResponse.Date,
+                                                                   httpResponse.AsImmutable,
+                                                                   ocpiRequest.RequestId,
+                                                                   ocpiRequest.CorrelationId
+                                                               );
+
+                        return httpResponse;
 
                     }
 

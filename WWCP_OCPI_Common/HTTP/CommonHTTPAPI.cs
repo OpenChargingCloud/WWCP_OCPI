@@ -393,6 +393,131 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+
+        #region OnRequestFailed
+
+        /// <summary>
+        /// An OCPI request whose handling threw: what was asked, the ids its
+        /// caller was answered with, who it was where its token was known, and
+        /// what was thrown.
+        /// </summary>
+        public delegate Task OnRequestFailedDelegate(DateTimeOffset   Timestamp,
+                                                     HTTPRequest      Request,
+                                                     Request_Id       RequestId,
+                                                     Correlation_Id   CorrelationId,
+                                                     RemoteParty_Id?  RemotePartyId,
+                                                     Exception        Exception);
+
+        /// <summary>
+        /// The handling of an OCPI request threw.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Its caller is answered OCPI 3000 with HTTP 500, a message that says
+        /// nothing of this server, and the request and correlation ids - see
+        /// AnswerFailedRequest. What was thrown would tell whoever asked what
+        /// runs here and where it was built, and where it was the request
+        /// itself that could not be read, before any token was looked at. This
+        /// says it instead, to whoever made this API, to say it where somebody
+        /// reads it; the ids join the two.
+        /// </para>
+        /// <para>
+        /// The request still carries its Authorization header, and with it a
+        /// token: say its line, not its headers.
+        /// </para>
+        /// </remarks>
+        public event OnRequestFailedDelegate? OnRequestFailed;
+
+        #endregion
+
+        #endregion
+
+        #region AnswerFailedRequest (Request, RequestId, CorrelationId, RemotePartyId, Exception)
+
+        /// <summary>
+        /// What the caller of an OCPI request whose handling threw is told:
+        /// nothing of this server, and what to quote.
+        /// </summary>
+        public const String FailedRequestMessage = "Internal server error! Please quote the request id when reporting it.";
+
+        /// <summary>
+        /// The answer to an OCPI request whose handling threw: OCPI 3000 with
+        /// HTTP 500, FailedRequestMessage, and the request and correlation ids,
+        /// as headers and in the body. What was thrown goes to OnRequestFailed,
+        /// or to DebugX where nobody listens.
+        /// </summary>
+        /// <param name="Request">The HTTP request whose handling threw.</param>
+        /// <param name="RequestId">Its request id, where its OCPI request could be read.</param>
+        /// <param name="CorrelationId">Its correlation id, where its OCPI request could be read.</param>
+        /// <param name="RemotePartyId">Who sent it, where its token was known.</param>
+        /// <param name="Exception">What was thrown.</param>
+        /// <remarks>
+        /// Where it was the OCPI request itself that could not be read, the ids
+        /// are taken from the headers it came with, or made up as OCPIRequest
+        /// makes them: the caller gets them either way, and so does the log.
+        /// A subscriber that throws changes nothing of the answer.
+        /// </remarks>
+        public async Task<HTTPResponse.Builder> AnswerFailedRequest(HTTPRequest      Request,
+                                                                    Request_Id?      RequestId,
+                                                                    Correlation_Id?  CorrelationId,
+                                                                    RemoteParty_Id?  RemotePartyId,
+                                                                    Exception        Exception)
+        {
+
+            var timestamp      = Timestamp.Now;
+
+            var requestId      = RequestId     ?? Request.TryParseHeaderStruct<Request_Id>    (HTTPHeaders.X_Request_ID,     Request_Id.    TryParse)
+                                               ?? Request_Id.    NewRandom(IsLocal: true);
+
+            var correlationId  = CorrelationId ?? Request.TryParseHeaderStruct<Correlation_Id>(HTTPHeaders.X_Correlation_ID, Correlation_Id.TryParse)
+                                               ?? Correlation_Id.NewRandom(IsLocal: true);
+
+            var onRequestFailed = OnRequestFailed;
+
+            if (onRequestFailed is not null)
+                await onRequestFailed.InvokeAllAsync(
+                          handler => handler(
+                                         timestamp,
+                                         Request,
+                                         requestId,
+                                         correlationId,
+                                         RemotePartyId,
+                                         Exception
+                                     ),
+                          (handlerException, eventName) => {
+                              DebugX.LogException(handlerException, $"{nameof(CommonHTTPAPI)}.{eventName}");
+                              return Task.CompletedTask;
+                          },
+                          nameof(OnRequestFailed)
+                      );
+
+            else
+                DebugX.LogException(
+                    Exception,
+                    $"{nameof(CommonHTTPAPI)}: {Request.HTTPMethod} {Request.Path} (request id {requestId}, correlation id {correlationId})"
+                );
+
+            return new HTTPResponse.Builder(Request) {
+                       HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                       Server                     = HTTPServiceName,
+                       Date                       = timestamp,
+                       AccessControlAllowOrigin   = "*",
+                       AccessControlAllowHeaders  = [ "Authorization" ],
+                       ContentType                = HTTPContentType.Application.JSON_UTF8,
+                       Content                    = JSONObject.Create(
+                                                        new JProperty("status_code",     StatusCode.ServerErrors.GenericServerError.Value),
+                                                        new JProperty("status_message",  FailedRequestMessage),
+                                                        new JProperty("requestId",       requestId.    ToString()),
+                                                        new JProperty("correlationId",   correlationId.ToString()),
+                                                        new JProperty("timestamp",       timestamp.    ToISO8601())
+                                                    ).ToUTF8Bytes(),
+                       Connection                 = ConnectionType.Close
+                   }.
+                   Set(HTTPHeaders.X_Request_ID,      requestId).
+                   Set(HTTPHeaders.X_Correlation_ID,  correlationId);
+
+        }
+
         #endregion
 
         #region Custom JSON serializers
