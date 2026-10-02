@@ -247,15 +247,40 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         #endregion
 
 
-        #region (private static) ABooking(Id, Status = null, LastUpdated = null)
+        #region ABookingTokensLicensePlateIsThereAtTheNextStart()
+
+        /// <summary>
+        /// A booking whose token carries a license plate is there at the next
+        /// start with it: the plate was written down, and not read back.
+        /// </summary>
+        [Test]
+        public async Task ABookingTokensLicensePlateIsThereAtTheNextStart()
+        {
+
+            var booking  = ABooking("BOOKING0001", LicensePlate: "J-GD 2026");
+
+            var added    = await api.AddBooking(booking);
+
+            Assert.That(added.IsSuccess, Is.True, $"The booking could not be added: {added.ErrorResponse}");
+
+            Assert.That(AsJSON((await NextStart()).GetBookings()), Is.EquivalentTo(AsJSON([ booking ])),
+                        "The next start does not know the license plate of the booking's token.");
+
+        }
+
+        #endregion
+
+
+        #region (private static) ABooking(Id, Status = null, LastUpdated = null, LicensePlate = null)
 
         /// <summary>
         /// A booking of this Common API's own party, which it keeps bookings
         /// for: reserved, unless said otherwise.
         /// </summary>
         private static Booking ABooking(String              Id,
-                                        ReservationStatus?  Status        = null,
-                                        DateTimeOffset?     LastUpdated   = null)
+                                        ReservationStatus?  Status         = null,
+                                        DateTimeOffset?     LastUpdated    = null,
+                                        String?             LicensePlate   = null)
 
             => new (
                    Id:                      Booking_Id.            Parse(Id),
@@ -269,7 +294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
                                                     partyId,
                                                     Token_Id.   Parse("TOKEN0001"),
                                                     TokenType.  RFID,
-                                                    Contract_Id.Parse("DE-GEF-C12345678-X")
+                                                    Contract_Id.Parse("DE-GEF-C12345678-X"),
+                                                    LicensePlate
                                                 )
                                             ],
                    TariffIds:               [ Tariff_Id.Parse("TARIFF0001") ],

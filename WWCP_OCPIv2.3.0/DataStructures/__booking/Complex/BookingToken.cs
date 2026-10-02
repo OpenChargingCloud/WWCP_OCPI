@@ -259,13 +259,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse LicensePlate   [optional]
+
+                var licensePlate = JSON.GetString("license_plate");
+
+                #endregion
+
 
                 BookingToken = new BookingToken(
                                countryCode,
                                partyId,
                                UID,
                                tokenType,
-                               contractId
+                               contractId,
+                               licensePlate
                            );
 
 
