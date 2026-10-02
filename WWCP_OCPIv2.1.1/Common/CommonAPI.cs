@@ -4132,36 +4132,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region updateTariff
+                #region removeTariff
 
+                // RemoveTariff writes down every version of the tariff it
+                // removed - or every tariff it removed at once - as an array;
+                // a line of one tariff, as an object, is taken as well.
                 case CommonHTTPAPI.removeTariff:
-                    try
+                    foreach (var tariffJSON in command.JSONArray?.OfType<JObject>().ToArray() ??
+                                               (command.JSONObject is not null ? [ command.JSONObject ] : []))
                     {
-                        if (command.JSONObject is not null &&
-                            Tariff.TryParse(command.JSONObject,
-                                            out tariff,
-                                            out errorResponse))
+                        try
                         {
-                            tariffs.Remove(tariff.Id);
-                        }
+                            if (Tariff.TryParse(tariffJSON,
+                                                out tariff,
+                                                out errorResponse))
+                            {
+                                tariffs.Remove(tariff.Id);
+                            }
 
-                        // RemoveSession wrote its line as "removeTariff", with
-                        // the session: such a line still removes that session.
-                        else if (command.JSONObject is not null &&
-                                 Session.TryParse(command.JSONObject,
-                                                  out session,
-                                                  out _))
-                        {
-                            chargingSessions.Remove(session.Id, out _);
-                            errorResponse = null;
+                            // RemoveSession wrote its line as "removeTariff", with
+                            // the session: such a line still removes that session.
+                            else if (Session.TryParse(tariffJSON,
+                                                      out session,
+                                                      out _))
+                            {
+                                chargingSessions.Remove(session.Id, out _);
+                                errorResponse = null;
+                            }
                         }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
                     }
-                    catch (Exception e)
-                    {
-                        errorResponse ??= e.Message;
-                    }
-                    if (errorResponse is not null)
-                        errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
                     break;
 
                 #endregion
