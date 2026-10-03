@@ -2516,6 +2516,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 GetCredentialsResponse,
                 request => {
 
+                    #region No access token known here: the credentials are nobody else's business
+
+                    if (request.LocalAccessInfo is null)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                                StatusMessage        = "Unknown access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                    Server                     = HTTPServiceName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
+                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
+                                }
+                           }
+                        );
+
+                    }
+
+                    #endregion
+
                     #region Check access token... not allowed!
 
                     if (request.LocalAccessInfo is not null &&
@@ -2550,7 +2577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    StatusCode           = StatusCode.Success,
                                    StatusMessage        = "Hello world!",
                                    Data                 = new Credentials(
-                                                              request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
+                                                              request.LocalAccessInfo.AccessToken,
                                                               BaseAPI.OurVersionsURL,
                                                               OurBusinessDetails,
                                                               OurCountryCode,
@@ -6954,10 +6981,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 foreach (var localAccessInfo in remoteParty.LocalAccessInfos)
                 {
 
+                    // The token first, as 2.2.1 and 2.3.0 ask it: a TOTP only
+                    // tells whether the access the token names may be used now,
+                    // and never makes another token the one of this access.
+                    if (localAccessInfo.AccessToken != AccessToken)
+                        continue;
+
                     if (localAccessInfo.TOTPConfig is not null)
                     {
-
-                        var accessToken  = AccessToken.ToString();
 
                         var (previous,
                              current,
@@ -6978,10 +7009,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     }
 
                     else
-                    {
-                        if (localAccessInfo.AccessToken == AccessToken)
-                            remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
-                    }
+                        remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
 
                 }
             }

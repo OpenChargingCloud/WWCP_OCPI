@@ -2442,6 +2442,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 OCPIResponseLogger:  GetCredentialsResponse,
                 OCPIRequestHandler:  request => {
 
+                    #region No access token known here: the credentials are nobody else's business
+
+                    if (request.LocalAccessInfo is null)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                                StatusMessage        = "Unknown access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
+
+                    }
+
+                    #endregion
+
                     #region Check access token
 
                     if (request.LocalAccessInfo is not null &&
@@ -2468,7 +2488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             StatusCode           = StatusCode.Success,
                             StatusMessage        = "Hello world!",
                             Data                 = new Credentials(
-                                                       request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
+                                                       request.LocalAccessInfo.AccessToken,
                                                        BaseAPI.OurVersionsURL,
                                                        parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                    ).ToJSON(

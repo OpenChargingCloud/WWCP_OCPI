@@ -2786,6 +2786,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 GetCredentialsHTTPResponse,
                 request => {
 
+                    #region No access token known here: the credentials are nobody else's business
+
+                    if (request.LocalAccessInfo is null)
+                    {
+
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                                StatusMessage        = "Unknown access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                    Server                     = HTTPServiceName,
+                                    Date                       = Timestamp.Now,
+                                    AccessControlAllowOrigin   = "*",
+                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ],
+                                    Connection                 = ConnectionType.KeepAlive,
+                                    Vary                       = "Accept"
+                                }
+                            }
+                        );
+
+                    }
+
+                    #endregion
+
                     #region Check access token
 
                     if (request.LocalAccessInfo is not null &&
@@ -2820,7 +2847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    StatusCode           = StatusCode.Success,
                                    StatusMessage        = DefaultStatusMessage,
                                    Data                 = new Credentials(
-                                                              request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
+                                                              request.LocalAccessInfo.AccessToken,
                                                               BaseAPI.OurVersionsURL,
                                                               parties.Values.Select(partyData => partyData.ToCredentialsRole())
                                                           ).ToJSON(
