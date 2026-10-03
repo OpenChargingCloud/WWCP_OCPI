@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual   (30,                                               patchResult.PatchedData.Amperage.Value);
                 ClassicAssert.AreEqual   (Tariff_Id.Parse("DE*GEF*T0001"),                  patchResult.PatchedData.GetTariffId());
                 ClassicAssert.AreEqual   (URL.Parse("https://open.charging.cloud/terms"),   patchResult.PatchedData.TermsAndConditionsURL);
-                ClassicAssert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),           patchResult.PatchedData.LastUpdated);
+                ClassicAssert.AreNotEqual(DateTimeOffset.Parse("2020-09-21T00:00:00Z"),     patchResult.PatchedData.LastUpdated);
 
                 ClassicAssert.IsTrue     (Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
             }

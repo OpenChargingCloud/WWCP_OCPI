@@ -1408,7 +1408,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             ClassicAssert.AreEqual   (Location_Id.Parse("LOC0001"),            patchResult.PatchedData.Id);
             ClassicAssert.AreEqual   ("Location 0001a",                        patchResult.PatchedData.Name);
-            ClassicAssert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),  patchResult.PatchedData.LastUpdated);
+            ClassicAssert.AreNotEqual(DateTimeOffset.Parse("2020-09-21T00:00:00Z"), patchResult.PatchedData.LastUpdated);
 
             ClassicAssert.IsTrue     (Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
 

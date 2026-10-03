@@ -286,7 +286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task ShutdownEachTest()
         {
             if (httpServer is not null)
-                await httpServer.Stop();
+                await httpServer.DisposeAsync();
         }
 
         #endregion

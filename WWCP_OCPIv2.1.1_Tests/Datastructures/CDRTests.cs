@@ -1777,10 +1777,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region CDR
 
-            var sessionStart    = DateTime.Parse("2024-04-14T19:25:45.000Z");
-            var chargingStart   = DateTime.Parse("2024-04-14T19:26:20.000Z");
-            var chargingStop    = DateTime.Parse("2024-04-15T06:36:36.000Z");
-            var sessionStop     = DateTime.Parse("2024-04-15T06:40:02.000Z");
+            var sessionStart    = DateTimeOffset.Parse("2024-04-14T19:25:45.000Z");
+            var chargingStart   = DateTimeOffset.Parse("2024-04-14T19:26:20.000Z");
+            var chargingStop    = DateTimeOffset.Parse("2024-04-15T06:36:36.000Z");
+            var sessionStop     = DateTimeOffset.Parse("2024-04-15T06:40:02.000Z");
 
             var meteringValues  = new[] {
                                       new Timestamped<WattHour>(chargingStart, WattHour.FromKWh(    0m)),

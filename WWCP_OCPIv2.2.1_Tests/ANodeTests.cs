@@ -634,13 +634,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         {
 
             if (cpoHTTPServer   is not null)
-                await cpoHTTPServer.  Stop();
+                await cpoHTTPServer.  DisposeAsync();
 
             if (emsp1HTTPServer is not null)
-                await emsp1HTTPServer.Stop();
+                await emsp1HTTPServer.DisposeAsync();
 
             if (emsp2HTTPServer is not null)
-                await emsp2HTTPServer.Stop();
+                await emsp2HTTPServer.DisposeAsync();
 
         }
 

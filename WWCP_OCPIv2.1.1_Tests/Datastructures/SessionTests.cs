@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                 ClassicAssert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
                 ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToISO8601());
-                ClassicAssert.AreEqual (0.0M,                                 parsedSession.kWh);
+                ClassicAssert.AreEqual (WattHour.FromKWh(0.0M),               parsedSession.kWh);
                 ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
                 ClassicAssert.AreEqual (Currency.EUR,                    parsedSession.Currency);
@@ -142,8 +142,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
                 ClassicAssert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
                 ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
-                ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
-                ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
+                ClassicAssert.AreEqual (Volt.FromV(230),                      parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
+                ClassicAssert.AreEqual (Ampere.FromA(64),                     parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
                 ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().GetTariffId());
                 ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToISO8601());
 
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
                 ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToISO8601());
                 ClassicAssert.AreEqual ("2015-06-29T23:50:16.000Z",           parsedSession.End?. ToISO8601());
-                ClassicAssert.AreEqual (41.0M,                                parsedSession.kWh);
+                ClassicAssert.AreEqual (WattHour.FromKWh(41.0M),              parsedSession.kWh);
                 ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
                 ClassicAssert.AreEqual (Currency.EUR,                    parsedSession.Currency);
@@ -299,8 +299,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
                 ClassicAssert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
                 ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
-                ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
-                ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
+                ClassicAssert.AreEqual (Volt.FromV(230),                      parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
+                ClassicAssert.AreEqual (Ampere.FromA(64),                     parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
                 ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().GetTariffId());
                 ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToISO8601());
 

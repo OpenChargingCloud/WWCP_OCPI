@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
 
                 ClassicAssert.IsNotNull(response);
 
-                ClassicAssert.AreEqual (-1,                                response.StatusCode); // local error!
+                ClassicAssert.AreEqual (-1,                                response.StatusCode.Value); // local error!
                 ClassicAssert.AreEqual ("Unknown version identification!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -344,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                                   Request_Id.    Parse("12340"),
                                                   Correlation_Id.Parse("56780"));
 
-                ClassicAssert.AreEqual (2000,                                   response.StatusCode);
+                ClassicAssert.AreEqual (2000,                                   response.StatusCode.Value);
                 ClassicAssert.AreEqual ("This OCPI version is not supported!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 

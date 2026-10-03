@@ -5835,20 +5835,39 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         public async virtual Task ShutdownOnce()
         {
 
+            // The APIs first: disposing of one writes out what its files still
+            // wait for, and the files are deleted below.
+            if (cpo1CommonHTTPAPI  is not null)
+                await cpo1CommonHTTPAPI. DisposeAsync();
+
+            if (cpo2CommonHTTPAPI  is not null)
+                await cpo2CommonHTTPAPI. DisposeAsync();
+
+            if (hub1CommonHTTPAPI  is not null)
+                await hub1CommonHTTPAPI. DisposeAsync();
+
+            if (emsp1CommonHTTPAPI is not null)
+                await emsp1CommonHTTPAPI.DisposeAsync();
+
+            if (emsp2CommonHTTPAPI is not null)
+                await emsp2CommonHTTPAPI.DisposeAsync();
+
+            // Disposing of a server stops it, and lets go of its timer, its
+            // warden and its DNS client as well, which Stop() leaves behind.
             if (cpo1HTTPServer is not null)
-                await cpo1HTTPServer.Stop();
+                await cpo1HTTPServer.DisposeAsync();
 
             if (cpo2HTTPServer is not null)
-                await cpo2HTTPServer.Stop();
+                await cpo2HTTPServer.DisposeAsync();
 
             if (hub1HTTPServer is not null)
-                await hub1HTTPServer.Stop();
+                await hub1HTTPServer.DisposeAsync();
 
             if (emsp1HTTPServer is not null)
-                await emsp1HTTPServer.Stop();
+                await emsp1HTTPServer.DisposeAsync();
 
             if (emsp2HTTPServer is not null)
-                await emsp2HTTPServer.Stop();
+                await emsp2HTTPServer.DisposeAsync();
 
             await Delete_RemotePartyDBFiles();
 

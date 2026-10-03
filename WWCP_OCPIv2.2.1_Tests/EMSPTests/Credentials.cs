@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -179,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 

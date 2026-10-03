@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response.StatusCode);
+                ClassicAssert.AreEqual (1000,            response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response.StatusCode);
+                ClassicAssert.AreEqual (1000,            response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -332,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response);
                 ClassicAssert.AreEqual (403,                                 response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (2000,                                response.StatusCode);
+                ClassicAssert.AreEqual (2000,                                response.StatusCode.Value);
                 ClassicAssert.AreEqual ("Invalid or blocked access token!",  response.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -434,7 +434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response2.StatusCode);
+                ClassicAssert.AreEqual (1000,            response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -516,7 +516,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response2.StatusCode);
+                ClassicAssert.AreEqual (1000,            response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response2.StatusCode);
+                ClassicAssert.AreEqual (1000,            response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -742,7 +742,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.IsNull   (response2.HTTPResponse);
-                ClassicAssert.AreEqual (-1,                         response2.StatusCode);
+                ClassicAssert.AreEqual (-1,                         response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("No versionId available!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -858,7 +858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.IsNull   (response2.HTTPResponse);
-                ClassicAssert.AreEqual (-1,                          response2.StatusCode);
+                ClassicAssert.AreEqual (-1,                          response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("No remote URL available!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -1045,7 +1045,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (405,                                                                         response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (2000,                                                                        response2.StatusCode);
+                ClassicAssert.AreEqual (2000,                                                                        response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("You need to be registered before trying to invoke this protected method!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -1161,7 +1161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (405,                                                                         response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (2000,                                                                        response2.StatusCode);
+                ClassicAssert.AreEqual (2000,                                                                        response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("You need to be registered before trying to invoke this protected method!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -1231,7 +1231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 ClassicAssert.IsNotNull(response2);
                 ClassicAssert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response2.StatusCode);
+                ClassicAssert.AreEqual (1000,            response2.StatusCode.Value);
                 ClassicAssert.AreEqual ("Hello world!",  response2.StatusMessage);
                 ClassicAssert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
 
