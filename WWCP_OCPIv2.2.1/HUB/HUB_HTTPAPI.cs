@@ -1891,6 +1891,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             RegisterURLTemplates();
 
+            // Where the version details find the modules served here.
+            CommonAPI.HUBModulesPath = this.URLPathPrefix;
+
             // The remote CPOs and their assets, as the file of the assets
             // of the Common API has them - see RemoteCPOAssets.
             RemoteCPOAssets.Read(CommonAPI, remoteCPOs).GetAwaiter().GetResult();
@@ -8847,7 +8850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "CDRs",
+                URLPathPrefix + "cdrs",
                 request =>
 
                     Task.FromResult(
@@ -9111,7 +9114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "tokens/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}",
                 request =>
 
                     Task.FromResult(
@@ -9134,7 +9137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "tokens/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}",
                 CPOEvents.GetTokensHTTPRequest,
                 CPOEvents.GetTokensHTTPResponse,
                 request => {
@@ -9250,7 +9253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "tokens/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}",
                 CPOEvents.DeleteTokensHTTPRequest,
                 CPOEvents.DeleteTokensHTTPResponse,
                 async request => {
@@ -9313,7 +9316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}/{tokenId}",
                 request =>
 
                     Task.FromResult(
@@ -9336,7 +9339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}/{tokenId}",
                 CPOEvents.GetTokenHTTPRequest,
                 CPOEvents.GetTokenHTTPResponse,
                 request => {
@@ -9409,7 +9412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}/{tokenId}",
                 CPOEvents.PutTokenHTTPRequest,
                 CPOEvents.PutTokenHTTPResponse,
                 async request => {
@@ -9526,7 +9529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}/{tokenId}",
                 CPOEvents.PatchTokenHTTPRequest,
                 CPOEvents.PatchTokenHTTPResponse,
                 async request => {
@@ -9627,7 +9630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                URLPathPrefix + "receiver/tokens/{country_code}/{party_id}/{tokenId}",
                 CPOEvents.DeleteTokenHTTPRequest,
                 CPOEvents.DeleteTokenHTTPResponse,
                 async request => {
@@ -10297,7 +10300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}",
                 request =>
 
                     Task.FromResult(
@@ -10320,7 +10323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}",
                 EMSPEvents.GetLocationsHTTPRequest,
                 EMSPEvents.GetLocationsHTTPResponse,
                 request => {
@@ -10417,7 +10420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}",
                 EMSPEvents.DeleteLocationsHTTPRequest,
                 EMSPEvents.DeleteLocationsHTTPResponse,
                 async request => {
@@ -10482,7 +10485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}",
                 request =>
 
                     Task.FromResult(
@@ -10505,7 +10508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}",
                 EMSPEvents.GetLocationHTTPRequest,
                 EMSPEvents.GetLocationHTTPResponse,
                 request => {
@@ -10589,7 +10592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}",
                 EMSPEvents.PutLocationHTTPRequest,
                 EMSPEvents.PutLocationHTTPResponse,
                 async request => {
@@ -10741,7 +10744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}",
                 EMSPEvents.PatchLocationHTTPRequest,
                 EMSPEvents.PatchLocationHTTPResponse,
                 async request => {
@@ -10855,7 +10858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}",
                 EMSPEvents.DeleteLocationHTTPRequest,
                 EMSPEvents.DeleteLocationHTTPResponse,
                 async request => {
@@ -10945,7 +10948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 request =>
 
                     Task.FromResult(
@@ -10968,7 +10971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 EMSPEvents.GetEVSEHTTPRequest,
                 EMSPEvents.GetEVSEHTTPResponse,
                 request => {
@@ -11045,7 +11048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 EMSPEvents.PutEVSEHTTPRequest,
                 EMSPEvents.PutEVSEHTTPResponse,
                 async request => {
@@ -11177,7 +11180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 EMSPEvents.PatchEVSEHTTPRequest,
                 EMSPEvents.PatchEVSEHTTPResponse,
                 async request => {
@@ -11277,7 +11280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 EMSPEvents.DeleteEVSEHTTPRequest,
                 EMSPEvents.DeleteEVSEHTTPResponse,
                 async request => {
@@ -11359,7 +11362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 request =>
 
                     Task.FromResult(
@@ -11384,7 +11387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 EMSPEvents.GetConnectorHTTPRequest,
                 EMSPEvents.GetConnectorHTTPResponse,
                 request => {
@@ -11458,7 +11461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 EMSPEvents.PutConnectorHTTPRequest,
                 EMSPEvents.PutConnectorHTTPResponse,
                 async request => {
@@ -11584,7 +11587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 EMSPEvents.PatchConnectorHTTPRequest,
                 EMSPEvents.PatchConnectorHTTPResponse,
                 async request => {
@@ -11682,7 +11685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 EMSPEvents.DeleteConnectorHTTPRequest,
                 EMSPEvents.DeleteConnectorHTTPResponse,
                 async request => {
@@ -11762,7 +11765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
                 request =>
 
                     Task.FromResult(
@@ -11785,7 +11788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
+                URLPathPrefix + "receiver/locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
                 EMSPEvents.PutEVSEHTTPRequest,
                 EMSPEvents.PutEVSEHTTPResponse,
                 async request => {
@@ -11864,7 +11867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}",
                 request =>
 
                     Task.FromResult(
@@ -11887,7 +11890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}",
                 EMSPEvents.GetTariffsHTTPRequest,
                 EMSPEvents.GetTariffsHTTPResponse,
                 request => {
@@ -11977,7 +11980,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}",
                 EMSPEvents.DeleteTariffsHTTPRequest,
                 EMSPEvents.DeleteTariffsHTTPResponse,
                 async request => {
@@ -12041,7 +12044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}/{tariffId}",
                 request =>
 
                     Task.FromResult(
@@ -12064,7 +12067,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}/{tariffId}",
                 EMSPEvents.GetTariffHTTPRequest,
                 EMSPEvents.GetTariffHTTPResponse,
                 request => {
@@ -12141,7 +12144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}/{tariffId}",
                 EMSPEvents.PutTariffHTTPRequest,
                 EMSPEvents.PutTariffHTTPResponse,
                 async request => {
@@ -12277,7 +12280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}/{tariffId}",
                 EMSPEvents.PatchTariffHTTPRequest,
                 EMSPEvents.PatchTariffHTTPResponse,
                 async request => {
@@ -12371,7 +12374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                URLPathPrefix + "receiver/tariffs/{country_code}/{party_id}/{tariffId}",
                 EMSPEvents.DeleteTariffHTTPRequest,
                 EMSPEvents.DeleteTariffHTTPResponse,
                 async request => {
@@ -12481,7 +12484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}",
                 request =>
 
                     Task.FromResult(
@@ -12506,7 +12509,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions_EMSP",
+                URLPathPrefix + "receiver/sessions",
                 EMSPEvents.GetSessionsHTTPRequest,
                 EMSPEvents.GetSessionsHTTPResponse,
                 request => {
@@ -12583,7 +12586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}",
                 EMSPEvents.GetSessionsHTTPRequest,
                 EMSPEvents.GetSessionsHTTPResponse,
                 request => {
@@ -12667,7 +12670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "sessions",
+                URLPathPrefix + "receiver/sessions",
                 EMSPEvents.DeleteSessionsHTTPRequest,
                 EMSPEvents.DeleteSessionsHTTPResponse,
                 async request => {
@@ -12728,7 +12731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "sessions/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}",
                 EMSPEvents.DeleteSessionsHTTPRequest,
                 EMSPEvents.DeleteSessionsHTTPResponse,
                 async request => {
@@ -12792,7 +12795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
                 request =>
 
                     Task.FromResult(
@@ -12815,7 +12818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
                 EMSPEvents.GetSessionHTTPRequest,
                 EMSPEvents.GetSessionHTTPResponse,
                 request => {
@@ -12886,7 +12889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
                 EMSPEvents.PutSessionHTTPRequest,
                 EMSPEvents.PutSessionHTTPResponse,
                 async request => {
@@ -13009,7 +13012,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
                 EMSPEvents.PatchSessionHTTPRequest,
                 EMSPEvents.PatchSessionHTTPResponse,
                 async request => {
@@ -13107,7 +13110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
                 EMSPEvents.DeleteSessionHTTPRequest,
                 EMSPEvents.DeleteSessionHTTPResponse,
                 async request => {
@@ -13185,7 +13188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}",
                 request =>
 
                     Task.FromResult(
@@ -13208,7 +13211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs_EMSP",
+                URLPathPrefix + "receiver/cdrs",
                 EMSPEvents.GetCDRsHTTPRequest,
                 EMSPEvents.GetCDRsHTTPResponse,
                 request => {
@@ -13307,7 +13310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}",
                 EMSPEvents.GetCDRsHTTPRequest,
                 EMSPEvents.GetCDRsHTTPResponse,
                 request => {
@@ -13405,7 +13408,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "cdrs",///{country_code}/{party_id}",
+                URLPathPrefix + "receiver/cdrs",
                 EMSPEvents.PostCDRHTTPRequest,
                 EMSPEvents.PostCDRHTTPResponse,
                 async request => {
@@ -13507,7 +13510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           ),
                                    HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
                                        HTTPStatusCode             = HTTPStatusCode.Created,
-                                       Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString()),
+                                       Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + $"receiver/cdrs/{newCDR.CountryCode}/{newCDR.PartyId}/{newCDR.Id}"),
                                        AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.PUT, HTTPMethod.PATCH, HTTPMethod.DELETE ],
                                        AccessControlAllowHeaders  = [ "Authorization" ],
                                        LastModified               = newCDR.LastUpdated,
@@ -13525,7 +13528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "cdrs",
+                URLPathPrefix + "receiver/cdrs",
                 EMSPEvents.DeleteCDRsHTTPRequest,
                 EMSPEvents.DeleteCDRsHTTPResponse,
                 async request => {
@@ -13575,7 +13578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}",
                 EMSPEvents.DeleteCDRsHTTPRequest,
                 EMSPEvents.DeleteCDRsHTTPResponse,
                 async request => {
@@ -13639,7 +13642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}/{cdrId}",
                 request =>
 
                     Task.FromResult(
@@ -13662,7 +13665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}/{cdrId}",
                 EMSPEvents.GetCDRHTTPRequest,
                 EMSPEvents.GetCDRHTTPResponse,
                 request => {
@@ -13746,7 +13749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                URLPathPrefix + "receiver/cdrs/{country_code}/{party_id}/{cdrId}",
                 EMSPEvents.DeleteCDRHTTPRequest,
                 EMSPEvents.DeleteCDRHTTPResponse,
                 async request => {

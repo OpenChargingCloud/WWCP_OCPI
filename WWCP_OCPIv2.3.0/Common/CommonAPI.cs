@@ -3675,6 +3675,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public Func<EVSE, Boolean>      KeepRemovedEVSEs           { get; }
 
         /// <summary>
+        /// Where the HUB_HTTPAPI built on this Common API serves its modules,
+        /// once one is built: the version details announce them there, and
+        /// not before - a platform with the HUB role that builds none announces
+        /// none of them.
+        /// </summary>
+        public HTTPPath?                HUBModulesPath             { get; internal set; }
+
+        /// <summary>
         /// The Common API logger.
         /// </summary>
         public CommonAPILogger?         Logger                     { get; }
@@ -4542,6 +4550,39 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     (request.Host + (prefix + "hubclientinfo")).Replace("//", "/"))
                             )
                         );
+
+                    }
+
+                    #endregion
+
+                    #region The HUB modules, where a HUB_HTTPAPI serves them
+
+                    // Announced only where a HUB_HTTPAPI was built on this Common
+                    // API, and at the path it serves them at: a platform with the
+                    // HUB role that builds none - the RoamingHub - announces none.
+                    // The receiver half of a module that has a sender half too is
+                    // below "receiver/", as the two cannot share one path.
+                    if (HUBModulesPath is HTTPPath hubModulesPath)
+                    {
+
+                        URL HUBModule(String Path)
+
+                            => URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
+                                             (request.Host + (hubModulesPath + Path)).Replace("//", "/"));
+
+                        endpoints.AddRange([
+                            new VersionEndpoint(Module_Id.Locations,  InterfaceRoles.SENDER,    HUBModule("locations")),
+                            new VersionEndpoint(Module_Id.Locations,  InterfaceRoles.RECEIVER,  HUBModule("receiver/locations")),
+                            new VersionEndpoint(Module_Id.Tariffs,    InterfaceRoles.SENDER,    HUBModule("tariffs")),
+                            new VersionEndpoint(Module_Id.Tariffs,    InterfaceRoles.RECEIVER,  HUBModule("receiver/tariffs")),
+                            new VersionEndpoint(Module_Id.Sessions,   InterfaceRoles.SENDER,    HUBModule("sessions")),
+                            new VersionEndpoint(Module_Id.Sessions,   InterfaceRoles.RECEIVER,  HUBModule("receiver/sessions")),
+                            new VersionEndpoint(Module_Id.CDRs,       InterfaceRoles.SENDER,    HUBModule("cdrs")),
+                            new VersionEndpoint(Module_Id.CDRs,       InterfaceRoles.RECEIVER,  HUBModule("receiver/cdrs")),
+                            new VersionEndpoint(Module_Id.Tokens,     InterfaceRoles.SENDER,    HUBModule("tokens")),
+                            new VersionEndpoint(Module_Id.Tokens,     InterfaceRoles.RECEIVER,  HUBModule("receiver/tokens")),
+                            new VersionEndpoint(Module_Id.Commands,   InterfaceRoles.RECEIVER,  HUBModule("commands"))
+                        ]);
 
                     }
 
