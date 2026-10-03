@@ -120,8 +120,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
             Assert.That(ProbesIn(api.AssetsDBFileName), Is.EqualTo(Enumerable.Range(1, 2000).Select(number => (Int64) number)),
                         "Not every asset handed over before the API was disposed is in its file.");
 
-            Assert.DoesNotThrowAsync(async () => await api.BaseAPI.DisposeAsync(),
-                                     "Disposing the API a second time threw.");
+            await Assert.DoesNotThrowAsync(async () => await api.BaseAPI.DisposeAsync(),
+                                           "Disposing the API a second time threw.");
 
         }
 
@@ -139,8 +139,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
 
             await api.BaseAPI.DisposeAsync();
 
-            Assert.ThrowsAsync<ChannelClosedException>(async () => await api.LogAsset("probe", 1, EventTracking_Id.New),
-                                                       "An asset handed over once the API was disposed was taken.");
+            await Assert.ThrowsAsync<ChannelClosedException>(async () => await api.LogAsset("probe", 1, EventTracking_Id.New),
+                                                             "An asset handed over once the API was disposed was taken.");
 
         }
 
