@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
@@ -92,10 +91,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult1);
+                Assert.That(addChargingPoolResult1, Is.Not.Null);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool1);
+                Assert.That(chargingPool1, Is.Not.Null);
 
                 #endregion
 
@@ -136,10 +135,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult2);
+                Assert.That(addChargingPoolResult2, Is.Not.Null);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool2);
+                Assert.That(chargingPool2, Is.Not.Null);
 
                 #endregion
 
@@ -164,10 +163,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult1);
+                Assert.That(addChargingStationResult1, Is.Not.Null);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation1);
+                Assert.That(chargingStation1, Is.Not.Null);
 
                 #endregion
 
@@ -189,10 +188,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult2);
+                Assert.That(addChargingStationResult2, Is.Not.Null);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation2);
+                Assert.That(chargingStation2, Is.Not.Null);
 
                 #endregion
 
@@ -214,10 +213,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult3);
+                Assert.That(addChargingStationResult3, Is.Not.Null);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation3);
+                Assert.That(chargingStation3, Is.Not.Null);
 
                 #endregion
 
@@ -238,10 +237,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result1);
+                Assert.That(addEVSE1Result1, Is.Not.Null);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                ClassicAssert.IsNotNull(evse1);
+                Assert.That(evse1, Is.Not.Null);
 
                 #endregion
 
@@ -261,10 +260,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result2);
+                Assert.That(addEVSE1Result2, Is.Not.Null);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -284,10 +283,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result3);
+                Assert.That(addEVSE1Result3, Is.Not.Null);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -307,10 +306,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result4);
+                Assert.That(addEVSE1Result4, Is.Not.Null);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                ClassicAssert.IsNotNull(evse4);
+                Assert.That(evse4, Is.Not.Null);
 
                 #endregion
 
@@ -394,10 +393,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult1);
+                Assert.That(addChargingPoolResult1, Is.Not.Null);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool1);
+                Assert.That(chargingPool1, Is.Not.Null);
 
                 #endregion
 
@@ -438,10 +437,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult2);
+                Assert.That(addChargingPoolResult2, Is.Not.Null);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool2);
+                Assert.That(chargingPool2, Is.Not.Null);
 
                 #endregion
 
@@ -466,10 +465,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult1);
+                Assert.That(addChargingStationResult1, Is.Not.Null);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation1);
+                Assert.That(chargingStation1, Is.Not.Null);
 
                 #endregion
 
@@ -491,10 +490,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult2);
+                Assert.That(addChargingStationResult2, Is.Not.Null);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation2);
+                Assert.That(chargingStation2, Is.Not.Null);
 
                 #endregion
 
@@ -516,10 +515,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult3);
+                Assert.That(addChargingStationResult3, Is.Not.Null);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation3);
+                Assert.That(chargingStation3, Is.Not.Null);
 
                 #endregion
 
@@ -540,10 +539,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result1);
+                Assert.That(addEVSE1Result1, Is.Not.Null);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                ClassicAssert.IsNotNull(evse1);
+                Assert.That(evse1, Is.Not.Null);
 
                 #endregion
 
@@ -563,10 +562,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result2);
+                Assert.That(addEVSE1Result2, Is.Not.Null);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -586,10 +585,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result3);
+                Assert.That(addEVSE1Result3, Is.Not.Null);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -609,10 +608,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result4);
+                Assert.That(addEVSE1Result4, Is.Not.Null);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                ClassicAssert.IsNotNull(evse4);
+                Assert.That(evse4, Is.Not.Null);
 
                 #endregion
 
@@ -621,16 +620,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 #region Validate, that locations had been sent to the OCPI module
 
                 var allLocations  = cpoCommonAPI.GetLocations().ToArray();
-                ClassicAssert.IsNotNull(allLocations);
-                ClassicAssert.AreEqual (2, allLocations.Length);
+                Assert.That(allLocations,        Is.Not.Null);
+                Assert.That(allLocations.Length, Is.EqualTo(2));
 
                 #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
                 var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                ClassicAssert.IsNotNull(allEVSEs);
-                ClassicAssert.AreEqual (4, allEVSEs.Length);
+                Assert.That(allEVSEs,        Is.Not.Null);
+                Assert.That(allEVSEs.Length, Is.EqualTo(4));
 
                 #endregion
 
@@ -645,7 +644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     out var location1))
                 {
 
-                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
+                    Assert.That(location1.EVSEs.Count(), Is.EqualTo(3));
 
                 }
                 else
@@ -661,7 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     out var location2))
                 {
 
-                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
+                    Assert.That(location2.EVSEs.Count(), Is.EqualTo(1));
 
                 }
                 else
@@ -852,9 +851,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
                 chargingPool1!.Description.Set(Languages.en, "GraphDefined charging pool for tests #1 (updated)");
 
-                ClassicAssert.AreEqual(8, updatedPoolProperties.Count);
-                ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
-                ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
+                Assert.That(updatedPoolProperties.Count,                                                       Is.EqualTo(8));
+                Assert.That(graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en], Is.EqualTo("Test pool #1 (updated)"));
+                Assert.That(graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en], Is.EqualTo("GraphDefined charging pool for tests #1 (updated)"));
 
                 cpoCommonAPI.TryGetLocation(
                     Party_Idv3.From(
@@ -865,7 +864,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     out var location
                 );
 
-                ClassicAssert.AreEqual("Test pool #1 (updated)",                             location!.Name);
+                Assert.That(location!.Name, Is.EqualTo("Test pool #1 (updated)"));
                 //ClassicAssert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
 
 
@@ -980,10 +979,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult1);
+                Assert.That(addChargingPoolResult1, Is.Not.Null);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool1);
+                Assert.That(chargingPool1, Is.Not.Null);
 
                 #endregion
 
@@ -1024,10 +1023,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult2);
+                Assert.That(addChargingPoolResult2, Is.Not.Null);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool2);
+                Assert.That(chargingPool2, Is.Not.Null);
 
                 #endregion
 
@@ -1052,10 +1051,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult1);
+                Assert.That(addChargingStationResult1, Is.Not.Null);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation1);
+                Assert.That(chargingStation1, Is.Not.Null);
 
                 #endregion
 
@@ -1077,10 +1076,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult2);
+                Assert.That(addChargingStationResult2, Is.Not.Null);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation2);
+                Assert.That(chargingStation2, Is.Not.Null);
 
                 #endregion
 
@@ -1102,10 +1101,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult3);
+                Assert.That(addChargingStationResult3, Is.Not.Null);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation3);
+                Assert.That(chargingStation3, Is.Not.Null);
 
                 #endregion
 
@@ -1126,10 +1125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result1);
+                Assert.That(addEVSE1Result1, Is.Not.Null);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                ClassicAssert.IsNotNull(evse1);
+                Assert.That(evse1, Is.Not.Null);
 
                 #endregion
 
@@ -1149,10 +1148,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result2);
+                Assert.That(addEVSE1Result2, Is.Not.Null);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -1172,10 +1171,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result3);
+                Assert.That(addEVSE1Result3, Is.Not.Null);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -1195,31 +1194,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result4);
+                Assert.That(addEVSE1Result4, Is.Not.Null);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                ClassicAssert.IsNotNull(evse4);
+                Assert.That(evse4, Is.Not.Null);
 
                 #endregion
 
 
                 var evse1_UId = evse1!.Id.ToOCPI_EVSEUId();
-                ClassicAssert.IsTrue(evse1_UId.HasValue);
+                Assert.That(evse1_UId.HasValue, Is.True);
 
 
                 #region Validate, that locations had been sent to the OCPI module
 
                 var allLocations  = cpoCommonAPI.GetLocations().ToArray();
-                ClassicAssert.IsNotNull(allLocations);
-                ClassicAssert.AreEqual (2, allLocations.Length);
+                Assert.That(allLocations,        Is.Not.Null);
+                Assert.That(allLocations.Length, Is.EqualTo(2));
 
                 #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
                 var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                ClassicAssert.IsNotNull(allEVSEs);
-                ClassicAssert.AreEqual (4, allEVSEs.Length);
+                Assert.That(allEVSEs,        Is.Not.Null);
+                Assert.That(allEVSEs.Length, Is.EqualTo(4));
 
                 #endregion
 
@@ -1234,7 +1233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     out var location1))
                 {
 
-                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
+                    Assert.That(location1.EVSEs.Count(), Is.EqualTo(3));
 
                 }
                 else
@@ -1250,7 +1249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     out var location2))
                 {
 
-                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
+                    Assert.That(location2.EVSEs.Count(), Is.EqualTo(1));
 
                 }
                 else
@@ -1340,7 +1339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE))
                     {
-                        ClassicAssert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
+                        Assert.That(ocpiEVSE.Status, Is.EqualTo(StatusType.AVAILABLE));
                     }
                 }
 
@@ -1350,10 +1349,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
 
 
-                ClassicAssert.AreEqual(3, updatedEVSEStatus.    Count);
-                ClassicAssert.AreEqual(2, updatedOCPIEVSEStatus.Count);
+                Assert.That(updatedEVSEStatus.    Count, Is.EqualTo(3));
+                Assert.That(updatedOCPIEVSEStatus.Count, Is.EqualTo(2));
 
-                ClassicAssert.AreEqual(EVSEStatusType.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value);
+                Assert.That(graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value, Is.EqualTo(EVSEStatusType.Charging));
 
                 {
                     if (evse1_UId.HasValue &&
@@ -1368,7 +1367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE))
                     {
-                        ClassicAssert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
+                        Assert.That(ocpiEVSE.Status, Is.EqualTo(StatusType.CHARGING));
                     }
                 }
 
@@ -1443,10 +1442,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult1);
+                Assert.That(addChargingPoolResult1, Is.Not.Null);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool1);
+                Assert.That(chargingPool1, Is.Not.Null);
 
                 #endregion
 
@@ -1487,10 +1486,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                              );
 
-                ClassicAssert.IsNotNull(addChargingPoolResult2);
+                Assert.That(addChargingPoolResult2, Is.Not.Null);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                ClassicAssert.IsNotNull(chargingPool2);
+                Assert.That(chargingPool2, Is.Not.Null);
 
                 #endregion
 
@@ -1515,10 +1514,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult1);
+                Assert.That(addChargingStationResult1, Is.Not.Null);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation1);
+                Assert.That(chargingStation1, Is.Not.Null);
 
                 #endregion
 
@@ -1540,10 +1539,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult2);
+                Assert.That(addChargingStationResult2, Is.Not.Null);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation2);
+                Assert.That(chargingStation2, Is.Not.Null);
 
                 #endregion
 
@@ -1565,10 +1564,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                                 );
 
-                ClassicAssert.IsNotNull(addChargingStationResult3);
+                Assert.That(addChargingStationResult3, Is.Not.Null);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                ClassicAssert.IsNotNull(chargingStation3);
+                Assert.That(chargingStation3, Is.Not.Null);
 
                 #endregion
 
@@ -1589,10 +1588,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result1);
+                Assert.That(addEVSE1Result1, Is.Not.Null);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                ClassicAssert.IsNotNull(evse1);
+                Assert.That(evse1, Is.Not.Null);
 
                 #endregion
 
@@ -1612,10 +1611,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result2);
+                Assert.That(addEVSE1Result2, Is.Not.Null);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -1635,10 +1634,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result3);
+                Assert.That(addEVSE1Result3, Is.Not.Null);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                ClassicAssert.IsNotNull(evse2);
+                Assert.That(evse2, Is.Not.Null);
 
                 #endregion
 
@@ -1658,10 +1657,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                                       );
 
-                ClassicAssert.IsNotNull(addEVSE1Result4);
+                Assert.That(addEVSE1Result4, Is.Not.Null);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                ClassicAssert.IsNotNull(evse4);
+                Assert.That(evse4, Is.Not.Null);
 
                 #endregion
 
@@ -1805,9 +1804,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                  ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
                                              );
 
-                ClassicAssert.AreEqual(AuthStartResultTypes.NotAuthorized, authStartResult1.Result);
-                ClassicAssert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult2.Result);
-                ClassicAssert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult3.Result);
+                Assert.That(authStartResult1.Result, Is.EqualTo(AuthStartResultTypes.NotAuthorized));
+                Assert.That(authStartResult2.Result, Is.EqualTo(AuthStartResultTypes.Authorized));
+                Assert.That(authStartResult3.Result, Is.EqualTo(AuthStartResultTypes.Authorized));
 
             }
 

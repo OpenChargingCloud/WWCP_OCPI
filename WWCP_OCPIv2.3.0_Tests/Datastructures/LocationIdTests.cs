@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using cloud.charging.open.protocols.OCPI;
 
@@ -56,13 +55,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
         public void TryParse_Null()
         {
 
-            ClassicAssert.IsNull  (Location_Id.TryParse(null));
-            ClassicAssert.IsFalse (Location_Id.TryParse(null).HasValue);
+            Assert.That(Location_Id.TryParse(null),          Is.Null);
+            Assert.That(Location_Id.TryParse(null).HasValue, Is.False);
 
-            ClassicAssert.IsFalse (Location_Id.TryParse(null, out Location_Id LocationId));
-            ClassicAssert.IsTrue  (LocationId.IsNullOrEmpty);
-            ClassicAssert.AreEqual(0,  LocationId.Length);
-            ClassicAssert.AreEqual("", LocationId.ToString());
+            Assert.That(Location_Id.TryParse(null, out Location_Id LocationId), Is.False);
+            Assert.That(LocationId.IsNullOrEmpty,                               Is.True);
+            Assert.That(LocationId.Length,                                      Is.EqualTo(0));
+            Assert.That(LocationId.ToString(),                                  Is.EqualTo(""));
 
         }
 
@@ -70,13 +69,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
         public void TryParse_Empty()
         {
 
-            ClassicAssert.IsNull  (Location_Id.TryParse(""));
-            ClassicAssert.IsFalse (Location_Id.TryParse("").HasValue);
+            Assert.That(Location_Id.TryParse(""),          Is.Null);
+            Assert.That(Location_Id.TryParse("").HasValue, Is.False);
 
-            ClassicAssert.IsFalse (Location_Id.TryParse("", out Location_Id LocationId));
-            ClassicAssert.IsTrue  (LocationId.IsNullOrEmpty);
-            ClassicAssert.AreEqual(0,  LocationId.Length);
-            ClassicAssert.AreEqual("", LocationId.ToString());
+            Assert.That(Location_Id.TryParse("", out Location_Id LocationId), Is.False);
+            Assert.That(LocationId.IsNullOrEmpty,                             Is.True);
+            Assert.That(LocationId.Length,                                    Is.EqualTo(0));
+            Assert.That(LocationId.ToString(),                                Is.EqualTo(""));
 
         }
 
@@ -84,86 +83,88 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
         public void TryParse_Whitespace()
         {
 
-            ClassicAssert.IsNull  (Location_Id.TryParse("   "));
-            ClassicAssert.IsFalse (Location_Id.TryParse("   ").HasValue);
+            Assert.That(Location_Id.TryParse("   "),          Is.Null);
+            Assert.That(Location_Id.TryParse("   ").HasValue, Is.False);
 
-            ClassicAssert.IsFalse (Location_Id.TryParse("   ", out Location_Id LocationId));
-            ClassicAssert.IsTrue  (LocationId.IsNullOrEmpty);
-            ClassicAssert.AreEqual(0,  LocationId.Length);
-            ClassicAssert.AreEqual("", LocationId.ToString());
+            Assert.That(Location_Id.TryParse("   ", out Location_Id LocationId), Is.False);
+            Assert.That(LocationId.IsNullOrEmpty,                                Is.True);
+            Assert.That(LocationId.Length,                                       Is.EqualTo(0));
+            Assert.That(LocationId.ToString(),                                   Is.EqualTo(""));
 
         }
 
         [Test]
         public void Length()
         {
-            ClassicAssert.AreEqual(3, Location_Id.Parse("abc").Length);
+            Assert.That(Location_Id.Parse("abc").Length, Is.EqualTo(3));
         }
 
         [Test]
         public void Equality()
         {
 
-            ClassicAssert.AreEqual(Location_Id.Parse("abc"), Location_Id.Parse("abc"));
-            ClassicAssert.AreEqual(Location_Id.Parse("abc"), Location_Id.Parse("aBc"));
+            var abc = Location_Id.Parse("abc");
 
-            ClassicAssert.IsTrue  (Location_Id.Parse("abc").Equals(Location_Id.Parse("abc")));
-            ClassicAssert.IsTrue  (Location_Id.Parse("abc").Equals(Location_Id.Parse("aBc")));
+            Assert.That(abc,                     Is.EqualTo(Location_Id.Parse("abc")));
+            Assert.That(Location_Id.Parse("aBc"), Is.EqualTo(abc));
+
+            Assert.That(Location_Id.Parse("abc").Equals(Location_Id.Parse("abc")), Is.True);
+            Assert.That(Location_Id.Parse("abc").Equals(Location_Id.Parse("aBc")), Is.True);
 
         }
 
         [Test]
         public void OperatorEquality()
         {
-            ClassicAssert.IsTrue(Location_Id.Parse("abc") == Location_Id.Parse("abc"));
-            ClassicAssert.IsTrue(Location_Id.Parse("abc") == Location_Id.Parse("aBc"));
+            Assert.That(Location_Id.Parse("abc") == Location_Id.Parse("abc"), Is.True);
+            Assert.That(Location_Id.Parse("abc") == Location_Id.Parse("aBc"), Is.True);
         }
 
         [Test]
         public void OperatorInequality()
         {
-            ClassicAssert.IsFalse(Location_Id.Parse("abc") != Location_Id.Parse("abc"));
-            ClassicAssert.IsFalse(Location_Id.Parse("abc") != Location_Id.Parse("aBc"));
+            Assert.That(Location_Id.Parse("abc") != Location_Id.Parse("abc"), Is.False);
+            Assert.That(Location_Id.Parse("abc") != Location_Id.Parse("aBc"), Is.False);
         }
 
         [Test]
         public void OperatorSmaller()
         {
-            ClassicAssert.IsFalse(Location_Id.Parse("abc") < Location_Id.Parse("abc"));
-            ClassicAssert.IsFalse(Location_Id.Parse("abc") < Location_Id.Parse("aBc"));
-            ClassicAssert.IsTrue (Location_Id.Parse("abc") < Location_Id.Parse("abc2"));
+            Assert.That(Location_Id.Parse("abc") < Location_Id.Parse("abc"),  Is.False);
+            Assert.That(Location_Id.Parse("abc") < Location_Id.Parse("aBc"),  Is.False);
+            Assert.That(Location_Id.Parse("abc") < Location_Id.Parse("abc2"), Is.True);
         }
 
         [Test]
         public void OperatorSmallerOrEquals()
         {
-            ClassicAssert.IsTrue(Location_Id.Parse("abc") <= Location_Id.Parse("abc"));
-            ClassicAssert.IsTrue(Location_Id.Parse("abc") <= Location_Id.Parse("aBc"));
-            ClassicAssert.IsTrue(Location_Id.Parse("abc") <= Location_Id.Parse("abc2"));
+            Assert.That(Location_Id.Parse("abc") <= Location_Id.Parse("abc"),  Is.True);
+            Assert.That(Location_Id.Parse("abc") <= Location_Id.Parse("aBc"),  Is.True);
+            Assert.That(Location_Id.Parse("abc") <= Location_Id.Parse("abc2"), Is.True);
         }
 
         [Test]
         public void OperatorBigger()
         {
-            ClassicAssert.IsFalse(Location_Id.Parse("abc")  > Location_Id.Parse("abc"));
-            ClassicAssert.IsFalse(Location_Id.Parse("abc")  > Location_Id.Parse("aBc"));
-            ClassicAssert.IsTrue (Location_Id.Parse("abc2") > Location_Id.Parse("abc"));
+            Assert.That(Location_Id.Parse("abc")  > Location_Id.Parse("abc"), Is.False);
+            Assert.That(Location_Id.Parse("abc")  > Location_Id.Parse("aBc"), Is.False);
+            Assert.That(Location_Id.Parse("abc2") > Location_Id.Parse("abc"), Is.True);
         }
 
         [Test]
         public void OperatorBiggerOrEquals()
         {
-            ClassicAssert.IsTrue(Location_Id.Parse("abc")  >= Location_Id.Parse("abc"));
-            ClassicAssert.IsTrue(Location_Id.Parse("abc")  >= Location_Id.Parse("aBc"));
-            ClassicAssert.IsTrue(Location_Id.Parse("abc2") >= Location_Id.Parse("abc"));
+            Assert.That(Location_Id.Parse("abc")  >= Location_Id.Parse("abc"), Is.True);
+            Assert.That(Location_Id.Parse("abc")  >= Location_Id.Parse("aBc"), Is.True);
+            Assert.That(Location_Id.Parse("abc2") >= Location_Id.Parse("abc"), Is.True);
         }
 
         [Test]
         public void HashCodeEquality()
         {
-            ClassicAssert.AreEqual   (Location_Id.Parse("abc").GetHashCode(), Location_Id.Parse("abc"). GetHashCode());
-            ClassicAssert.AreEqual   (Location_Id.Parse("abc").GetHashCode(), Location_Id.Parse("aBc"). GetHashCode());
-            ClassicAssert.AreNotEqual(Location_Id.Parse("abc").GetHashCode(), Location_Id.Parse("abc2").GetHashCode());
+            Assert.That(Location_Id.Parse("abc"). GetHashCode(), Is.EqualTo(Location_Id.Parse("abc").GetHashCode()));
+            Assert.That(Location_Id.Parse("aBc"). GetHashCode(), Is.EqualTo(Location_Id.Parse("abc").GetHashCode()));
+            Assert.That(Location_Id.Parse("abc2").GetHashCode(), Is.Not.EqualTo(Location_Id.Parse("abc").GetHashCode()));
         }
 
         [Test]
@@ -174,16 +175,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
                              { Location_Id.Parse("abc01"), "DifferentCases_DictionaryKeyEquality()" }
                          };
 
-            ClassicAssert.IsTrue(Lookup.ContainsKey(Location_Id.Parse("abc01")));
-            ClassicAssert.IsTrue(Lookup.ContainsKey(Location_Id.Parse("aBc01")));
+            Assert.That(Lookup.ContainsKey(Location_Id.Parse("abc01")), Is.True);
+            Assert.That(Lookup.ContainsKey(Location_Id.Parse("aBc01")), Is.True);
 
         }
 
         [Test]
         public void Test_ToString()
         {
-            ClassicAssert.AreEqual("abc", Location_Id.Parse("abc").ToString());
-            ClassicAssert.AreEqual("aBc", Location_Id.Parse("aBc").ToString());
+            Assert.That(Location_Id.Parse("abc").ToString(), Is.EqualTo("abc"));
+            Assert.That(Location_Id.Parse("aBc").ToString(), Is.EqualTo("aBc"));
         }
 
     }

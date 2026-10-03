@@ -22,7 +22,6 @@ using System.Collections.Concurrent;
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -249,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                               );
 
-            ClassicAssert.IsNotNull(ocpiBaseAPI);
+            Assert.That(ocpiBaseAPI, Is.Not.Null);
 
 
             #region Create cpo/emsp1/emsp2 OCPI Common API
@@ -428,13 +427,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //          )
             //      );
 
-            ClassicAssert.IsNotNull(cpoVersionsAPIURL);
-            ClassicAssert.IsNotNull(emsp1VersionsAPIURL);
-            ClassicAssert.IsNotNull(emsp2VersionsAPIURL);
+            Assert.That(cpoVersionsAPIURL,   Is.Not.Null);
+            Assert.That(emsp1VersionsAPIURL, Is.Not.Null);
+            Assert.That(emsp2VersionsAPIURL, Is.Not.Null);
 
-            ClassicAssert.IsNotNull(cpoCommonAPI);
-            ClassicAssert.IsNotNull(emsp1CommonAPI);
-            ClassicAssert.IsNotNull(emsp2CommonAPI);
+            Assert.That(cpoCommonAPI,   Is.Not.Null);
+            Assert.That(emsp1CommonAPI, Is.Not.Null);
+            Assert.That(emsp2CommonAPI, Is.Not.Null);
 
             #endregion
 
@@ -503,9 +502,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                    );
 
-            ClassicAssert.IsNotNull(cpoCPOAPI);
-            ClassicAssert.IsNotNull(emsp1EMSPAPI);
-            ClassicAssert.IsNotNull(emsp2EMSPAPI);
+            Assert.That(cpoCPOAPI,    Is.Not.Null);
+            Assert.That(emsp1EMSPAPI, Is.Not.Null);
+            Assert.That(emsp2EMSPAPI, Is.Not.Null);
 
             #endregion
 
@@ -617,9 +616,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 Status:                            PartyStatus.ENABLED);
 
 
-            ClassicAssert.AreEqual(2, cpoCommonAPI.  RemoteParties.Count());
-            ClassicAssert.AreEqual(1, emsp1CommonAPI.RemoteParties.Count());
-            ClassicAssert.AreEqual(1, emsp2CommonAPI.RemoteParties.Count());
+            Assert.That(cpoCommonAPI.  RemoteParties.Count(), Is.EqualTo(2));
+            Assert.That(emsp1CommonAPI.RemoteParties.Count(), Is.EqualTo(1));
+            Assert.That(emsp2CommonAPI.RemoteParties.Count(), Is.EqualTo(1));
 
             #endregion
 

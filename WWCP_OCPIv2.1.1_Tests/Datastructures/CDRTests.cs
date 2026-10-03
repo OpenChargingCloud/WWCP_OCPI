@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -257,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             //ClassicAssert.AreEqual("DE",                          JSON["country_code"]?.Value<String>());
             //ClassicAssert.AreEqual("GEF",                         JSON["party_id"]?.    Value<String>());
-            ClassicAssert.AreEqual("CDR0001",                     jsonCDR["id"]?.          Value<String>());
+            Assert.That(jsonCDR["id"]?.          Value<String>(), Is.EqualTo("CDR0001"));
 
 
             if (CDR.TryParse(jsonCDR,
@@ -266,33 +265,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                              CountryCode.Parse("DE"),
                              Party_Id.Parse("GEF"))) {
 
-                ClassicAssert.IsNotNull(parsedCDR);
-                ClassicAssert.IsNull   (errorResponse);
+                Assert.That(parsedCDR,     Is.Not.Null);
+                Assert.That(errorResponse, Is.Null);
 
-                ClassicAssert.AreEqual (cdr1.CountryCode,              parsedCDR.CountryCode);
-                ClassicAssert.AreEqual (cdr1.PartyId,                  parsedCDR.PartyId);
-                ClassicAssert.AreEqual (cdr1.Id,                       parsedCDR.Id);
+                Assert.That(parsedCDR.CountryCode, Is.EqualTo(cdr1.CountryCode));
+                Assert.That(parsedCDR.PartyId,     Is.EqualTo(cdr1.PartyId));
+                Assert.That(parsedCDR.Id,          Is.EqualTo(cdr1.Id));
 
-                ClassicAssert.AreEqual (cdr1.Start.ToISO8601(),        parsedCDR.Start.ToISO8601());
-                ClassicAssert.AreEqual (cdr1.Stop. ToISO8601(),        parsedCDR.Stop.  ToISO8601());
-                ClassicAssert.AreEqual (cdr1.AuthId,                   parsedCDR.AuthId);
-                ClassicAssert.AreEqual (cdr1.AuthMethod,               parsedCDR.AuthMethod);
-                ClassicAssert.IsTrue   (cdr1.Location.Equals(parsedCDR.Location));
-                ClassicAssert.AreEqual (cdr1.Currency,                 parsedCDR.Currency);
-                ClassicAssert.AreEqual (cdr1.ChargingPeriods,          parsedCDR.ChargingPeriods);
-                ClassicAssert.AreEqual (cdr1.TotalCost,                parsedCDR.TotalCost);
-                ClassicAssert.AreEqual (cdr1.TotalEnergy,              parsedCDR.TotalEnergy);
-                ClassicAssert.AreEqual (cdr1.TotalTime,                parsedCDR.TotalTime);
+                Assert.That(parsedCDR.Start.ToISO8601(),              Is.EqualTo(cdr1.Start.ToISO8601()));
+                Assert.That(parsedCDR.Stop.  ToISO8601(),             Is.EqualTo(cdr1.Stop. ToISO8601()));
+                Assert.That(parsedCDR.AuthId,                         Is.EqualTo(cdr1.AuthId));
+                Assert.That(parsedCDR.AuthMethod,                     Is.EqualTo(cdr1.AuthMethod));
+                Assert.That(cdr1.Location.Equals(parsedCDR.Location), Is.True);
+                Assert.That(parsedCDR.Currency,                       Is.EqualTo(cdr1.Currency));
+                Assert.That(parsedCDR.ChargingPeriods,                Is.EqualTo(cdr1.ChargingPeriods));
+                Assert.That(parsedCDR.TotalCost,                      Is.EqualTo(cdr1.TotalCost));
+                Assert.That(parsedCDR.TotalEnergy,                    Is.EqualTo(cdr1.TotalEnergy));
+                Assert.That(parsedCDR.TotalTime,                      Is.EqualTo(cdr1.TotalTime));
 
-                ClassicAssert.AreEqual (cdr1.EnergyMeterId,                  parsedCDR.EnergyMeterId);
-                ClassicAssert.AreEqual (cdr1.EnergyMeter,              parsedCDR.EnergyMeter);
-                ClassicAssert.AreEqual (cdr1.TransparencySoftware,    parsedCDR.TransparencySoftware);
-                ClassicAssert.AreEqual (cdr1.Tariffs,                  parsedCDR.Tariffs);
-                ClassicAssert.AreEqual (cdr1.SignedData,               parsedCDR.SignedData);
-                ClassicAssert.AreEqual (cdr1.TotalParkingTime,         parsedCDR.TotalParkingTime);
-                ClassicAssert.AreEqual (cdr1.Remark,                   parsedCDR.Remark);
+                Assert.That(parsedCDR.EnergyMeterId,        Is.EqualTo(cdr1.EnergyMeterId));
+                Assert.That(parsedCDR.EnergyMeter,          Is.EqualTo(cdr1.EnergyMeter));
+                Assert.That(parsedCDR.TransparencySoftware, Is.EqualTo(cdr1.TransparencySoftware));
+                Assert.That(parsedCDR.Tariffs,              Is.EqualTo(cdr1.Tariffs));
+                Assert.That(parsedCDR.SignedData,           Is.EqualTo(cdr1.SignedData));
+                Assert.That(parsedCDR.TotalParkingTime,     Is.EqualTo(cdr1.TotalParkingTime));
+                Assert.That(parsedCDR.Remark,               Is.EqualTo(cdr1.Remark));
 
-                ClassicAssert.AreEqual (cdr1.LastUpdated.ToISO8601(),  parsedCDR.LastUpdated.ToISO8601());
+                Assert.That(parsedCDR.LastUpdated.ToISO8601(), Is.EqualTo(cdr1.LastUpdated.ToISO8601()));
 
             }
 
@@ -389,11 +388,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       CountryCode.Parse("DE"),
                                       Party_Id.   Parse("GEF"));
 
-            ClassicAssert.IsTrue   (result, errorResponse!);
-            ClassicAssert.IsNotNull(parsedCDR);
-            ClassicAssert.IsNull   (errorResponse);
+            Assert.That(result,        Is.True, errorResponse!);
+            Assert.That(parsedCDR,     Is.Not.Null);
+            Assert.That(errorResponse, Is.Null);
 
-            ClassicAssert.AreEqual (CDR_Id.Parse("12345"),                                 parsedCDR!.Id);
+            Assert.That(parsedCDR!.Id, Is.EqualTo(CDR_Id.Parse("12345")));
             //ClassicAssert.AreEqual(true,                                                  parsedCDR.Publish);
             //ClassicAssert.AreEqual(cdr1.Start.    ToISO8601(),                            parsedCDR.Start.    ToISO8601());
             //ClassicAssert.AreEqual(cdr1.End.Value.ToISO8601(),                            parsedCDR.End.Value.ToISO8601());
@@ -473,10 +472,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                                          );
 
-            ClassicAssert.IsNotNull(addChargingPoolResult1);
+            Assert.That(addChargingPoolResult1, Is.Not.Null);
 
             var chargingPool1 = addChargingPoolResult1.ChargingPool;
-            ClassicAssert.IsNotNull(chargingPool1);
+            Assert.That(chargingPool1, Is.Not.Null);
 
             #endregion
 
@@ -495,10 +494,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                                             );
 
-            ClassicAssert.IsNotNull(addChargingStationResult1);
+            Assert.That(addChargingStationResult1, Is.Not.Null);
 
             var chargingStation1  = addChargingStationResult1.ChargingStation;
-            ClassicAssert.IsNotNull(chargingStation1);
+            Assert.That(chargingStation1, Is.Not.Null);
 
             #endregion
 
@@ -526,10 +525,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                                   );
 
-            ClassicAssert.IsNotNull(addEVSE1Result1);
+            Assert.That(addEVSE1Result1, Is.Not.Null);
 
             var evse1     = addEVSE1Result1.EVSE!;
-            ClassicAssert.IsNotNull(evse1);
+            Assert.That(evse1, Is.Not.Null);
 
             #endregion
 
@@ -557,10 +556,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                                   );
 
-            ClassicAssert.IsNotNull(addEVSE1Result2);
+            Assert.That(addEVSE1Result2, Is.Not.Null);
 
             var evse2     = addEVSE1Result2.EVSE;
-            ClassicAssert.IsNotNull(evse2);
+            Assert.That(evse2, Is.Not.Null);
 
             #endregion
 
@@ -640,18 +639,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                           );
 
 
-            ClassicAssert.IsTrue   (wwcpCDR.Duration.         HasValue);
-            ClassicAssert.AreEqual (2.0, wwcpCDR.Duration!.Value.TotalHours);
+            Assert.That(wwcpCDR.Duration.         HasValue, Is.True);
+            Assert.That(wwcpCDR.Duration!.Value.TotalHours, Is.EqualTo(2.0));
 
-            ClassicAssert.IsNotNull(wwcpCDR.EVSE);
-            ClassicAssert.IsTrue   (wwcpCDR.EVSEId.           HasValue);
-            ClassicAssert.IsNotNull(wwcpCDR.ChargingStation);
-            ClassicAssert.IsTrue   (wwcpCDR.ChargingStationId.HasValue);
-            ClassicAssert.IsNotNull(wwcpCDR.ChargingPool);
-            ClassicAssert.IsTrue   (wwcpCDR.ChargingPoolId.   HasValue);
+            Assert.That(wwcpCDR.EVSE,                       Is.Not.Null);
+            Assert.That(wwcpCDR.EVSEId.           HasValue, Is.True);
+            Assert.That(wwcpCDR.ChargingStation,            Is.Not.Null);
+            Assert.That(wwcpCDR.ChargingStationId.HasValue, Is.True);
+            Assert.That(wwcpCDR.ChargingPool,               Is.Not.Null);
+            Assert.That(wwcpCDR.ChargingPoolId.   HasValue, Is.True);
 
-            ClassicAssert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
-            ClassicAssert.AreEqual (23, wwcpCDR.ConsumedEnergy!.Value.kWh);
+            Assert.That(wwcpCDR.ConsumedEnergy.   HasValue, Is.True);
+            Assert.That(wwcpCDR.ConsumedEnergy!.Value.kWh,  Is.EqualTo(23));
 
             var ocpiCDR = wwcpCDR.ToOCPI(
                               CustomChargingPoolIdConverter:   null,
@@ -690,26 +689,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               out var warnings
                           );
 
-            ClassicAssert.AreEqual (0, warnings.Count(), 0, warnings.FirstOrDefault()?.Text.FirstText());
+            Assert.That(warnings.Count(), Is.EqualTo(0), warnings.FirstOrDefault()?.Text.FirstText());
 
-            ClassicAssert.IsNotNull(ocpiCDR);
-            ClassicAssert.AreEqual ("DE",                                       ocpiCDR!.CountryCode.ToString());
-            ClassicAssert.AreEqual ("GEF",                                      ocpiCDR!.PartyId.    ToString());
-            ClassicAssert.AreEqual (wwcpCDR.Id.ToString(),                      ocpiCDR!.Id.         ToString());
-            ClassicAssert.AreEqual (wwcpCDR.SessionTime.StartTime,              ocpiCDR!.Start);
-            ClassicAssert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,         ocpiCDR!.Stop);
+            Assert.That(ocpiCDR,                         Is.Not.Null);
+            Assert.That(ocpiCDR!.CountryCode.ToString(), Is.EqualTo("DE"));
+            Assert.That(ocpiCDR!.PartyId.    ToString(), Is.EqualTo("GEF"));
+            Assert.That(ocpiCDR!.Id.         ToString(), Is.EqualTo(wwcpCDR.Id.ToString()));
+            Assert.That(ocpiCDR!.Start,                  Is.EqualTo(wwcpCDR.SessionTime.StartTime));
+            Assert.That(ocpiCDR!.Stop,                   Is.EqualTo(wwcpCDR.SessionTime.EndTime!.Value));
             //AuthId
-            ClassicAssert.AreEqual (wwcpCDR.AuthenticationStart?.AuthMethod.ToOCPI(),    ocpiCDR!.AuthMethod);
+            Assert.That(ocpiCDR!.AuthMethod, Is.EqualTo(wwcpCDR.AuthenticationStart?.AuthMethod.ToOCPI()));
 
-            ClassicAssert.IsNotNull(ocpiCDR.Location);
-            ClassicAssert.IsNotNull(ocpiCDR.Location.EVSEs);
-            ClassicAssert.AreEqual (1,                                          ocpiCDR!.Location.EVSEs.Count());
-            ClassicAssert.AreEqual (wwcpCDR.EVSEId!.Value.ToString(),           ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString());
+            Assert.That(ocpiCDR.Location,                                         Is.Not.Null);
+            Assert.That(ocpiCDR.Location.EVSEs,                                   Is.Not.Null);
+            Assert.That(ocpiCDR!.Location.EVSEs.Count(),                          Is.EqualTo(1));
+            Assert.That(ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString(), Is.EqualTo(wwcpCDR.EVSEId!.Value.ToString()));
 
-            ClassicAssert.AreEqual (wwcpCDR.ChargingPrice?.Currency?.ISOCode,   ocpiCDR!.Currency.ToString());
+            Assert.That(ocpiCDR!.Currency.ToString(), Is.EqualTo(wwcpCDR.ChargingPrice?.Currency?.ISOCode));
 
-            ClassicAssert.IsNotNull(ocpiCDR.ChargingPeriods);
-            ClassicAssert.AreEqual (wwcpCDR.EnergyMeteringValues.Count() - 1,   ocpiCDR!.ChargingPeriods.Count());
+            Assert.That(ocpiCDR.ChargingPeriods,          Is.Not.Null);
+            Assert.That(ocpiCDR!.ChargingPeriods.Count(), Is.EqualTo(wwcpCDR.EnergyMeteringValues.Count() - 1));
 
             var energyMeteringValue1  = wwcpCDR!.EnergyMeteringValues.ElementAt(0);
             var energyMeteringValue2  = wwcpCDR!.EnergyMeteringValues.ElementAt(1);
@@ -719,13 +718,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var energyMeteringValue6  = wwcpCDR!.EnergyMeteringValues.ElementAt(5);
             var energyMeteringValue7  = wwcpCDR!.EnergyMeteringValues.ElementAt(6);
 
-            ClassicAssert.IsNotNull(energyMeteringValue1);
-            ClassicAssert.IsNotNull(energyMeteringValue2);
-            ClassicAssert.IsNotNull(energyMeteringValue3);
-            ClassicAssert.IsNotNull(energyMeteringValue4);
-            ClassicAssert.IsNotNull(energyMeteringValue5);
-            ClassicAssert.IsNotNull(energyMeteringValue6);
-            ClassicAssert.IsNotNull(energyMeteringValue7);
+            Assert.That(energyMeteringValue1, Is.Not.Null);
+            Assert.That(energyMeteringValue2, Is.Not.Null);
+            Assert.That(energyMeteringValue3, Is.Not.Null);
+            Assert.That(energyMeteringValue4, Is.Not.Null);
+            Assert.That(energyMeteringValue5, Is.Not.Null);
+            Assert.That(energyMeteringValue6, Is.Not.Null);
+            Assert.That(energyMeteringValue7, Is.Not.Null);
 
             var chargingPeriod1       = ocpiCDR!.ChargingPeriods.ElementAt(0);
             var chargingPeriod2       = ocpiCDR!.ChargingPeriods.ElementAt(1);
@@ -734,54 +733,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var chargingPeriod5       = ocpiCDR!.ChargingPeriods.ElementAt(4);
             var chargingPeriod6       = ocpiCDR!.ChargingPeriods.ElementAt(5);
 
-            ClassicAssert.IsNotNull(chargingPeriod1);
-            ClassicAssert.IsNotNull(chargingPeriod2);
-            ClassicAssert.IsNotNull(chargingPeriod3);
-            ClassicAssert.IsNotNull(chargingPeriod4);
-            ClassicAssert.IsNotNull(chargingPeriod5);
-            ClassicAssert.IsNotNull(chargingPeriod6);
+            Assert.That(chargingPeriod1, Is.Not.Null);
+            Assert.That(chargingPeriod2, Is.Not.Null);
+            Assert.That(chargingPeriod3, Is.Not.Null);
+            Assert.That(chargingPeriod4, Is.Not.Null);
+            Assert.That(chargingPeriod5, Is.Not.Null);
+            Assert.That(chargingPeriod6, Is.Not.Null);
 
-            ClassicAssert.AreEqual (energyMeteringValue1.Timestamp.ToISO8601(),                                chargingPeriod1.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue2.Timestamp.ToISO8601(),                                chargingPeriod2.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue3.Timestamp.ToISO8601(),                                chargingPeriod3.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue4.Timestamp.ToISO8601(),                                chargingPeriod4.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue5.Timestamp.ToISO8601(),                                chargingPeriod5.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue6.Timestamp.ToISO8601(),                                chargingPeriod6.StartTimestamp.      ToISO8601());
-            ClassicAssert.AreEqual (energyMeteringValue7.Timestamp.ToISO8601(),                                chargingPeriod6.StopTimestamp!.Value.ToISO8601());
+            Assert.That(chargingPeriod1.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue1.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod2.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue2.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod3.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue3.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod4.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue4.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod5.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue5.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod6.StartTimestamp.      ToISO8601(), Is.EqualTo(energyMeteringValue6.Timestamp.ToISO8601()));
+            Assert.That(chargingPeriod6.StopTimestamp!.Value.ToISO8601(), Is.EqualTo(energyMeteringValue7.Timestamp.ToISO8601()));
 
-            ClassicAssert.IsNotNull(chargingPeriod1.Dimensions);
-            ClassicAssert.IsNotNull(chargingPeriod2.Dimensions);
-            ClassicAssert.IsNotNull(chargingPeriod3.Dimensions);
-            ClassicAssert.IsNotNull(chargingPeriod4.Dimensions);
-            ClassicAssert.IsNotNull(chargingPeriod5.Dimensions);
-            ClassicAssert.IsNotNull(chargingPeriod6.Dimensions);
+            Assert.That(chargingPeriod1.Dimensions, Is.Not.Null);
+            Assert.That(chargingPeriod2.Dimensions, Is.Not.Null);
+            Assert.That(chargingPeriod3.Dimensions, Is.Not.Null);
+            Assert.That(chargingPeriod4.Dimensions, Is.Not.Null);
+            Assert.That(chargingPeriod5.Dimensions, Is.Not.Null);
+            Assert.That(chargingPeriod6.Dimensions, Is.Not.Null);
 
-            ClassicAssert.IsNotNull(chargingPeriod1.Dimensions.FirstOrDefault());
-            ClassicAssert.IsNotNull(chargingPeriod2.Dimensions.FirstOrDefault());
-            ClassicAssert.IsNotNull(chargingPeriod3.Dimensions.FirstOrDefault());
-            ClassicAssert.IsNotNull(chargingPeriod4.Dimensions.FirstOrDefault());
-            ClassicAssert.IsNotNull(chargingPeriod5.Dimensions.FirstOrDefault());
-            ClassicAssert.IsNotNull(chargingPeriod6.Dimensions.FirstOrDefault());
+            Assert.That(chargingPeriod1.Dimensions, Is.Not.Empty);
+            Assert.That(chargingPeriod2.Dimensions, Is.Not.Empty);
+            Assert.That(chargingPeriod3.Dimensions, Is.Not.Empty);
+            Assert.That(chargingPeriod4.Dimensions, Is.Not.Empty);
+            Assert.That(chargingPeriod5.Dimensions, Is.Not.Empty);
+            Assert.That(chargingPeriod6.Dimensions, Is.Not.Empty);
 
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod1.Dimensions.First().Type);
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod2.Dimensions.First().Type);
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod3.Dimensions.First().Type);
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod4.Dimensions.First().Type);
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod5.Dimensions.First().Type);
-            ClassicAssert.AreEqual (CDRDimensionType.ENERGY,                                                   chargingPeriod6.Dimensions.First().Type);
+            Assert.That(chargingPeriod1.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(chargingPeriod2.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(chargingPeriod3.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(chargingPeriod4.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(chargingPeriod5.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(chargingPeriod6.Dimensions.First().Type, Is.EqualTo(CDRDimensionType.ENERGY));
 
-            ClassicAssert.AreEqual (energyMeteringValue2.WattHours.kWh,                                        chargingPeriod1.Dimensions.First().Volume);
-            ClassicAssert.AreEqual (energyMeteringValue3.WattHours.kWh - energyMeteringValue2.WattHours.kWh,   chargingPeriod2.Dimensions.First().Volume);
-            ClassicAssert.AreEqual (energyMeteringValue4.WattHours.kWh - energyMeteringValue3.WattHours.kWh,   chargingPeriod3.Dimensions.First().Volume);
-            ClassicAssert.AreEqual (energyMeteringValue5.WattHours.kWh - energyMeteringValue4.WattHours.kWh,   chargingPeriod4.Dimensions.First().Volume);
-            ClassicAssert.AreEqual (energyMeteringValue6.WattHours.kWh - energyMeteringValue5.WattHours.kWh,   chargingPeriod5.Dimensions.First().Volume);
-            ClassicAssert.AreEqual (energyMeteringValue7.WattHours.kWh - energyMeteringValue6.WattHours.kWh,   chargingPeriod6.Dimensions.First().Volume);
+            Assert.That(chargingPeriod1.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue2.WattHours.kWh));
+            Assert.That(chargingPeriod2.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue3.WattHours.kWh - energyMeteringValue2.WattHours.kWh));
+            Assert.That(chargingPeriod3.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue4.WattHours.kWh - energyMeteringValue3.WattHours.kWh));
+            Assert.That(chargingPeriod4.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue5.WattHours.kWh - energyMeteringValue4.WattHours.kWh));
+            Assert.That(chargingPeriod5.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue6.WattHours.kWh - energyMeteringValue5.WattHours.kWh));
+            Assert.That(chargingPeriod6.Dimensions.First().Volume, Is.EqualTo(energyMeteringValue7.WattHours.kWh - energyMeteringValue6.WattHours.kWh));
 
-            ClassicAssert.AreEqual (wwcpCDR.ChargingPrice?.Base + wwcpCDR.ChargingPrice?.VAT,                  ocpiCDR!.TotalCost);
-            ClassicAssert.AreEqual (wwcpCDR.ConsumedEnergy!.Value,                                             ocpiCDR!.TotalEnergy);
-            ClassicAssert.AreEqual (wwcpCDR.Duration.Value,                                                    ocpiCDR!.TotalTime);
+            Assert.That(ocpiCDR!.TotalCost,   Is.EqualTo(wwcpCDR.ChargingPrice?.Base + wwcpCDR.ChargingPrice?.VAT));
+            Assert.That(ocpiCDR!.TotalEnergy, Is.EqualTo(wwcpCDR.ConsumedEnergy!.Value));
+            Assert.That(ocpiCDR!.TotalTime,   Is.EqualTo(wwcpCDR.Duration.Value));
 
-            ClassicAssert.AreEqual (wwcpCDR.EnergyMeterId!.Value.ToString(),                                   ocpiCDR!.EnergyMeterId.ToString());
+            Assert.That(ocpiCDR!.EnergyMeterId.ToString(), Is.EqualTo(wwcpCDR.EnergyMeterId!.Value.ToString()));
 
             //Tariffs
             //SignedData

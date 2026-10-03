@@ -18,7 +18,6 @@
 //#region Usings
 
 //using NUnit.Framework;
-//using NUnit.Framework.Legacy;
 
 //using org.GraphDefined.Vanaheimr.Illias;
 //using org.GraphDefined.Vanaheimr.Aegir;

@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -261,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var json = tariff1.ToJSON();
 
-            ClassicAssert.AreEqual("TARIFF0001",   json["id"]?.Value<String>());
+            Assert.That(json["id"]?.Value<String>(), Is.EqualTo("TARIFF0001"));
 
 
             if (Tariff.TryParse(json,
@@ -271,26 +270,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 tariff1.PartyId))
             {
 
-                ClassicAssert.IsNotNull(tariff2);
-                ClassicAssert.IsNull   (errorResponse);
+                Assert.That(tariff2,       Is.Not.Null);
+                Assert.That(errorResponse, Is.Null);
 
                 if (tariff2 is not null)
                 {
 
-                    ClassicAssert.AreEqual(tariff1.Id,                        tariff2.Id);
-                    ClassicAssert.AreEqual(tariff1.Currency,                  tariff2.Currency);
-                    ClassicAssert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
-                    ClassicAssert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
-                    ClassicAssert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
-                    ClassicAssert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
+                    Assert.That(tariff2.Id,             Is.EqualTo(tariff1.Id));
+                    Assert.That(tariff2.Currency,       Is.EqualTo(tariff1.Currency));
+                    Assert.That(tariff2.TariffElements, Is.EqualTo(tariff1.TariffElements));
+                    Assert.That(tariff2.TariffAltText,  Is.EqualTo(tariff1.TariffAltText));
+                    Assert.That(tariff2.TariffAltURL,   Is.EqualTo(tariff1.TariffAltURL));
+                    Assert.That(tariff2.EnergyMix,      Is.EqualTo(tariff1.EnergyMix));
 
-                    ClassicAssert.AreEqual(tariff1.LastUpdated.ToISO8601(),   tariff2.LastUpdated.ToISO8601());
+                    Assert.That(tariff2.LastUpdated.ToISO8601(), Is.EqualTo(tariff1.LastUpdated.ToISO8601()));
 
                 }
 
             }
             else
-                ClassicAssert.Fail("Error: " + errorResponse);
+                Assert.Fail("Error: " + errorResponse);
 
         }
 

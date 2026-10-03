@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -70,21 +69,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         CountryCode.Parse("DE"),
                                         Party_Id.   Parse("TNM"));
 
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(parsedToken);
-            ClassicAssert.IsNull   (errorResponse);
+            Assert.That(result,        Is.True, errorResponse);
+            Assert.That(parsedToken,   Is.Not.Null);
+            Assert.That(errorResponse, Is.Null);
 
             if (parsedToken is not null)
             {
 
-                ClassicAssert.AreEqual(Token_Id. Parse("012345678"),        parsedToken.Id);
-                ClassicAssert.AreEqual(TokenType.RFID,                      parsedToken.Type);
-                ClassicAssert.AreEqual(Auth_Id.  Parse("DE8ACC12E46L89"),   parsedToken.AuthId);
-                ClassicAssert.AreEqual("DF000-2001-8999",                   parsedToken.VisualNumber);
-                ClassicAssert.AreEqual("TheNewMotion",                      parsedToken.Issuer);
-                ClassicAssert.AreEqual(true,                                parsedToken.IsValid);
-                ClassicAssert.AreEqual(WhitelistType.ALLOWED,               parsedToken.WhitelistType);
-                ClassicAssert.AreEqual("2015-06-29T22:39:09.000Z",          parsedToken.LastUpdated.ToISO8601());
+                Assert.That(parsedToken.Id,                      Is.EqualTo(Token_Id. Parse("012345678")));
+                Assert.That(parsedToken.Type,                    Is.EqualTo(TokenType.RFID));
+                Assert.That(parsedToken.AuthId,                  Is.EqualTo(Auth_Id.  Parse("DE8ACC12E46L89")));
+                Assert.That(parsedToken.VisualNumber,            Is.EqualTo("DF000-2001-8999"));
+                Assert.That(parsedToken.Issuer,                  Is.EqualTo("TheNewMotion"));
+                Assert.That(parsedToken.IsValid,                 Is.EqualTo(true));
+                Assert.That(parsedToken.WhitelistType,           Is.EqualTo(WhitelistType.ALLOWED));
+                Assert.That(parsedToken.LastUpdated.ToISO8601(), Is.EqualTo("2015-06-29T22:39:09.000Z"));
 
             }
 
@@ -118,15 +117,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var json = token1.ToJSON();
 
-            ClassicAssert.AreEqual("Token0001",                     json["uid"]?.                             Value<String>());
-            ClassicAssert.AreEqual("RFID",                          json["type"]?.                            Value<String>());
-            ClassicAssert.AreEqual("0815",                          json["auth_id"]?.                         Value<String>());
-            ClassicAssert.AreEqual("RFID:0815",                     json["visual_number"]?.                   Value<String>());
-            ClassicAssert.AreEqual("GraphDefined GmbH",             json["issuer"]?.                          Value<String>());
-            ClassicAssert.AreEqual(true,                            json["valid"]?.                           Value<Boolean>());
-            ClassicAssert.AreEqual("NEVER",                         json["whitelist"]?.                       Value<String>());
-            ClassicAssert.AreEqual("de",                            json["language"]?.                        Value<String>());
-            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",      json["last_updated"]?.                    Value<String>());
+            Assert.That(json["uid"]?.                             Value<String>(),  Is.EqualTo("Token0001"));
+            Assert.That(json["type"]?.                            Value<String>(),  Is.EqualTo("RFID"));
+            Assert.That(json["auth_id"]?.                         Value<String>(),  Is.EqualTo("0815"));
+            Assert.That(json["visual_number"]?.                   Value<String>(),  Is.EqualTo("RFID:0815"));
+            Assert.That(json["issuer"]?.                          Value<String>(),  Is.EqualTo("GraphDefined GmbH"));
+            Assert.That(json["valid"]?.                           Value<Boolean>(), Is.EqualTo(true));
+            Assert.That(json["whitelist"]?.                       Value<String>(),  Is.EqualTo("NEVER"));
+            Assert.That(json["language"]?.                        Value<String>(),  Is.EqualTo("de"));
+            Assert.That(json["last_updated"]?.                    Value<String>(),  Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
 
             var result = Token.TryParse(json,
@@ -135,22 +134,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         CountryCode.Parse("DE"),
                                         Party_Id.   Parse("GDF"));
 
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(token2);
-            ClassicAssert.IsNull   (errorResponse);
+            Assert.That(result,        Is.True, errorResponse);
+            Assert.That(token2,        Is.Not.Null);
+            Assert.That(errorResponse, Is.Null);
 
             if (token2 is not null)
             {
 
-                ClassicAssert.AreEqual(token1.Id,                       token2.Id);
-                ClassicAssert.AreEqual(token1.Type,                     token2.Type);
-                ClassicAssert.AreEqual(token1.AuthId,                   token2.AuthId);
-                ClassicAssert.AreEqual(token1.Issuer,                   token2.Issuer);
-                ClassicAssert.AreEqual(token1.IsValid,                  token2.IsValid);
-                ClassicAssert.AreEqual(token1.WhitelistType,            token2.WhitelistType);
-                ClassicAssert.AreEqual(token1.VisualNumber,             token2.VisualNumber);
-                ClassicAssert.AreEqual(token1.UILanguage,               token2.UILanguage);
-                ClassicAssert.AreEqual(token1.LastUpdated.ToISO8601(),  token2.LastUpdated.ToISO8601());
+                Assert.That(token2.Id,                      Is.EqualTo(token1.Id));
+                Assert.That(token2.Type,                    Is.EqualTo(token1.Type));
+                Assert.That(token2.AuthId,                  Is.EqualTo(token1.AuthId));
+                Assert.That(token2.Issuer,                  Is.EqualTo(token1.Issuer));
+                Assert.That(token2.IsValid,                 Is.EqualTo(token1.IsValid));
+                Assert.That(token2.WhitelistType,           Is.EqualTo(token1.WhitelistType));
+                Assert.That(token2.VisualNumber,            Is.EqualTo(token1.VisualNumber));
+                Assert.That(token2.UILanguage,              Is.EqualTo(token1.UILanguage));
+                Assert.That(token2.LastUpdated.ToISO8601(), Is.EqualTo(token1.LastUpdated.ToISO8601()));
 
             }
 

@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -106,49 +105,49 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             var JSON = session1.ToJSON();
 
-            ClassicAssert.AreEqual("DE",                              JSON["country_code"].                    Value<String>());
-            ClassicAssert.AreEqual("GEF",                             JSON["party_id"].                        Value<String>());
-            ClassicAssert.AreEqual("Session0001",                     JSON["id"].                              Value<String>());
-            ClassicAssert.AreEqual("2020-08-21T00:00:00.000Z",        JSON["start_date_time"].                 Value<String>());
-            ClassicAssert.AreEqual("2020-08-22T00:00:00.000Z",        JSON["end_date_time"].                   Value<String>());
-            ClassicAssert.AreEqual(1.11,                              JSON["kwh"].                             Value<Decimal>());
-            ClassicAssert.AreEqual("1234",                            JSON["cdr_token"]["uid"].                Value<String>());
-            ClassicAssert.AreEqual("RFID",                            JSON["cdr_token"]["type"].               Value<String>());
-            ClassicAssert.AreEqual("Contract0815",                    JSON["cdr_token"]["contract_id"].        Value<String>());
-            ClassicAssert.AreEqual("AUTH_REQUEST",                    JSON["auth_method"].                     Value<String>());
-            ClassicAssert.AreEqual("Auth1234",                        JSON["authorization_reference"].         Value<String>());
-            ClassicAssert.AreEqual("LOC0001",                         JSON["location_id"].                     Value<String>());
-            ClassicAssert.AreEqual("EVSE0001",                        JSON["evse_uid"].                        Value<String>());
-            ClassicAssert.AreEqual("C1",                              JSON["connector_id"].                    Value<String>());
-            ClassicAssert.AreEqual("Meter0001",                       JSON["meter_id"].                        Value<String>());
-            ClassicAssert.AreEqual("EUR",                             JSON["currency"].                        Value<String>());
+            Assert.That(JSON["country_code"].                    Value<String>(),  Is.EqualTo("DE"));
+            Assert.That(JSON["party_id"].                        Value<String>(),  Is.EqualTo("GEF"));
+            Assert.That(JSON["id"].                              Value<String>(),  Is.EqualTo("Session0001"));
+            Assert.That(JSON["start_date_time"].                 Value<String>(),  Is.EqualTo("2020-08-21T00:00:00.000Z"));
+            Assert.That(JSON["end_date_time"].                   Value<String>(),  Is.EqualTo("2020-08-22T00:00:00.000Z"));
+            Assert.That(JSON["kwh"].                             Value<Decimal>(), Is.EqualTo(1.11));
+            Assert.That(JSON["cdr_token"]["uid"].                Value<String>(),  Is.EqualTo("1234"));
+            Assert.That(JSON["cdr_token"]["type"].               Value<String>(),  Is.EqualTo("RFID"));
+            Assert.That(JSON["cdr_token"]["contract_id"].        Value<String>(),  Is.EqualTo("Contract0815"));
+            Assert.That(JSON["auth_method"].                     Value<String>(),  Is.EqualTo("AUTH_REQUEST"));
+            Assert.That(JSON["authorization_reference"].         Value<String>(),  Is.EqualTo("Auth1234"));
+            Assert.That(JSON["location_id"].                     Value<String>(),  Is.EqualTo("LOC0001"));
+            Assert.That(JSON["evse_uid"].                        Value<String>(),  Is.EqualTo("EVSE0001"));
+            Assert.That(JSON["connector_id"].                    Value<String>(),  Is.EqualTo("C1"));
+            Assert.That(JSON["meter_id"].                        Value<String>(),  Is.EqualTo("Meter0001"));
+            Assert.That(JSON["currency"].                        Value<String>(),  Is.EqualTo("EUR"));
             //ClassicAssert.AreEqual("Stadtwerke Jena-Ost",             JSON["charging_periods"]["xxx"].Value<String>());
-            ClassicAssert.AreEqual(1.12,                              JSON["total_cost"]["excl_vat"].          Value<Decimal>());
-            ClassicAssert.AreEqual(2.24,                              JSON["total_cost"]["incl_vat"].          Value<Decimal>());
-            ClassicAssert.AreEqual("ACTIVE",                          JSON["status"].                          Value<String>());
-            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",        JSON["last_updated"].                    Value<String>());
+            Assert.That(JSON["total_cost"]["excl_vat"].          Value<Decimal>(), Is.EqualTo(1.12));
+            Assert.That(JSON["total_cost"]["incl_vat"].          Value<Decimal>(), Is.EqualTo(2.24));
+            Assert.That(JSON["status"].                          Value<String>(),  Is.EqualTo("ACTIVE"));
+            Assert.That(JSON["last_updated"].                    Value<String>(),  Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
-            ClassicAssert.IsTrue(Session.TryParse(JSON, out var session2, out var errorResponse));
-            ClassicAssert.IsNull(errorResponse);
+            Assert.That(Session.TryParse(JSON, out var session2, out var errorResponse), Is.True);
+            Assert.That(errorResponse,                                                   Is.Null);
 
-            ClassicAssert.AreEqual(session1.CountryCode,              session2.CountryCode);
-            ClassicAssert.AreEqual(session1.PartyId,                  session2.PartyId);
-            ClassicAssert.AreEqual(session1.Id,                       session2.Id);
-            ClassicAssert.AreEqual(session1.Start.    ToISO8601(),    session2.Start.    ToISO8601());
-            ClassicAssert.AreEqual(session1.End.Value.ToISO8601(),    session2.End.Value.ToISO8601());
-            ClassicAssert.AreEqual(session1.kWh,                      session2.kWh);
-            ClassicAssert.AreEqual(session1.CDRToken,                 session2.CDRToken);
-            ClassicAssert.AreEqual(session1.AuthMethod,               session2.AuthMethod);
-            ClassicAssert.AreEqual(session1.AuthorizationReference,   session2.AuthorizationReference);
-            ClassicAssert.AreEqual(session1.LocationId,               session2.LocationId);
-            ClassicAssert.AreEqual(session1.EVSEUId,                  session2.EVSEUId);
-            ClassicAssert.AreEqual(session1.ConnectorId,              session2.ConnectorId);
-            ClassicAssert.AreEqual(session1.EnergyMeterId,            session2.EnergyMeterId);
-            ClassicAssert.AreEqual(session1.Currency,                 session2.Currency);
-            ClassicAssert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
-            ClassicAssert.AreEqual(session1.TotalCosts,               session2.TotalCosts);
-            ClassicAssert.AreEqual(session1.Status,                   session2.Status);
-            ClassicAssert.AreEqual(session1.LastUpdated.ToISO8601(),  session2.LastUpdated.ToISO8601());
+            Assert.That(session2.CountryCode,             Is.EqualTo(session1.CountryCode));
+            Assert.That(session2.PartyId,                 Is.EqualTo(session1.PartyId));
+            Assert.That(session2.Id,                      Is.EqualTo(session1.Id));
+            Assert.That(session2.Start.    ToISO8601(),   Is.EqualTo(session1.Start.    ToISO8601()));
+            Assert.That(session2.End.Value.ToISO8601(),   Is.EqualTo(session1.End.Value.ToISO8601()));
+            Assert.That(session2.kWh,                     Is.EqualTo(session1.kWh));
+            Assert.That(session2.CDRToken,                Is.EqualTo(session1.CDRToken));
+            Assert.That(session2.AuthMethod,              Is.EqualTo(session1.AuthMethod));
+            Assert.That(session2.AuthorizationReference,  Is.EqualTo(session1.AuthorizationReference));
+            Assert.That(session2.LocationId,              Is.EqualTo(session1.LocationId));
+            Assert.That(session2.EVSEUId,                 Is.EqualTo(session1.EVSEUId));
+            Assert.That(session2.ConnectorId,             Is.EqualTo(session1.ConnectorId));
+            Assert.That(session2.EnergyMeterId,           Is.EqualTo(session1.EnergyMeterId));
+            Assert.That(session2.Currency,                Is.EqualTo(session1.Currency));
+            Assert.That(session2.ChargingPeriods,         Is.EqualTo(session1.ChargingPeriods));
+            Assert.That(session2.TotalCosts,              Is.EqualTo(session1.TotalCosts));
+            Assert.That(session2.Status,                  Is.EqualTo(session1.Status));
+            Assert.That(session2.LastUpdated.ToISO8601(), Is.EqualTo(session1.LastUpdated.ToISO8601()));
 
         }
 
@@ -198,13 +197,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             #endregion
 
             var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(parsedSession);
-            ClassicAssert.IsNull   (errorResponse);
+            Assert.That(result,        Is.True, errorResponse);
+            Assert.That(parsedSession, Is.Not.Null);
+            Assert.That(errorResponse, Is.Null);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("STK"),                  parsedSession.PartyId);
-            ClassicAssert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
+            Assert.That(parsedSession.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedSession.PartyId,     Is.EqualTo(Party_Id.   Parse("STK")));
+            Assert.That(parsedSession.Id,          Is.EqualTo(Session_Id. Parse("101")));
             //ClassicAssert.AreEqual(Session1.Start.    ToISO8601(),    parsedSession.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Session1.End.Value.ToISO8601(),    parsedSession.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Session1.kWh,                      parsedSession.kWh);
@@ -301,15 +300,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             #endregion
 
             var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(parsedSession);
-            ClassicAssert.IsNull   (errorResponse);
+            Assert.That(result,        Is.True, errorResponse);
+            Assert.That(parsedSession, Is.Not.Null);
+            Assert.That(errorResponse, Is.Null);
 
-            ClassicAssert.AreEqual(8.50M, parsedSession?.TotalCosts?.BeforeTaxes);
+            Assert.That(parsedSession?.TotalCosts?.BeforeTaxes, Is.EqualTo(8.50M));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);
-            ClassicAssert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
+            Assert.That(parsedSession.CountryCode, Is.EqualTo(CountryCode.Parse("BE")));
+            Assert.That(parsedSession.PartyId,     Is.EqualTo(Party_Id.   Parse("BEC")));
+            Assert.That(parsedSession.Id,          Is.EqualTo(Session_Id. Parse("101")));
             //ClassicAssert.AreEqual(Session1.Start.    ToISO8601(),    parsedSession.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Session1.End.Value.ToISO8601(),    parsedSession.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Session1.kWh,                      parsedSession.kWh);
@@ -372,9 +371,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
 
-            ClassicAssert.IsFalse  (result, "A session with a total cost as before is read.");
-            ClassicAssert.IsNull   (parsedSession);
-            StringAssert.Contains  ("total_cost", errorResponse ?? "", "Why the session is refused is not said.");
+            Assert.That(result,              Is.False, "A session with a total cost as before is read.");
+            Assert.That(parsedSession,       Is.Null);
+            Assert.That(errorResponse ?? "", Does.Contain("total_cost"), "Why the session is refused is not said.");
 
         }
 

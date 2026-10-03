@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -127,29 +126,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             var JSON = TariffA.ToJSON();
 
-            ClassicAssert.AreEqual("DE",                             JSON["country_code"].Value<String>());
-            ClassicAssert.AreEqual("GEF",                            JSON["party_id"].    Value<String>());
-            ClassicAssert.AreEqual("TARIFF0001",                     JSON["id"].          Value<String>());
+            Assert.That(JSON["country_code"].Value<String>(), Is.EqualTo("DE"));
+            Assert.That(JSON["party_id"].    Value<String>(), Is.EqualTo("GEF"));
+            Assert.That(JSON["id"].          Value<String>(), Is.EqualTo("TARIFF0001"));
 
-            ClassicAssert.IsTrue(Tariff.TryParse(JSON, out Tariff TariffB, out String ErrorResponse));
-            ClassicAssert.IsNull(ErrorResponse);
+            Assert.That(Tariff.TryParse(JSON, out Tariff TariffB, out String ErrorResponse), Is.True);
+            Assert.That(ErrorResponse,                                                       Is.Null);
 
-            ClassicAssert.AreEqual(TariffA.CountryCode,              TariffB.CountryCode);
-            ClassicAssert.AreEqual(TariffA.PartyId,                  TariffB.PartyId);
-            ClassicAssert.AreEqual(TariffA.Id,                       TariffB.Id);
-            ClassicAssert.AreEqual(TariffA.Currency,                 TariffB.Currency);
-            ClassicAssert.AreEqual(TariffA.TariffElements,           TariffB.TariffElements);
+            Assert.That(TariffB.CountryCode,    Is.EqualTo(TariffA.CountryCode));
+            Assert.That(TariffB.PartyId,        Is.EqualTo(TariffA.PartyId));
+            Assert.That(TariffB.Id,             Is.EqualTo(TariffA.Id));
+            Assert.That(TariffB.Currency,       Is.EqualTo(TariffA.Currency));
+            Assert.That(TariffB.TariffElements, Is.EqualTo(TariffA.TariffElements));
 
-            ClassicAssert.AreEqual(TariffA.TariffType,               TariffB.TariffType);
-            ClassicAssert.AreEqual(TariffA.TariffAltText,            TariffB.TariffAltText);
-            ClassicAssert.AreEqual(TariffA.TariffAltURL,             TariffB.TariffAltURL);
-            ClassicAssert.AreEqual(TariffA.MinPrice,                 TariffB.MinPrice);
-            ClassicAssert.AreEqual(TariffA.MaxPrice,                 TariffB.MaxPrice);
-            ClassicAssert.AreEqual(TariffA.Start,                    TariffB.Start);
-            ClassicAssert.AreEqual(TariffA.End,                      TariffB.End);
-            ClassicAssert.AreEqual(TariffA.EnergyMix,                TariffB.EnergyMix);
+            Assert.That(TariffB.TariffType,    Is.EqualTo(TariffA.TariffType));
+            Assert.That(TariffB.TariffAltText, Is.EqualTo(TariffA.TariffAltText));
+            Assert.That(TariffB.TariffAltURL,  Is.EqualTo(TariffA.TariffAltURL));
+            Assert.That(TariffB.MinPrice,      Is.EqualTo(TariffA.MinPrice));
+            Assert.That(TariffB.MaxPrice,      Is.EqualTo(TariffA.MaxPrice));
+            Assert.That(TariffB.Start,         Is.EqualTo(TariffA.Start));
+            Assert.That(TariffB.End,           Is.EqualTo(TariffA.End));
+            Assert.That(TariffB.EnergyMix,     Is.EqualTo(TariffA.EnergyMix));
 
-            ClassicAssert.AreEqual(TariffA.LastUpdated.ToISO8601(),  TariffB.LastUpdated.ToISO8601());
+            Assert.That(TariffB.LastUpdated.ToISO8601(), Is.EqualTo(TariffA.LastUpdated.ToISO8601()));
 
         }
 

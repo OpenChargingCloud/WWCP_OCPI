@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -268,42 +267,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var JSON = Location1.ToJSON();
 
-            ClassicAssert.AreEqual("DE",                               JSON["country_code"].Value<String>());
-            ClassicAssert.AreEqual("GEF",                              JSON["party_id"].    Value<String>());
-            ClassicAssert.AreEqual("LOC0001",                          JSON["id"].          Value<String>());
+            Assert.That(JSON["country_code"].Value<String>(), Is.EqualTo("DE"));
+            Assert.That(JSON["party_id"].    Value<String>(), Is.EqualTo("GEF"));
+            Assert.That(JSON["id"].          Value<String>(), Is.EqualTo("LOC0001"));
 
-            ClassicAssert.IsTrue(Location.TryParse(JSON, out Location Location2, out String ErrorResponse));
-            ClassicAssert.IsNull(ErrorResponse);
+            Assert.That(Location.TryParse(JSON, out Location Location2, out String ErrorResponse), Is.True);
+            Assert.That(ErrorResponse,                                                             Is.Null);
 
-            ClassicAssert.AreEqual(Location1.CountryCode,              Location2.CountryCode);
-            ClassicAssert.AreEqual(Location1.PartyId,                  Location2.PartyId);
-            ClassicAssert.AreEqual(Location1.Id,                       Location2.Id);
+            Assert.That(Location2.CountryCode, Is.EqualTo(Location1.CountryCode));
+            Assert.That(Location2.PartyId,     Is.EqualTo(Location1.PartyId));
+            Assert.That(Location2.Id,          Is.EqualTo(Location1.Id));
 
-            ClassicAssert.AreEqual(Location1.Publish,                  Location2.Publish);
-            ClassicAssert.AreEqual(Location1.Address,                  Location2.Address);
-            ClassicAssert.AreEqual(Location1.City,                     Location2.City);
-            ClassicAssert.AreEqual(Location1.Country,                  Location2.Country);
-            ClassicAssert.AreEqual(Location1.Coordinates,              Location2.Coordinates);
-            ClassicAssert.AreEqual(Location1.TimeZone,                 Location2.TimeZone);
+            Assert.That(Location2.Publish,     Is.EqualTo(Location1.Publish));
+            Assert.That(Location2.Address,     Is.EqualTo(Location1.Address));
+            Assert.That(Location2.City,        Is.EqualTo(Location1.City));
+            Assert.That(Location2.Country,     Is.EqualTo(Location1.Country));
+            Assert.That(Location2.Coordinates, Is.EqualTo(Location1.Coordinates));
+            Assert.That(Location2.TimeZone,    Is.EqualTo(Location1.TimeZone));
 
-            ClassicAssert.AreEqual(Location1.PublishAllowedTo,         Location2.PublishAllowedTo);
-            ClassicAssert.AreEqual(Location1.Name,                     Location2.Name);
-            ClassicAssert.AreEqual(Location1.PostalCode,               Location2.PostalCode);
-            ClassicAssert.AreEqual(Location1.State,                    Location2.State);
-            ClassicAssert.AreEqual(Location1.RelatedLocations,         Location2.RelatedLocations);
-            ClassicAssert.AreEqual(Location1.ParkingType,              Location2.ParkingType);
+            Assert.That(Location2.PublishAllowedTo, Is.EqualTo(Location1.PublishAllowedTo));
+            Assert.That(Location2.Name,             Is.EqualTo(Location1.Name));
+            Assert.That(Location2.PostalCode,       Is.EqualTo(Location1.PostalCode));
+            Assert.That(Location2.State,            Is.EqualTo(Location1.State));
+            Assert.That(Location2.RelatedLocations, Is.EqualTo(Location1.RelatedLocations));
+            Assert.That(Location2.ParkingType,      Is.EqualTo(Location1.ParkingType));
             //ClassicAssert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
-            ClassicAssert.AreEqual(Location1.Directions,               Location2.Directions);
-            ClassicAssert.AreEqual(Location1.Operator,                 Location2.Operator);
-            ClassicAssert.AreEqual(Location1.SubOperator,              Location2.SubOperator);
-            ClassicAssert.AreEqual(Location1.Owner,                    Location2.Owner);
-            ClassicAssert.AreEqual(Location1.Facilities,               Location2.Facilities);
+            Assert.That(Location2.Directions,  Is.EqualTo(Location1.Directions));
+            Assert.That(Location2.Operator,    Is.EqualTo(Location1.Operator));
+            Assert.That(Location2.SubOperator, Is.EqualTo(Location1.SubOperator));
+            Assert.That(Location2.Owner,       Is.EqualTo(Location1.Owner));
+            Assert.That(Location2.Facilities,  Is.EqualTo(Location1.Facilities));
             //ClassicAssert.AreEqual(LocationA.OpeningTimes,             LocationB.OpeningTimes);
-            ClassicAssert.AreEqual(Location1.ChargingWhenClosed,       Location2.ChargingWhenClosed);
-            ClassicAssert.AreEqual(Location1.Images,                   Location2.Images);
-            ClassicAssert.AreEqual(Location1.EnergyMix,                Location2.EnergyMix);
+            Assert.That(Location2.ChargingWhenClosed, Is.EqualTo(Location1.ChargingWhenClosed));
+            Assert.That(Location2.Images,             Is.EqualTo(Location1.Images));
+            Assert.That(Location2.EnergyMix,          Is.EqualTo(Location1.EnergyMix));
 
-            ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),  Location2.LastUpdated.ToISO8601());
+            Assert.That(Location2.LastUpdated.ToISO8601(), Is.EqualTo(Location1.LastUpdated.ToISO8601()));
 
         }
 
@@ -537,15 +536,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""country_code"": ""FR"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Patching the 'country code' of a charging location is not allowed!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'country code' of a charging location is not allowed!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -778,15 +776,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""party_id"": ""GDF"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Patching the 'party identification' of a charging location is not allowed!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'party identification' of a charging location is not allowed!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                                   patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                     patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -1019,15 +1016,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""id"": ""2"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Patching the 'identification' of a charging location is not allowed!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'identification' of a charging location is not allowed!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                             patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                               patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -1260,17 +1256,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""name"": ""Location 0001a"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsTrue   (patchResult.IsSuccess);
-            ClassicAssert.IsFalse  (patchResult.IsFailed);
-            ClassicAssert.IsNull   (patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.True);
+            Assert.That(patchResult.IsFailed,      Is.False);
+            Assert.That(patchResult.ErrorResponse, Is.Null);
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual   (Location_Id.Parse("LOC0001"),            patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual   ("Location 0001a",                        patchResult.PatchedData.Name);
-            ClassicAssert.AreNotEqual(DateTimeOffset.Parse("2020-09-21T00:00:00Z"), patchResult.PatchedData.LastUpdated);
+            Assert.That(patchResult.PatchedData.Id,          Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.Name,        Is.EqualTo("Location 0001a"));
+            Assert.That(patchResult.PatchedData.LastUpdated, Is.Not.EqualTo(DateTimeOffset.Parse("2020-09-21T00:00:00Z")));
 
-            ClassicAssert.IsTrue     (Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
+            Assert.That(Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5), Is.True);
 
         }
 
@@ -1503,15 +1498,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""name"": ""Location 0001a"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsTrue   (patchResult.IsSuccess);
-            ClassicAssert.IsFalse  (patchResult.IsFailed);
-            ClassicAssert.IsNull   (patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.True);
+            Assert.That(patchResult.IsFailed,      Is.False);
+            Assert.That(patchResult.ErrorResponse, Is.Null);
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("Location 0001a",              patchResult.PatchedData.Name);
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.Name,                    Is.EqualTo("Location 0001a"));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-10-15T00:00:00.000Z"));
 
         }
 
@@ -1744,18 +1738,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""facilities"": [ ""CAFE"", ""AIRPORT"" ], ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsTrue   (patchResult.IsSuccess);
-            ClassicAssert.IsFalse  (patchResult.IsFailed);
-            ClassicAssert.IsNull   (patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.True);
+            Assert.That(patchResult.IsFailed,      Is.False);
+            Assert.That(patchResult.ErrorResponse, Is.Null);
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
-            ClassicAssert.AreEqual (2,                             patchResult.PatchedData.Facilities.        Count());
-            ClassicAssert.AreEqual (Facility.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
-            ClassicAssert.AreEqual (Facility.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                         Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.Name,                       Is.EqualTo("Location 0001"));
+            Assert.That(patchResult.PatchedData.Facilities.        Count(), Is.EqualTo(2));
+            Assert.That(patchResult.PatchedData.Facilities.        First(), Is.EqualTo(Facility.Parse("CAFE")));
+            Assert.That(patchResult.PatchedData.Facilities.Skip(1).First(), Is.EqualTo(Facility.Parse("AIRPORT")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(),    Is.EqualTo("2020-10-15T00:00:00.000Z"));
 
         }
 
@@ -1988,16 +1981,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""facilities"": null, ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsTrue   (patchResult.IsSuccess);
-            ClassicAssert.IsFalse  (patchResult.IsFailed);
-            ClassicAssert.IsNull   (patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.True);
+            Assert.That(patchResult.IsFailed,      Is.False);
+            Assert.That(patchResult.ErrorResponse, Is.Null);
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
-            ClassicAssert.AreEqual (0,                             patchResult.PatchedData.Facilities. Count());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.Name,                    Is.EqualTo("Location 0001"));
+            Assert.That(patchResult.PatchedData.Facilities. Count(),     Is.EqualTo(0));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-10-15T00:00:00.000Z"));
 
         }
 
@@ -2230,15 +2222,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""name"": null, ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsTrue   (patchResult.IsSuccess);
-            ClassicAssert.IsFalse  (patchResult.IsFailed);
-            ClassicAssert.IsNull   (patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.True);
+            Assert.That(patchResult.IsFailed,      Is.False);
+            Assert.That(patchResult.ErrorResponse, Is.Null);
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            ClassicAssert.IsTrue   (patchResult.PatchedData.Name.IsNullOrEmpty());
-            ClassicAssert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.Name.IsNullOrEmpty(),    Is.True);
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-10-15T00:00:00.000Z"));
 
         }
 
@@ -2471,15 +2462,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""evses"": ""I-N-V-A-L-I-D!"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Patching the 'evses' array of a charging location is not allowed!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'evses' array of a charging location is not allowed!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                          patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                            patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -2712,15 +2702,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""operator"": ""I-N-V-A-L-I-D!"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Invalid JSON merge patch of a charging location: Invalid operator!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a charging location: Invalid operator!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -2953,15 +2942,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""last_updated"": ""I-N-V-A-L-I-D!"" }"));
 
-            ClassicAssert.IsNotNull(patchResult);
-            ClassicAssert.IsFalse  (patchResult.IsSuccess);
-            ClassicAssert.IsTrue   (patchResult.IsFailed);
-            ClassicAssert.IsNotNull(patchResult.ErrorResponse);
-            ClassicAssert.AreEqual ("Invalid JSON merge patch of a charging location: Invalid 'last updated'!",   patchResult.ErrorResponse);
-            ClassicAssert.IsNotNull(patchResult.PatchedData);
+            Assert.That(patchResult.IsSuccess,     Is.False);
+            Assert.That(patchResult.IsFailed,      Is.True);
+            Assert.That(patchResult.ErrorResponse, Is.Not.Null);
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a charging location: Invalid 'last updated'!"));
+            Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
-            ClassicAssert.AreEqual (Location_Id.Parse("LOC0001"),                                                 patchResult.PatchedData.Id);
-            ClassicAssert.AreEqual ("2020-09-21T00:00:00.000Z",                                                   patchResult.PatchedData.LastUpdated.ToISO8601());
+            Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
+            Assert.That(patchResult.PatchedData.LastUpdated.ToISO8601(), Is.EqualTo("2020-09-21T00:00:00.000Z"));
 
         }
 
@@ -3057,13 +3045,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("BE"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("LOC1"),                                  parsedLocation.Id);
-            ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("BE")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("BEC")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("LOC1")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(true));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3168,13 +3156,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("SE"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EVC"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),  parsedLocation.Id);
-            ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("SE")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("EVC")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(true));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3247,13 +3235,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
-            ClassicAssert.AreEqual(true,                                                       parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALF")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(true));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3325,13 +3313,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
-            ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALF")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(false));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3413,13 +3401,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),  parsedLocation.Id);
-            ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALL")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(false));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3494,13 +3482,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            ClassicAssert.IsNull(ErrorResponse);
-            ClassicAssert.IsTrue(result);
+            Assert.That(ErrorResponse, Is.Null);
+            Assert.That(result,        Is.True);
 
-            ClassicAssert.AreEqual(CountryCode.Parse("DE"),                                    parsedLocation.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
-            ClassicAssert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),  parsedLocation.Id);
-            ClassicAssert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("DE")));
+            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALL")));
+            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77")));
+            Assert.That(parsedLocation.Publish,     Is.EqualTo(false));
             //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
             //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
             //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);

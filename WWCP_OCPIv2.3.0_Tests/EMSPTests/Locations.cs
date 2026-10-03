@@ -20,7 +20,6 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
@@ -51,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -338,22 +337,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (1, response.Data.Count());
+                    Assert.That(response.Data.Count(), Is.EqualTo(1));
 
                 }
 
@@ -379,7 +378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -666,22 +665,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (1, response.Data.Count());
+                    Assert.That(response.Data.Count(), Is.EqualTo(1));
 
                 }
 
@@ -707,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -1003,22 +1002,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,            response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!",  response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                      Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("AC1")));
+                    Assert.That(response.Data.First().EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("AC1")), Is.True);
 
-                    ClassicAssert.AreEqual (1, response.Data.Count());
+                    Assert.That(response.Data.Count(), Is.EqualTo(1));
 
                 }
 
@@ -1045,7 +1044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -1332,22 +1331,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (1,  response.Data.Count());
+                    Assert.That(response.Data.Count(), Is.EqualTo(1));
 
                 }
 
@@ -1373,7 +1372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -1660,22 +1659,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.EVSEs.First().Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (1,  response.Data.Count());
+                    Assert.That(response.Data.Count(), Is.EqualTo(1));
 
                 }
 
@@ -1702,7 +1701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -1992,22 +1991,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-26T05:07:21.108Z"}
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (2,  response.Data.Count());  // 2 Connectors!
+                    Assert.That(response.Data.Count(), Is.EqualTo(2));  // 2 Connectors!
 
                 }
 
@@ -2033,7 +2032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -2321,22 +2320,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue   (response.Data.Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.Connectors.First().TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
-                    ClassicAssert.AreEqual (2,  response.Data.Count());  // 2 Connectors!
+                    Assert.That(response.Data.Count(), Is.EqualTo(2));  // 2 Connectors!
 
                 }
 
@@ -2363,7 +2362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -2654,20 +2653,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-26T05:07:21.108Z"}
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue(response.Data.TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
                 }
 
@@ -2693,7 +2692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null &&
                 cpoCommonAPI    is not null)
@@ -2982,20 +2981,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-18T03:41:28.838Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.RequestId);
-                ClassicAssert.IsNotNull(response.CorrelationId);
-                ClassicAssert.IsNotNull(response.Data);
+                Assert.That(response.RequestId,     Is.Not.Null);
+                Assert.That(response.CorrelationId, Is.Not.Null);
+                Assert.That(response.Data,          Is.Not.Null);
 
                 if (response.Data is not null)
                 {
 
-                    ClassicAssert.IsTrue(response.Data.TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")));
+                    Assert.That(response.Data.TariffIds.Contains(Tariff_Id.Parse("DE*GEF*T0001")), Is.True);
 
                 }
 

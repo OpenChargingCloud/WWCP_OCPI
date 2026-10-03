@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -47,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -90,27 +89,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //    "timestamp":       "2022-12-26T10:29:49.143Z"
                 //}
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 var credentials = response.Data;
-                ClassicAssert.IsNotNull(credentials);
+                Assert.That(credentials, Is.Not.Null);
 
                 if (credentials is not null)
                 {
 
-                    ClassicAssert.AreEqual ("cso-2-emp1:token",                           credentials.    Token.                            ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.3.0/versions",   credentials.    URL.                              ToString());
-                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.PartyId.      ToString());
+                    Assert.That(credentials.    Token.                            ToString(),   Is.EqualTo("cso-2-emp1:token"));
+                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:3301/ocpi/v2.3.0/versions"));
+                    Assert.That(credentials.    Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
+                    Assert.That(credentials.    Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GEF"));
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
-                    ClassicAssert.IsNotNull(businessDetails);
-                    ClassicAssert.AreEqual ("GraphDefined CSO Services",                  businessDetails.Name);
-                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                          ToString());
+                    Assert.That(businessDetails,                                              Is.Not.Null);
+                    Assert.That(businessDetails.Name,                                         Is.EqualTo("GraphDefined CSO Services"));
+                    Assert.That(businessDetails.Website.                          ToString(), Is.EqualTo("https://www.graphdefined.com/cso"));
 
                 }
 
@@ -134,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -177,27 +176,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                 //    "timestamp":       "2022-12-26T10:29:49.143Z"
                 //}
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 var credentials = response.Data;
-                ClassicAssert.IsNotNull(credentials);
+                Assert.That(credentials, Is.Not.Null);
 
                 if (credentials is not null)
                 {
 
-                    ClassicAssert.AreEqual ("cso-2-emp2:token",                           credentials.    Token.                            ToString());
-                    ClassicAssert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.3.0/versions",   credentials.    URL.                              ToString());
-                    ClassicAssert.AreEqual ("DE",                                         credentials.    Roles.First().PartyId.CountryCode.ToString());
-                    ClassicAssert.AreEqual ("GEF",                                        credentials.    Roles.First().PartyId.PartyId.      ToString());
+                    Assert.That(credentials.    Token.                            ToString(),   Is.EqualTo("cso-2-emp2:token"));
+                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:3301/ocpi/v2.3.0/versions"));
+                    Assert.That(credentials.    Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
+                    Assert.That(credentials.    Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GEF"));
 
                     var businessDetails = credentials.Roles.First().BusinessDetails;
-                    ClassicAssert.IsNotNull(businessDetails);
-                    ClassicAssert.AreEqual ("GraphDefined CSO Services",                  businessDetails.Name);
-                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",           businessDetails.Website.                          ToString());
+                    Assert.That(businessDetails,                                              Is.Not.Null);
+                    Assert.That(businessDetails.Name,                                         Is.EqualTo("GraphDefined CSO Services"));
+                    Assert.That(businessDetails.Website.                          ToString(), Is.EqualTo("https://www.graphdefined.com/cso"));
 
                 }
 

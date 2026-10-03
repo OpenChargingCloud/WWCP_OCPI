@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -101,40 +100,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var JSON = Credentials1.ToJSON();
 
-            ClassicAssert.AreEqual("4285n43805fng38",                        JSON["token"].                                            Value<String>());
-            ClassicAssert.AreEqual("http://open.charging.cloud/versions",    JSON["url"].                                              Value<String>());
+            Assert.That(JSON["token"].                                            Value<String>(), Is.EqualTo("4285n43805fng38"));
+            Assert.That(JSON["url"].                                              Value<String>(), Is.EqualTo("http://open.charging.cloud/versions"));
 
-            ClassicAssert.AreEqual("DE",                                     JSON["roles"][0]["country_code"].                         Value<String>());
-            ClassicAssert.AreEqual("GEF",                                    JSON["roles"][0]["party_id"].                             Value<String>());
-            ClassicAssert.AreEqual("CPO",                                    JSON["roles"][0]["role"].                                 Value<String>());
-            ClassicAssert.AreEqual("Open Charging Cloud CPO",                JSON["roles"][0]["business_details"]["name"].             Value<String>());
-            ClassicAssert.AreEqual("http://cpo.charging.cloud",              JSON["roles"][0]["business_details"]["website"].          Value<String>());
-            ClassicAssert.AreEqual("http://cpo.charging.cloud/logo",         JSON["roles"][0]["business_details"]["logo"]["url"].      Value<String>());
-            ClassicAssert.AreEqual("http://cpo.charging.cloud/logo_small",   JSON["roles"][0]["business_details"]["logo"]["thumbnail"].Value<String>());
-            ClassicAssert.AreEqual("OPERATOR",                               JSON["roles"][0]["business_details"]["logo"]["category"]. Value<String>());
-            ClassicAssert.AreEqual("svg",                                    JSON["roles"][0]["business_details"]["logo"]["type"].     Value<String>());
-            ClassicAssert.AreEqual(1000,                                     JSON["roles"][0]["business_details"]["logo"]["width"].    Value<UInt16>());
-            ClassicAssert.AreEqual(1500,                                     JSON["roles"][0]["business_details"]["logo"]["height"].   Value<UInt16>());
+            Assert.That(JSON["roles"][0]["country_code"].                         Value<String>(), Is.EqualTo("DE"));
+            Assert.That(JSON["roles"][0]["party_id"].                             Value<String>(), Is.EqualTo("GEF"));
+            Assert.That(JSON["roles"][0]["role"].                                 Value<String>(), Is.EqualTo("CPO"));
+            Assert.That(JSON["roles"][0]["business_details"]["name"].             Value<String>(), Is.EqualTo("Open Charging Cloud CPO"));
+            Assert.That(JSON["roles"][0]["business_details"]["website"].          Value<String>(), Is.EqualTo("http://cpo.charging.cloud"));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["url"].      Value<String>(), Is.EqualTo("http://cpo.charging.cloud/logo"));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["thumbnail"].Value<String>(), Is.EqualTo("http://cpo.charging.cloud/logo_small"));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["category"]. Value<String>(), Is.EqualTo("OPERATOR"));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["type"].     Value<String>(), Is.EqualTo("svg"));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["width"].    Value<UInt16>(), Is.EqualTo(1000));
+            Assert.That(JSON["roles"][0]["business_details"]["logo"]["height"].   Value<UInt16>(), Is.EqualTo(1500));
 
-            ClassicAssert.AreEqual("DE",                                     JSON["roles"][1]["country_code"].                         Value<String>());
-            ClassicAssert.AreEqual("GDF",                                    JSON["roles"][1]["party_id"].                             Value<String>());
-            ClassicAssert.AreEqual("EMSP",                                   JSON["roles"][1]["role"].                                 Value<String>());
-            ClassicAssert.AreEqual("Open Charging Cloud EMSP",               JSON["roles"][1]["business_details"]["name"].             Value<String>());
-            ClassicAssert.AreEqual("http://emsp.charging.cloud",             JSON["roles"][1]["business_details"]["website"].          Value<String>());
-            ClassicAssert.AreEqual("http://emsp.charging.cloud/logo",        JSON["roles"][1]["business_details"]["logo"]["url"].      Value<String>());
-            ClassicAssert.AreEqual("http://emsp.charging.cloud/logo_small",  JSON["roles"][1]["business_details"]["logo"]["thumbnail"].Value<String>());
-            ClassicAssert.AreEqual("NETWORK",                                JSON["roles"][1]["business_details"]["logo"]["category"]. Value<String>());
-            ClassicAssert.AreEqual("png",                                    JSON["roles"][1]["business_details"]["logo"]["type"].     Value<String>());
-            ClassicAssert.AreEqual(2000,                                     JSON["roles"][1]["business_details"]["logo"]["width"].    Value<UInt16>());
-            ClassicAssert.AreEqual(3000,                                     JSON["roles"][1]["business_details"]["logo"]["height"].   Value<UInt16>());
+            Assert.That(JSON["roles"][1]["country_code"].                         Value<String>(), Is.EqualTo("DE"));
+            Assert.That(JSON["roles"][1]["party_id"].                             Value<String>(), Is.EqualTo("GDF"));
+            Assert.That(JSON["roles"][1]["role"].                                 Value<String>(), Is.EqualTo("EMSP"));
+            Assert.That(JSON["roles"][1]["business_details"]["name"].             Value<String>(), Is.EqualTo("Open Charging Cloud EMSP"));
+            Assert.That(JSON["roles"][1]["business_details"]["website"].          Value<String>(), Is.EqualTo("http://emsp.charging.cloud"));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["url"].      Value<String>(), Is.EqualTo("http://emsp.charging.cloud/logo"));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["thumbnail"].Value<String>(), Is.EqualTo("http://emsp.charging.cloud/logo_small"));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["category"]. Value<String>(), Is.EqualTo("NETWORK"));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["type"].     Value<String>(), Is.EqualTo("png"));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["width"].    Value<UInt16>(), Is.EqualTo(2000));
+            Assert.That(JSON["roles"][1]["business_details"]["logo"]["height"].   Value<UInt16>(), Is.EqualTo(3000));
 
 
-            ClassicAssert.IsTrue(Credentials.TryParse(JSON, out Credentials Credentials2, out String ErrorResponse));
-            ClassicAssert.IsNull(ErrorResponse);
+            Assert.That(Credentials.TryParse(JSON, out Credentials Credentials2, out String ErrorResponse), Is.True);
+            Assert.That(ErrorResponse,                                                                      Is.Null);
 
-            ClassicAssert.AreEqual(Credentials1.Token,                       Credentials2.Token);
-            ClassicAssert.AreEqual(Credentials1.URL,                         Credentials2.URL);
-            ClassicAssert.AreEqual(Credentials1.Roles,                       Credentials2.Roles);
+            Assert.That(Credentials2.Token, Is.EqualTo(Credentials1.Token));
+            Assert.That(Credentials2.URL,   Is.EqualTo(Credentials1.URL));
+            Assert.That(Credentials2.Roles, Is.EqualTo(Credentials1.Roles));
 
         }
 
@@ -168,15 +167,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            ClassicAssert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
-            ClassicAssert.IsNull(errorResponse);
+            Assert.That(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse), Is.True);
+            Assert.That(errorResponse,                                                                               Is.Null);
 
-            ClassicAssert.AreEqual(AccessToken.Parse("ebf3b399-779f-4497-9b9d-ac6ad3cc44d2"),  parsedCredentials.Token);
-            ClassicAssert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),    parsedCredentials.URL);
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.First().Role);
-            ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Token,                              Is.EqualTo(AccessToken.Parse("ebf3b399-779f-4497-9b9d-ac6ad3cc44d2")));
+            Assert.That(parsedCredentials.URL,                                Is.EqualTo(URL.        Parse("https://example.com/ocpi/versions/")));
+            Assert.That(parsedCredentials.Roles.First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("EXA")));
+            Assert.That(parsedCredentials.Roles.First().Role,                 Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Name, Is.EqualTo("Example Operator"));
 
         }
 
@@ -216,22 +215,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            ClassicAssert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
-            ClassicAssert.IsNull(errorResponse);
+            Assert.That(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse), Is.True);
+            Assert.That(errorResponse,                                                                               Is.Null);
 
-            ClassicAssert.AreEqual(AccessToken.Parse("9e80a9c4-28be-11e9-b210-d663bd873d93"),  parsedCredentials.Token);
-            ClassicAssert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
+            Assert.That(parsedCredentials.Token, Is.EqualTo(AccessToken.Parse("9e80a9c4-28be-11e9-b210-d663bd873d93")));
+            Assert.That(parsedCredentials.URL,   Is.EqualTo(URL.        Parse("https://ocpi.example.com/versions/")));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.        First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.        First().Role);
-            ClassicAssert.AreEqual("Example Operator",                                         parsedCredentials.Roles.        First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Roles.        First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.        First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("EXA")));
+            Assert.That(parsedCredentials.Roles.        First().Role,                 Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.        First().BusinessDetails.Name, Is.EqualTo("Example Operator"));
 
             // Note: Same CountryCode and PartyId, but different roles: Is this really a good idea?
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.EMSP,                                                  parsedCredentials.Roles.Skip(1).First().Role);
-            ClassicAssert.AreEqual("Example Provider",                                         parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("EXA")));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().Role,                 Is.EqualTo(Role.EMSP));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name, Is.EqualTo("Example Provider"));
 
         }
 
@@ -273,22 +272,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            ClassicAssert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
-            ClassicAssert.IsNull(errorResponse);
+            Assert.That(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse), Is.True);
+            Assert.That(errorResponse,                                                                               Is.Null);
 
-            ClassicAssert.AreEqual(AccessToken.Parse("9e80ae10-28be-11e9-b210-d663bd873d93"),    parsedCredentials.Token);
-            ClassicAssert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),      parsedCredentials.URL);
+            Assert.That(parsedCredentials.Token, Is.EqualTo(AccessToken.Parse("9e80ae10-28be-11e9-b210-d663bd873d93")));
+            Assert.That(parsedCredentials.URL,   Is.EqualTo(URL.        Parse("https://example.com/ocpi/versions/")));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                      parsedCredentials.Roles.First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXA"),                                     parsedCredentials.Roles.First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                     parsedCredentials.Roles.First().Role);
-            ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo.jpg"),        parsedCredentials.Roles.First().BusinessDetails.Logo.URL);
-            ClassicAssert.AreEqual(URL.        Parse("https://example.com/img/logo_thumb.jpg"),  parsedCredentials.Roles.First().BusinessDetails.Logo.Thumbnail);
-            ClassicAssert.AreEqual(ImageCategory.OPERATOR,                                       parsedCredentials.Roles.First().BusinessDetails.Logo.Category);
-            ClassicAssert.AreEqual(ImageFileType.jpeg,                                           parsedCredentials.Roles.First().BusinessDetails.Logo.Type);
-            ClassicAssert.AreEqual(512,                                                          parsedCredentials.Roles.First().BusinessDetails.Logo.Width);
-            ClassicAssert.AreEqual(512,                                                          parsedCredentials.Roles.First().BusinessDetails.Logo.Height);
-            ClassicAssert.AreEqual(URL.        Parse("http://example.com"),                      parsedCredentials.Roles.First().BusinessDetails.Website);
+            Assert.That(parsedCredentials.Roles.First().PartyId.CountryCode,            Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.First().PartyId.PartyId,                Is.EqualTo(Party_Id.   Parse("EXA")));
+            Assert.That(parsedCredentials.Roles.First().Role,                           Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.URL,       Is.EqualTo(URL.        Parse("https://example.com/img/logo.jpg")));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.Thumbnail, Is.EqualTo(URL.        Parse("https://example.com/img/logo_thumb.jpg")));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.Category,  Is.EqualTo(ImageCategory.OPERATOR));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.Type,      Is.EqualTo(ImageFileType.jpeg));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.Width,     Is.EqualTo(512));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Logo.Height,    Is.EqualTo(512));
+            Assert.That(parsedCredentials.Roles.First().BusinessDetails.Website,        Is.EqualTo(URL.        Parse("http://example.com")));
 
         }
 
@@ -335,26 +334,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            ClassicAssert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
-            ClassicAssert.IsNull(errorResponse);
+            Assert.That(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse), Is.True);
+            Assert.That(errorResponse,                                                                               Is.Null);
 
-            ClassicAssert.AreEqual(AccessToken.Parse("9e80aca8-28be-11e9-b210-d663bd873d93"),  parsedCredentials.Token);
-            ClassicAssert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
+            Assert.That(parsedCredentials.Token, Is.EqualTo(AccessToken.Parse("9e80aca8-28be-11e9-b210-d663bd873d93")));
+            Assert.That(parsedCredentials.URL,   Is.EqualTo(URL.        Parse("https://ocpi.example.com/versions/")));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("EXO"),                                   parsedCredentials.Roles.        First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.        First().Role);
-            ClassicAssert.AreEqual("Excellent Operator",                                       parsedCredentials.Roles.        First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Roles.        First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.        First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("EXO")));
+            Assert.That(parsedCredentials.Roles.        First().Role,                 Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.        First().BusinessDetails.Name, Is.EqualTo("Excellent Operator"));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("PFC"),                                   parsedCredentials.Roles.Skip(1).First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.Skip(1).First().Role);
-            ClassicAssert.AreEqual("Plug Flex Charging",                                       parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Roles.Skip(1).First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("PFC")));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().Role,                 Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name, Is.EqualTo("Plug Flex Charging"));
 
-            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(2).First().PartyId.CountryCode);
-            ClassicAssert.AreEqual(Party_Id.   Parse("CGP"),                                   parsedCredentials.Roles.Skip(2).First().PartyId.PartyId);
-            ClassicAssert.AreEqual(Role.CPO,                                                   parsedCredentials.Roles.Skip(2).First().Role);
-            ClassicAssert.AreEqual("Charging Green Power",                                     parsedCredentials.Roles.Skip(2).First().BusinessDetails.Name);
+            Assert.That(parsedCredentials.Roles.Skip(2).First().PartyId.CountryCode,  Is.EqualTo(CountryCode.Parse("NL")));
+            Assert.That(parsedCredentials.Roles.Skip(2).First().PartyId.PartyId,      Is.EqualTo(Party_Id.   Parse("CGP")));
+            Assert.That(parsedCredentials.Roles.Skip(2).First().Role,                 Is.EqualTo(Role.CPO));
+            Assert.That(parsedCredentials.Roles.Skip(2).First().BusinessDetails.Name, Is.EqualTo("Charging Green Power"));
 
         }
 

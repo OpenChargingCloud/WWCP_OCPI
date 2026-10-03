@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -105,9 +104,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
-            ClassicAssert.IsNotNull(csoRoamingNetwork);
-            ClassicAssert.IsNotNull(emp1RoamingNetwork);
-            ClassicAssert.IsNotNull(emp2RoamingNetwork);
+            Assert.That(csoRoamingNetwork,  Is.Not.Null);
+            Assert.That(emp1RoamingNetwork, Is.Not.Null);
+            Assert.That(emp2RoamingNetwork, Is.Not.Null);
 
             #endregion
 
@@ -121,8 +120,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                      InitialStatus:                       ChargingStationOperatorStatusTypes.Available
                                                  );
 
-            ClassicAssert.IsTrue   (result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
-            ClassicAssert.IsNotNull(result.ChargingStationOperator);
+            Assert.That(result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, Is.True);
+            Assert.That(result.ChargingStationOperator,                                           Is.Not.Null);
 
             graphDefinedCSO = result.ChargingStationOperator;
 
@@ -216,9 +215,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
-            ClassicAssert.IsNotNull(cpoCommonAPI);
-            ClassicAssert.IsNotNull(emsp1CommonAPI);
-            ClassicAssert.IsNotNull(emsp2CommonAPI);
+            Assert.That(cpoCommonAPI,   Is.Not.Null);
+            Assert.That(emsp1CommonAPI, Is.Not.Null);
+            Assert.That(emsp2CommonAPI, Is.Not.Null);
 
             if (cpoCommonAPI   is not null &&
                 emsp1CommonAPI is not null &&
@@ -315,9 +314,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        );
 
-                ClassicAssert.IsNotNull(cpoAdapter);
-                ClassicAssert.IsNotNull(emsp1Adapter);
-                ClassicAssert.IsNotNull(emsp2Adapter);
+                Assert.That(cpoAdapter,   Is.Not.Null);
+                Assert.That(emsp1Adapter, Is.Not.Null);
+                Assert.That(emsp2Adapter, Is.Not.Null);
 
             }
 

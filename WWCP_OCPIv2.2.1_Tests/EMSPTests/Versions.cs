@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -48,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -87,19 +86,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 //     "timestamp":       "2022-12-25T23:16:31.228Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 var versions = response.Data;
-                ClassicAssert.IsNotNull(versions);
-                ClassicAssert.AreEqual (1, response.Data?.Count());
+                Assert.That(versions,               Is.Not.Null);
+                Assert.That(response.Data?.Count(), Is.EqualTo(1));
 
                 var version  = versions?.First();
-                ClassicAssert.IsTrue   (version?.Id == Version.Id);
-                ClassicAssert.IsTrue   (URL.Parse("http://localhost:3301/ocpi/v2.2/versions/2.2.1") == version?.URL);
+                Assert.That(version?.Id == Version.Id,                                                   Is.True);
+                Assert.That(URL.Parse("http://localhost:3301/ocpi/v2.2/versions/2.2.1") == version?.URL, Is.True);
 
             }
 
@@ -121,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -206,33 +205,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 //     "timestamp":       "2022-12-26T00:36:21.228Z"
                 // }
 
-                ClassicAssert.IsNotNull(response);
-                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                ClassicAssert.AreEqual (1000,           response.StatusCode.Value);
-                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(1000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Hello world!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 var versionDetail  = response.Data;
-                ClassicAssert.IsNotNull(versionDetail);
+                Assert.That(versionDetail, Is.Not.Null);
 
                 if (versionDetail is not null)
                 {
 
                     var versionId      = versionDetail.VersionId;
-                    ClassicAssert.IsTrue   (versionId == Version.Id);
+                    Assert.That(versionId == Version.Id, Is.True);
 
                     var endpoints      = versionDetail.Endpoints;
-                    ClassicAssert.AreEqual (9, endpoints.Count());
+                    Assert.That(endpoints.Count(), Is.EqualTo(9));
 
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.RECEIVER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"        && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"          && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"         && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "chargingprofiles" && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"             && endpoint.Role == InterfaceRoles.SENDER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"         && endpoint.Role == InterfaceRoles.RECEIVER));
-                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"           && endpoint.Role == InterfaceRoles.RECEIVER));
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"        && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"          && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"         && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "chargingprofiles" && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"             && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"         && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"           && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
 
                 }
 
@@ -256,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -272,16 +271,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 // X-Request-ID:      21Sj4CSUttCvUE7t8YdttY31YA1nzx
                 // X-Correlation-ID:  jGrrQ7pEb541dCnUx12SEp3KG88YjG
 
-                ClassicAssert.IsNotNull(response);
+                Assert.That(response, Is.Not.Null);
 
-                ClassicAssert.AreEqual (-1,                                response.StatusCode.Value); // local error!
-                ClassicAssert.AreEqual ("Unknown version identification!",  response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(-1)); // local error!
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Unknown version identification!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 // There is not HTTP response, as this is a local error!
-                ClassicAssert.IsNull   (response.HTTPResponse);
-                ClassicAssert.IsNull   (response.RequestId);
-                ClassicAssert.IsNull   (response.CorrelationId);
+                Assert.That(response.HTTPResponse,  Is.Null);
+                Assert.That(response.RequestId,     Is.Null);
+                Assert.That(response.CorrelationId, Is.Null);
 
             }
 
@@ -303,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
-            ClassicAssert.IsNotNull(graphDefinedCPO);
+            Assert.That(graphDefinedCPO, Is.Not.Null);
 
             if (graphDefinedCPO is not null)
             {
@@ -337,18 +336,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-22T11:54:54.800Z"
                 // }
 
-                ClassicAssert.IsNotNull(httpResponse);
-                ClassicAssert.IsTrue   (httpResponse.ContentLength > 0);
+                Assert.That(httpResponse,                   Is.Not.Null);
+                Assert.That(httpResponse.ContentLength > 0, Is.True);
 
                 var response = OCPIResponse.Parse(httpResponse,
                                                   Request_Id.    Parse("12340"),
                                                   Correlation_Id.Parse("56780"));
 
-                ClassicAssert.AreEqual (2000,                                   response.StatusCode.Value);
-                ClassicAssert.AreEqual ("This OCPI version is not supported!",  response.StatusMessage);
-                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(2000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("This OCPI version is not supported!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
-                ClassicAssert.IsNotNull(response.HTTPResponse);
+                Assert.That(response.HTTPResponse, Is.Not.Null);
 
             }
 
