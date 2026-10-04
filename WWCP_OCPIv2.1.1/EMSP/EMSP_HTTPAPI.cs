@@ -3311,6 +3311,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     // (E-Tag, Timestamp, ...)
 
                     var patchedLocation = await CommonAPI.TryPatchLocation(
+                                                    location.CountryCode,
+                                                    location.PartyId,
                                                     locationId.Value,
                                                     locationPatch
                                                 );
@@ -6564,7 +6566,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (locationReference.HasValue)
                         {
 
-                            if (!CommonAPI.TryGetLocation(locationReference.Value.LocationId,
+                            if (!CommonAPI.TryGetLocation(request.LocalAccessInfo.CountryCode,
+                                                          request.LocalAccessInfo.PartyId,
+                                                          locationReference.Value.LocationId,
                                                           out var validLocation))
                             {
 

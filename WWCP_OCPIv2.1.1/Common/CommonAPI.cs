@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             LocationId  = locationId;
 
 
-            if (!CommonAPI.TryGetLocation(locationId, out Location) ||
+            if (!CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location) ||
                  Location.CountryCode != CountryCode                ||
                  Location.PartyId     != PartyId)
             {
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             LocationId  = locationId;
 
-            CommonAPI.TryGetLocation(locationId, out Location);
+            CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location);
 
             return true;
 
@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EVSEUId     = evseUId;
 
 
-            if (!CommonAPI.TryGetLocation(locationId, out Location) ||
+            if (!CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location) ||
                  Location.CountryCode != CountryCode                ||
                  Location.PartyId     != PartyId)
             {
@@ -520,7 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EVSEUId     = evseUId;
 
 
-            if (!CommonAPI.TryGetLocation(locationId, out Location) ||
+            if (!CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location) ||
                  Location.CountryCode != CountryCode                ||
                  Location.PartyId     != PartyId)
             {
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ConnectorId = connectorId;
 
 
-            if (!CommonAPI.TryGetLocation(locationId, out Location) ||
+            if (!CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location) ||
                  Location.CountryCode != CountryCode                ||
                  Location.PartyId     != PartyId)
             {
@@ -811,7 +811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ConnectorId = connectorId;
 
 
-            if (!CommonAPI.TryGetLocation(locationId, out Location) ||
+            if (!CommonAPI.TryGetLocation(CountryCode, PartyId, locationId, out Location) ||
                  Location.CountryCode != CountryCode                ||
                  Location.PartyId     != PartyId)
             {
@@ -3994,7 +3994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               out location,
                                               out errorResponse))
                         {
-                            locations.TryAdd(location.Id, location);
+                            locations.TryAdd(KeyOf(location), location);
                         }
                     }
                     catch (Exception e)
@@ -4017,7 +4017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               out location,
                                               out errorResponse))
                         {
-                            locations.TryAdd(location.Id, location);
+                            locations.TryAdd(KeyOf(location), location);
                         }
                     }
                     catch (Exception e)
@@ -4041,10 +4041,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               out errorResponse))
                         {
 
-                            if (locations.ContainsKey(location.Id))
-                                locations.Remove(location.Id, out _);
+                            if (locations.ContainsKey(KeyOf(location)))
+                                locations.Remove(KeyOf(location), out _);
 
-                            locations.TryAdd(location.Id, location);
+                            locations.TryAdd(KeyOf(location), location);
 
                         }
                     }
@@ -4068,8 +4068,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               out location,
                                               out errorResponse))
                         {
-                            locations.Remove(location.Id, out _);
-                            locations.TryAdd(location.Id, location);
+                            locations.Remove(KeyOf(location), out _);
+                            locations.TryAdd(KeyOf(location), location);
                         }
                     }
                     catch (Exception e)
@@ -4092,7 +4092,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               out location,
                                               out errorResponse))
                         {
-                            locations.Remove(location.Id, out _);
+                            locations.Remove(KeyOf(location), out _);
                         }
                     }
                     catch (Exception e)
@@ -4126,7 +4126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             command.JSONObject.TryGetValue("locationId", out var locationId) &&
                             locationId.Type == JTokenType.String &&
                             Location_Id.TryParse(locationId?.Value<String>() ?? "", out var location_Id) &&
-                            locations.ContainsKey(location_Id) &&
+                            TryKeyOf(location_Id, out var locationKey) &&
 
                             command.JSONObject.TryGetValue("evse",       out var evseJToken) &&
                             evseJToken.Type == JTokenType.Object &&
@@ -4137,7 +4137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         {
 
-                            if (locations.TryGetValue(location_Id, out location))
+                            if (locations.TryGetValue(locationKey, out location))
                             {
 
                                 var updatedLocation = location.Update(loc => {
@@ -4154,8 +4154,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 if (updatedLocation is not null)
                                 {
-                                    locations.Remove(location.Id, out _);
-                                    locations.TryAdd(location.Id, updatedLocation);
+                                    locations.Remove(KeyOf(location), out _);
+                                    locations.TryAdd(KeyOf(updatedLocation), updatedLocation);
                                 }
 
                             }
@@ -7372,7 +7372,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         // Note: Charging locations/EVSEs are expected to be always in memory!
 
-        private readonly ConcurrentDictionary<Location_Id, Location> locations = [];
+        /// <summary>
+        /// The locations, by their party and their id: two CPOs may well give
+        /// a location the same id, and the location of one is not the other's.
+        /// </summary>
+        private readonly ConcurrentDictionary<(Party_Idv3 Party, Location_Id Id), Location> locations = [];
+
+        /// <summary>
+        /// The key of the given location: its party and its id.
+        /// </summary>
+        private static (Party_Idv3 Party, Location_Id Id) KeyOf(Location Location)
+
+            => (Party_Idv3.From(Location.CountryCode, Location.PartyId), Location.Id);
+
+        /// <summary>
+        /// The key of a location known here by its id alone: of the first party
+        /// that has a location of that id, where more than one has.
+        /// </summary>
+        private Boolean TryKeyOf(Location_Id LocationId, out (Party_Idv3 Party, Location_Id Id) Key)
+        {
+
+            foreach (var key in locations.Keys)
+            {
+                if (key.Id == LocationId)
+                {
+                    Key = key;
+                    return true;
+                }
+            }
+
+            Key = default;
+            return false;
+
+        }
 
 
         public delegate Task OnLocationAddedDelegate    (Location        Location);
@@ -7408,7 +7440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (locations.TryAdd(Location.Id, Location))
+            if (locations.TryAdd(KeyOf(Location), Location))
             {
 
                 Location.CommonAPI = this;
@@ -7500,7 +7532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (locations.TryAdd(Location.Id, Location))
+            if (locations.TryAdd(KeyOf(Location), Location))
             {
 
                 Location.CommonAPI = this;
@@ -7596,7 +7628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Update an existing location
 
-            if (locations.TryGetValue(Location.Id, out var existingLocation))
+            if (locations.TryGetValue(KeyOf(Location), out var existingLocation))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -7613,7 +7645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 //    return AddOrUpdateResult<Location>.NoOperation(Location,
                 //                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
 
-                if (locations.TryUpdate(Location.Id,
+                if (locations.TryUpdate(KeyOf(Location),
                                         Location,
                                         existingLocation))
                 {
@@ -7724,7 +7756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Add a new location
 
-            if (locations.TryAdd(Location.Id, Location))
+            if (locations.TryAdd(KeyOf(Location), Location))
             {
 
                 Location.CommonAPI = this;
@@ -7820,7 +7852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (!locations.TryGetValue(Location.Id, out var existingLocation))
+            if (!locations.TryGetValue(KeyOf(Location), out var existingLocation))
                 return UpdateResult<Location>.Failed(
                            EventTrackingId,
                            Location,
@@ -7843,7 +7875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            if (locations.TryUpdate(Location.Id,
+            if (locations.TryUpdate(KeyOf(Location),
                                     Location,
                                     existingLocation))
             {
@@ -8001,8 +8033,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryPatchLocation       (LocationId, LocationPatch, AllowDowngrades = false, ...)
 
         /// <summary>
-        /// Try to patch the given charging location with the given JSON patch document.
+        /// Patch the location of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
         /// </summary>
+        public Task<PatchResult<Location>>
+
+            TryPatchLocation(Location_Id        LocationId,
+                             JObject            LocationPatch,
+                             Boolean?           AllowDowngrades     = false,
+                             Boolean            SkipNotifications   = false,
+                             EventTracking_Id?  EventTrackingId     = null,
+                             User_Id?           CurrentUserId       = null,
+                             CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(LocationId, out var key)
+
+                   ? TryPatchLocation(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         LocationId,
+                         LocationPatch,
+                         AllowDowngrades,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         PatchResult<Location>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given location '{LocationId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region TryPatchLocation       (CountryCode, PartyId, LocationId, LocationPatch, AllowDowngrades = false, ...)
+
+        /// <summary>
+        /// Try to patch the location of the given id of the given party - not
+        /// another party's of the same id - with the given JSON patch document.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party of the charging location.</param>
+        /// <param name="PartyId">The party identification of the party of the charging location.</param>
         /// <param name="LocationId">The identification of the charging location to patch.</param>
         /// <param name="LocationPatch">The JSON patch document to apply to the charging tariff.</param>
         /// <param name="AllowDowngrades">Whether to allow downgrades of the 'lastUpdated' timestamp or not.</param>
@@ -8012,7 +8086,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<Location>>
 
-            TryPatchLocation(Location_Id        LocationId,
+            TryPatchLocation(CountryCode        CountryCode,
+                             Party_Id           PartyId,
+                             Location_Id        LocationId,
                              JObject            LocationPatch,
                              Boolean?           AllowDowngrades     = false,
                              Boolean            SkipNotifications   = false,
@@ -8024,7 +8100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (locations.TryGetValue(LocationId, out var existingLocation))
+            if (locations.TryGetValue((Party_Idv3.From(CountryCode, PartyId), LocationId), out var existingLocation))
             {
 
                 var patchResult = existingLocation.TryPatch(
@@ -8060,7 +8136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return PatchResult<Location>.Failed(
                        EventTrackingId,
-                       $"The given location '{LocationId}' is unknown!"
+                       $"The location '{LocationId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -8087,6 +8163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            CancellationToken  CancellationToken   = default)
 
             => RemoveLocation(
+                   Location.CountryCode,
+                   Location.PartyId,
                    Location.Id,
                    SkipNotifications,
                    EventTrackingId,
@@ -8099,8 +8177,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region RemoveLocation         (LocationId, ...)
 
         /// <summary>
-        /// Remove the given charging location.
+        /// Remove the location of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
         /// </summary>
+        /// <param name="LocationId">An unique charging location identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public Task<RemoveResult<Location>>
+
+            RemoveLocation(Location_Id        LocationId,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(LocationId, out var key)
+
+                   ? RemoveLocation(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         LocationId,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         RemoveResult<Location>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given location '{LocationId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region RemoveLocation         (CountryCode, PartyId, LocationId, ...)
+
+        /// <summary>
+        /// Remove the location of the given id of the given party - not
+        /// another party's of the same id.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party of the charging location.</param>
+        /// <param name="PartyId">The party identification of the party of the charging location.</param>
         /// <param name="LocationId">An unique charging location identification.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
@@ -8108,7 +8229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<Location>>
 
-            RemoveLocation(Location_Id        LocationId,
+            RemoveLocation(CountryCode        CountryCode,
+                           Party_Id           PartyId,
+                           Location_Id        LocationId,
                            Boolean            SkipNotifications   = false,
                            EventTracking_Id?  EventTrackingId     = null,
                            User_Id?           CurrentUserId       = null,
@@ -8118,7 +8241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (locations.Remove(LocationId, out var location))
+            if (locations.Remove((Party_Idv3.From(CountryCode, PartyId), LocationId), out var location))
             {
 
                 await LogAsset(
@@ -8178,7 +8301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return RemoveResult<Location>.Failed(
                        EventTrackingId,
-                       "RemoveLocation(LocationId, ...) failed!"
+                       $"The location '{LocationId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -8273,6 +8396,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveLocation(
+                                       location.CountryCode,
+                                       location.PartyId,
                                        location.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -8351,6 +8476,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveLocation(
+                                       location.CountryCode,
+                                       location.PartyId,
                                        location.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -8430,6 +8557,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveLocation(
+                                       location.CountryCode,
+                                       location.PartyId,
                                        location.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -8475,18 +8604,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region LocationExists         (LocationId)
 
+        /// <summary>
+        /// Whether any party has a location of the given id here.
+        /// </summary>
         public Boolean LocationExists(Location_Id  LocationId)
 
-            => locations.ContainsKey(LocationId);
+            => TryKeyOf(LocationId, out _);
+
+        #endregion
+
+        #region LocationExists         (CountryCode, PartyId, LocationId)
+
+        /// <summary>
+        /// Whether the given party has a location of the given id here.
+        /// </summary>
+        public Boolean LocationExists(CountryCode  CountryCode,
+                                      Party_Id     PartyId,
+                                      Location_Id  LocationId)
+
+            => locations.ContainsKey((Party_Idv3.From(CountryCode, PartyId), LocationId));
 
         #endregion
 
         #region GetLocation            (LocationId)
 
+        /// <summary>
+        /// The location of the given id - of the first party that has one,
+        /// where more than one has; see the overload that names the party.
+        /// </summary>
         public Location? GetLocation(Location_Id  LocationId)
         {
 
-            if (locations.TryGetValue(LocationId, out var location))
+            if (TryGetLocation(LocationId, out var location))
+                return location;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetLocation            (CountryCode, PartyId, LocationId)
+
+        /// <summary>
+        /// The location of the given id of the given party.
+        /// </summary>
+        public Location? GetLocation(CountryCode  CountryCode,
+                                     Party_Id     PartyId,
+                                     Location_Id  LocationId)
+        {
+
+            if (TryGetLocation(CountryCode, PartyId, LocationId, out var location))
                 return location;
 
             return null;
@@ -8497,11 +8665,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region TryGetLocation         (LocationId, out Location)
 
+        /// <summary>
+        /// The location of the given id - of the first party that has one,
+        /// where more than one has; see the overload that names the party.
+        /// </summary>
         public Boolean TryGetLocation(Location_Id                        LocationId,
                                       [NotNullWhen(true)] out Location?  Location)
         {
 
-            if (locations.TryGetValue(LocationId, out Location))
+            if (TryKeyOf(LocationId, out var key) &&
+                locations.TryGetValue(key, out Location))
+            {
+                return true;
+            }
+
+            Location = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetLocation         (CountryCode, PartyId, LocationId, out Location)
+
+        /// <summary>
+        /// The location of the given id of the given party - not another
+        /// party's of the same id.
+        /// </summary>
+        public Boolean TryGetLocation(CountryCode                        CountryCode,
+                                      Party_Id                           PartyId,
+                                      Location_Id                        LocationId,
+                                      [NotNullWhen(true)] out Location?  Location)
+        {
+
+            if (locations.TryGetValue((Party_Idv3.From(CountryCode, PartyId), LocationId), out Location))
                 return true;
 
             Location = null;

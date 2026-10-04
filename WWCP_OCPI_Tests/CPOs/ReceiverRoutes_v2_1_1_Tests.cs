@@ -84,6 +84,44 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         #endregion
 
 
+        #region TwoCPOsMayPutALocationOfTheSameId()
+
+        /// <summary>
+        /// The EMSP kept the locations by their id alone: the second CPO's
+        /// location of an id replaced the first one's.
+        /// </summary>
+        [Test]
+        public async Task TwoCPOsMayPutALocationOfTheSameId()
+        {
+
+            var cpo2 = cpo2CPOAPI_v2_1_1?.GetEMSPClient(
+                           CountryCode: CountryCode.Parse("DE"),
+                           PartyId:     Party_Id.   Parse("GDF")
+                       );
+
+            Assert.That(cpo2, Is.Not.Null);
+
+            var response1 = await EMSP1().PutLocation(ALocation("GEF", "LOC0103"));
+            var response2 = await cpo2!. PutLocation(ALocation("GE2", "LOC0103"));
+
+            Assert.Multiple(() => {
+
+                Assert.That(response1.StatusCode.Value, Is.EqualTo(1000), response1.StatusMessage);
+                Assert.That(response2.StatusCode.Value, Is.EqualTo(1000), response2.StatusMessage);
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetLocations(CountryCode.Parse("DE"), Party_Id.Parse("GEF")).Select(location => location.Id.ToString()), Does.Contain("LOC0103"),
+                            "CPO #1's location is gone.");
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetLocations(CountryCode.Parse("DE"), Party_Id.Parse("GE2")).Select(location => location.Id.ToString()), Does.Contain("LOC0103"),
+                            "CPO #2's location is not there.");
+
+            });
+
+        }
+
+        #endregion
+
+
         #region (private) EMSP1() / ALocation(PartyId, LocationId)
 
         /// <summary>
