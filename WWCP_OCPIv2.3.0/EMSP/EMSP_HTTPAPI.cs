@@ -3131,6 +3131,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             this.AllowDowngrades  = AllowDowngrades;
 
+            this.Counters         = new APICounters();
+
             this.HTTPLogger       = this.DisableLogging == false
                                         ? new EMSP_HTTPAPI_Logger(
                                               this,
