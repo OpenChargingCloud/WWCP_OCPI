@@ -451,32 +451,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
 
             #endregion
 
+            // The example is older than 2.3.0: its tariff has no "tax_included",
+            // which 2.3.0 requires. The library reads as the specification says
+            // and refuses it.
             var result = CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse);
-            Assert.That(result,        Is.True, errorResponse);
-            Assert.That(parsedCDR,     Is.Not.Null);
-            Assert.That(errorResponse, Is.Null);
 
-            Assert.That(parsedCDR.CountryCode, Is.EqualTo(CountryCode.Parse("BE")));
-            Assert.That(parsedCDR.PartyId,     Is.EqualTo(Party_Id.   Parse("BEC")));
-            Assert.That(parsedCDR.Id,          Is.EqualTo(CDR_Id.Parse("12345")));
-            //ClassicAssert.AreEqual(true,                                                  parsedCDR.Publish);
-            //ClassicAssert.AreEqual(CDR1.Start.    ToISO8601(),                            parsedCDR.Start.    ToISO8601());
-            //ClassicAssert.AreEqual(CDR1.End.Value.ToISO8601(),                            parsedCDR.End.Value.ToISO8601());
-            //ClassicAssert.AreEqual(CDR1.kWh,                                              parsedCDR.kWh);
-            //ClassicAssert.AreEqual(CDR1.CDRToken,                                         parsedCDR.CDRToken);
-            //ClassicAssert.AreEqual(CDR1.AuthMethod,                                       parsedCDR.AuthMethod);
-            //ClassicAssert.AreEqual(CDR1.AuthorizationReference,                           parsedCDR.AuthorizationReference);
-            //ClassicAssert.AreEqual(CDR1.CDRId,                                            parsedCDR.CDRId);
-            //ClassicAssert.AreEqual(CDR1.EVSEUId,                                          parsedCDR.EVSEUId);
-            //ClassicAssert.AreEqual(CDR1.ConnectorId,                                      parsedCDR.ConnectorId);
-            //ClassicAssert.AreEqual(CDR1.MeterId,                                          parsedCDR.MeterId);
-            //ClassicAssert.AreEqual(CDR1.EnergyMeter,                                      parsedCDR.EnergyMeter);
-            //ClassicAssert.AreEqual(CDR1.TransparencySoftware,                            parsedCDR.TransparencySoftware);
-            //ClassicAssert.AreEqual(CDR1.Currency,                                         parsedCDR.Currency);
-            //ClassicAssert.AreEqual(CDR1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
-            //ClassicAssert.AreEqual(CDR1.TotalCosts,                                       parsedCDR.TotalCosts);
-            //ClassicAssert.AreEqual(CDR1.Status,                                           parsedCDR.Status);
-            //ClassicAssert.AreEqual(CDR1.LastUpdated.ToISO8601(),                          parsedCDR.LastUpdated.ToISO8601());
+            Assert.That(result,         Is.False, "A CDR whose tariff has no tax_included was taken.");
+            Assert.That(errorResponse,  Is.EqualTo("Missing JSON property 'tax_included'!"));
 
         }
 

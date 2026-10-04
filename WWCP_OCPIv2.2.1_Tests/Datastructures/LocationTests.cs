@@ -3234,31 +3234,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.That(ErrorResponse, Is.Null);
-            Assert.That(result,        Is.True);
+            // The example writes "parking_restrictions" as a string, where the
+            // specification has an array of them. The library reads as the
+            // specification says and refuses it.
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
-            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALF")));
-            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920")));
-            Assert.That(parsedLocation.Publish,     Is.EqualTo(true));
-            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
-            //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
-            //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
-            //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
-            //ClassicAssert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
-            //ClassicAssert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
-            //ClassicAssert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
-            //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
-            //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
-            //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
-            //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
-            //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
-            //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
-            //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
+            Assert.That(result,         Is.False, "A location with parking restrictions that are no array was taken.");
+            Assert.That(errorResponse,  Is.EqualTo("The given property 'parking restrictions' is not a valid JSON array!"));
 
         }
 
@@ -3312,31 +3296,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.That(ErrorResponse, Is.Null);
-            Assert.That(result,        Is.True);
+            // The example writes "parking_restrictions" as a string, where the
+            // specification has an array of them. The library reads as the
+            // specification says and refuses it.
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.That(parsedLocation.CountryCode, Is.EqualTo(CountryCode.Parse("NL")));
-            Assert.That(parsedLocation.PartyId,     Is.EqualTo(Party_Id.   Parse("ALF")));
-            Assert.That(parsedLocation.Id,          Is.EqualTo(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920")));
-            Assert.That(parsedLocation.Publish,     Is.EqualTo(false));
-            //ClassicAssert.AreEqual(Location1.Start.    ToISO8601(),                            parsedLocation.Start.    ToISO8601());
-            //ClassicAssert.AreEqual(Location1.End.Value.ToISO8601(),                            parsedLocation.End.Value.ToISO8601());
-            //ClassicAssert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
-            //ClassicAssert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
-            //ClassicAssert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
-            //ClassicAssert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
-            //ClassicAssert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
-            //ClassicAssert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
-            //ClassicAssert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
-            //ClassicAssert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
-            //ClassicAssert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
-            //ClassicAssert.AreEqual(Location1.TransparencySoftware,                            parsedLocation.TransparencySoftware);
-            //ClassicAssert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
-            //ClassicAssert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
-            //ClassicAssert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
-            //ClassicAssert.AreEqual(Location1.Status,                                           parsedLocation.Status);
-            //ClassicAssert.AreEqual(Location1.LastUpdated.ToISO8601(),                          parsedLocation.LastUpdated.ToISO8601());
+            Assert.That(result,         Is.False, "A location with parking restrictions that are no array was taken.");
+            Assert.That(errorResponse,  Is.EqualTo("The given property 'parking restrictions' is not a valid JSON array!"));
 
         }
 
