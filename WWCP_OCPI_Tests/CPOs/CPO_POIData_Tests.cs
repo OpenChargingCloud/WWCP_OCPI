@@ -900,7 +900,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
             => new (
 
-                   EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                   EVSE_UId.Parse("DE*GEF*E*LOC0001*2"),
                    StatusType.AVAILABLE,
                    [
                        new OCPIv2_2_1.Connector(
@@ -934,7 +934,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                            DateTime.Parse("2020-09-22")
                        )
                    ],
-                   EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                   EVSE_Id.Parse("DE*GEF*E*LOC0001*2"),
                    [
                        new StatusSchedule(
                            StatusType.INOPERATIVE,
@@ -999,7 +999,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
             => new (
 
-                   EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                   EVSE_UId.Parse("DE*GEF*E*LOC0001*2"),
                    StatusType.AVAILABLE,
                    [
                        new OCPIv2_3_0.Connector(
@@ -1038,7 +1038,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                        )
                    ],
 
-                   EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                   EVSE_Id.Parse("DE*GEF*E*LOC0001*2"),
                    [
                        new StatusSchedule(
                            StatusType.INOPERATIVE,
@@ -1174,7 +1174,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
             // The location is put as new: what another test of this fixture
             // put there before is taken away first.
-            await emsp1CommonAPI_v2_2_1!.RemoveLocation(Location1_v2_2_1);
+            await emsp1EMSPAPI_v2_2_1!.RemoveRemoteLocation(Location1_v2_2_1);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
@@ -1388,7 +1388,7 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
 
             // The location is put as new: what another test of this fixture
             // put there before is taken away first.
-            await emsp1CommonAPI_v2_2_1!.RemoveLocation(Location1_v2_2_1);
+            await emsp1EMSPAPI_v2_2_1!.RemoveRemoteLocation(Location1_v2_2_1);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
