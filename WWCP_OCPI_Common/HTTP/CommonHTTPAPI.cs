@@ -3380,28 +3380,32 @@ namespace cloud.charging.open.protocols.OCPI
 
                     #region Check access token
 
+                    // Blocked in the table of this API's access tokens: a token
+                    // no remote party has is blocked there as well, and a
+                    // client may have sent it BASE64-encoded - so every form it
+                    // was presented in is asked, not only a remote party's.
+                    if (request.PresentedAccessTokens.Any(AccessTokenIsBlocked))
+                        return Task.FromResult(
+                                    new OCPIResponse.Builder(request) {
+                                        StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                                        StatusMessage        = "Invalid or blocked access token!",
+                                        HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                            HTTPStatusCode             = HTTPStatusCode.OK,
+                                            Server                     = HTTPServiceName,
+                                            Date                       = Timestamp.Now,
+                                            AccessControlAllowOrigin   = "*",
+                                            AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                            Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                            AccessControlAllowHeaders  = [ "Authorization" ],
+                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                            Connection                 = ConnectionType.KeepAlive,
+                                            Vary                       = "Accept"
+                                        }
+                                    }
+                                );
+
                     if (request.AccessToken.HasValue)
                     {
-
-                        if (AccessTokenIsBlocked(request.AccessToken.Value))
-                            return Task.FromResult(
-                                        new OCPIResponse.Builder(request) {
-                                            StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                            StatusMessage        = "Invalid or blocked access token!",
-                                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                Server                     = HTTPServiceName,
-                                                Date                       = Timestamp.Now,
-                                                AccessControlAllowOrigin   = "*",
-                                                AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                                AccessControlAllowHeaders  = [ "Authorization" ],
-                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                Connection                 = ConnectionType.KeepAlive,
-                                                Vary                       = "Accept"
-                                            }
-                                        }
-                                    );
 
                         // Filter the version information based on the remote party's visible version ids
                         if (request.RemoteParty?.VisibleVersionIds.Count > 0)

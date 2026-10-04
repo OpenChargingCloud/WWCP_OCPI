@@ -417,6 +417,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         public AccessToken?         AccessToken                 { get; }
 
+        /// <summary>
+        /// The access token as this request presents it: as it was sent, and
+        /// decoded where it reads as BASE64 - whether a remote party has it or
+        /// not. AccessToken is set only where one does; the base API's own
+        /// table of access tokens, the blocked ones among them, asks these.
+        /// </summary>
+        public IReadOnlyList<AccessToken>  PresentedAccessTokens  { get; }
+
         public IEnumerable<String>  AccessTokenErrorMessages    { get; }
 
         public LocalAccessInfo2?    LocalAccessInfo             { get; }
@@ -612,6 +620,12 @@ namespace cloud.charging.open.protocols.OCPI
                     accessTokenErrorMessages.Remove("Unknown access token!");
 
             }
+
+            PresentedAccessTokens = new[] { accessTokenRAW, accessTokenBASE64 }.
+                                        Where   (accessToken => accessToken.HasValue).
+                                        Select  (accessToken => accessToken!.Value).
+                                        Distinct().
+                                        ToArray ();
 
             HTTPRequest.SubprotocolRequest = this;
 
