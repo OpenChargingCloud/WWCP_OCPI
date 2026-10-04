@@ -1036,7 +1036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             SessionId = sessionId;
 
 
-            if (!CommonAPI.TryGetSession(SessionId.Value, out Session) ||
+            if (!CommonAPI.TryGetSession(CountryCode, PartyId, SessionId.Value, out Session) ||
                  Session.CountryCode != CountryCode                    ||
                  Session.PartyId     != PartyId)
             {
@@ -1110,7 +1110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             SessionId = sessionId;
 
-            CommonAPI.TryGetSession(sessionId, out Session);
+            CommonAPI.TryGetSession(CountryCode, PartyId, sessionId, out Session);
 
             return true;
 
@@ -1166,7 +1166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             CDRId = cdrId;
 
 
-            if (!CommonAPI.TryGetCDR(CDRId.Value, out CDR) ||
+            if (!CommonAPI.TryGetCDR(CountryCode, PartyId, CDRId.Value, out CDR) ||
                  CDR.CountryCode != CountryCode            ||
                  CDR.PartyId     != PartyId)
             {
@@ -1237,7 +1237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             CDRId = cdrId;
 
-            CommonAPI.TryGetCDR(cdrId, out CDR);
+            CommonAPI.TryGetCDR(CountryCode, PartyId, cdrId, out CDR);
 
             return true;
 
@@ -4295,7 +4295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       out session,
                                                       out _))
                             {
-                                chargingSessions.Remove(session.Id, out _);
+                                chargingSessions.Remove(KeyOf(session), out _);
                                 errorResponse = null;
                             }
                         }
@@ -4329,7 +4329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out session,
                                              out errorResponse))
                         {
-                            chargingSessions.TryAdd(session.Id, session);
+                            chargingSessions.TryAdd(KeyOf(session), session);
                         }
                     }
                     catch (Exception e)
@@ -4352,7 +4352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out session,
                                              out errorResponse))
                         {
-                            chargingSessions.TryAdd(session.Id, session);
+                            chargingSessions.TryAdd(KeyOf(session), session);
                         }
                     }
                     catch (Exception e)
@@ -4376,10 +4376,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out errorResponse))
                         {
 
-                            if (chargingSessions.ContainsKey(session.Id))
-                                chargingSessions.Remove(session.Id, out _);
+                            if (chargingSessions.ContainsKey(KeyOf(session)))
+                                chargingSessions.Remove(KeyOf(session), out _);
 
-                            chargingSessions.TryAdd(session.Id, session);
+                            chargingSessions.TryAdd(KeyOf(session), session);
 
                         }
                     }
@@ -4403,8 +4403,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out session,
                                              out errorResponse))
                         {
-                            chargingSessions.Remove(session.Id, out _);
-                            chargingSessions.TryAdd(session.Id, session);
+                            chargingSessions.Remove(KeyOf(session), out _);
+                            chargingSessions.TryAdd(KeyOf(session), session);
                         }
                     }
                     catch (Exception e)
@@ -4427,7 +4427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              out session,
                                              out errorResponse))
                         {
-                            chargingSessions.Remove(session.Id, out _);
+                            chargingSessions.Remove(KeyOf(session), out _);
                         }
                     }
                     catch (Exception e)
@@ -4589,7 +4589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          out cdr,
                                          out errorResponse))
                         {
-                            chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            chargeDetailRecords.TryAdd(KeyOf(cdr), cdr);
                         }
                     }
                     catch (Exception e)
@@ -4612,7 +4612,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          out cdr,
                                          out errorResponse))
                         {
-                            chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            chargeDetailRecords.TryAdd(KeyOf(cdr), cdr);
                         }
                     }
                     catch (Exception e)
@@ -4636,10 +4636,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          out errorResponse))
                         {
 
-                            if (chargeDetailRecords.ContainsKey(cdr.Id))
-                                chargeDetailRecords.Remove(cdr.Id, out _);
+                            if (chargeDetailRecords.ContainsKey(KeyOf(cdr)))
+                                chargeDetailRecords.Remove(KeyOf(cdr), out _);
 
-                            chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            chargeDetailRecords.TryAdd(KeyOf(cdr), cdr);
 
                         }
                     }
@@ -4663,8 +4663,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out cdr,
                                             out errorResponse))
                         {
-                            chargeDetailRecords.Remove(cdr.Id, out _);
-                            chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            chargeDetailRecords.Remove(KeyOf(cdr), out _);
+                            chargeDetailRecords.TryAdd(KeyOf(cdr), cdr);
                         }
                     }
                     catch (Exception e)
@@ -4687,7 +4687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          out cdr,
                                          out errorResponse))
                         {
-                            chargeDetailRecords.Remove(cdr.Id, out _);
+                            chargeDetailRecords.Remove(KeyOf(cdr), out _);
                         }
                     }
                     catch (Exception e)
@@ -11799,7 +11799,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly ConcurrentDictionary<Session_Id , Session> chargingSessions = [];
+        /// <summary>
+        /// The sessions, by their party and their id: two parties may well
+        /// give one the same id, and the one of one party is not the other's.
+        /// </summary>
+        private readonly ConcurrentDictionary<(Party_Idv3 Party, Session_Id Id), Session> chargingSessions = [];
+
+        /// <summary>
+        /// The key of the given session: its party and its id.
+        /// </summary>
+        private static (Party_Idv3 Party, Session_Id Id) KeyOf(Session Session)
+
+            => (Party_Idv3.From(Session.CountryCode, Session.PartyId), Session.Id);
+
+        /// <summary>
+        /// The key of a session known here by its id alone: of the first party
+        /// that has one of that id, where more than one has.
+        /// </summary>
+        private Boolean TryKeyOf(Session_Id SessionId, out (Party_Idv3 Party, Session_Id Id) Key)
+        {
+
+            foreach (var key in chargingSessions.Keys)
+            {
+                if (key.Id == SessionId)
+                {
+                    Key = key;
+                    return true;
+                }
+            }
+
+            Key = default;
+            return false;
+
+        }
 
 
         public delegate Task OnSessionAddedDelegate          (Session Session);
@@ -11840,7 +11872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargingSessions.TryAdd(Session.Id, Session))
+            if (chargingSessions.TryAdd(KeyOf(Session), Session))
             {
 
                 Session.CommonAPI = this;
@@ -11927,7 +11959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargingSessions.TryAdd(Session.Id, Session))
+            if (chargingSessions.TryAdd(KeyOf(Session), Session))
             {
 
                 Session.CommonAPI = this;
@@ -12017,7 +12049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Update an existing session
 
-            if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
+            if (chargingSessions.TryGetValue(KeyOf(Session), out var existingSession))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -12032,7 +12064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                chargingSessions[Session.Id] = Session;
+                chargingSessions[KeyOf(Session)] = Session;
                 Session.CommonAPI = this;
 
                 await LogAsset(
@@ -12089,7 +12121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Add a new session
 
-            if (chargingSessions.TryAdd(Session.Id, Session))
+            if (chargingSessions.TryAdd(KeyOf(Session), Session))
             {
 
                 Session.CommonAPI = this;
@@ -12182,7 +12214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Validate AllowDowngrades
 
-            if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
+            if (chargingSessions.TryGetValue(KeyOf(Session), out var existingSession))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -12208,7 +12240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            if (chargingSessions.TryUpdate(Session.Id, Session, existingSession))
+            if (chargingSessions.TryUpdate(KeyOf(Session), Session, existingSession))
             {
 
                 Session.CommonAPI = this;
@@ -12273,7 +12305,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryPatchSession       (SessionId, SessionPatch, AllowDowngrades = false, SkipNotifications = false)
+        #region TryPatchSession       (SessionId, SessionPatch, AllowDowngrades = false, ...)
+
+        /// <summary>
+        /// Patch the session of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<PatchResult<Session>>
+
+            TryPatchSession(Session_Id         SessionId,
+                            JObject            SessionPatch,
+                            Boolean?           AllowDowngrades     = false,
+                            Boolean            SkipNotifications   = false,
+                            EventTracking_Id?  EventTrackingId     = null,
+                            User_Id?           CurrentUserId       = null,
+                            CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(SessionId, out var key)
+
+                   ? TryPatchSession(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         SessionId,
+                         SessionPatch,
+                         AllowDowngrades,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         PatchResult<Session>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given session '{SessionId}' does not exist!"
+                         )
+                     );
+
+        #endregion
+
+        #region TryPatchSession       (CountryCode, PartyId, SessionId, SessionPatch, AllowDowngrades = false, ...)
 
         /// <summary>
         /// Try to patch the given charging session with the given JSON patch document.
@@ -12287,7 +12358,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<Session>>
 
-            TryPatchSession(Session_Id         SessionId,
+            TryPatchSession(CountryCode        CountryCode,
+                            Party_Id           PartyId,
+                            Session_Id         SessionId,
                             JObject            SessionPatch,
                             Boolean?           AllowDowngrades     = false,
                             Boolean            SkipNotifications   = false,
@@ -12305,7 +12378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            "The given charging session patch must not be null or empty!"
                        );
 
-            if (chargingSessions.TryGetValue(SessionId, out var existingSession))
+            if (chargingSessions.TryGetValue((Party_Idv3.From(CountryCode, PartyId), SessionId), out var existingSession))
             {
 
                 var patchResult = existingSession.TryPatch(
@@ -12340,7 +12413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return PatchResult<Session>.Failed(
                        EventTrackingId,
-                       $"The given session '{SessionId}' does not exist!"
+                       $"The session '{SessionId}' of '{CountryCode}{PartyId}' does not exist!"
                    );
 
         }
@@ -12367,6 +12440,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                           CancellationToken  CancellationToken   = default)
 
                 => RemoveSession(
+                       Session.CountryCode,
+                       Session.PartyId,
                        Session.Id,
                        SkipNotifications,
                        EventTrackingId,
@@ -12379,6 +12454,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region RemoveSession         (SessionId, ...)
 
         /// <summary>
+        /// Remove the session of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<RemoveResult<Session>>
+
+            RemoveSession(Session_Id         SessionId,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(SessionId, out var key)
+
+                   ? RemoveSession(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         SessionId,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         RemoveResult<Session>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given session '{SessionId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region RemoveSession         (CountryCode, PartyId, SessionId, ...)
+
+        /// <summary>
         /// Remove the given charging session.
         /// </summary>
         /// <param name="SessionId">An unique charging session identification.</param>
@@ -12386,7 +12496,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
         /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
-        public async Task<RemoveResult<Session>> RemoveSession(Session_Id         SessionId,
+        public async Task<RemoveResult<Session>> RemoveSession(CountryCode        CountryCode,
+                                                               Party_Id           PartyId,
+                                                               Session_Id         SessionId,
                                                                Boolean            SkipNotifications   = false,
                                                                EventTracking_Id?  EventTrackingId     = null,
                                                                User_Id?           CurrentUserId       = null,
@@ -12395,7 +12507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargingSessions.Remove(SessionId, out var session))
+            if (chargingSessions.Remove((Party_Idv3.From(CountryCode, PartyId), SessionId), out var session))
             {
 
                 await LogAsset(
@@ -12450,7 +12562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return RemoveResult<Session>.Failed(
                        EventTrackingId,
-                       $"The charging session '{SessionId}' is unknown!"
+                       $"The session '{SessionId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -12545,6 +12657,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveSession(
+                                       session.CountryCode,
+                                       session.PartyId,
                                        session.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -12623,6 +12737,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveSession(
+                                       session.CountryCode,
+                                       session.PartyId,
                                        session.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -12702,6 +12818,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveSession(
+                                       session.CountryCode,
+                                       session.PartyId,
                                        session.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -12750,7 +12868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean SessionExists(Session_Id SessionId)
         {
 
-            if (chargingSessions.ContainsKey(SessionId))
+            if (TryKeyOf(SessionId, out _))
                 return true;
 
             var onSessionSlowStorageLookup = OnSessionSlowStorageLookup;
@@ -12795,14 +12913,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryGetSession         (CountryCode, PartyId, SessionId, out Session)
+        #region TryGetSession         (SessionId, out Session)
 
         public Boolean TryGetSession(Session_Id                        SessionId,
                                      [NotNullWhen(true)] out Session?  Session)
         {
 
-            if (chargingSessions.TryGetValue(SessionId, out Session))
+            if (TryKeyOf(SessionId, out var key) &&
+                chargingSessions.TryGetValue(key, out Session))
+            {
                 return true;
+            }
 
             var onSessionSlowStorageLookup = OnSessionSlowStorageLookup;
             if (onSessionSlowStorageLookup is not null)
@@ -12832,6 +12953,85 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region SessionExists         (CountryCode, PartyId, SessionId)
+
+        /// <summary>
+        /// Whether the given party has a session of the given id.
+        /// </summary>
+        public Boolean SessionExists(CountryCode  CountryCode,
+                                     Party_Id     PartyId,
+                                     Session_Id   SessionId)
+
+            => TryGetSession(CountryCode, PartyId, SessionId, out _);
+
+        #endregion
+
+        #region GetSession            (CountryCode, PartyId, SessionId)
+
+        /// <summary>
+        /// The session of the given id of the given party.
+        /// </summary>
+        public Session? GetSession(CountryCode  CountryCode,
+                                   Party_Id     PartyId,
+                                   Session_Id   SessionId)
+
+            => TryGetSession(CountryCode, PartyId, SessionId, out var session)
+                   ? session
+                   : null;
+
+        #endregion
+
+        #region TryGetSession         (CountryCode, PartyId, SessionId, out Session)
+
+        /// <summary>
+        /// The session of the given id of the given party - not another
+        /// party's of the same id. Where it is not in memory, the slow storage
+        /// is asked for the id, and what it has counts only as that party's.
+        /// </summary>
+        public Boolean TryGetSession(CountryCode                       CountryCode,
+                                     Party_Id                          PartyId,
+                                     Session_Id                        SessionId,
+                                     [NotNullWhen(true)] out Session?  Session)
+        {
+
+            if (chargingSessions.TryGetValue((Party_Idv3.From(CountryCode, PartyId), SessionId), out Session))
+                return true;
+
+            var slowStorageLookup = OnSessionSlowStorageLookup;
+            if (slowStorageLookup is not null)
+            {
+                try
+                {
+
+                    var found = slowStorageLookup(
+                                    SessionId
+                                ).Result;
+
+                    if (found is not null &&
+                        found.CountryCode == CountryCode &&
+                        found.PartyId     == PartyId)
+                    {
+                        Session = found;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetSession), " ", nameof(OnSessionSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+            Session = null;
+            return false;
+
+        }
+
+        #endregion
+
+
         #region GetSessions           (IncludeSession = null)
 
         public IEnumerable<Session> GetSessions(Func<Session, Boolean>? IncludeSession = null)
@@ -12858,7 +13058,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly ConcurrentDictionary<CDR_Id, CDR> chargeDetailRecords = [];
+        /// <summary>
+        /// The charge detail records, by their party and their id: two parties may well
+        /// give one the same id, and the one of one party is not the other's.
+        /// </summary>
+        private readonly ConcurrentDictionary<(Party_Idv3 Party, CDR_Id Id), CDR> chargeDetailRecords = [];
+
+        /// <summary>
+        /// The key of the given charge detail record: its party and its id.
+        /// </summary>
+        private static (Party_Idv3 Party, CDR_Id Id) KeyOf(CDR CDR)
+
+            => (Party_Idv3.From(CDR.CountryCode, CDR.PartyId), CDR.Id);
+
+        /// <summary>
+        /// The key of a charge detail record known here by its id alone: of the first party
+        /// that has one of that id, where more than one has.
+        /// </summary>
+        private Boolean TryKeyOf(CDR_Id CDRId, out (Party_Idv3 Party, CDR_Id Id) Key)
+        {
+
+            foreach (var key in chargeDetailRecords.Keys)
+            {
+                if (key.Id == CDRId)
+                {
+                    Key = key;
+                    return true;
+                }
+            }
+
+            Key = default;
+            return false;
+
+        }
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate  (CDR CDR);
@@ -12899,7 +13131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
+            if (chargeDetailRecords.TryAdd(KeyOf(CDR), CDR))
             {
 
                 CDR.CommonAPI = this;
@@ -12994,7 +13226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
+            if (chargeDetailRecords.TryAdd(KeyOf(CDR), CDR))
             {
 
                 CDR.CommonAPI = this;
@@ -13092,7 +13324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Update an existing charge detail record
 
-            if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
+            if (chargeDetailRecords.TryGetValue(KeyOf(CDR), out var existingCDR))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -13107,7 +13339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                chargeDetailRecords[CDR.Id] = CDR;
+                chargeDetailRecords[KeyOf(CDR)] = CDR;
                 CDR.CommonAPI = this;
 
                 await LogAsset(
@@ -13172,7 +13404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Add a new charge detail record
 
-            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
+            if (chargeDetailRecords.TryAdd(KeyOf(CDR), CDR))
             {
 
                 CDR.CommonAPI = this;
@@ -13234,7 +13466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Validate AllowDowngrades
 
-            if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
+            if (chargeDetailRecords.TryGetValue(KeyOf(CDR), out var existingCDR))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -13260,7 +13492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            if (chargeDetailRecords.TryUpdate(CDR.Id, CDR, existingCDR))
+            if (chargeDetailRecords.TryUpdate(KeyOf(CDR), CDR, existingCDR))
             {
 
                 CDR.CommonAPI = this;
@@ -13333,7 +13565,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region TryPatchCDR       (CDR, CDRPatch, AllowDowngrades = false, ...)   // Non-Standard
+        #region TryPatchCDR       (CDRId, CDRPatch, AllowDowngrades = false, ...)
+
+        /// <summary>
+        /// Patch the charge detail record of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<PatchResult<CDR>>
+
+            TryPatchCDR(CDR_Id             CDRId,
+                        JObject            CDRPatch,
+                        Boolean?           AllowDowngrades     = false,
+                        Boolean            SkipNotifications   = false,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(CDRId, out var key)
+
+                   ? TryPatchCDR(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         CDRId,
+                         CDRPatch,
+                         AllowDowngrades,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         PatchResult<CDR>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given charge detail record '{CDRId}' does not exist!"
+                         )
+                     );
+
+        #endregion
+
+        #region TryPatchCDR       (CountryCode, PartyId, CDRId, CDRPatch, AllowDowngrades = false, ...)
 
         /// <summary>
         /// Try to patch the given charge detail record with the given JSON patch document.
@@ -13347,7 +13618,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<CDR>>
 
-            TryPatchCDR(CDR_Id             CDRId,
+            TryPatchCDR(CountryCode        CountryCode,
+                        Party_Id           PartyId,
+                        CDR_Id             CDRId,
                         JObject            CDRPatch,
                         Boolean?           AllowDowngrades     = false,
                         Boolean            SkipNotifications   = false,
@@ -13365,7 +13638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            "The given charge detail record patch must not be null or empty!"
                        );
 
-            if (chargeDetailRecords.TryGetValue(CDRId, out var existingCDR))
+            if (chargeDetailRecords.TryGetValue((Party_Idv3.From(CountryCode, PartyId), CDRId), out var existingCDR))
             {
 
                 var patchResult = existingCDR.TryPatch(
@@ -13401,7 +13674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return PatchResult<CDR>.Failed(
                        EventTrackingId,
-                       $"The given charge detail record '{CDRId}' does not exist!"
+                       $"The charge detail record '{CDRId}' of '{CountryCode}{PartyId}' does not exist!"
                    );
 
         }
@@ -13428,6 +13701,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                       CancellationToken  CancellationToken   = default)
 
                 => RemoveCDR(
+                       CDR.CountryCode,
+                       CDR.PartyId,
                        CDR.Id,
                        SkipNotifications,
                        EventTrackingId,
@@ -13440,6 +13715,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region RemoveCDR         (CDRId, ...)
 
         /// <summary>
+        /// Remove the charge detail record of the given id - of the first party that has
+        /// one, where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<RemoveResult<CDR>>
+
+            RemoveCDR(CDR_Id             CDRId,
+                      Boolean            SkipNotifications   = false,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      User_Id?           CurrentUserId       = null,
+                      CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(CDRId, out var key)
+
+                   ? RemoveCDR(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         CDRId,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         RemoveResult<CDR>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given charge detail record '{CDRId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region RemoveCDR         (CountryCode, PartyId, CDRId, ...)
+
+        /// <summary>
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDRId">A unique identification of a charge detail record.</param>
@@ -13449,7 +13759,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<CDR>>
 
-            RemoveCDR(CDR_Id             CDRId,
+            RemoveCDR(CountryCode        CountryCode,
+                      Party_Id           PartyId,
+                      CDR_Id             CDRId,
                       Boolean            SkipNotifications   = false,
                       EventTracking_Id?  EventTrackingId     = null,
                       User_Id?           CurrentUserId       = null,
@@ -13459,7 +13771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (chargeDetailRecords.Remove(CDRId, out var cdr))
+            if (chargeDetailRecords.Remove((Party_Idv3.From(CountryCode, PartyId), CDRId), out var cdr))
             {
 
                 await LogAsset(
@@ -13522,7 +13834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return RemoveResult<CDR>.Failed(
                        EventTrackingId,
-                       $"The charge detail record '{CDRId}' is unknown!"
+                       $"The charge detail record '{CDRId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -13618,6 +13930,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveCDR(
+                                       cdr.CountryCode,
+                                       cdr.PartyId,
                                        cdr.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -13696,6 +14010,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveCDR(
+                                       cdr.CountryCode,
+                                       cdr.PartyId,
                                        cdr.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -13776,6 +14092,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveCDR(
+                                       cdr.CountryCode,
+                                       cdr.PartyId,
                                        cdr.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -13824,7 +14142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean CDRExists(CDR_Id CDRId)
         {
 
-            if (chargeDetailRecords.ContainsKey(CDRId))
+            if (TryKeyOf(CDRId, out _))
                 return true;
 
             var onChargeDetailRecordSlowStorageLookup = OnChargeDetailRecordSlowStorageLookup;
@@ -13875,8 +14193,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  [NotNullWhen(true)] out CDR?  CDR)
         {
 
-            if (chargeDetailRecords.TryGetValue(CDRId, out CDR))
+            if (TryKeyOf(CDRId, out var key) &&
+                chargeDetailRecords.TryGetValue(key, out CDR))
+            {
                 return true;
+            }
 
             var onChargeDetailRecordLookup = OnChargeDetailRecordSlowStorageLookup;
             if (onChargeDetailRecordLookup is not null)
@@ -13905,6 +14226,85 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
+        #region CDRExists         (CountryCode, PartyId, CDRId)
+
+        /// <summary>
+        /// Whether the given party has a charge detail record of the given id.
+        /// </summary>
+        public Boolean CDRExists(CountryCode  CountryCode,
+                                 Party_Id     PartyId,
+                                 CDR_Id       CDRId)
+
+            => TryGetCDR(CountryCode, PartyId, CDRId, out _);
+
+        #endregion
+
+        #region GetCDR            (CountryCode, PartyId, CDRId)
+
+        /// <summary>
+        /// The charge detail record of the given id of the given party.
+        /// </summary>
+        public CDR? GetCDR(CountryCode  CountryCode,
+                           Party_Id     PartyId,
+                           CDR_Id       CDRId)
+
+            => TryGetCDR(CountryCode, PartyId, CDRId, out var cdr)
+                   ? cdr
+                   : null;
+
+        #endregion
+
+        #region TryGetCDR         (CountryCode, PartyId, CDRId, out CDR)
+
+        /// <summary>
+        /// The charge detail record of the given id of the given party - not another
+        /// party's of the same id. Where it is not in memory, the slow storage
+        /// is asked for the id, and what it has counts only as that party's.
+        /// </summary>
+        public Boolean TryGetCDR(CountryCode                   CountryCode,
+                                 Party_Id                      PartyId,
+                                 CDR_Id                        CDRId,
+                                 [NotNullWhen(true)] out CDR?  CDR)
+        {
+
+            if (chargeDetailRecords.TryGetValue((Party_Idv3.From(CountryCode, PartyId), CDRId), out CDR))
+                return true;
+
+            var slowStorageLookup = OnChargeDetailRecordSlowStorageLookup;
+            if (slowStorageLookup is not null)
+            {
+                try
+                {
+
+                    var found = slowStorageLookup(
+                                    CDRId
+                                ).Result;
+
+                    if (found is not null &&
+                        found.CountryCode == CountryCode &&
+                        found.PartyId     == PartyId)
+                    {
+                        CDR = found;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+            CDR = null;
+            return false;
+
+        }
+
+        #endregion
+
 
         #region GetCDRs           (IncludeCDRs = null)
 

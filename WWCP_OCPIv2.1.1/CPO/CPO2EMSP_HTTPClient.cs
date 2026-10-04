@@ -3372,7 +3372,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Session.Parse(json)
+                                   json => Session.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.GetSession.IncResponses_OK();
@@ -3531,7 +3535,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Session.Parse(json)
+                                   json => Session.Parse(
+                                               json,
+                                               Session.CountryCode,
+                                               Session.PartyId
+                                           )
                                );
 
                     Counters.PutSession.IncResponses_OK();
@@ -3699,7 +3707,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Session.Parse(json)
+                                   json => Session.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.PatchSession.IncResponses_OK();
@@ -3860,7 +3872,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Session.Parse(json)
+                                   json => Session.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.DeleteSession.IncResponses_OK();

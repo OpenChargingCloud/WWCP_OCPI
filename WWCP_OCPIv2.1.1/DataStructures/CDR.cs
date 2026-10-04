@@ -1608,9 +1608,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return PatchResult<CDR>.Failed(EventTrackingId, this,
                                                    patchResult.ErrorResponse);
 
+                // With its owner, as a location does: 2.1.1 writes it without its
+                // country code and party id, and TryParse asks for both - every
+                // patch failed with "The country code is missing!".
                 if (TryParse(patchResult.PatchedData,
                              out var patchedCDR,
-                             out var errorResponse))
+                             out var errorResponse,
+                             CountryCode,
+                             PartyId))
                 {
 
                     return PatchResult<CDR>.Success(EventTrackingId, patchedCDR,

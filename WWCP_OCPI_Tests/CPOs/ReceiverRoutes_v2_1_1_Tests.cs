@@ -122,7 +122,45 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         #endregion
 
 
-        #region (private) EMSP1() / ALocation(PartyId, LocationId)
+        #region TwoCPOsMayPutASessionOfTheSameId()
+
+        /// <summary>
+        /// The EMSP kept the sessions by their id alone: the second CPO's
+        /// session of an id replaced the first one's.
+        /// </summary>
+        [Test]
+        public async Task TwoCPOsMayPutASessionOfTheSameId()
+        {
+
+            var cpo2 = cpo2CPOAPI_v2_1_1?.GetEMSPClient(
+                           CountryCode: CountryCode.Parse("DE"),
+                           PartyId:     Party_Id.   Parse("GDF")
+                       );
+
+            Assert.That(cpo2, Is.Not.Null);
+
+            var response1 = await EMSP1().PutSession(ASession("GEF", "SESSION0103"));
+            var response2 = await cpo2!. PutSession(ASession("GE2", "SESSION0103"));
+
+            Assert.Multiple(() => {
+
+                Assert.That(response1.StatusCode.Value, Is.EqualTo(1000), response1.StatusMessage);
+                Assert.That(response2.StatusCode.Value, Is.EqualTo(1000), response2.StatusMessage);
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetSessions(CountryCode.Parse("DE"), Party_Id.Parse("GEF")).Select(session => session.Id.ToString()), Does.Contain("SESSION0103"),
+                            "CPO #1's session is gone.");
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetSessions(CountryCode.Parse("DE"), Party_Id.Parse("GE2")).Select(session => session.Id.ToString()), Does.Contain("SESSION0103"),
+                            "CPO #2's session is not there.");
+
+            });
+
+        }
+
+        #endregion
+
+
+        #region (private) EMSP1() / ALocation(PartyId, LocationId) / ASession(PartyId, SessionId)
 
         /// <summary>
         /// CPO #1's client of EMSP #1, on OCPI 2.1.1.
@@ -156,6 +194,24 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    "07749",
                    Country.Germany,
                    GeoCoordinate.Parse(50.9, 11.6)
+               );
+
+        /// <summary>
+        /// An active session of the given party, at a location of its own.
+        /// </summary>
+        private static OCPIv2_1_1.Session ASession(String PartyId, String SessionId)
+
+            => new (
+                   CountryCode:  CountryCode.Parse("DE"),
+                   PartyId:      Party_Id.   Parse(PartyId),
+                   Id:           Session_Id.Parse(SessionId),
+                   Start:        Timestamp.Now - TimeSpan.FromMinutes(5),
+                   kWh:          WattHour.FromKWh(1.11M),
+                   AuthId:       Auth_Id.Parse("1234"),
+                   AuthMethod:   OCPIv2_1_1.AuthMethods.AUTH_REQUEST,
+                   Location:     ALocation(PartyId, "LOC0104"),
+                   Currency:     Currency.EUR,
+                   Status:       OCPIv2_1_1.SessionStatusTypes.ACTIVE
                );
 
         #endregion

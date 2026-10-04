@@ -5456,6 +5456,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                     var patchedSession = await CommonAPI.TryPatchSession(
+                                                   existingSession.CountryCode,
+                                                   existingSession.PartyId,
                                                    existingSession.Id,
                                                    sessionPatch
                                                );
