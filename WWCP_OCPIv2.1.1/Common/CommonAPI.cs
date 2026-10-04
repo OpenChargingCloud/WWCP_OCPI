@@ -2545,8 +2545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     #region Check access token... not allowed!
 
-                    if (request.LocalAccessInfo is not null &&
-                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    if (request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                     {
 
                         return Task.FromResult(
