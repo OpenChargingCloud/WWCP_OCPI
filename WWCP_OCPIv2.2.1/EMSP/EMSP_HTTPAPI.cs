@@ -14883,7 +14883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     #endregion
 
-                    var requestedTokenType = request.QueryString.Map("type", TokenType.TryParse);
+                    var requestedTokenType = request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;  // "Default if omitted: RFID"
 
                     #region Parse optional LocationReference JSON
 
@@ -14987,7 +14987,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         CommonAPI.DefaultPartyId.CountryCode,
                                                         CommonAPI.DefaultPartyId.PartyId,
                                                         tokenId.Value,
-                                                        requestedTokenType ?? TokenType.RFID,
+                                                        requestedTokenType,
                                                         Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                         $"Could not call {nameof(EMSP_HTTPAPI)}.OnRFIDAuthToken(...): {e.Message}",
                                                         false,
@@ -15211,7 +15211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                   CommonAPI.DefaultPartyId.CountryCode,
                                                   CommonAPI.DefaultPartyId.PartyId,
                                                   tokenId.Value,
-                                                  requestedTokenType ?? TokenType.RFID,
+                                                  requestedTokenType,
                                                   Contract_Id.Parse($"{CommonAPI.DefaultPartyId.ToString(Role.EMSP)}-{tokenId}"),
                                                   "Internal Error!",
                                                   false,
