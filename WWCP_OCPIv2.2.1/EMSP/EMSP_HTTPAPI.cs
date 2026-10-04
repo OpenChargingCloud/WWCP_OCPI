@@ -5114,7 +5114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteLocation.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(RemoteLocation.Id, RemoteLocation))
@@ -5224,7 +5224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteLocation.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(RemoteLocation.Id, RemoteLocation))
@@ -5336,7 +5336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteLocation.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 #region Update an existing location
@@ -5582,7 +5582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteLocation.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (!party.Locations.TryGetValue(RemoteLocation.Id, out var existingRemoteLocation))
@@ -5802,7 +5802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Locations.TryGetValue(RemoteLocationId, out var existingRemoteLocation))
@@ -5912,7 +5912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Locations.TryRemove(RemoteLocationId, out var location))
@@ -6230,7 +6230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 var matchingRemoteLocations  = party.Locations.Values;
@@ -6297,7 +6297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             Location_Id  RemoteLocationId)
         {
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
                 return party.Locations.ContainsKey(RemoteLocationId);
 
             return false;
@@ -6313,7 +6313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             [NotNullWhen(true)] out Location?  RemoteLocation)
         {
 
-            if (remoteCPOs.     TryGetValue(PartyId,          out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId,          out var party) &&
                 party.Locations.TryGetValue(RemoteLocationId, out var location))
             {
                 RemoteLocation = location;
@@ -6356,7 +6356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (remoteCPOs.TryGetValue(PartyId.Value, out var party))
+                if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId.Value, out var party))
                     return party.Locations.Values;
             }
 
@@ -6926,7 +6926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteTariff.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(RemoteTariff.Id, RemoteTariff))
@@ -7018,7 +7018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteTariff.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(RemoteTariff.Id, RemoteTariff))
@@ -7112,7 +7112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteTariff.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 #region Update an existing tariff
@@ -7285,7 +7285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteTariff.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (!party.Tariffs.TryGetValue(RemoteTariff.Id, out var existingRemoteTariff))
@@ -7404,7 +7404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Tariffs.TryGetValue(RemoteTariffId, out var existingRemoteTariff, Timestamp.Now))
@@ -7514,7 +7514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Tariffs.TryRemove(RemoteTariffId, out var tariffVersions))
@@ -7831,7 +7831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 var matchingRemoteTariffs  = party.Tariffs.Values();
@@ -7906,7 +7906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           TimeSpan?        Tolerance   = null)
         {
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
                 return party.Tariffs.ContainsKey(RemoteTariffId);
 
             var onRemoteTariffSlowStorageLookup = OnRemoteTariffSlowStorageLookup;
@@ -7969,7 +7969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           TimeSpan?                        Tolerance   = null)
         {
 
-            if (remoteCPOs.   TryGetValue(PartyId,        out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId,        out var party) &&
                 party.Tariffs.TryGetValue(RemoteTariffId, out var tariff))
             {
                 RemoteTariff = tariff;
@@ -8036,7 +8036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (remoteCPOs.TryGetValue(PartyId.Value, out var party))
+                if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId.Value, out var party))
                     return party.Tariffs.Values();
             }
 
@@ -8127,7 +8127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteSession.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(RemoteSession.Id, RemoteSession))
@@ -8217,7 +8217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteSession.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(RemoteSession.Id, RemoteSession))
@@ -8309,7 +8309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteSession.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 #region Update an existing session
@@ -8482,7 +8482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteSession.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (!party.Sessions.TryGetValue(RemoteSession.Id, out var existingRemoteSession))
@@ -8598,7 +8598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Sessions.TryGetValue(RemoteSessionId, out var existingRemoteSession))
@@ -8708,7 +8708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.Sessions.TryRemove(RemoteSessionId, out var session))
@@ -9008,7 +9008,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 var matchingRemoteSessions  = party.Sessions.Values;
@@ -9075,7 +9075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            Session_Id  RemoteSessionId)
         {
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party) &&
                 party.Sessions.ContainsKey(RemoteSessionId))
             {
                 return true;
@@ -9133,7 +9133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            [NotNullWhen(true)] out Session?  RemoteSession)
         {
 
-            if (remoteCPOs.    TryGetValue(PartyId,         out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId,         out var party) &&
                 party.Sessions.TryGetValue(RemoteSessionId, out RemoteSession))
             {
                 return true;
@@ -9197,7 +9197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (remoteCPOs.TryGetValue(PartyId.Value, out var party))
+                if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId.Value, out var party))
                     return party.Sessions.Values;
             }
 
@@ -9269,7 +9269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteCDR.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(RemoteCDR.Id, RemoteCDR))
@@ -9383,7 +9383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteCDR.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(RemoteCDR.Id, RemoteCDR))
@@ -9488,7 +9488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteCDR.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 #region Update an existing charge detail record
@@ -9687,7 +9687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     RemoteCDR.PartyId
                                 );
 
-            if (remoteCPOs.TryGetValue(partyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, partyId, out var party))
             {
 
                 if (!party.CDRs.TryGetValue(RemoteCDR.Id, out var existingRemoteCDR))
@@ -9822,7 +9822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            "The given remote charge detail record patch must not be null or empty!"
                        );
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.CDRs.TryGetValue(RemoteCDRId, out var existingRemoteCDR))
@@ -9932,7 +9932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 if (party.CDRs.TryRemove(RemoteCDRId, out var cdr))
@@ -10245,7 +10245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party))
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party))
             {
 
                 var matchingRemoteCDRs  = party.CDRs.Values;
@@ -10312,7 +10312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        CDR_Id      RemoteCDRId)
         {
 
-            if (remoteCPOs.TryGetValue(PartyId, out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId, out var party) &&
                 party.CDRs.ContainsKey(RemoteCDRId))
             {
                 return true;
@@ -10370,7 +10370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        [NotNullWhen(true)] out CDR?  RemoteCDR)
         {
 
-            if (remoteCPOs.TryGetValue(PartyId,     out var party) &&
+            if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId,     out var party) &&
                 party.CDRs.TryGetValue(RemoteCDRId, out RemoteCDR))
             {
                 return true;
@@ -10434,7 +10434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (remoteCPOs.TryGetValue(PartyId.Value, out var party))
+                if (RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, PartyId.Value, out var party))
                     return party.CDRs.Values;
             }
 
@@ -15050,7 +15050,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             if (request.From.HasValue)
                             {
 
-                                if (!remoteCPOs.TryGetValue(request.From.Value, out var partyData) ||
+                                if (!RemoteCPOAssets.TryGet(CommonAPI, remoteCPOs, request.From.Value, out var partyData) ||
                                      partyData is null ||
                                     !partyData.Locations.TryGetValue(locationReference.Value.LocationId, out validLocation))
                                 {

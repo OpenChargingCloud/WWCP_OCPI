@@ -60,6 +60,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     internal static class RemoteCPOAssets
     {
 
+        #region TryGet (CommonAPI, RemoteCPOs, PartyId, out RemoteCPO)
+
+        /// <summary>
+        /// The given remote CPO, with its assets. A CPO that is a remote party
+        /// of the given Common API - itself, or one of the roles a hub named -
+        /// is made where it is asked for first: by its first push, or by the
+        /// first line of the assets file read back at the start, which comes
+        /// after the remote parties. AddRemoteCPO is not needed for that.
+        /// </summary>
+        /// <param name="CommonAPI">The Common API whose remote parties are asked.</param>
+        /// <param name="RemoteCPOs">The remote CPOs, with their assets.</param>
+        /// <param name="PartyId">The party identification of the remote CPO.</param>
+        /// <param name="RemoteCPO">The remote CPO, with its assets.</param>
+        internal static Boolean TryGet(CommonAPI                                    CommonAPI,
+                                       ConcurrentDictionary<Party_Idv3, PartyData>  RemoteCPOs,
+                                       Party_Idv3                                   PartyId,
+                                       [NotNullWhen(true)] out PartyData?           RemoteCPO)
+        {
+
+            if (RemoteCPOs.TryGetValue(PartyId, out RemoteCPO))
+                return true;
+
+            foreach (var credentialsRole in CommonAPI.GetRemoteParties().SelectMany(remoteParty => remoteParty.Roles))
+            {
+                if (credentialsRole.PartyId == PartyId &&
+                    credentialsRole.Role    == Role.CPO)
+                {
+
+                    RemoteCPO = RemoteCPOs.GetOrAdd(
+                                    PartyId,
+                                    partyId => new PartyData(
+                                                   partyId,
+                                                   Role.CPO,
+                                                   credentialsRole.BusinessDetails
+                                               )
+                                );
+
+                    return true;
+
+                }
+            }
+
+            RemoteCPO = null;
+            return false;
+
+        }
+
+        #endregion
+
         #region Read   (CommonAPI, RemoteCPOs, CancellationToken = default)
 
         /// <summary>
@@ -162,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            RemoteCPOs. TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -197,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            RemoteCPOs. TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -232,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            RemoteCPOs. TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -269,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            RemoteCPOs. TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -302,7 +351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            RemoteCPOs. TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -344,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -376,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -408,7 +457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -445,7 +494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -481,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tariff,
                                             out errorResponse
                                         ) &&
-                                RemoteCPOs.TryGetValue(
+                                TryGet(CommonAPI, RemoteCPOs, 
                                             Party_Idv3.From(
                                                 tariff.CountryCode,
                                                 tariff.PartyId
@@ -524,7 +573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -556,7 +605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -588,7 +637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -625,7 +674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -658,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -701,7 +750,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -734,7 +783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -767,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -805,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -839,7 +888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            RemoteCPOs.TryGetValue(
+                            TryGet(CommonAPI, RemoteCPOs, 
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
