@@ -4820,6 +4820,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     // (E-Tag, Timestamp, ...)
 
                     var patchedTariff = await CommonAPI.TryPatchTariff(
+                                                  existingTariff.CountryCode,
+                                                  existingTariff.PartyId,
                                                   existingTariff.Id,
                                                   tariffPatch
                                               );

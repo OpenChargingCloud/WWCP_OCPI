@@ -160,7 +160,47 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         #endregion
 
 
-        #region (private) EMSP1() / ALocation(PartyId, LocationId) / ASession(PartyId, SessionId)
+        #region TwoCPOsMayPutATariffOfTheSameId()
+
+        /// <summary>
+        /// The EMSP kept the tariffs by their id alone: the second CPO's
+        /// tariff of an id replaced the first one's. And the CPO's client
+        /// read the tariff it got back without the party it named, so that
+        /// every answer as OCPI has it failed.
+        /// </summary>
+        [Test]
+        public async Task TwoCPOsMayPutATariffOfTheSameId()
+        {
+
+            var cpo2 = cpo2CPOAPI_v2_1_1?.GetEMSPClient(
+                           CountryCode: CountryCode.Parse("DE"),
+                           PartyId:     Party_Id.   Parse("GDF")
+                       );
+
+            Assert.That(cpo2, Is.Not.Null);
+
+            var response1 = await EMSP1().PutTariff(ATariff("GEF", "TARIFF0103"));
+            var response2 = await cpo2!. PutTariff(ATariff("GE2", "TARIFF0103"));
+
+            Assert.Multiple(() => {
+
+                Assert.That(response1.StatusCode.Value, Is.EqualTo(1000), response1.StatusMessage);
+                Assert.That(response2.StatusCode.Value, Is.EqualTo(1000), response2.StatusMessage);
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetTariffs(CountryCode.Parse("DE"), Party_Id.Parse("GEF")).Select(tariff => tariff.Id.ToString()), Does.Contain("TARIFF0103"),
+                            "CPO #1's tariff is gone.");
+
+                Assert.That(emsp1CommonAPI_v2_1_1!.GetTariffs(CountryCode.Parse("DE"), Party_Id.Parse("GE2")).Select(tariff => tariff.Id.ToString()), Does.Contain("TARIFF0103"),
+                            "CPO #2's tariff is not there.");
+
+            });
+
+        }
+
+        #endregion
+
+
+        #region (private) EMSP1() / ALocation(PartyId, LocationId) / ASession(PartyId, SessionId) / ATariff(PartyId, TariffId)
 
         /// <summary>
         /// CPO #1's client of EMSP #1, on OCPI 2.1.1.
@@ -212,6 +252,28 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
                    Location:     ALocation(PartyId, "LOC0104"),
                    Currency:     Currency.EUR,
                    Status:       OCPIv2_1_1.SessionStatusTypes.ACTIVE
+               );
+
+        /// <summary>
+        /// A tariff of the given party.
+        /// </summary>
+        private static OCPIv2_1_1.Tariff ATariff(String PartyId, String TariffId)
+
+            => new (
+                   CountryCode:     CountryCode.Parse("DE"),
+                   PartyId:         Party_Id.   Parse(PartyId),
+                   Id:              Tariff_Id.  Parse(TariffId),
+                   Currency:        Currency.EUR,
+                   TariffElements:  [
+                                        new OCPIv2_1_1.TariffElement(
+                                            [
+                                                OCPIv2_1_1.PriceComponent.ChargingTime(
+                                                    2.5M,
+                                                    TimeSpan.FromSeconds(300)
+                                                )
+                                            ]
+                                        )
+                                    ]
                );
 
         #endregion

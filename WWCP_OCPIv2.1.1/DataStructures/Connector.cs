@@ -887,7 +887,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 foreach (var tariffId in tariffIds)
                 {
 
-                    var tariff = ParentEVSE?.ParentLocation?.CommonAPI?.GetTariff(tariffId);
+                    var location = ParentEVSE?.ParentLocation;
+                    var tariff   = location?.CommonAPI?.GetTariff(location.CountryCode, location.PartyId, tariffId);
 
                     if (tariff is not null)
                     {

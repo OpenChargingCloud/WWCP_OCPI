@@ -905,7 +905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TariffId = tariffId;
 
 
-            if (!CommonAPI.TryGetTariff(tariffId, out Tariff) ||
+            if (!CommonAPI.TryGetTariff(CountryCode, PartyId, tariffId, out Tariff) ||
                  Tariff.CountryCode != CountryCode            ||
                  Tariff.PartyId     != PartyId)
             {
@@ -977,7 +977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             TariffId = tariffId;
 
-            CommonAPI.TryGetTariff(tariffId, out Tariff);
+            CommonAPI.TryGetTariff(CountryCode, PartyId, tariffId, out Tariff);
 
             return true;
 
@@ -4183,7 +4183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out tariff,
                                             out errorResponse))
                         {
-                            tariffs.TryAdd(tariff.Id, tariff);
+                            tariffs.TryAdd(KeyOf(tariff), tariff);
                         }
                     }
                     catch (Exception e)
@@ -4206,7 +4206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out tariff,
                                             out errorResponse))
                         {
-                            tariffs.TryAdd(tariff.Id, tariff);
+                            tariffs.TryAdd(KeyOf(tariff), tariff);
                         }
                     }
                     catch (Exception e)
@@ -4230,10 +4230,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out errorResponse))
                         {
 
-                            if (tariffs.ContainsKey(tariff.Id))
-                                tariffs.Remove(tariff.Id);
+                            if (tariffs.ContainsKey(KeyOf(tariff)))
+                                tariffs.Remove(KeyOf(tariff));
 
-                            tariffs.TryAdd(tariff.Id, tariff);
+                            tariffs.TryAdd(KeyOf(tariff), tariff);
 
                         }
                     }
@@ -4257,8 +4257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out tariff,
                                             out errorResponse))
                         {
-                            tariffs.Remove(tariff.Id);
-                            tariffs.TryAdd(tariff.Id, tariff);
+                            tariffs.Remove(KeyOf(tariff));
+                            tariffs.TryAdd(KeyOf(tariff), tariff);
                         }
                     }
                     catch (Exception e)
@@ -4286,7 +4286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                 out tariff,
                                                 out errorResponse))
                             {
-                                tariffs.Remove(tariff.Id);
+                                tariffs.Remove(KeyOf(tariff));
                             }
 
                             // RemoveSession wrote its line as "removeTariff", with
@@ -9607,7 +9607,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly TimeRangeDictionary<Tariff_Id , Tariff> tariffs = [];
+        /// <summary>
+        /// The tariffs, by their party and their id: two CPOs may well give a
+        /// tariff the same id, and the tariff of one is not the other's.
+        /// </summary>
+        private readonly TimeRangeDictionary<(Party_Idv3 Party, Tariff_Id Id), Tariff> tariffs = [];
+
+        /// <summary>
+        /// The key of the given tariff: its party and its id.
+        /// </summary>
+        private static (Party_Idv3 Party, Tariff_Id Id) KeyOf(Tariff Tariff)
+
+            => (Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId), Tariff.Id);
+
+        /// <summary>
+        /// The key of a tariff known here by its id alone: of the first party
+        /// that has a tariff of that id, where more than one has.
+        /// </summary>
+        private Boolean TryKeyOf(Tariff_Id TariffId, out (Party_Idv3 Party, Tariff_Id Id) Key)
+        {
+
+            foreach (var tariffVersions in tariffs)
+            {
+                if (tariffVersions.Key.Id == TariffId)
+                {
+                    Key = tariffVersions.Key;
+                    return true;
+                }
+            }
+
+            Key = default;
+            return false;
+
+        }
 
 
         public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
@@ -9656,7 +9688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (tariffs.TryAdd(Tariff.Id, Tariff))
+            if (tariffs.TryAdd(KeyOf(Tariff), Tariff))
             {
 
                 Tariff.CommonAPI = this;
@@ -9729,7 +9761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (tariffs.TryAdd(Tariff.Id, Tariff))
+            if (tariffs.TryAdd(KeyOf(Tariff), Tariff))
             {
 
                 Tariff.CommonAPI = this;
@@ -9805,7 +9837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Update an existing tariff
 
-            if (tariffs.TryGetValue(Tariff.Id,
+            if (tariffs.TryGetValue(KeyOf(Tariff),
                                     out var existingTariff,
                                     Tariff.NotBefore ?? DateTimeOffset.MinValue))
             {
@@ -9820,7 +9852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            );
                 }
 
-                tariffs.AddOrUpdate(Tariff.Id, Tariff);
+                tariffs.AddOrUpdate(KeyOf(Tariff), Tariff);
                 Tariff.CommonAPI = this;
 
                 await LogAsset(
@@ -9863,7 +9895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Add a new tariff
 
-            if (tariffs.TryAdd(Tariff.Id, Tariff))
+            if (tariffs.TryAdd(KeyOf(Tariff), Tariff))
             {
 
                 Tariff.CommonAPI = this;
@@ -9942,7 +9974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Validate AllowDowngrades
 
-            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
+            if (tariffs.TryGetValue(KeyOf(Tariff), out var existingTariff, Timestamp.Now))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -9961,7 +9993,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            if (tariffs.TryUpdate(Tariff.Id, Tariff, existingTariff))
+            // The version to replace first, then its replacement - unlike a
+            // ConcurrentDictionary's TryUpdate: the other way round it put the
+            // existing tariff in its own place, and no update changed anything.
+            if (tariffs.TryUpdate(KeyOf(Tariff), existingTariff, Tariff))
             {
 
                 Tariff.CommonAPI = this;
@@ -10015,6 +10050,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryPatchTariff       (TariffId, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
 
         /// <summary>
+        /// Patch the tariff of the given id - of the first party that has one,
+        /// where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<PatchResult<Tariff>>
+
+            TryPatchTariff(Tariff_Id          TariffId,
+                           JObject            TariffPatch,
+                           Boolean?           AllowDowngrades     = false,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(TariffId, out var key)
+
+                   ? TryPatchTariff(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         TariffId,
+                         TariffPatch,
+                         AllowDowngrades,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         PatchResult<Tariff>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given tariff '{TariffId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region TryPatchTariff       (CountryCode, PartyId, TariffId, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
+
+        /// <summary>
         /// Try to patch the given charging tariff with the given JSON patch document.
         /// </summary>
         /// <param name="TariffId">The identification of the charging tariff to patch.</param>
@@ -10026,7 +10100,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<PatchResult<Tariff>>
 
-            TryPatchTariff(Tariff_Id          TariffId,
+            TryPatchTariff(CountryCode        CountryCode,
+                           Party_Id           PartyId,
+                           Tariff_Id          TariffId,
                            JObject            TariffPatch,
                            Boolean?           AllowDowngrades     = false,
                            Boolean            SkipNotifications   = false,
@@ -10044,7 +10120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            "The given charging tariff patch must not be null or empty!"
                        );
 
-            if (tariffs.TryGetValue(TariffId, out var existingTariff, Timestamp.Now))
+            if (tariffs.TryGetValue((Party_Idv3.From(CountryCode, PartyId), TariffId), out var existingTariff, Timestamp.Now))
             {
 
                 var patchResult = existingTariff.TryPatch(
@@ -10080,7 +10156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return PatchResult<Tariff>.Failed(
                        EventTrackingId,
-                       $"The given tariff '{TariffId}' is unknown!"
+                       $"The tariff '{TariffId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -10105,6 +10181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                     CancellationToken  CancellationToken   = default)
 
             => RemoveTariff(
+                   Tariff.CountryCode,
+                   Tariff.PartyId,
                    Tariff.Id,
                    SkipNotifications,
                    EventTrackingId,
@@ -10117,8 +10195,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region RemoveTariff         (TariffId, ...)
 
         /// <summary>
-        /// Remove the given charging tariff.
+        /// Remove the tariff of the given id - of the first party that has one,
+        /// where more than one has; see the overload that names the party.
         /// </summary>
+        /// <param name="TariffId">An unique charging tariff identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public Task<RemoveResult<IEnumerable<Tariff>>>
+
+            RemoveTariff(Tariff_Id          TariffId,
+                         Boolean            SkipNotifications   = false,
+                         EventTracking_Id?  EventTrackingId     = null,
+                         User_Id?           CurrentUserId       = null,
+                         CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(TariffId, out var key)
+
+                   ? RemoveTariff(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         TariffId,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         RemoveResult<IEnumerable<Tariff>>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given tariff '{TariffId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region RemoveTariff         (CountryCode, PartyId, TariffId, ...)
+
+        /// <summary>
+        /// Remove the tariff of the given id of the given party - not another
+        /// party's of the same id.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party of the charging tariff.</param>
+        /// <param name="PartyId">The party identification of the party of the charging tariff.</param>
         /// <param name="TariffId">An unique charging tariff identification.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
@@ -10126,7 +10247,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>>
 
-            RemoveTariff(Tariff_Id          TariffId,
+            RemoveTariff(CountryCode        CountryCode,
+                         Party_Id           PartyId,
+                         Tariff_Id          TariffId,
                          Boolean            SkipNotifications   = false,
                          EventTracking_Id?  EventTrackingId     = null,
                          User_Id?           CurrentUserId       = null,
@@ -10136,7 +10259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (tariffs.TryRemove(TariffId, out var tariffVersions))
+            if (tariffs.TryRemove((Party_Idv3.From(CountryCode, PartyId), TariffId), out var tariffVersions))
             {
 
                 await LogAsset(
@@ -10183,7 +10306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             return RemoveResult<IEnumerable<Tariff>>.Failed(
                        EventTrackingId,
-                       $"The charging tariff '{TariffId}' is unknown!"
+                       $"The tariff '{TariffId}' of '{CountryCode}{PartyId}' is unknown!"
                    );
 
         }
@@ -10278,6 +10401,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveTariff(
+                                       tariff.CountryCode,
+                                       tariff.PartyId,
                                        tariff.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -10362,6 +10487,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveTariff(
+                                       tariff.CountryCode,
+                                       tariff.PartyId,
                                        tariff.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -10448,6 +10575,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 var result = await RemoveTariff(
+                                       tariff.CountryCode,
+                                       tariff.PartyId,
                                        tariff.Id,
                                        SkipNotifications,
                                        EventTrackingId,
@@ -10504,7 +10633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     TimeSpan?        Tolerance   = null)
         {
 
-            if (tariffs.ContainsKey(TariffId))
+            if (TryKeyOf(TariffId, out _))
                 return true;
 
             var onTariffSlowStorageLookup = OnTariffSlowStorageLookup;
@@ -10541,7 +10670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  TimeSpan?        Tolerance   = null)
         {
 
-            if (tariffs.TryGetValue(TariffId,
+            if (TryKeyOf(TariffId, out var key) &&
+                tariffs.TryGetValue(key,
                                     out var tariff,
                                     Timestamp,
                                     Tolerance))
@@ -10563,7 +10693,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     TimeSpan?                        Tolerance   = null)
         {
 
-            if (tariffs.TryGetValue(TariffId,
+            if (TryKeyOf(TariffId, out var key) &&
+                tariffs.TryGetValue(key,
                                     out Tariff,
                                     Timestamp,
                                     Tolerance))
@@ -10600,6 +10731,99 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
+        #region TariffExists         (CountryCode, PartyId, TariffId, Timestamp = null, Tolerance = null)
+
+        /// <summary>
+        /// Whether the given party has a tariff of the given id.
+        /// </summary>
+        public Boolean TariffExists(CountryCode      CountryCode,
+                                    Party_Id         PartyId,
+                                    Tariff_Id        TariffId,
+                                    DateTimeOffset?  Timestamp   = null,
+                                    TimeSpan?        Tolerance   = null)
+
+            => tariffs.ContainsKey((Party_Idv3.From(CountryCode, PartyId), TariffId)) ||
+               TryGetTariff(CountryCode, PartyId, TariffId, out _, Timestamp, Tolerance);
+
+        #endregion
+
+        #region GetTariff            (CountryCode, PartyId, TariffId, Timestamp = null, Tolerance = null)
+
+        /// <summary>
+        /// The tariff of the given id of the given party.
+        /// </summary>
+        public Tariff? GetTariff(CountryCode      CountryCode,
+                                 Party_Id         PartyId,
+                                 Tariff_Id        TariffId,
+                                 DateTimeOffset?  Timestamp   = null,
+                                 TimeSpan?        Tolerance   = null)
+
+            => TryGetTariff(CountryCode, PartyId, TariffId, out var tariff, Timestamp, Tolerance)
+                   ? tariff
+                   : null;
+
+        #endregion
+
+        #region TryGetTariff         (CountryCode, PartyId, TariffId, out Tariff, Timestamp = null, Tolerance = null)
+
+        /// <summary>
+        /// The tariff of the given id of the given party - not another party's
+        /// of the same id. Where it is not in memory, the slow storage is asked
+        /// for the id, and what it has counts only as that party's.
+        /// </summary>
+        public Boolean TryGetTariff(CountryCode                      CountryCode,
+                                    Party_Id                         PartyId,
+                                    Tariff_Id                        TariffId,
+                                    [NotNullWhen(true)] out Tariff?  Tariff,
+                                    DateTimeOffset?                  Timestamp   = null,
+                                    TimeSpan?                        Tolerance   = null)
+        {
+
+            if (tariffs.TryGetValue((Party_Idv3.From(CountryCode, PartyId), TariffId),
+                                    out Tariff,
+                                    Timestamp,
+                                    Tolerance))
+            {
+                return true;
+            }
+
+            var onTariffLookup = OnTariffSlowStorageLookup;
+            if (onTariffLookup is not null)
+            {
+                try
+                {
+
+                    var found = onTariffLookup(
+                                    TariffId,
+                                    Timestamp,
+                                    Tolerance
+                                ).Result;
+
+                    if (found is not null &&
+                        found.CountryCode == CountryCode &&
+                        found.PartyId     == PartyId)
+                    {
+                        Tariff = found;
+                        return true;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetTariff), " ", nameof(OnTariffSlowStorageLookup), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace ?? "");
+                }
+            }
+
+            Tariff = null;
+            return false;
+
+        }
+
+        #endregion
+
 
         #region GetTariffs           (IncludeTariff = null, Timestamp = null, Tolerance = null)
 

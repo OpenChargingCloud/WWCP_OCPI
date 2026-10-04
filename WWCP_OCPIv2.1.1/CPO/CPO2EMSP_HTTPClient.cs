@@ -2723,7 +2723,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Tariff.Parse(json)
+                                   json => Tariff.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.GetTariff.IncResponses_OK();
@@ -2882,7 +2886,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Tariff.Parse(json)
+                                   json => Tariff.Parse(
+                                               json,
+                                               Tariff.CountryCode,
+                                               Tariff.PartyId
+                                           )
                                );
 
                     Counters.PutTariff.IncResponses_OK();
@@ -3050,7 +3058,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Tariff.Parse(json)
+                                   json => Tariff.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.PatchTariff.IncResponses_OK();
@@ -3211,7 +3223,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Tariff.Parse(json)
+                                   json => Tariff.Parse(
+                                               json,
+                                               CountryCode,
+                                               PartyId
+                                           )
                                );
 
                     Counters.DeleteTariff.IncResponses_OK();
