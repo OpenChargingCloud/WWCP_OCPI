@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 var version = versions.First();
                 Assert.That(version.Id,  Is.EqualTo(Version_Id.Parse("2.3.0")));
-                Assert.That(version.URL, Is.EqualTo(emsp1VersionsAPIURL.Value + "2.3.0"));
+                Assert.That(version.URL.ToString(), Does.EndWith($":{emsp1HTTPServer!.TCPPort}/ocpi/versions/{Version.Id}"));
 
             }
 
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 var version = versions.First();
                 Assert.That(version.Id,  Is.EqualTo(Version_Id.Parse("2.3.0")));
-                Assert.That(version.URL, Is.EqualTo(emsp1VersionsAPIURL.Value + "2.3.0"));
+                Assert.That(version.URL.ToString(), Does.EndWith($":{emsp1HTTPServer!.TCPPort}/ocpi/versions/{Version.Id}"));
 
             }
 
@@ -297,6 +297,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             Assert.That(addCPOResult.IsSuccess, Is.True);
 
+            // The versions list asks the token list of the base API, where a
+            // token is blocked as such - as GetVersions_BlockedTokens_Tests do.
+            await emsp1CommonAPI.AddAccessToken(AccessToken.Parse("yyyyyy"), AccessStatus.BLOCKED);
+
             #endregion
 
             var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
@@ -330,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 // }
 
                 Assert.That(response,                                                      Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(403));
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(200));  // as GetVersions_BlockedTokens_Tests have it - a 401 would be better, if OCPI allows it
                 Assert.That(response.StatusCode.Value,                                     Is.EqualTo(2000));
                 Assert.That(response.StatusMessage,                                        Is.EqualTo("Invalid or blocked access token!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
@@ -443,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 Assert.That(versionDetail, Is.Not.Null);
 
                 var endpoints = versionDetail.Endpoints;
-                Assert.That(endpoints.Count(), Is.EqualTo(7));
+                Assert.That(endpoints.Count(), Is.EqualTo(8));
                 //ClassicAssert.AreEqual(Version_Id.Parse("2.3.0"), endpoints.Id);
                 //ClassicAssert.AreEqual(emspVersionsAPIURL + "2.3.0", endpoints.URL);
 
@@ -523,15 +527,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 var credentials = response2.Data;
                 Assert.That(credentials,                                                Is.Not.Null);
-                Assert.That(credentials.Token.                            ToString(),   Is.EqualTo("yyyyyy"));
-                Assert.That(credentials.URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:7235/versions"));
+                Assert.That(credentials.Token.                            ToString(),   Is.EqualTo("emp1-2-cso:token"));
+                Assert.That(credentials.URL.                              ToString(),   Is.EqualTo(emsp1VersionsAPIURL!.Value.ToString()));
                 Assert.That(credentials.Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
                 Assert.That(credentials.Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GDF"));
 
                 var businessDetails = credentials.Roles.First().BusinessDetails;
                 Assert.That(businessDetails,                                          Is.Not.Null);
-                Assert.That(businessDetails.Name,                                     Is.EqualTo("GraphDefined EMSP Services"));
-                Assert.That(businessDetails.Website.                      ToString(), Is.EqualTo("https://www.graphdefined.com/emsp"));
+                Assert.That(businessDetails.Name,                                     Is.EqualTo("GraphDefined EMSP #1 Services"));
+                Assert.That(businessDetails.Website.                      ToString(), Is.EqualTo("https://www.graphdefined.com/emsp1"));
 
             }
 
@@ -595,53 +599,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.GetCredentials();
 
-                // HTTP/1.1 200 OK
-                // Date:                          Mon, 26 Dec 2022 15:14:30 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                296
-                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
-                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
-                // 
-                // {
-                //    "data": {
-                //        "token":         "<any>",
-                //        "url":           "http://127.0.0.1:7235/versions",
-                //        "business_details": {
-                //            "name":           "GraphDefined EMSP Services",
-                //            "website":        "https://www.graphdefined.com/emsp"
-                //        },
-                //        "country_code":  "DE",
-                //        "party_id":      "GDF"
-                //    },
-                //    "status_code":      1000,
-                //    "status_message":  "Hello world!",
-                //    "timestamp":       "2022-12-26T15:14:30.143Z"
-                //}
-
+                // A token EMSP #1 does not know: its credentials are not given
+                // to anybody it does not know.
                 Assert.That(response2,                                                       Is.Not.Null);
-                Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
-                Assert.That(response2.StatusCode.Value,                                      Is.EqualTo(1000));
-                Assert.That(response2.StatusMessage,                                         Is.EqualTo("Hello world!"));
-                Assert.That(Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10), Is.True);
-
-                //ClassicAssert.IsNotNull(response.Request);
-
-                var credentials = response2.Data;
-                Assert.That(credentials,                                                Is.Not.Null);
-                Assert.That(credentials.Token.                            ToString(),   Is.EqualTo("<any>"));
-                Assert.That(credentials.URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:7235/versions"));
-                Assert.That(credentials.Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
-                Assert.That(credentials.Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GDF"));
-
-                var businessDetails = credentials.Roles.First().BusinessDetails;
-                Assert.That(businessDetails,                                          Is.Not.Null);
-                Assert.That(businessDetails.Name,                                     Is.EqualTo("GraphDefined EMSP Services"));
-                Assert.That(businessDetails.Website.                      ToString(), Is.EqualTo("https://www.graphdefined.com/emsp"));
+                Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(401));
+                Assert.That(response2.StatusCode.Value,                                      Is.EqualTo(2000));
+                Assert.That(response2.StatusMessage,                                         Is.EqualTo("Unknown access token!"));
+                Assert.That(response2.Data,                                                  Is.Null);
 
             }
 
@@ -742,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 Assert.That(response2,                                                      Is.Not.Null);
                 Assert.That(response2.HTTPResponse,                                         Is.Null);
                 Assert.That(response2.StatusCode.Value,                                     Is.EqualTo(-1));
-                Assert.That(response2.StatusMessage,                                        Is.EqualTo("No versionId available!"));
+                Assert.That(response2.StatusMessage,                                        Is.EqualTo("No remote URL available!"));
                 Assert.That(Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 //ClassicAssert.IsNotNull(response.Request);
@@ -949,8 +913,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             #endregion
 
-            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7235/2.3.0/credentials"),
-                                                             "yyyyyy");
+            var httpResponse = await TestHelpers.JSONRequest(CredentialsURL(emsp1CommonAPI!, emsp1HTTPServer!),
+                                                             "eXl5eXl5");  // "yyyyyy", BASE64-encoded as the local access keeps it
 
             // HTTP/1.1 403 Forbidden
             // Date:                          Mon, 26 Dec 2022 15:43:44 GMT
@@ -995,6 +959,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         [Test]
         public async Task CPO_PutCredentials_NotYetRegistered_Test()
         {
+
+            // Not yet registered: EMSP #1 knows the CPO by its token, and has not
+            // been told where the CPO's versions are.
+            await emsp1CommonAPI!.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
+
+            var notRegistered = await emsp1CommonAPI.AddRemoteParty(
+                                          Id:                RemoteParty_Id.Parse("DE-GEF_CPO"),
+                                          CredentialsRoles:  [
+                                                                 new CredentialsRole(
+                                                                     CountryCode:      CountryCode.Parse("DE"),
+                                                                     PartyId:          Party_Id.   Parse("GEF"),
+                                                                     Role:             Role.       CPO,
+                                                                     BusinessDetails:  new BusinessDetails("GraphDefined CSO Services")
+                                                                 )
+                                                             ],
+                                          LocalAccessInfos:  [
+                                                                 new LocalAccessInfo(
+                                                                     AccessToken.Parse("emp1-2-cso:token"),
+                                                                     AccessStatus.ALLOWED
+                                                                 )
+                                                             ],
+                                          RemoteAccessInfos: [],
+                                          Status:            PartyStatus.ENABLED
+                                      );
+
+            Assert.That(notRegistered.IsSuccess, Is.True);
 
             var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
@@ -1045,7 +1035,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 Assert.That(response2,                                                      Is.Not.Null);
                 Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(405));
                 Assert.That(response2.StatusCode.Value,                                     Is.EqualTo(2000));
-                Assert.That(response2.StatusMessage,                                        Is.EqualTo("You need to be registered before trying to invoke this protected method!"));
+                Assert.That(response2.StatusMessage,                                        Is.EqualTo("The given access token 'emp1-2-cso:token' is not yet registered!"));
                 Assert.That(Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 //ClassicAssert.IsNotNull(response.Request);

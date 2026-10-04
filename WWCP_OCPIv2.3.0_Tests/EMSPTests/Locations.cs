@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -500,7 +500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -837,7 +837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -1166,7 +1166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -1494,7 +1494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -1823,7 +1823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -2154,7 +2154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -2484,7 +2484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )
@@ -2814,7 +2814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.EMSPTests
                                               URL.Parse("http://example.com/kleine_pinguine.jpg")
                                           )
                                       ],
-                                      [ EMSP_Id.Parse("DE*GDF") ],
+                                      [ EMSP_Id.Parse("DE-GDF") ],
                                       Created:     DateTime.Parse("2020-09-22"),
                                       LastUpdated: DateTime.Parse("2020-09-22")
                                   )

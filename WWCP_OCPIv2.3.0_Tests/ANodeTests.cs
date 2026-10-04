@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
             var httpResponse  = await new HTTPClient(RemoteURL).GET(
                                           RemoteURL.Path,
                                           RequestBuilder: requestBuilder => {
-                                              requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                              requestBuilder.Authorization  = HTTPTokenAuthentication.Parse(Token);
                                               requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                               requestBuilder.Set("X-Request-ID",      "1234");
                                               requestBuilder.Set("X-Correlation-ID",  "5678");
@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                               Method,
                                               RemoteURL.Path,
                                               RequestBuilder: requestBuilder => {
-                                                  requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                                  requestBuilder.Authorization  = HTTPTokenAuthentication.Parse(Token);
                                                   requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                   requestBuilder.Content        = JSON.ToUTF8Bytes();
                                                   requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
@@ -628,6 +628,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
             await emsp2HTTPServer.Start();
 
         }
+
+        #endregion
+
+        #region (protected) CredentialsURL(CommonAPI, Server)
+
+        /// <summary>
+        /// Where the given node serves its credentials, on the given server.
+        /// </summary>
+        protected static URL CredentialsURL(CommonAPI   CommonAPI,
+                                            HTTPServer  Server)
+
+            => URL.Parse($"http://127.0.0.1:{Server.TCPPort}{CommonAPI.URLPathPrefix + $"{Version.String}/credentials"}");
 
         #endregion
 
