@@ -1286,7 +1286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TokenId = tokenId;
 
 
-            if (!CommonAPI.TryGetTokenStatus(TokenId.Value, out var tokenStatus))
+            if (!CommonAPI.TryGetTokenStatus(CountryCode.Value, PartyId.Value, TokenId.Value, out var tokenStatus))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1421,7 +1421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TokenId = tokenId;
 
 
-            if (CommonAPI.TryGetTokenStatus(TokenId.Value, out var tokenStatus))
+            if (CommonAPI.TryGetTokenStatus(CountryCode.Value, PartyId.Value, TokenId.Value, out var tokenStatus))
                 TokenStatus = tokenStatus;
 
             return true;
@@ -4367,7 +4367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  out _tokenStatus,
                                                  out errorResponse))
                         {
-                            tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            tokenStatus.TryAdd(KeyOf(_tokenStatus.Token), _tokenStatus);
                         }
                     }
                     catch (Exception e)
@@ -4390,7 +4390,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  out _tokenStatus,
                                                  out errorResponse))
                         {
-                            tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            tokenStatus.TryAdd(KeyOf(_tokenStatus.Token), _tokenStatus);
                         }
                     }
                     catch (Exception e)
@@ -4414,10 +4414,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  out errorResponse))
                         {
 
-                            if (tokenStatus.ContainsKey(_tokenStatus.Token.Id))
-                                tokenStatus.Remove(_tokenStatus.Token.Id, out _);
+                            if (tokenStatus.ContainsKey(KeyOf(_tokenStatus.Token)))
+                                tokenStatus.Remove(KeyOf(_tokenStatus.Token), out _);
 
-                            tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            tokenStatus.TryAdd(KeyOf(_tokenStatus.Token), _tokenStatus);
 
                         }
                     }
@@ -4441,8 +4441,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  out _tokenStatus,
                                                  out errorResponse))
                         {
-                            tokenStatus.Remove(_tokenStatus.Token.Id, out _);
-                            tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            tokenStatus.Remove(KeyOf(_tokenStatus.Token), out _);
+                            tokenStatus.TryAdd(KeyOf(_tokenStatus.Token), _tokenStatus);
                         }
                     }
                     catch (Exception e)
@@ -4465,7 +4465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  out _tokenStatus,
                                                  out errorResponse))
                         {
-                            tokenStatus.Remove(_tokenStatus.Token.Id, out _);
+                            tokenStatus.Remove(KeyOf(_tokenStatus.Token), out _);
                         }
                     }
                     catch (Exception e)
@@ -10364,7 +10364,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = [];
+        /// <summary>
+        /// The tokens, by their party and their uid: two EMSPs may well give
+        /// out the same uid, and the token of one is not the other's.
+        /// </summary>
+        private readonly ConcurrentDictionary<(Party_Idv3 Party, Token_Id Id), TokenStatus> tokenStatus = [];
+
+        /// <summary>
+        /// The key of the given token: its party and its uid.
+        /// </summary>
+        private static (Party_Idv3 Party, Token_Id Id) KeyOf(Token Token)
+
+            => (Party_Idv3.From(Token.CountryCode, Token.PartyId), Token.Id);
+
+        /// <summary>
+        /// The key of a token known here by its uid alone: of the first party
+        /// that has a token of that uid, where more than one has.
+        /// </summary>
+        private Boolean TryKeyOf(Token_Id TokenId, out (Party_Idv3 Party, Token_Id Id) Key)
+        {
+
+            foreach (var key in tokenStatus.Keys)
+            {
+                if (key.Id == TokenId)
+                {
+                    Key = key;
+                    return true;
+                }
+            }
+
+            Key = default;
+            return false;
+
+        }
 
 
         public delegate Task               OnTokenStatusAddedDelegate  (TokenStatus  TokenStatus);
@@ -10412,7 +10444,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Status ??= AllowedType.ALLOWED
                                  );
 
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            if (tokenStatus.TryAdd(KeyOf(Token), newTokenStatus))
             {
 
                 Token.CommonAPI = this;
@@ -10488,7 +10520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Status ??= AllowedType.ALLOWED
                                  );
 
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            if (tokenStatus.TryAdd(KeyOf(Token), newTokenStatus))
             {
 
                 Token.CommonAPI = this;
@@ -10562,7 +10594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Update an existing token
 
-            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            if (tokenStatus.TryGetValue(KeyOf(Token), out var existingTokenStatus))
             {
 
                 var updatedTokenStatus = new TokenStatus(
@@ -10582,7 +10614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                tokenStatus[Token.Id] = updatedTokenStatus;
+                tokenStatus[KeyOf(Token)] = updatedTokenStatus;
                 Token.CommonAPI = this;
 
                 await LogAsset(
@@ -10626,7 +10658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Status ??= AllowedType.ALLOWED
                                  );
 
-            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
+            if (tokenStatus.TryAdd(KeyOf(Token), newTokenStatus))
             {
 
                 Token.CommonAPI = this;
@@ -10703,7 +10735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region Validate AllowDowngrades
 
-            if (!tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            if (!tokenStatus.TryGetValue(KeyOf(Token), out var existingTokenStatus))
                 return UpdateResult<TokenStatus>.Failed(
                            EventTrackingId,
                            new TokenStatus(
@@ -10733,7 +10765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          Status ?? existingTokenStatus.Status
                                      );
 
-            if (tokenStatus.TryUpdate(Token.Id,
+            if (tokenStatus.TryUpdate(KeyOf(Token),
                                       updatedTokenStatus,
                                       existingTokenStatus))
             {
@@ -10784,9 +10816,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region TryPatchToken       (TokenId, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<PatchResult<Token>>
+        /// <summary>
+        /// Patch the token of the given uid - of the first party that has one,
+        /// where more than one has; see the overload that names the party.
+        /// </summary>
+        public Task<PatchResult<Token>>
 
             TryPatchToken(Token_Id           TokenId,
+                          JObject            TokenPatch,
+                          Boolean?           AllowDowngrades     = false,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+            => TryKeyOf(TokenId, out var key)
+
+                   ? TryPatchToken(
+                         key.Party.CountryCode,
+                         key.Party.PartyId,
+                         TokenId,
+                         TokenPatch,
+                         AllowDowngrades,
+                         SkipNotifications,
+                         EventTrackingId,
+                         CurrentUserId,
+                         CancellationToken
+                     )
+
+                   : Task.FromResult(
+                         PatchResult<Token>.Failed(
+                             EventTrackingId ?? EventTracking_Id.New,
+                             $"The given token '{TokenId}' is unknown!"
+                         )
+                     );
+
+        #endregion
+
+        #region TryPatchToken       (CountryCode, PartyId, TokenId, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
+
+        /// <summary>
+        /// Patch the token of the given uid of the given party - not another
+        /// party's of the same uid.
+        /// </summary>
+        public async Task<PatchResult<Token>>
+
+            TryPatchToken(CountryCode        CountryCode,
+                          Party_Id           PartyId,
+                          Token_Id           TokenId,
                           JObject            TokenPatch,
                           Boolean?           AllowDowngrades     = false,
                           Boolean            SkipNotifications   = false,
@@ -10798,7 +10875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (tokenStatus.TryGetValue(TokenId, out var existingTokenStatus))
+            if (tokenStatus.TryGetValue((Party_Idv3.From(CountryCode, PartyId), TokenId), out var existingTokenStatus))
             {
 
                 var patchResult = existingTokenStatus.Token.TryPatch(
@@ -10862,12 +10939,82 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         CancellationToken  CancellationToken   = default)
 
                 => RemoveToken(
+                       Token.CountryCode,
+                       Token.PartyId,
                        Token.Id,
                        SkipNotifications,
                        EventTrackingId,
                        CurrentUserId,
                        CancellationToken
                    );
+
+        #endregion
+
+        #region RemoveToken         (CountryCode, PartyId, TokenId, ...)
+
+        /// <summary>
+        /// Remove the token of the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party of the token.</param>
+        /// <param name="PartyId">The party identification of the party of the token.</param>
+        /// <param name="TokenId">A unique identification of a token.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
+        public async Task<RemoveResult<TokenStatus>>
+
+            RemoveToken(CountryCode        CountryCode,
+                        Party_Id           PartyId,
+                        Token_Id           TokenId,
+                        Boolean            SkipNotifications   = false,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (tokenStatus.Remove((Party_Idv3.From(CountryCode, PartyId), TokenId), out var existingTokenStatus))
+            {
+
+                await LogAsset(
+                          CommonHTTPAPI.removeToken,
+                          existingTokenStatus.Token.ToJSON(
+                              true,
+                              CustomTokenSerializer
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
+
+                if (!SkipNotifications)
+                {
+
+                    await LogEvent(
+                              OnTokenStatusRemoved,
+                              loggingDelegate => loggingDelegate.Invoke(
+                                  existingTokenStatus
+                              )
+                          );
+
+                }
+
+                return RemoveResult<TokenStatus>.Success(
+                           EventTrackingId,
+                           existingTokenStatus
+                       );
+
+            }
+
+            return RemoveResult<TokenStatus>.Failed(
+                       EventTrackingId,
+                       $"The token '{TokenId}' of '{CountryCode}{PartyId}' is unknown!"
+                   );
+
+        }
 
         #endregion
 
@@ -10893,7 +11040,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
+            if (TryKeyOf(TokenId, out var key) &&
+                tokenStatus.Remove(key, out var existingTokenStatus))
             {
 
                 await LogAsset(
@@ -11218,12 +11366,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region TokenExists         (CountryCode, PartyId, TokenId)
+
+        /// <summary>
+        /// Whether the given party has a token of the given uid here.
+        /// </summary>
+        public Boolean TokenExists(CountryCode  CountryCode,
+                                   Party_Id     PartyId,
+                                   Token_Id     TokenId)
+
+            => tokenStatus.ContainsKey((Party_Idv3.From(CountryCode, PartyId), TokenId));
+
+        #endregion
+
+        #region TryGetTokenStatus   (CountryCode, PartyId, TokenId, out TokenStatus)
+
+        /// <summary>
+        /// The token of the given uid of the given party - not another
+        /// party's of the same uid.
+        /// </summary>
+        public Boolean TryGetTokenStatus(CountryCode                           CountryCode,
+                                         Party_Id                              PartyId,
+                                         Token_Id                              TokenId,
+                                         [NotNullWhen(true)] out TokenStatus?  TokenStatus)
+
+            => tokenStatus.TryGetValue((Party_Idv3.From(CountryCode, PartyId), TokenId), out TokenStatus);
+
+        #endregion
+
         #region TokenExists         (TokenId)
 
         public Boolean TokenExists(Token_Id TokenId)
         {
 
-            if (tokenStatus.ContainsKey(TokenId))
+            if (TryKeyOf(TokenId, out _))
                 return true;
 
             var onTokenSlowStorageLookup = OnTokenSlowStorageLookup;
@@ -11274,8 +11450,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          [NotNullWhen(true)] out TokenStatus?  TokenStatus)
         {
 
-            if (tokenStatus.TryGetValue(TokenId, out TokenStatus))
+            if (TryKeyOf(TokenId, out var key) &&
+                tokenStatus.TryGetValue(key, out TokenStatus))
+            {
                 return true;
+            }
 
             var onTokenSlowStorageLookup = OnTokenSlowStorageLookup;
             if (onTokenSlowStorageLookup is not null)

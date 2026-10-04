@@ -3735,6 +3735,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     //ToDo: Validation-Checks for PATCHes (E-Tag, Timestamp, ...)
                     var patchedResult  = await CommonAPI.TryPatchToken(
+                                                   existingTokenStatus.Token.CountryCode,
+                                                   existingTokenStatus.Token.PartyId,
                                                    existingTokenStatus.Token.Id,
                                                    tokenPatch,
                                                    AllowDowngrades ?? request.QueryString.GetBoolean("forceDowngrade")
