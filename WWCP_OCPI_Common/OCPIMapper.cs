@@ -264,7 +264,10 @@ namespace cloud.charging.open.protocols.OCPI
             var evseUId     = ChargingLocation.EVSEId?.ToOCPI_EVSEUId(CustomEVSEIdConverter);
 
             return new LocationReference(
-                    //   LocationId:   
+                       LocationId:  locationId.Value,
+                       EVSEUIds:    evseUId.HasValue
+                                        ? [ evseUId.Value ]
+                                        : null
                    );
 
         }

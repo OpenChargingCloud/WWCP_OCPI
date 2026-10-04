@@ -2459,6 +2459,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
+        #region (private) Completed     (ChargingLocation)
+
+        /// <summary>
+        /// The given charging location as OCPI needs it: with its charging pool,
+        /// which is the OCPI location. A charging station that names only its
+        /// EVSE - or itself - leaves the pool out, and this roaming network
+        /// knows where that EVSE or station is.
+        /// </summary>
+        /// <param name="ChargingLocation">A charging location.</param>
+        private WWCP.ChargingLocation? Completed(WWCP.ChargingLocation? ChargingLocation)
+        {
+
+            if (ChargingLocation is null ||
+                ChargingLocation.ChargingPoolId.HasValue)
+                return ChargingLocation;
+
+            if (RoamingNetwork.TryGetEVSEById(ChargingLocation.EVSEId, out var evse))
+                return WWCP.ChargingLocation.FromEVSE(evse) ?? ChargingLocation;
+
+            if (RoamingNetwork.TryGetChargingStationById(ChargingLocation.ChargingStationId, out var chargingStation))
+                return WWCP.ChargingLocation.FromChargingStation(chargingStation) ?? ChargingLocation;
+
+            return ChargingLocation;
+
+        }
+
+        #endregion
+
         #region (private) PostToken     (LocalAuthentication, ...)
 
         /// <summary>
@@ -2495,7 +2523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Convert ChargingLocation          into an OCPI location reference
 
-            var locationReference = ChargingLocation.ToOCPI(
+            var locationReference = Completed(ChargingLocation).ToOCPI(
                                         CustomChargingPoolIdConverter,
                                         CustomEVSEUIdConverter
                                     );
