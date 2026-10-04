@@ -173,6 +173,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Terminal_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var terminalId))
                 return terminalId;
 
@@ -211,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Terminal_Id TerminalId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

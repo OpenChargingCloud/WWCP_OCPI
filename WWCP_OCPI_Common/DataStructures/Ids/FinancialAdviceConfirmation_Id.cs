@@ -139,6 +139,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static FinancialAdviceConfirmation_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var financialAdviceConfirmationId))
                 return financialAdviceConfirmationId;
 
@@ -177,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out FinancialAdviceConfirmation_Id FinancialAdviceConfirmationId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

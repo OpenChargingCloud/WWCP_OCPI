@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static EnvironmentalImpactCategory Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var environmentalImpactCategory))
                 return environmentalImpactCategory;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out EnvironmentalImpactCategory EnvironmentalImpactCategory)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

@@ -128,6 +128,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Invoice_Creator Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var invoiceCreator))
                 return invoiceCreator;
 
@@ -166,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Invoice_Creator InvoiceCreator)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

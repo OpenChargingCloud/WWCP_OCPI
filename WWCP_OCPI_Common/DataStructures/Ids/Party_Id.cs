@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Party_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var partyId))
                 return partyId;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Party_Id PartyId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty() &&
                 Text.Length >= 1        &&

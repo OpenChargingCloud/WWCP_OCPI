@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static CountryCode Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var countryCode))
                 return countryCode;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out CountryCode CountryCode)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty() &&
                 Text.Length == 2)

@@ -153,6 +153,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Token_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var tokenId))
                 return tokenId;
 
@@ -191,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Token_Id TokenId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

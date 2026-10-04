@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static SubscriptionRenegotiationStatus Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var subscriptionRenegotiationStatus))
                 return subscriptionRenegotiationStatus;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out SubscriptionRenegotiationStatus SubscriptionRenegotiationStatus)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

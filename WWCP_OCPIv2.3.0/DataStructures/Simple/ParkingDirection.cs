@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static ParkingDirection Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var parkingDirection))
                 return parkingDirection;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(String Text, out ParkingDirection ParkingDirection)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

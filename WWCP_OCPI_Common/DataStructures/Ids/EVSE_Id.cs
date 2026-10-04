@@ -128,6 +128,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static EVSE_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var evseId))
                 return evseId;
 
@@ -166,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out EVSE_Id EVSEId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

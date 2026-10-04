@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Auth_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var authId))
                 return authId;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out Auth_Id AuthId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

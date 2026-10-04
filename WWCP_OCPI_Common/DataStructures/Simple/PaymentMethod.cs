@@ -125,6 +125,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static PaymentMethod Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var paymentMethod))
                 return paymentMethod;
 
@@ -163,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out PaymentMethod PaymentMethod)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

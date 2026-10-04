@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Tax_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var TaxId))
                 return TaxId;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Tax_Id  TaxId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

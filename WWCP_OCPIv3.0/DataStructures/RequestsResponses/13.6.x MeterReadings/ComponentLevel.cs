@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static ComponentLevel Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var componentLevel))
                 return componentLevel;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out ComponentLevel ComponentLevel)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

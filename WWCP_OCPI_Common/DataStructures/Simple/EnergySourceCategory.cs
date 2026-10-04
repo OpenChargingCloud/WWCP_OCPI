@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static EnergySourceCategory Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var energySourceCategory))
                 return energySourceCategory;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out EnergySourceCategory EnergySourceCategory)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

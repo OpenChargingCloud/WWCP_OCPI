@@ -128,6 +128,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Capture_StatusCode Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var captureStatusCode))
                 return captureStatusCode;
 
@@ -166,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Capture_StatusCode CaptureStatusCode)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

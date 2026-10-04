@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static CreditReference_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var creditReferenceId))
                 return creditReferenceId;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out CreditReference_Id CreditReferenceId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

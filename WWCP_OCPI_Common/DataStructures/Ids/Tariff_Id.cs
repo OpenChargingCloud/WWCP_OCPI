@@ -163,6 +163,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Tariff_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var tariffId))
                 return tariffId;
 
@@ -201,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Tariff_Id TariffId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

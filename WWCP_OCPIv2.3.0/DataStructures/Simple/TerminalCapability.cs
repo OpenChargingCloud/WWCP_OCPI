@@ -110,6 +110,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static TerminalCapability Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var terminalCapability))
                 return terminalCapability;
 
@@ -148,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(String Text, out TerminalCapability TerminalCapability)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

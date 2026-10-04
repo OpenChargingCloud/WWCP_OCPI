@@ -119,6 +119,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Reservation_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var reservationId))
                 return reservationId;
 
@@ -157,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Reservation_Id ReservationId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

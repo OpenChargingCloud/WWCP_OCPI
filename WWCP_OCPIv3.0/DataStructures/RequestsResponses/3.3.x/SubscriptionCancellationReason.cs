@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static SubscriptionCancellationReason Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var subscriptionCancellationReason))
                 return subscriptionCancellationReason;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out SubscriptionCancellationReason SubscriptionCancellationReason)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

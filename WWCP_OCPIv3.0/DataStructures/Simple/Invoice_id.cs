@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Invoice_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var invoiceId))
                 return invoiceId;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out Invoice_Id InvoiceId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

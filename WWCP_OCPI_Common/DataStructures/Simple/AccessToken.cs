@@ -120,6 +120,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static AccessToken Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var accessToken))
                 return accessToken;
 
@@ -158,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out AccessToken AccessToken)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {
@@ -226,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParseAsBASE64(String Text, out AccessToken AccessToken)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {
@@ -294,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParseFromBASE64(String Text, out AccessToken AccessToken)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty() && Text.TryParseBASE64_UTF8(out var vvv, out _))
             {

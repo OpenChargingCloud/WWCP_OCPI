@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static EnergyMeter_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var meterId))
                 return meterId;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out EnergyMeter_Id MeterId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

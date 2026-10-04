@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static SignedValueNature Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var signedValueNature))
                 return signedValueNature;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out SignedValueNature SignedValueNature)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

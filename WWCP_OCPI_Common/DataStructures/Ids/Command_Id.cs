@@ -119,6 +119,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Command_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var commandId))
                 return commandId;
 
@@ -157,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Command_Id CommandId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

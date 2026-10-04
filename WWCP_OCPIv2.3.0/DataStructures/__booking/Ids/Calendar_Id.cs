@@ -119,6 +119,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Calendar_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var calendarId))
                 return calendarId;
 
@@ -157,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(String Text, out Calendar_Id CalendarId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static EncodingMethod Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var encodingMethod))
                 return encodingMethod;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out EncodingMethod EncodingMethod)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

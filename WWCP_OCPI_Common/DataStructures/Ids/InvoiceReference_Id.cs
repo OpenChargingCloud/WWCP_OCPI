@@ -120,6 +120,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static InvoiceReference_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var invoiceReferenceId))
                 return invoiceReferenceId;
 
@@ -158,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out InvoiceReference_Id InvoiceReferenceId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

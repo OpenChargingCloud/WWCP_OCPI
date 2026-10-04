@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static TariffType Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var tariffType))
                 return tariffType;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out TariffType TariffType)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

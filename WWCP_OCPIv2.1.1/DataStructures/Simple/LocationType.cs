@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static LocationType Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var locationType))
                 return locationType;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(String Text, out LocationType LocationType)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

@@ -192,6 +192,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static AuthorizationReference Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var authorizationReference))
                 return authorizationReference;
 
@@ -230,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out AuthorizationReference AuthorizationReference)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

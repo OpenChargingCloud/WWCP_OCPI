@@ -120,6 +120,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static ChargingStation_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var chargingStationId))
                 return chargingStationId;
 
@@ -158,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out ChargingStation_Id ChargingStationId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

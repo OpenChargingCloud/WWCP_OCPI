@@ -107,6 +107,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static EVSEPosition Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var evsePosition))
                 return evsePosition;
 
@@ -145,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public static Boolean TryParse(String Text, out EVSEPosition EVSEPosition)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

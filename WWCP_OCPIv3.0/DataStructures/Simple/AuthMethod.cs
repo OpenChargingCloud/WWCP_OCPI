@@ -108,6 +108,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static AuthMethod Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var authMethod))
                 return authMethod;
 
@@ -146,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(String Text, out AuthMethod AuthMethod)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

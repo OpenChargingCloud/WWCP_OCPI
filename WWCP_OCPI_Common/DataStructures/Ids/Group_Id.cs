@@ -120,6 +120,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Group_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var groupId))
                 return groupId;
 
@@ -158,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Group_Id GroupId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

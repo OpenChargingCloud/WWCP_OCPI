@@ -140,6 +140,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Location_Id Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var locationId))
                 return locationId;
 
@@ -178,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Location_Id LocationId)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

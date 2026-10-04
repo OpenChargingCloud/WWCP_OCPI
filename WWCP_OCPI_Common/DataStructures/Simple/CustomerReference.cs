@@ -128,6 +128,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Customer_Reference Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var customerReference))
                 return customerReference;
 
@@ -166,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Customer_Reference CustomerReference)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {

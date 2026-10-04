@@ -42,13 +42,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
         [Test]
         public void Parse_Empty()
         {
-            Assert.Throws<ArgumentNullException>(() => Location_Id.Parse(""));
+            Assert.Throws<ArgumentException>    (() => Location_Id.Parse(""));
         }
 
         [Test]
         public void Parse_Whitespace()
         {
-            Assert.Throws<ArgumentNullException>(() => Location_Id.Parse("   "));
+            Assert.Throws<ArgumentException>    (() => Location_Id.Parse("   "));
         }
 
         [Test]

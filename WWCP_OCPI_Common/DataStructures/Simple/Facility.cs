@@ -167,6 +167,8 @@ namespace cloud.charging.open.protocols.OCPI
         public static Facility Parse(String Text)
         {
 
+            ArgumentNullException.ThrowIfNull(Text);
+
             if (TryParse(Text, out var facility))
                 return facility;
 
@@ -205,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean TryParse(String Text, out Facility Facility)
         {
 
-            Text = Text.Trim();
+            Text = Text?.Trim() ?? "";
 
             if (Text.IsNotNullOrEmpty())
             {
