@@ -2081,8 +2081,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             cpo2CommonHTTPAPI  = new CommonHTTPAPI(
 
                                      HTTPAPI:                   cpo2HTTPAPI,
-                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3202/ocpi"),
-                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3202/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(cpo2TLSServerCertificate is not null ? "s" : "")}://localhost:{cpo2HTTPServer.TCPPort}/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -2179,8 +2179,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp1CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp1HTTPAPI,
-                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3401/ocpi"),
-                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3401/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(emsp1TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp1HTTPServer.TCPPort}/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
@@ -2228,8 +2228,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
             emsp2CommonHTTPAPI = new CommonHTTPAPI(
 
                                      HTTPAPI:                   emsp2HTTPAPI,
-                                     OurBaseURL:                URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3402/ocpi"),
-                                     OurVersionsURL:            URL.Parse($"http{(cpo1TLSServerCertificate is not null ? "s" : "")}://localhost:3402/ocpi/versions"),
+                                     OurBaseURL:                URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi"),
+                                     OurVersionsURL:            URL.Parse($"http{(emsp2TLSServerCertificate is not null ? "s" : "")}://localhost:{emsp2HTTPServer.TCPPort}/ocpi/versions"),
 
                                      Hostnames:                 null,
                                      RootPath:                  HTTPPath.Parse("/ocpi"),
