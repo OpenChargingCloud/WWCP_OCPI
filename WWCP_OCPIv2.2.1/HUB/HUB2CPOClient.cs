@@ -2568,7 +2568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tokens,
-                                           InterfaceRoles.SENDER,
+                                           InterfaceRoles.RECEIVER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
@@ -2730,7 +2730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
 
                 var remoteURL = await GetModuleRemoteURL(
                                           Module_Id.Tokens,
-                                          InterfaceRoles.SENDER,
+                                          InterfaceRoles.RECEIVER,
                                           VersionId,
                                           eventTrackingId,
                                           CancellationToken

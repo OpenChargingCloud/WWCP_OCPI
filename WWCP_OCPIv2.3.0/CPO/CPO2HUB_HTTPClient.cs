@@ -4730,7 +4730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.CPO.HUB.HTTP
 
                 var httpClient = await GetModuleHTTPClient(
                                            Module_Id.Tokens,
-                                           InterfaceRoles.RECEIVER,
+                                           InterfaceRoles.SENDER,
                                            VersionId,
                                            eventTrackingId,
                                            CancellationToken
