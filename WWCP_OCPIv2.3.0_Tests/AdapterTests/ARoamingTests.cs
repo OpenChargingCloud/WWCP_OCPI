@@ -72,6 +72,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
         #region SetupEachTest()
 
+        /// <summary>
+        /// The CPO and EMSP APIs are the adapters'.
+        /// </summary>
+        protected override Boolean ModuleAPIsByAdapters
+            => true;
+
         [SetUp]
         public override async Task SetupEachTest()
         {
@@ -313,6 +319,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                            DisableSendChargeDetailRecords:      true
 
                                        );
+
+                cpoCPOAPI     = cpoAdapter.  CPO_HTTPAPI;
+                emsp1EMSPAPI  = emsp1Adapter.EMSP_HTTPAPI;
+                emsp2EMSPAPI  = emsp2Adapter.EMSP_HTTPAPI;
 
                 Assert.That(cpoAdapter,   Is.Not.Null);
                 Assert.That(emsp1Adapter, Is.Not.Null);

@@ -130,6 +130,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         protected       ConcurrentDictionary<DateTimeOffset, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTimeOffset, OCPIResponse>   emsp2APIResponseLogs;
 
+        /// <summary>
+        /// The directory of this test's nodes' files - their remote parties and
+        /// assets - so that no test reads what another one wrote.
+        /// </summary>
+        /// <summary>
+        /// Whether the CPO and EMSP APIs come from adapters a subclass makes,
+        /// rather than from this rig.
+        /// </summary>
+        protected virtual Boolean ModuleAPIsByAdapters
+            => false;
+
+        protected       String                                               nodesDirectory  = default!;
+
         public          URL?                                                 cpoVersionsAPIURL;
         public          URL?                                                 emsp1VersionsAPIURL;
         public          URL?                                                 emsp2VersionsAPIURL;
@@ -181,18 +194,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             Timestamp.Reset();
 
+            nodesDirectory = Path.Combine(Path.GetTempPath(), $"WWCP_OCPI_Tests-{Guid.NewGuid():N}");
+            foreach (var node in new[] { "cpo", "emsp1", "emsp2" })
+                Directory.CreateDirectory(Path.Combine(nodesDirectory, node));
+
             #region Create cpo/emsp1/emsp2 HTTP Servers
 
             cpoHTTPServer         = new HTTPServer(
-                                        TCPPort:         IPPort.Parse(3301)
+                                        IPAddress:         IPv4Address.Localhost,
+                                        TCPPort:         IPPort.Parse(FreePort())
                                     );
 
             emsp1HTTPServer       = new HTTPServer(
-                                        TCPPort:         IPPort.Parse(3401)
+                                        IPAddress:         IPv4Address.Localhost,
+                                        TCPPort:         IPPort.Parse(FreePort())
                                     );
 
             emsp2HTTPServer       = new HTTPServer(
-                                        TCPPort:         IPPort.Parse(3402)
+                                        IPAddress:         IPv4Address.Localhost,
+                                        TCPPort:         IPPort.Parse(FreePort())
                                     );
 
             #endregion
@@ -213,47 +233,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var ocpiBaseAPI = new CommonHTTPAPI(
-
-                                  HTTPAPI:                   cpoHTTPAPI,
-                                  OurBaseURL:                URL.Parse("http://127.0.0.1:3201/ocpi"),
-                                  OurVersionsURL:            URL.Parse("http://127.0.0.1:3201/ocpi/versions"),
-                                  //OurBusinessDetails:        new OCPI.BusinessDetails(
-                                  //                               "GraphDefined OCPI Services",
-                                  //                               URL.Parse("https://www.graphdefined.com/ocpi")
-                                  //                           ),
-                                  //OurCountryCode:            OCPI.CountryCode.Parse("DE"),
-                                  //OurPartyId:                OCPI.Party_Id.   Parse("BDO"),
-                                  //OurRole:                   OCPI.Role.       CPO,
-
-                                  AdditionalURLPathPrefix:   null,
-                                  //KeepRemovedEVSEs:          null,
-                                  LocationsAsOpenData:       true,
-                                  AllowDowngrades:           null,
-
-                                  ExternalDNSName:           null,
-                                  HTTPServiceName:           null,
-                                  BasePath:                  null,
-
-                                  RootPath:                  HTTPPath.Parse("/ocpi"),
-                                  APIVersionHashes:          null,
-
-                                  IsDevelopment:             null,
-                                  DevelopmentServers:        null,
-                                  DisableLogging:            null,
-                                  LoggingContext:            null,
-                                  LoggingPath:               null,
-                                  LogfileName:               null,
-                                  LogfileCreator:            null
-
-                              );
-
-            Assert.That(ocpiBaseAPI, Is.Not.Null);
+            // Each node is a platform of its own: its own HTTP server, its own
+            // Common HTTP API, its own Common API. All three shared the CPO's
+            // Common HTTP API, and the second Common API failed to register the
+            // routes the first one had - every test of this rig failed in its
+            // SetUp, from the day CommonHTTPAPI came.
+            var cpoBaseAPI    = ABaseAPI(cpoHTTPAPI);
+            var emsp1BaseAPI  = ABaseAPI(emsp1HTTPAPI);
+            var emsp2BaseAPI  = ABaseAPI(emsp2HTTPAPI);
 
 
             #region Create cpo/emsp1/emsp2 OCPI Common API
 
-            cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v2.2/versions");
+            cpoVersionsAPIURL    = cpoBaseAPI.OurVersionsURL;
 
             cpoCommonAPI         = new CommonAPI(
 
@@ -277,7 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                 Party_Id.   Parse("GEF")
                                                                             ),
 
-                                       BaseAPI:                             ocpiBaseAPI,
+                                       BaseAPI:                             cpoBaseAPI,
+                                       DatabaseFilePath:                    Path.Combine(nodesDirectory, "cpo"),
                                        //HTTPServer:                          cpoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -312,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                   );
 
 
-            emsp1VersionsAPIURL  = URL.Parse("http://127.0.0.1:3401/ocpi/v2.2/versions");
+            emsp1VersionsAPIURL  = emsp1BaseAPI.OurVersionsURL;
 
             emsp1CommonAPI       = new CommonAPI(
 
@@ -324,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                         CountryCode.Parse("DE"),
                                                                                         Party_Id.   Parse("GDF")
                                                                                     ),
-                                                                                    Role.CPO,
+                                                                                    Role.EMSP,
                                                                                     new BusinessDetails(
                                                                                         "GraphDefined EMSP #1 Services",
                                                                                         URL.Parse("https://www.graphdefined.com/emsp1")
@@ -336,7 +329,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                 Party_Id.   Parse("GDF")
                                                                             ),
 
-                                       BaseAPI:                             ocpiBaseAPI,
+                                       BaseAPI:                             emsp1BaseAPI,
+                                       DatabaseFilePath:                    Path.Combine(nodesDirectory, "emsp1"),
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -370,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //      );
 
 
-            emsp2VersionsAPIURL  = URL.Parse("http://127.0.0.1:3402/ocpi/v2.2/versions");
+            emsp2VersionsAPIURL  = emsp2BaseAPI.OurVersionsURL;
 
             emsp2CommonAPI       = new CommonAPI(
 
@@ -382,7 +376,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                         CountryCode.Parse("DE"),
                                                                                         Party_Id.   Parse("GD2")
                                                                                     ),
-                                                                                    Role.CPO,
+                                                                                    Role.EMSP,
                                                                                     new BusinessDetails(
                                                                                         "GraphDefined EMSP #2 Services",
                                                                                         URL.Parse("https://www.graphdefined.com/emsp2")
@@ -394,7 +388,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                 Party_Id.   Parse("GD2")
                                                                             ),
 
-                                       BaseAPI:                             ocpiBaseAPI,
+                                       BaseAPI:                             emsp2BaseAPI,
+                                       DatabaseFilePath:                    Path.Combine(nodesDirectory, "emsp2"),
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -439,72 +434,80 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Create cpo CPO API / emsp1 EMP API / emsp2 EMP API
 
-            cpoCPOAPI            = new CPO_HTTPAPI(
+            // Not where a subclass makes adapters: each adapter makes its own, on
+            // the same Common API, and a second one there fails to register the
+            // routes the first one has.
+            if (!ModuleAPIsByAdapters)
+            {
 
-                                       CommonAPI:                           cpoCommonAPI,
-                                       AllowDowngrades:                     null,
+                cpoCPOAPI            = new CPO_HTTPAPI(
 
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
+                                           CommonAPI:                           cpoCommonAPI,
+                                           AllowDowngrades:                     null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2/v2.2.1/cpo"),
-                                       APIVersionHashes:                    null,
+                                           ExternalDNSName:                     null,
+                                           HTTPServiceName:                     null,
+                                           BasePath:                            null,
 
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
+                                           URLPathPrefix:                       null,  // the default, where the version details announce it
+                                           APIVersionHashes:                    null,
 
-                                   );
+                                           IsDevelopment:                       null,
+                                           DevelopmentServers:                  null,
+                                           DisableLogging:                      null,
+                                           LoggingPath:                         null,
+                                           LogfileName:                         null,
+                                           LogfileCreator:                      null
 
-            emsp1EMSPAPI         = new EMSP_HTTPAPI(
+                                       );
 
-                                       CommonAPI:                           emsp1CommonAPI,
-                                       AllowDowngrades:                     null,
+                emsp1EMSPAPI         = new EMSP_HTTPAPI(
 
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
+                                           CommonAPI:                           emsp1CommonAPI,
+                                           AllowDowngrades:                     null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2/v2.2.1/emsp"),
-                                       APIVersionHashes:                    null,
+                                           ExternalDNSName:                     null,
+                                           HTTPServiceName:                     null,
+                                           BasePath:                            null,
 
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
+                                           URLPathPrefix:                       null,  // the default, where the version details announce it
+                                           APIVersionHashes:                    null,
 
-                                   );
+                                           IsDevelopment:                       null,
+                                           DevelopmentServers:                  null,
+                                           DisableLogging:                      null,
+                                           LoggingPath:                         null,
+                                           LogfileName:                         null,
+                                           LogfileCreator:                      null
 
-            emsp2EMSPAPI         = new EMSP_HTTPAPI(
+                                       );
 
-                                       CommonAPI:                           emsp2CommonAPI,
-                                       AllowDowngrades:                     null,
+                emsp2EMSPAPI         = new EMSP_HTTPAPI(
 
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
+                                           CommonAPI:                           emsp2CommonAPI,
+                                           AllowDowngrades:                     null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2/v2.2.1/emsp"),
-                                       APIVersionHashes:                    null,
+                                           ExternalDNSName:                     null,
+                                           HTTPServiceName:                     null,
+                                           BasePath:                            null,
 
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null
+                                           URLPathPrefix:                       null,  // the default, where the version details announce it
+                                           APIVersionHashes:                    null,
 
-                                   );
+                                           IsDevelopment:                       null,
+                                           DevelopmentServers:                  null,
+                                           DisableLogging:                      null,
+                                           LoggingPath:                         null,
+                                           LogfileName:                         null,
+                                           LogfileCreator:                      null
 
-            Assert.That(cpoCPOAPI,    Is.Not.Null);
-            Assert.That(emsp1EMSPAPI, Is.Not.Null);
-            Assert.That(emsp2EMSPAPI, Is.Not.Null);
+                                       );
+
+                Assert.That(cpoCPOAPI,    Is.Not.Null);
+                Assert.That(emsp1EMSPAPI, Is.Not.Null);
+                Assert.That(emsp2EMSPAPI, Is.Not.Null);
+
+            }
 
             #endregion
 
@@ -529,7 +532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 LocalAccessStatus:                 AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
-                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:                 emsp1VersionsAPIURL.Value,
                                                 RemoteVersionIds:                  null,
                                                 RemoteAccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                      RemoteAccessStatus.ONLINE,
@@ -554,7 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 LocalAccessToken:                  AccessToken.Parse("cso-2-emp2:token"),
                                                 LocalAccessStatus:                 AccessStatus.ALLOWED,
                                                 RemoteAccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
-                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:                 emsp2VersionsAPIURL.Value,
                                                 RemoteVersionIds:                  null,
                                                 RemoteAccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                      RemoteAccessStatus.ONLINE,
@@ -581,7 +584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 LocalAccessStatus:                 AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:                 AccessToken.Parse("cso-2-emp1:token"),
-                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:                 cpoVersionsAPIURL.Value,
                                                 RemoteVersionIds:                  null,
                                                 RemoteAccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                      RemoteAccessStatus.ONLINE,
@@ -608,7 +611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                 LocalAccessStatus:                 AccessStatus.ALLOWED,
 
                                                 RemoteAccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
-                                                RemoteVersionsURL:                 URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.TCPPort}/ocpi/v2.2/versions"),
+                                                RemoteVersionsURL:                 cpoVersionsAPIURL.Value,
                                                 RemoteVersionIds:                  null,
                                                 RemoteAccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                      RemoteAccessStatus.ONLINE,
@@ -622,7 +625,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
+            await cpoHTTPServer.  Start();
+            await emsp1HTTPServer.Start();
+            await emsp2HTTPServer.Start();
+
         }
+
+        #endregion
+
+        #region (private) FreePort() / ABaseAPI(HTTPAPI)
+
+        /// <summary>
+        /// A port nobody was listening on a moment ago.
+        /// </summary>
+        private static UInt16 FreePort()
+        {
+
+            var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+
+            listener.Start();
+
+            var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+
+            listener.Stop();
+
+            return port;
+
+        }
+
+        /// <summary>
+        /// The Common HTTP API of a node on the given HTTP API: its URLs are
+        /// the ones its server listens on.
+        /// </summary>
+        private static CommonHTTPAPI ABaseAPI(HTTPExtAPI HTTPAPI)
+
+            => new (
+                   HTTPAPI:              HTTPAPI,
+                   OurBaseURL:           URL.Parse($"http://127.0.0.1:{HTTPAPI.HTTPServer.TCPPort}/ocpi"),
+                   OurVersionsURL:       URL.Parse($"http://127.0.0.1:{HTTPAPI.HTTPServer.TCPPort}/ocpi/versions"),
+                   LocationsAsOpenData:  true,
+                   RootPath:             HTTPPath.Parse("/ocpi")
+               );
 
         #endregion
 
@@ -640,6 +683,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             if (emsp2HTTPServer is not null)
                 await emsp2HTTPServer.DisposeAsync();
+
+            // Their base APIs write out what their files still wait for, and
+            // then the files go.
+            foreach (var commonAPI in new[] { cpoCommonAPI, emsp1CommonAPI, emsp2CommonAPI })
+                if (commonAPI is not null)
+                    await commonAPI.BaseAPI.DisposeAsync();
+
+            try
+            {
+                Directory.Delete(nodesDirectory, true);
+            }
+            catch (IOException)
+            { }
+            catch (UnauthorizedAccessException)
+            { }
 
         }
 
