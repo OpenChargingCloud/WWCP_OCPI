@@ -654,9 +654,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                                       Location,
                                                       EVSEUId,
                                                       ConnectorId,
-                                                      EMPId) => {
+                                                      RemotePartyId) => {
 
-                    if (EMPId.ToString() == "DE-GDF")
+                    // The remote party asking - EMSP #1 - not its EMSP id.
+                    if (RemotePartyId == RemoteParty_Id.Parse("DE-GDF_EMSP"))
                         return [ Tariff_Id.Parse("AC1") ];
 
                     // Will be called during a lot of internal calculations!
