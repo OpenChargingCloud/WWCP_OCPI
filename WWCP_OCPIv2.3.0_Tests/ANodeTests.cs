@@ -276,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
+                                       URLPathPrefix:                       null,  // the default, as a platform makes it
                                        APIVersionHashes:                    null,
 
                                        IsDevelopment:                       null,
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
+                                       URLPathPrefix:                       null,  // the default, as a platform makes it
                                        APIVersionHashes:                    null,
 
                                        IsDevelopment:                       null,
@@ -395,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi"),
+                                       URLPathPrefix:                       null,  // the default, as a platform makes it
                                        APIVersionHashes:                    null,
 
                                        IsDevelopment:                       null,

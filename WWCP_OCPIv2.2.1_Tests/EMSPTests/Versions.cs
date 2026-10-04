@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
 
                 var version  = versions?.First();
                 Assert.That(version?.Id == Version.Id,                                                   Is.True);
-                Assert.That(URL.Parse("http://localhost:3301/ocpi/v2.2/versions/2.2.1") == version?.URL, Is.True);
+                Assert.That(version?.URL.ToString(), Does.EndWith($":{cpoHTTPServer!.TCPPort}/ocpi/versions/{Version.Id}"));
 
             }
 
@@ -221,14 +221,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                     Assert.That(versionId == Version.Id, Is.True);
 
                     var endpoints      = versionDetail.Endpoints;
-                    Assert.That(endpoints.Count(), Is.EqualTo(9));
+                    Assert.That(endpoints.Count(), Is.EqualTo(8));
 
-                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"        && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"          && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"         && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
-                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "chargingprofiles" && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
+                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "chargingprofiles" && endpoint.Role == InterfaceRoles.RECEIVER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"             && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"         && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"           && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
@@ -307,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
             if (graphDefinedCPO is not null)
             {
 
-                var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:3301/ocpi/v2.2/versions/v0.7"),
+                var httpResponse = await TestHelpers.JSONRequest(URL.Parse($"{cpoVersionsAPIURL!.Value}/v0.7"),
                                                                  "xxxxxx");
 
                 // GET /ocpi/v2.2/versions/v0.7 HTTP/1.1
@@ -336,18 +335,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 //     "timestamp":       "2023-04-22T11:54:54.800Z"
                 // }
 
-                Assert.That(httpResponse,                   Is.Not.Null);
-                Assert.That(httpResponse.ContentLength > 0, Is.True);
-
-                var response = OCPIResponse.Parse(httpResponse,
-                                                  Request_Id.    Parse("12340"),
-                                                  Correlation_Id.Parse("56780"));
-
-                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(2000));
-                Assert.That(response.StatusMessage,                                        Is.EqualTo("This OCPI version is not supported!"));
-                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
-
-                Assert.That(response.HTTPResponse, Is.Not.Null);
+                // 2.2.1 has no route for a version it does not speak: the path
+                // is not there. Only 3.0 answers it with an OCPI 2000.
+                Assert.That(httpResponse,                     Is.Not.Null);
+                Assert.That(httpResponse.HTTPStatusCode.Code, Is.EqualTo(404));
 
             }
 

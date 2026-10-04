@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 {
 
                     Assert.That(credentials.    Token.                            ToString(),   Is.EqualTo("cso-2-emp1:token"));
-                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:3301/ocpi/v2.2/versions"));
+                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo(cpoVersionsAPIURL!.Value.ToString()));
                     Assert.That(credentials.    Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
                     Assert.That(credentials.    Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GEF"));
 
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 {
 
                     Assert.That(credentials.    Token.                            ToString(),   Is.EqualTo("cso-2-emp2:token"));
-                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo("http://127.0.0.1:3301/ocpi/v2.2/versions"));
+                    Assert.That(credentials.    URL.                              ToString(),   Is.EqualTo(cpoVersionsAPIURL!.Value.ToString()));
                     Assert.That(credentials.    Roles.First().PartyId.CountryCode.ToString(),   Is.EqualTo("DE"));
                     Assert.That(credentials.    Roles.First().PartyId.PartyId.      ToString(), Is.EqualTo("GEF"));
 
