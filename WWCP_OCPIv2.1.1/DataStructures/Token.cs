@@ -698,7 +698,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
 
-                var patchResult = TryPrivatePatch(ToJSON(), TokenPatch, EventTrackingId);
+                // With its owner: 2.1.1 writes a token without its country code and
+                // party id, and TryParse below asks for both - every patch failed
+                // with "The country code is missing!".
+                var patchResult = TryPrivatePatch(ToJSON(IncludeOwnerInformation: true), TokenPatch, EventTrackingId);
 
 
                 if (patchResult.IsFailed)
@@ -924,8 +927,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Token is not null &&
 
-               CountryCode.            Equals(Token.Id)                      &&
-               PartyId.                Equals(Token.Id)                      &&
+               CountryCode.            Equals(Token.CountryCode)             &&
+               PartyId.                Equals(Token.PartyId)                 &&
                Id.                     Equals(Token.Id)                      &&
                Type.                   Equals(Token.Type)                    &&
                AuthId.                 Equals(Token.AuthId)                  &&

@@ -141,6 +141,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
 
         #endregion
 
+        #region APatchOfOneEMSPsTokenLeavesTheOthersOfTheSameUid()
+
+        /// <summary>
+        /// A patch is an update, and an update found the token it replaced
+        /// unequal to itself - Token.Equals compared the country code and the
+        /// party id with the uid - so no token could be updated at all.
+        /// </summary>
+        [Test]
+        public async Task APatchOfOneEMSPsTokenLeavesTheOthersOfTheSameUid()
+        {
+
+            await api.AddRemoteParty(RemoteParty_Id.Parse("DE-AAA_EMSP"), RolesOf(emspAId), AccessToken.NewRandom());
+            await api.AddRemoteParty(RemoteParty_Id.Parse("DE-BBB_EMSP"), RolesOf(emspBId), AccessToken.NewRandom());
+
+            await api.AddOrUpdateToken(AToken(emspAId, "0123456789ABCDEF"), AllowedType.ALLOWED);
+            await api.AddOrUpdateToken(AToken(emspBId, "0123456789ABCDEF"), AllowedType.ALLOWED);
+
+            var patched = await api.TryPatchToken(
+                                    emspBId,
+                                    Token_Id.Parse("0123456789ABCDEF"),
+                                    new Newtonsoft.Json.Linq.JObject(
+                                        new Newtonsoft.Json.Linq.JProperty("valid",         false),
+                                        new Newtonsoft.Json.Linq.JProperty("last_updated",  (start + TimeSpan.FromHours(1)).ToISO8601())
+                                    )
+                                );
+
+            Assert.Multiple(() => {
+                Assert.That(patched.IsSuccess,                                          Is.True, $"EMSP B's token could not be patched: {patched.ErrorResponse}");
+                Assert.That(api.GetTokenStatus(emspAId).Single().Token.IsValid,         Is.True, "EMSP A's token was patched with EMSP B's.");
+                Assert.That(api.GetTokenStatus(emspBId).Single().Token.IsValid,         Is.False, "EMSP B's token was not patched.");
+            });
+
+        }
+
+        #endregion
+
         #region ATokenOfAPartyNobodyRegisteredIsRefused()
 
         [Test]

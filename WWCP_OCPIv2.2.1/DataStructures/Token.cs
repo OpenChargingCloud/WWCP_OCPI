@@ -1022,8 +1022,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => Token is not null &&
 
-               CountryCode.            Equals(Token.Id)                      &&
-               PartyId.                Equals(Token.Id)                      &&
+               CountryCode.            Equals(Token.CountryCode)             &&
+               PartyId.                Equals(Token.PartyId)                 &&
                Id.                     Equals(Token.Id)                      &&
                Type.                   Equals(Token.Type)                    &&
                ContractId.             Equals(Token.ContractId)              &&
