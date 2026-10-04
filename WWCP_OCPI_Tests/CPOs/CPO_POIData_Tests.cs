@@ -1112,6 +1112,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         public async Task CPO1_PutLocation_OCPIv2_1_1_Test1()
         {
 
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_1_1!.RemoveLocation(Location1_v2_1_1);
+
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_1_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
@@ -1167,6 +1171,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         [Test]
         public async Task CPO1_PutLocation_OCPIv2_2_1_Test1()
         {
+
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_2_1!.RemoveLocation(Location1_v2_2_1);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
@@ -1224,6 +1232,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         public async Task CPO1_PutLocation_OCPIv2_3_0_Test1()
         {
 
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_3_0!.RemoveLocation(Location1_v2_3_0);
+
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_3_0?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
                                         PartyId:     Party_Id.   Parse("GDF")
@@ -1280,6 +1292,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         [Test]
         public async Task CPO1_PutLocationAndEVSE_OCPIv2_1_1_Test1()
         {
+
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_1_1!.RemoveLocation(Location1_v2_1_1);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_1_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
@@ -1369,6 +1385,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         [Test]
         public async Task CPO1_PutLocationAndEVSE_OCPIv2_2_1_Test1()
         {
+
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_2_1!.RemoveLocation(Location1_v2_2_1);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_2_1?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),
@@ -1460,6 +1480,10 @@ namespace cloud.charging.open.protocols.OCPI.CPO.UnitTests
         [Test]
         public async Task CPO1_PutLocationAndEVSE_OCPIv2_3_0_Test1()
         {
+
+            // The location is put as new: what another test of this fixture
+            // put there before is taken away first.
+            await emsp1CommonAPI_v2_3_0!.RemoveLocation(Location1_v2_3_0);
 
             var graphDefinedEMSP1 = cpo1CPOAPI_v2_3_0?.GetEMSPClient(
                                         CountryCode: CountryCode.Parse("DE"),

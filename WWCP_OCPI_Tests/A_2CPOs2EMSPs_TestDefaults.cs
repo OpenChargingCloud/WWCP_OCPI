@@ -701,6 +701,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
         {
 
             await Delete_RemotePartyDBFiles();
+            DeleteWhatEarlierRunsLeft();
 
             #region Generate PKI
 
@@ -5875,6 +5876,43 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
         #endregion
 
+
+        #region (private) DeleteWhatEarlierRunsLeft()
+
+        /// <summary>
+        /// What the nodes of an earlier fixture or an earlier run wrote below
+        /// default/OCPI: their assets and their remote parties, which a Common
+        /// API reads back when it starts. Left there, a location one run put is
+        /// known to the next one already, and a test that puts it as new is
+        /// answered 200 rather than 201. Delete_RemotePartyDBFiles does not
+        /// help here: it asks the Common APIs of this fixture, which are not
+        /// made yet when it runs first.
+        /// </summary>
+        private static void DeleteWhatEarlierRunsLeft()
+        {
+
+            var loggingPath = Path.Combine(AppContext.BaseDirectory, "default", "OCPI");
+
+            if (!Directory.Exists(loggingPath))
+                return;
+
+            foreach (var filePath in Directory.GetFiles(loggingPath, "*", SearchOption.AllDirectories))
+            {
+
+                var fileName = Path.GetFileName(filePath);
+
+                if (fileName.Contains("_Assets_")        ||
+                    fileName.Contains("_RemoteParties_") ||
+                    fileName == CommonHTTPAPI.DefaultRemotePartyDBFileName)
+                {
+                    File.Delete(filePath);
+                }
+
+            }
+
+        }
+
+        #endregion
 
         #region (private) Delete_RemotePartyDBFiles()
 
