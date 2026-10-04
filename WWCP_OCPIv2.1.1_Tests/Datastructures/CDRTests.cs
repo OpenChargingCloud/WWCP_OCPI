@@ -705,7 +705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(ocpiCDR!.Location.EVSEs.Count(),                          Is.EqualTo(1));
             Assert.That(ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString(), Is.EqualTo(wwcpCDR.EVSEId!.Value.ToString()));
 
-            Assert.That(ocpiCDR!.Currency.ToString(), Is.EqualTo(wwcpCDR.ChargingPrice?.Currency?.ISOCode));
+            Assert.That(ocpiCDR!.Currency.ISOCode, Is.EqualTo(wwcpCDR.ChargingPrice?.Currency?.ISOCode));
 
             Assert.That(ocpiCDR.ChargingPeriods,          Is.Not.Null);
             Assert.That(ocpiCDR!.ChargingPeriods.Count(), Is.EqualTo(wwcpCDR.EnergyMeteringValues.Count() - 1));
@@ -1890,9 +1890,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp1.StartMeteringValue,                    Is.Null);
             Assert.That(cp1.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.FromKWh(0m))));
 
+            // Since 4610f0e4 a period bills its energy price even where no
+            // energy was charged, so that 0 kWh can be invoiced too.
             Assert.That(cp1.Energy,                                Is.EqualTo(WattHour.FromKWh(0)));
-            Assert.That(cp1.EnergyPrice,                           Is.EqualTo(0));
-            Assert.That(cp1.EnergyStepSize,                        Is.EqualTo(0));
+            Assert.That(cp1.EnergyPrice,                           Is.EqualTo(0.44M));
+            Assert.That(cp1.EnergyStepSize,                        Is.EqualTo(1000));
             Assert.That(cp1.PowerAverage,                          Is.EqualTo(Watt.    FromKW (0)));
 
             Assert.That(cp1.Duration,                              Is.EqualTo(chargingStart - sessionStart));
@@ -1900,7 +1902,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp1.TimePrice,                             Is.EqualTo(0));
             Assert.That(cp1.TimeStepSize,                          Is.EqualTo(0));
 
-            Assert.That(cp1.Dimensions.     Count,                 Is.EqualTo(0));
+            Assert.That(cp1.Dimensions.     Count,                 Is.EqualTo(1));
+            Assert.That(cp1.Dimensions.ElementAt(0).Type,          Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(cp1.Dimensions.ElementAt(0).Volume,        Is.EqualTo(0));
 
             Assert.That(cp1.PriceComponents.Count,                 Is.EqualTo(3));
             Assert.That(cp1.PriceComponents.ElementAt(0).Key,      Is.EqualTo(TariffDimension.ENERGY));
@@ -1915,9 +1919,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp2.StopTimestamp,                         Is.EqualTo(sessionStart  + new TimeSpan(3, 00, 00)));
             Assert.That(cp2.StartMeteringValue,                    Is.EqualTo(MeteringValue.Measured(chargingStart, WattHour.FromKWh(0m))));
             Assert.That(cp2.StopMeteringValue!.Value.Timestamp,    Is.EqualTo(chargingStart + new TimeSpan(2, 59, 25)));
-            Assert.That(cp2.StopMeteringValue!.Value.WattHours,    Is.EqualTo(WattHour.FromKWh(15929.608862144420131291028447M)));
+            Assert.That(cp2.StopMeteringValue!.Value.WattHours,    Is.EqualTo(WattHour.FromWh (15929.608862144420131291028447M)));
 
-            Assert.That(cp2.Energy,                                Is.EqualTo(WattHour.FromKWh(15929.608862144420131291028447M)));
+            Assert.That(cp2.Energy,                                Is.EqualTo(WattHour.FromWh (15929.608862144420131291028447M)));
             Assert.That(cp2.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp2.EnergyStepSize,                        Is.EqualTo(1000));
             Assert.That(cp2.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122498704672427971M)));
@@ -1944,11 +1948,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp3.StopTimestamp,                         Is.EqualTo(chargingStop));
             Assert.That(cp3.StartMeteringValue,                    Is.EqualTo(MeteringValue.Imputed(
                                                                                   chargingStart + new TimeSpan(2, 59, 25),
-                                                                                  WattHour.FromKWh(15929.608862144420131291028447M)
+                                                                                  WattHour.FromWh (15929.608862144420131291028447M)
                                                                               )));
             Assert.That(cp3.StopMeteringValue,                     Is.EqualTo(MeteringValue.Measured(chargingStop, WattHour.FromKWh(59.51m))));
 
-            Assert.That(cp3.Energy,                                Is.EqualTo(WattHour.FromKWh(43580.391137855579868708971553M)));
+            Assert.That(cp3.Energy,                                Is.EqualTo(WattHour.FromWh (43580.391137855579868708971553M)));
             Assert.That(cp3.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp3.EnergyStepSize,                        Is.EqualTo(1000));
             Assert.That(cp3.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122494881718378492M)));
@@ -1978,8 +1982,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp4.StopMeteringValue,                     Is.Null);
 
             Assert.That(cp4.Energy,                                Is.EqualTo(WattHour.FromKWh(0)));
-            Assert.That(cp4.EnergyPrice,                           Is.EqualTo(0));
-            Assert.That(cp4.EnergyStepSize,                        Is.EqualTo(0));
+            Assert.That(cp4.EnergyPrice,                           Is.EqualTo(0.44M));
+            Assert.That(cp4.EnergyStepSize,                        Is.EqualTo(1000));
             Assert.That(cp4.PowerAverage,                          Is.EqualTo(Watt.Zero));
 
             Assert.That(cp4.Duration,                              Is.EqualTo(sessionStop - chargingStop));
@@ -1987,9 +1991,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp4.TimePrice,                             Is.EqualTo(5.04M));
             Assert.That(cp4.TimeStepSize,                          Is.EqualTo(60));
 
-            Assert.That(cp4.Dimensions.     Count,                 Is.EqualTo(1));
-            Assert.That(cp4.Dimensions.ElementAt(0).Type,          Is.EqualTo(CDRDimensionType.TIME));
-            Assert.That(((Double) cp4.Dimensions.ElementAt(0).Volume) - (sessionStop - chargingStop).TotalHours, Is.LessThan(0.00001));
+            Assert.That(cp4.Dimensions.     Count,                 Is.EqualTo(2));
+            Assert.That(cp4.Dimensions.ElementAt(0).Type,          Is.EqualTo(CDRDimensionType.ENERGY));
+            Assert.That(cp4.Dimensions.ElementAt(0).Volume,        Is.EqualTo(0));
+            Assert.That(cp4.Dimensions.ElementAt(1).Type,          Is.EqualTo(CDRDimensionType.TIME));
+            Assert.That(((Double) cp4.Dimensions.ElementAt(1).Volume) - (sessionStop - chargingStop).TotalHours, Is.LessThan(0.00001));
 
             Assert.That(cp4.PriceComponents.Count,                 Is.EqualTo(2));
             Assert.That(cp4.PriceComponents.ElementAt(0).Key,      Is.EqualTo(TariffDimension.ENERGY));

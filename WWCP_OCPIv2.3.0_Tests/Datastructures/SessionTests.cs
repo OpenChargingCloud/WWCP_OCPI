@@ -122,8 +122,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             Assert.That(JSON["meter_id"].                        Value<String>(),  Is.EqualTo("Meter0001"));
             Assert.That(JSON["currency"].                        Value<String>(),  Is.EqualTo("EUR"));
             //ClassicAssert.AreEqual("Stadtwerke Jena-Ost",             JSON["charging_periods"]["xxx"].Value<String>());
-            Assert.That(JSON["total_cost"]["excl_vat"].          Value<Decimal>(), Is.EqualTo(1.12));
-            Assert.That(JSON["total_cost"]["incl_vat"].          Value<Decimal>(), Is.EqualTo(2.24));
+            Assert.That(JSON["total_cost"]["before_taxes"].      Value<Decimal>(), Is.EqualTo(1.12));
+            Assert.That(JSON["total_cost"]["taxes"][0]["name"].  Value<String>(),  Is.EqualTo("VAT"));
+            Assert.That(JSON["total_cost"]["taxes"][0]["amount"].Value<Decimal>(), Is.EqualTo(2.24));
             Assert.That(JSON["status"].                          Value<String>(),  Is.EqualTo("ACTIVE"));
             Assert.That(JSON["last_updated"].                    Value<String>(),  Is.EqualTo("2020-09-21T00:00:00.000Z"));
 

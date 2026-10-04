@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/locations")));
                     Assert.That(endpoints[Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/tariffs")));
                     Assert.That(endpoints[Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/sessions")));
-                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/chargingProfiles")));
+                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/chargingprofiles")));
                     Assert.That(endpoints[Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/cdrs")));
                     Assert.That(endpoints[Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/commands")));
                     Assert.That(endpoints[Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.2.1/emsp/tokens")));
@@ -422,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/locations")));
                     Assert.That(endpoints[Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/tariffs")));
                     Assert.That(endpoints[Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/sessions")));
-                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/chargingProfiles")));
+                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/chargingprofiles")));
                     Assert.That(endpoints[Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/cdrs")));
                     Assert.That(endpoints[Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/commands")));
                     Assert.That(endpoints[Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("https://localhost:3501/ocpi/v2.3.0/emsp/tokens")));
@@ -686,7 +686,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/locations")));
                     Assert.That(endpoints[Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/tariffs")));
                     Assert.That(endpoints[Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/sessions")));
-                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/chargingProfiles")));
+                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/chargingprofiles")));
                     Assert.That(endpoints[Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/cdrs")));
                     Assert.That(endpoints[Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/commands")));
                     Assert.That(endpoints[Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.2.1/cpo/tokens")));
@@ -834,7 +834,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                     Assert.That(endpoints[Module_Id.Locations].       First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/locations")));
                     Assert.That(endpoints[Module_Id.Tariffs].         First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/tariffs")));
                     Assert.That(endpoints[Module_Id.Sessions].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/sessions")));
-                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/chargingProfiles")));
+                    Assert.That(endpoints[Module_Id.ChargingProfiles].First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/chargingprofiles")));
                     Assert.That(endpoints[Module_Id.CDRs].            First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/cdrs")));
                     Assert.That(endpoints[Module_Id.Commands].        First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/commands")));
                     Assert.That(endpoints[Module_Id.Tokens].          First().URL,   Is.EqualTo(URL.Parse("https://localhost:3301/ocpi/v2.3.0/cpo/tokens")));

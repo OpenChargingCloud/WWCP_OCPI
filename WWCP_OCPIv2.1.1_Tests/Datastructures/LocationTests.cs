@@ -3561,7 +3561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a location: Invalid operator!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a location: JSON property 'operator' is not an object!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             if (patchResult.PatchedData is not null)

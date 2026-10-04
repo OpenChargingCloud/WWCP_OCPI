@@ -215,8 +215,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             Assert.That(JSON["directions"]          [0]["text"].        Value<String>(), Is.EqualTo("Bitte klingeln!"));
             Assert.That(JSON["directions"]          [1]["language"].    Value<String>(), Is.EqualTo("en"));
             Assert.That(JSON["directions"]          [1]["text"].        Value<String>(), Is.EqualTo("Ken sent me!"));
-            Assert.That(JSON["parking_restrictions"][0].                Value<String>(), Is.EqualTo("EV_ONLY"));
-            Assert.That(JSON["parking_restrictions"][1].                Value<String>(), Is.EqualTo("PLUGGED"));
+            Assert.That(JSON["parking_restrictions"].                   Count(),         Is.EqualTo(1));
+            Assert.That(JSON["parking_restrictions"][0].                Value<String>(), Is.EqualTo("CUSTOMERS"));
             Assert.That(JSON["images"]              [0]["url"].         Value<String>(), Is.EqualTo("http://example.com/pinguine.jpg"));
             Assert.That(JSON["images"]              [0]["thumbnail"].   Value<String>(), Is.EqualTo("http://example.com/kleine_pinguine.jpg"));
             Assert.That(JSON["images"]              [0]["category"].    Value<String>(), Is.EqualTo("OPERATOR"));

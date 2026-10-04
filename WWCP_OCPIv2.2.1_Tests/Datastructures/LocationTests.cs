@@ -539,7 +539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'country code' of a charging location is not allowed!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'country code' of a location is not allowed!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
@@ -779,7 +779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'party identification' of a charging location is not allowed!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'party identification' of a location is not allowed!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
@@ -1019,7 +1019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'identification' of a charging location is not allowed!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'identification' of a location is not allowed!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
@@ -2465,7 +2465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'evses' array of a charging location is not allowed!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Patching the 'evses' array of a location is not allowed!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
@@ -2705,7 +2705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a charging location: Invalid operator!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a location: JSON property 'operator' is not an object!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));
@@ -2945,7 +2945,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.That(patchResult.IsSuccess,     Is.False);
             Assert.That(patchResult.IsFailed,      Is.True);
             Assert.That(patchResult.ErrorResponse, Is.Not.Null);
-            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a charging location: Invalid 'last updated'!"));
+            Assert.That(patchResult.ErrorResponse, Is.EqualTo("Invalid JSON merge patch of a location: Invalid 'last updated'!"));
             Assert.That(patchResult.PatchedData,   Is.Not.Null);
 
             Assert.That(patchResult.PatchedData.Id,                      Is.EqualTo(Location_Id.Parse("LOC0001")));

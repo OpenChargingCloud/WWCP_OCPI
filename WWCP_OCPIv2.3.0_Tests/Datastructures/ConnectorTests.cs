@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.Datastructures
             Assert.That(JSON["power_type"].          Value<String>(), Is.EqualTo("AC_3_PHASE"));
             Assert.That(JSON["max_voltage"].         Value<UInt16>(), Is.EqualTo(400));
             Assert.That(JSON["max_amperage"].        Value<UInt16>(), Is.EqualTo(30));
-            Assert.That(JSON["max_electric_power"].  Value<UInt16>(), Is.EqualTo(12));
+            Assert.That(JSON["max_electric_power"].  Value<UInt32>(), Is.EqualTo(12000));  // watts, as OCPI counts them
             Assert.That(JSON["tariff_ids"][0].       Value<String>(), Is.EqualTo("DE*GEF*T0001"));
             Assert.That(JSON["tariff_ids"][1].       Value<String>(), Is.EqualTo("DE*GEF*T0002"));
             Assert.That(JSON["terms_and_conditions"].Value<String>(), Is.EqualTo("https://open.charging.cloud/terms"));
