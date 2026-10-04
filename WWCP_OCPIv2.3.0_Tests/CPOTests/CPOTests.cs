@@ -1174,6 +1174,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         public async Task CPO_Register_RR_Test()
         {
 
+            // Not yet registered: EMSP #1 knows the CPO by its token, and has not
+            // been told where the CPO's versions are. A registration is what
+            // tells it - and what gives both sides new tokens.
+            await emsp1CommonAPI!.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Role.CPO);
+
+            var notRegistered = await emsp1CommonAPI.AddRemoteParty(
+                                          Id:                RemoteParty_Id.Parse("DE-GEF_CPO"),
+                                          CredentialsRoles:  [
+                                                                 new CredentialsRole(
+                                                                     CountryCode:      CountryCode.Parse("DE"),
+                                                                     PartyId:          Party_Id.   Parse("GEF"),
+                                                                     Role:             Role.       CPO,
+                                                                     BusinessDetails:  new BusinessDetails("GraphDefined CSO Services")
+                                                                 )
+                                                             ],
+                                          LocalAccessInfos:  [
+                                                                 new LocalAccessInfo(
+                                                                     AccessToken.Parse("emp1-2-cso:token"),
+                                                                     AccessStatus.ALLOWED
+                                                                 )
+                                                             ],
+                                          RemoteAccessInfos: [],
+                                          Status:            PartyStatus.ENABLED
+                                      );
+
+            Assert.That(notRegistered.IsSuccess, Is.True);
+
             var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
@@ -1184,10 +1211,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
             if (graphDefinedEMSP is not null)
             {
 
-                var remoteAccessInfoOld  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
-                var accessInfoOld        = emsp1CommonAPI?.RemoteParties.First().LocalAccessInfos. First();
+                var remoteAccessInfoOld  = cpoCommonAPI?.GetRemoteParty(RemoteParty_Id.Parse("DE-GDF_EMSP"))?.RemoteAccessInfos.First();
+                Assert.That(remoteAccessInfoOld,                         Is.Not.Null);
 
-                var response1            = await graphDefinedEMSP.GetVersions();
                 var response2            = await graphDefinedEMSP.Register();
 
                 // HTTP/1.1 200 OK
@@ -1226,11 +1252,54 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
                 //ClassicAssert.IsNotNull(response.Request);
 
-                var remoteAccessInfoNew  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
+                var remoteAccessInfoNew  = cpoCommonAPI?.GetRemoteParty(RemoteParty_Id.Parse("DE-GDF_EMSP"))?.RemoteAccessInfos.First();
                 Assert.That(remoteAccessInfoNew,                         Is.Not.Null);
                 Assert.That(remoteAccessInfoNew?.AccessToken.ToString(), Is.Not.EqualTo(remoteAccessInfoOld?.AccessToken.ToString()));
 
-                var accessInfoNew        = emsp1CommonAPI?.RemoteParties.First().LocalAccessInfos. First();
+                // EMSP #1 now knows where the CPO's versions are.
+                var cpoAtEMSP1           = emsp1CommonAPI?.GetRemoteParty(RemoteParty_Id.Parse("DE-GEF_CPO"));
+                Assert.That(cpoAtEMSP1?.RemoteAccessInfos.Count(),       Is.EqualTo(1));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_Register_AlreadyRegistered_Test()
+
+        /// <summary>
+        /// A party that is registered already registers once more: OCPI wants
+        /// a 405 for that - a registered party renews its credentials by PUT.
+        /// </summary>
+        [Test]
+        public async Task CPO_Register_AlreadyRegistered_Test()
+        {
+
+            var graphDefinedEMSP = cpoCPOAPI?.GetEMSPClient(
+                                       CountryCode: CountryCode.Parse("DE"),
+                                       PartyId:     Party_Id.   Parse("GDF")
+                                   );
+
+            Assert.That(graphDefinedEMSP, Is.Not.Null);
+
+            if (graphDefinedEMSP is not null)
+            {
+
+                var remoteAccessInfoOld  = cpoCommonAPI?.GetRemoteParty(RemoteParty_Id.Parse("DE-GDF_EMSP"))?.RemoteAccessInfos.First();
+                Assert.That(remoteAccessInfoOld,                         Is.Not.Null);
+
+                var response             = await graphDefinedEMSP.Register();
+
+                Assert.That(response,                                                       Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(405));
+                Assert.That(response.StatusCode.Value,                                      Is.EqualTo(2000));
+                Assert.That(response.StatusMessage,                                         Is.EqualTo("The given access token 'emp1-2-cso:token' is already registered!"));
+                Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
+
+                // Refused: the CPO still calls EMSP #1 with the token it had.
+                var remoteAccessInfoNew  = cpoCommonAPI?.GetRemoteParty(RemoteParty_Id.Parse("DE-GDF_EMSP"))?.RemoteAccessInfos.First();
+                Assert.That(remoteAccessInfoNew?.AccessToken.ToString(), Is.EqualTo(remoteAccessInfoOld?.AccessToken.ToString()));
 
             }
 
