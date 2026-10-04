@@ -137,6 +137,62 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region NamesTheParty                (this Request, CountryCode, PartyId, out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Whether the route of the given request names the given party - where
+        /// it names one at all. OCPI 2.1.1 has the country code and the party
+        /// id of the CPO in the URL of every receiver of its locations, tariffs
+        /// and sessions, and a CPO pushes only what is its own: the party the
+        /// URL names is the caller's, or the request is refused. The routes of
+        /// a sender name none.
+        /// </summary>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="CountryCode">The country code of the party the URL must name.</param>
+        /// <param name="PartyId">The party identification of the party the URL must name.</param>
+        /// <param name="OCPIResponseBuilder">The OCPI response builder in case of errors.</param>
+        public static Boolean NamesTheParty(this OCPIRequest                                Request,
+                                            CountryCode                                     CountryCode,
+                                            Party_Id                                        PartyId,
+                                            [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            OCPIResponseBuilder = default;
+
+            if (!Request.HTTPRequest.ParsedURLParametersX.ContainsKey("country_code") &&
+                !Request.HTTPRequest.ParsedURLParametersX.ContainsKey("party_id"))
+            {
+                return true;
+            }
+
+            if (!Request.ParseParseCountryCodePartyId(out var countryCode,
+                                                      out var partyId,
+                                                      out OCPIResponseBuilder))
+            {
+                return false;
+            }
+
+            if (countryCode.Value == CountryCode &&
+                partyId.    Value == PartyId)
+            {
+                return true;
+            }
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                StatusCode           = StatusCode.ClientErrors.GenericClientError,
+                StatusMessage        = $"The party '{countryCode}{partyId}' the URL names is not the caller's!",
+                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                    AccessControlAllowHeaders  = [ "Authorization" ]
+                }
+            };
+
+            return false;
+
+        }
+
+        #endregion
+
         #region ParseMandatoryLocation       (this Request, CommonAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingEVSE = true)
 
         /// <summary>
@@ -163,6 +219,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             LocationId           = default;
             Location             = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
@@ -236,6 +295,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Location             = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
 
@@ -296,6 +358,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EVSEUId              = default;
             EVSE                 = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
@@ -412,6 +477,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EVSE                 = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
 
@@ -518,6 +586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ConnectorId          = default;
             Connector            = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId",  Location_Id. TryParse, out var locationId))
             {
@@ -677,6 +748,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Connector            = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId",  Location_Id. TryParse, out var locationId))
             {
 
@@ -808,6 +882,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>("tariffId", Tariff_Id.TryParse, out var tariffId))
             {
 
@@ -878,6 +955,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Tariff               = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Tariff_Id>("tariffId", Tariff_Id.TryParse, out var tariffId))
             {
 
@@ -932,6 +1012,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             SessionId            = default;
             Session              = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId", Session_Id.TryParse, out var sessionId))
             {
@@ -1005,6 +1088,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Session              = default;
             OCPIResponseBuilder  = default;
 
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
+
             if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId", Session_Id.TryParse, out var sessionId))
             {
 
@@ -1056,6 +1142,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             CDRId                = default;
             CDR                  = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>("cdrId", CDR_Id.TryParse, out var cdrId))
             {
@@ -1125,6 +1214,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             CDRId                = default;
             CDR                  = default;
             OCPIResponseBuilder  = default;
+
+            if (!Request.NamesTheParty(CountryCode, PartyId, out OCPIResponseBuilder))
+                return false;
 
             if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>("cdrId", CDR_Id.TryParse, out var cdrId))
             {

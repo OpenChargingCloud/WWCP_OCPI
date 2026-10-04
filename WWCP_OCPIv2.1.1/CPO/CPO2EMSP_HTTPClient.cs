@@ -980,7 +980,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId.ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
                                                                             requestBuilder.Set(HTTPHeaders.X_Request_ID,     requestId);
@@ -1134,7 +1136,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Location.Id.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Location.CountryCode.ToString() +
+                                                                                                    Location.PartyId.ToString() +
+                                                                                                    Location.Id.ToString(),
                                                  Content:               Location.ToJSON(
                                                                             false,
                                                                             false,
@@ -1320,7 +1324,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId.ToString(),
                                                  Content:               LocationPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -1477,7 +1483,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId.ToString() +
                                                                                                     EVSEUId.   ToString(),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -1682,7 +1690,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId.ToString() +
                                                                                                     EVSE.UId.  ToString(),
                                                  Content:               EVSE.ToJSON(
                                                                             RemoteEMSPId,
@@ -1862,7 +1872,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId.ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId.ToString() +
                                                                                                     EVSEUId.   ToString(),
                                                  Content:               EVSEPatch.ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
@@ -2023,7 +2035,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.POST(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     "status",
                                                  Content:               JSONObject.Create(
@@ -2187,7 +2201,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.GET(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
                                                  Authentication:        TokenAuth,
@@ -2355,7 +2371,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Connector.ParentEVSE.ParentLocation.Id. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
+                                                                                                    Connector.ParentEVSE.ParentLocation.PartyId.ToString() +
+                                                                                                    Connector.ParentEVSE.ParentLocation.Id. ToString() +
                                                                                                     Connector.ParentEVSE.               UId.ToString() +
                                                                                                     Connector.                          Id. ToString(),
                                                  Content:               Connector.ToJSON(
@@ -2517,7 +2535,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PATCH(
-                                                 Path:                  httpClient.RemoteURL.Path + LocationId. ToString() +
+                                                 Path:                  httpClient.RemoteURL.Path + CommonAPI.OurCountryCode.ToString() +
+                                                                                                    CommonAPI.OurPartyId.ToString() +
+                                                                                                    LocationId. ToString() +
                                                                                                     EVSEUId.    ToString() +
                                                                                                     ConnectorId.ToString(),
                                                  Content:               ConnectorPatch.ToUTF8Bytes(JSONFormatting),
@@ -2838,7 +2858,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Tariff.Id.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Tariff.CountryCode.ToString() +
+                                                                                                    Tariff.PartyId.ToString() +
+                                                                                                    Tariff.Id.ToString(),
                                                  Content:               Tariff.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -3485,7 +3507,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Session.Id.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Session.CountryCode.ToString() +
+                                                                                                    Session.PartyId.ToString() +
+                                                                                                    Session.Id.ToString(),
                                                  Content:               Session.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {

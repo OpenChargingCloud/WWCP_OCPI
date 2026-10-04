@@ -2988,14 +2988,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/locations/{locationId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}
 
-            #region OPTIONS  ~/locations/{locationId}      [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                 request =>
 
                     Task.FromResult(
@@ -3013,12 +3013,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/locations/{locationId}
+            #region GET      ~/locations/{country_code}/{party_id}/{locationId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{locationId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                 GetLocationHTTPRequest,
                 GetLocationHTTPResponse,
                 request => {
@@ -3098,12 +3098,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT      ~/locations/{locationId}
+            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{locationId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                 PutLocationHTTPRequest,
                 PutLocationHTTPResponse,
                 async request => {
@@ -3254,12 +3254,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH    ~/locations/{locationId}
+            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{locationId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                 PatchLocationHTTPRequest,
                 PatchLocationHTTPResponse,
                 async request => {
@@ -3364,12 +3364,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE   ~/locations/{locationId}      [NonStandard]
+            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{locationId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                 DeleteLocationHTTPRequest,
                 DeleteLocationHTTPResponse,
                 async request => {
@@ -3453,14 +3453,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseUId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
-            #region OPTIONS  ~/locations/{locationId}/{evseUId}      [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}/{evseUId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 request =>
 
                     Task.FromResult(
@@ -3478,12 +3478,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/locations/{locationId}/{evseUId}
+            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{locationId}/{evseUId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 GetEVSEHTTPRequest,
                 GetEVSEHTTPResponse,
                 request => {
@@ -3556,12 +3556,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT      ~/locations/{locationId}/{evseUId}
+            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{locationId}/{evseUId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 PutEVSEHTTPRequest,
                 PutEVSEHTTPResponse,
                 async request => {
@@ -3691,12 +3691,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH    ~/locations/{locationId}/{evseUId}
+            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{locationId}/{evseUId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 PatchEVSEHTTPRequest,
                 PatchEVSEHTTPResponse,
                 async request => {
@@ -3792,12 +3792,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE   ~/locations/{locationId}/{evseUId}      [NonStandard]
+            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{locationId}/{evseUId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}",
                 DeleteEVSEHTTPRequest,
                 DeleteEVSEHTTPResponse,
                 async request => {
@@ -3873,14 +3873,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseUId}/{connectorId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}
 
-            #region OPTIONS  ~/locations/{locationId}/{evseUId}/{connectorId}      [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 request =>
 
                     Task.FromResult(
@@ -3900,12 +3900,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/locations/{locationId}/{evseUId}/{connectorId}
+            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 GetConnectorHTTPRequest,
                 GetConnectorHTTPResponse,
                 request => {
@@ -3972,12 +3972,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT      ~/locations/{locationId}/{evseUId}/{connectorId}
+            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 PutConnectorHTTPRequest,
                 PutConnectorHTTPResponse,
                 async request => {
@@ -4094,12 +4094,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH    ~/locations/{locationId}/{evseUId}/{connectorId}
+            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 PatchConnectorHTTPRequest,
                 PatchConnectorHTTPResponse,
                 async request => {
@@ -4190,12 +4190,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE   ~/locations/{locationId}/{evseUId}/{connectorId}      [NonStandard]
+            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/{connectorId}",
                 DeleteConnectorHTTPRequest,
                 DeleteConnectorHTTPResponse,
                 async request => {
@@ -4266,14 +4266,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            #region ~/locations/{locationId}/{evseUId}/status  [NonStandard]
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/status  [NonStandard]
 
-            #region OPTIONS  ~/locations/{locationId}/{evseUId}/status     [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/status     [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/status",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
                 request =>
 
                     Task.FromResult(
@@ -4291,12 +4291,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region POST     ~/locations/{locationId}/{evseUId}/status     [NonStandard]
+            #region POST     ~/locations/{country_code}/{party_id}/{locationId}/{evseUId}/status     [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "locations/{locationId}/{evseUId}/status",
+                URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseUId}/status",
                 PostEVSEStatusHTTPRequest,
                 PostEVSEStatusHTTPResponse,
                 async request => {
@@ -4525,14 +4525,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/tariffs/{tariffId}
+            #region ~/tariffs/{country_code}/{party_id}/{tariffId}
 
-            #region OPTIONS  ~/tariffs/{tariffId}
+            #region OPTIONS  ~/tariffs/{country_code}/{party_id}/{tariffId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "tariffs/{tariffId}",
+                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                 request =>
 
                     Task.FromResult(
@@ -4550,12 +4550,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/tariffs/{tariffId}
+            #region GET      ~/tariffs/{country_code}/{party_id}/{tariffId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "tariffs/{tariffId}",
+                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                 GetTariffHTTPRequest,
                 GetTariffHTTPResponse,
                 Request => {
@@ -4629,12 +4629,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT      ~/tariffs/{tariffId}
+            #region PUT      ~/tariffs/{country_code}/{party_id}/{tariffId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "tariffs/{tariffId}",
+                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                 PutTariffHTTPRequest,
                 PutTariffHTTPResponse,
                 async request => {
@@ -4761,12 +4761,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH    ~/tariffs/{tariffId}      [NonStandard]
+            #region PATCH    ~/tariffs/{country_code}/{party_id}/{tariffId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "tariffs/{tariffId}",
+                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                 PatchTariffHTTPRequest,
                 PatchTariffHTTPResponse,
                 async request => {
@@ -4850,12 +4850,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE   ~/tariffs/{tariffId}
+            #region DELETE   ~/tariffs/{country_code}/{party_id}/{tariffId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "tariffs/{tariffId}",
+                URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                 DeleteTariffHTTPRequest,
                 DeleteTariffHTTPResponse,
                 async request => {
@@ -5129,14 +5129,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/sessions/{sessionId}
+            #region ~/sessions/{country_code}/{party_id}/{sessionId}
 
-            #region OPTIONS  ~/sessions/{sessionId}    [NonStandard]
+            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                 request =>
 
                     Task.FromResult(
@@ -5154,12 +5154,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/sessions/{sessionId}
+            #region GET      ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                 GetSessionHTTPRequest,
                 GetSessionHTTPResponse,
                 request => {
@@ -5242,12 +5242,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT      ~/sessions/{sessionId}
+            #region PUT      ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                 PutSessionHTTPRequest,
                 PutSessionHTTPResponse,
                 async request => {
@@ -5400,12 +5400,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PATCH    ~/sessions/{sessionId}
+            #region PATCH    ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                 PatchSessionHTTPRequest,
                 PatchSessionHTTPResponse,
                 async request => {
@@ -5511,12 +5511,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region DELETE   ~/sessions/{sessionId}    [NonStandard]
+            #region DELETE   ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "sessions/{sessionId}",
+                URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                 DeleteSessionHTTPRequest,
                 DeleteSessionHTTPResponse,
                 async request => {
