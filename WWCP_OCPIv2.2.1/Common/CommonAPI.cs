@@ -4244,7 +4244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            parties. TryGetValue(
+                            TryGetPartyData(
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -4279,7 +4279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            parties. TryGetValue(
+                            TryGetPartyData(
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -4314,7 +4314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            parties. TryGetValue(
+                            TryGetPartyData(
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -4351,7 +4351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            parties. TryGetValue(
+                            TryGetPartyData(
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -4384,7 +4384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          out location,
                                          out errorResponse
                                      ) &&
-                            parties. TryGetValue(
+                            TryGetPartyData(
                                          Party_Idv3.From(
                                              location.CountryCode,
                                              location.PartyId
@@ -4408,7 +4408,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region removeAllLocations
 
                 case CommonHTTPAPI.removeAllLocations:
-                    foreach (var party in parties.Values)
+                    foreach (var party in AllPartyData)
                         party.Locations.Clear();
                     break;
 
@@ -4485,7 +4485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -4517,7 +4517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -4549,7 +4549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -4586,7 +4586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out tariff,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             tariff.CountryCode,
                                             tariff.PartyId
@@ -4624,7 +4624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tariff,
                                             out errorResponse
                                         ) &&
-                                parties.TryGetValue(
+                                TryGetPartyData(
                                             Party_Idv3.From(
                                                 tariff.CountryCode,
                                                 tariff.PartyId
@@ -4649,7 +4649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region removeAllTariffs
 
                 case CommonHTTPAPI.removeAllTariffs:
-                    foreach (var party in parties.Values)
+                    foreach (var party in AllPartyData)
                         party.Tariffs.Clear();
                     break;
 
@@ -4667,7 +4667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -4699,7 +4699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -4731,7 +4731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -4768,7 +4768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -4801,7 +4801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out session,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             session.CountryCode,
                                             session.PartyId
@@ -4825,7 +4825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region removeAllSessions
 
                 case CommonHTTPAPI.removeAllSessions:
-                    foreach (var party in parties.Values)
+                    foreach (var party in AllPartyData)
                         party.Sessions.Clear();
                     break;
 
@@ -4843,7 +4843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tokenStatus,
                                             out errorResponse
                                         ) &&
-                            parties.    TryGetValue(
+                            TryGetPartyData(
                                             Party_Idv3.From(
                                                 tokenStatus.Token.CountryCode,
                                                 tokenStatus.Token.PartyId
@@ -4875,7 +4875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tokenStatus,
                                             out errorResponse
                                         ) &&
-                            parties.    TryGetValue(
+                            TryGetPartyData(
                                             Party_Idv3.From(
                                                 tokenStatus.Token.CountryCode,
                                                 tokenStatus.Token.PartyId
@@ -4907,7 +4907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tokenStatus,
                                             out errorResponse
                                         ) &&
-                            parties.    TryGetValue(
+                            TryGetPartyData(
                                             Party_Idv3.From(
                                                 tokenStatus.Token.CountryCode,
                                                 tokenStatus.Token.PartyId
@@ -4944,7 +4944,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tokenStatus,
                                             out errorResponse
                                         ) &&
-                            parties.    TryGetValue(
+                            TryGetPartyData(
                                             Party_Idv3.From(
                                                 tokenStatus.Token.CountryCode,
                                                 tokenStatus.Token.PartyId
@@ -4977,7 +4977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             out tokenStatus,
                                             out errorResponse
                                         ) &&
-                            parties.    TryGetValue(
+                            TryGetPartyData(
                                             Party_Idv3.From(
                                                 tokenStatus.Token.CountryCode,
                                                 tokenStatus.Token.PartyId
@@ -5006,7 +5006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 // them.
                 case CommonHTTPAPI.removeAllTokens:
                 case CommonHTTPAPI.removeAllTokenStatus:
-                    foreach (var party in parties.Values)
+                    foreach (var party in AllPartyData)
                         party.Tokens.Clear();
                     break;
 
@@ -5024,7 +5024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -5056,7 +5056,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -5088,7 +5088,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -5125,7 +5125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -5158,7 +5158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out cdr,
                                         out errorResponse
                                     ) &&
-                            parties.TryGetValue(
+                            TryGetPartyData(
                                         Party_Idv3.From(
                                             cdr.CountryCode,
                                             cdr.PartyId
@@ -5182,7 +5182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #region removeAllCDRs
 
                 case CommonHTTPAPI.removeAllChargeDetailRecords:
-                    foreach (var party in parties.Values)
+                    foreach (var party in AllPartyData)
                         party.CDRs.Clear();
                     break;
 
@@ -8378,7 +8378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Boolean TryGetParty(Party_Idv3                          PartyId,
                                    [NotNullWhen(true)] out PartyData?  Party)
 
-            => parties.TryGetValue(
+            => TryGetPartyData(
                    PartyId,
                    out Party
                );
@@ -8388,6 +8388,82 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public IEnumerable<PartyData> Parties
             => parties.Values;
+
+        #endregion
+
+        #region Parties (remote)
+
+        /// <summary>
+        /// The data of the remote parties whose assets this platform keeps:
+        /// the tokens an EMSP pushes to a CPO, the locations, tariffs,
+        /// sessions and CDRs a CPO pushes to a hub.
+        /// </summary>
+        /// <remarks>
+        /// Apart from Parties, which are this platform's own: the credentials
+        /// hand those to a peer as our roles, and the version details offer
+        /// the modules of their roles. A remote EMSP among them would make a
+        /// CPO say it was an EMSP as well. The EMSP API keeps the remote CPOs
+        /// it is pushed to apart in the same way - see RemoteCPOAssets.
+        /// </remarks>
+        private readonly ConcurrentDictionary<Party_Idv3, PartyData> remotePartyData = [];
+
+        #region (private) TryGetPartyData(PartyId, out PartyData)
+
+        /// <summary>
+        /// The data of the given party: one of this platform's own, or of a
+        /// remote party - which is made where it is asked for first, by a push
+        /// or by a line of the assets file read back at the start (after the
+        /// remote parties), as long as a remote party has the given party
+        /// identification among its roles: its own, or one a hub named.
+        /// </summary>
+        /// <param name="PartyId">A party identification.</param>
+        /// <param name="PartyData">The data of the party.</param>
+        private Boolean TryGetPartyData(Party_Idv3                           PartyId,
+                                        [NotNullWhen(true)] out PartyData?  PartyData)
+        {
+
+            if (parties.        TryGetValue(PartyId, out PartyData) ||
+                remotePartyData.TryGetValue(PartyId, out PartyData))
+            {
+                return true;
+            }
+
+            foreach (var credentialsRole in remoteParties.Values.SelectMany(remoteParty => remoteParty.Roles))
+            {
+                if (credentialsRole.PartyId == PartyId)
+                {
+
+                    PartyData = remotePartyData.GetOrAdd(
+                                    PartyId,
+                                    partyId => new PartyData(
+                                                   partyId,
+                                                   credentialsRole.Role,
+                                                   credentialsRole.BusinessDetails
+                                               )
+                                );
+
+                    return true;
+
+                }
+            }
+
+            PartyData = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region (private) AllPartyData
+
+        /// <summary>
+        /// The data of this platform's own parties and of the remote parties
+        /// whose assets it keeps.
+        /// </summary>
+        private IEnumerable<PartyData> AllPartyData
+            => parties.Values.Concat(remotePartyData.Values);
+
+        #endregion
 
         #endregion
 
@@ -8438,7 +8514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Location.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(Location.Id, Location))
@@ -8548,7 +8624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Location.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Locations.TryAdd(Location.Id, Location))
@@ -8660,7 +8736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Location.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 #region Update an existing location
@@ -8905,7 +8981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Location.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (!party.Locations.TryGetValue(Location.Id, out var existingLocation))
@@ -9124,7 +9200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Locations.TryGetValue(LocationId, out var existingLocation))
@@ -9234,7 +9310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Locations.TryRemove(LocationId, out var location))
@@ -9333,7 +9409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var locations = new List<Location>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 locations.AddRange(party.Locations.Values);
                 party.Locations.Clear();
@@ -9394,7 +9470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedLocations   = new List<Location>();
             var failedLocations    = new List<RemoveResult<Location>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var location in party.Locations.Values)
                 {
@@ -9475,7 +9551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedLocations   = new List<Location>();
             var failedLocations    = new List<RemoveResult<Location>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var location in party.Locations.Values)
                 {
@@ -9552,7 +9628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 var matchingLocations  = party.Locations.Values;
@@ -9619,7 +9695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       Location_Id  LocationId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
                 return party.Locations.ContainsKey(LocationId);
 
             return false;
@@ -9635,7 +9711,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       [NotNullWhen(true)] out Location?  Location)
         {
 
-            if (parties.        TryGetValue(PartyId,    out var party) &&
+            if (TryGetPartyData(PartyId,    out var party) &&
                 party.Locations.TryGetValue(LocationId, out var location))
             {
                 Location = location;
@@ -9656,7 +9732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var locations = new List<Location>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var location in party.Locations.Values)
                 {
@@ -9678,7 +9754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (parties.TryGetValue(PartyId.Value, out var party))
+                if (TryGetPartyData(PartyId.Value, out var party))
                     return party.Locations.Values;
             }
 
@@ -9687,7 +9763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var locations = new List<Location>();
 
-                foreach (var party in parties.Values)
+                foreach (var party in AllPartyData)
                     locations.AddRange(party.Locations.Values);
 
                 return locations;
@@ -10052,7 +10128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EVSE = null;
 
-            foreach (var locationKVP in parties.SelectMany(party => party.Value.Locations))
+            foreach (var locationKVP in AllPartyData.SelectMany(party => party.Locations))
             {
                 if (locationKVP.Value.TryGetEVSE(EVSE_UId, out EVSE))
                     return true;
@@ -10064,7 +10140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public IEnumerable<EVSE> EVSEs(Func<IEVSE, Boolean>? IncludeEVSEDelegate = null)
         {
-            foreach (var locationKVP in parties.SelectMany(party => party.Value.Locations))
+            foreach (var locationKVP in AllPartyData.SelectMany(party => party.Locations))
             {
                 foreach (var evse in locationKVP.Value.EVSEs)
                     if (IncludeEVSEDelegate is null || IncludeEVSEDelegate(evse))
@@ -10263,7 +10339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Tariff.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(Tariff.Id, Tariff))
@@ -10355,7 +10431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Tariff.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Tariffs.TryAdd(Tariff.Id, Tariff))
@@ -10449,7 +10525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Tariff.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 #region Update an existing tariff
@@ -10622,7 +10698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Tariff.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (!party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff))
@@ -10741,7 +10817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Tariffs.TryGetValue(TariffId, out var existingTariff, Timestamp.Now))
@@ -10851,7 +10927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Tariffs.TryRemove(TariffId, out var tariffVersions))
@@ -10938,7 +11014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var tariffVersionList = new List<IEnumerable<Tariff>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 tariffVersionList.Add(party.Tariffs.Values());
                 party.Tariffs.Clear();
@@ -10999,7 +11075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedTariffs   = new List<Tariff>();
             var failedTariffs    = new List<RemoveResult<Tariff>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var tariff in party.Tariffs.Values())
                 {
@@ -11085,7 +11161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedTariffs   = new List<Tariff>();
             var failedTariffs    = new List<RemoveResult<Tariff>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var tariff in party.Tariffs.Values())
                 {
@@ -11168,7 +11244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 var matchingTariffs  = party.Tariffs.Values();
@@ -11243,7 +11319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     TimeSpan?        Tolerance   = null)
         {
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
                 return party.Tariffs.ContainsKey(TariffId);
 
             var onTariffSlowStorageLookup = OnTariffSlowStorageLookup;
@@ -11306,7 +11382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     TimeSpan?                        Tolerance   = null)
         {
 
-            if (parties.      TryGetValue(PartyId,  out var party) &&
+            if (TryGetPartyData(PartyId,  out var party) &&
                 party.Tariffs.TryGetValue(TariffId, out var tariff))
             {
                 Tariff = tariff;
@@ -11351,7 +11427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var tariffs = new List<Tariff>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var tariff in party.Tariffs.Values())
                 {
@@ -11373,7 +11449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (parties.TryGetValue(PartyId.Value, out var party))
+                if (TryGetPartyData(PartyId.Value, out var party))
                     return party.Tariffs.Values();
             }
 
@@ -11382,7 +11458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var tariffs = new List<Tariff>();
 
-                foreach (var party in parties.Values)
+                foreach (var party in AllPartyData)
                     tariffs.AddRange(party.Tariffs.Values());
 
                 return tariffs;
@@ -11473,7 +11549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Token.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Tokens.TryAdd(Token.Id, tokenStatus))
@@ -11570,7 +11646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Token.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Tokens.TryAdd(Token.Id, tokenStatus))
@@ -11665,7 +11741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Token.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 #region Update an existing token status
@@ -11844,7 +11920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Token.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (!party.Tokens.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -11963,7 +12039,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Tokens.TryGetValue(TokenId, out var existingTokenStatus))
@@ -12074,7 +12150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Tokens.TryRemove(TokenId, out var existingTokenStatus))
@@ -12152,7 +12228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var tokenStatusList = new List<TokenStatus>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 tokenStatusList.AddRange(party.Tokens.Values);
                 party.Tokens.Clear();
@@ -12211,7 +12287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedTokens  = new List<TokenStatus>();
             var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var token_status in party.Tokens.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
                 {
@@ -12285,7 +12361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedTokens  = new List<TokenStatus>();
             var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var token_status in party.Tokens.Values.Where(tokenstatus => IncludeTokenIds(
                                                                                           Party_Idv3.From(
@@ -12365,7 +12441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedTokens  = new List<TokenStatus>();
             var failedTokens   = new List<RemoveResult<TokenStatus>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var token_status in party.Tokens.Values.Where(tokenstatus => tokenstatus.Token.CountryCode == PartyId.CountryCode &&
                                                                                       tokenstatus.Token.PartyId     == PartyId.PartyId).ToArray())
@@ -12422,7 +12498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    Token_Id    TokenId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
                 return party.Tokens.ContainsKey(TokenId);
 
             var onTokenSlowStorageLookup = OnTokenSlowStorageLookup;
@@ -12477,7 +12553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                          [NotNullWhen(true)] out TokenStatus?  TokenStatus)
         {
 
-            if (parties.     TryGetValue(PartyId, out var party) &&
+            if (TryGetPartyData(PartyId, out var party) &&
                 party.Tokens.TryGetValue(TokenId, out TokenStatus))
             {
                 return true;
@@ -12524,7 +12600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var matchingTokenStatus = new List<TokenStatus>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var tokenStatus in party.Tokens.Values)
                 {
@@ -12546,7 +12622,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (parties.TryGetValue(PartyId.Value, out var party))
+                if (TryGetPartyData(PartyId.Value, out var party))
                     return party.Tokens.Values;
             }
 
@@ -12555,7 +12631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var tokenStatus = new List<TokenStatus>();
 
-                foreach (var party in parties.Values)
+                foreach (var party in AllPartyData)
                     tokenStatus.AddRange(party.Tokens.Values);
 
                 return tokenStatus;
@@ -12618,7 +12694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Session.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(Session.Id, Session))
@@ -12708,7 +12784,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Session.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.Sessions.TryAdd(Session.Id, Session))
@@ -12800,7 +12876,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Session.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 #region Update an existing session
@@ -12973,7 +13049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Session.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (!party.Sessions.TryGetValue(Session.Id, out var existingSession))
@@ -13089,7 +13165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Sessions.TryGetValue(SessionId, out var existingSession))
@@ -13199,7 +13275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.Sessions.TryRemove(SessionId, out var session))
@@ -13280,7 +13356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var sessions = new List<Session>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 sessions.AddRange(party.Sessions.Values);
                 party.Sessions.Clear();
@@ -13341,7 +13417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedSessions   = new List<Session>();
             var failedSessions    = new List<RemoveResult<Session>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var session in party.Sessions.Values)
                 {
@@ -13422,7 +13498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedSessions   = new List<Session>();
             var failedSessions    = new List<RemoveResult<Session>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var session in party.Sessions.Values)
                 {
@@ -13499,7 +13575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 var matchingSessions  = party.Sessions.Values;
@@ -13566,7 +13642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      Session_Id  SessionId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party) &&
+            if (TryGetPartyData(PartyId, out var party) &&
                 party.Sessions.ContainsKey(SessionId))
             {
                 return true;
@@ -13624,7 +13700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      [NotNullWhen(true)] out Session?  Session)
         {
 
-            if (parties.       TryGetValue(PartyId,   out var party) &&
+            if (TryGetPartyData(PartyId,   out var party) &&
                 party.Sessions.TryGetValue(SessionId, out Session))
             {
                 return true;
@@ -13666,7 +13742,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var sessions = new List<Session>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var session in party.Sessions.Values)
                 {
@@ -13688,7 +13764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (parties.TryGetValue(PartyId.Value, out var party))
+                if (TryGetPartyData(PartyId.Value, out var party))
                     return party.Sessions.Values;
             }
 
@@ -13697,7 +13773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var sessions = new List<Session>();
 
-                foreach (var party in parties.Values)
+                foreach (var party in AllPartyData)
                     sessions.AddRange(party.Sessions.Values);
 
                 return sessions;
@@ -13760,7 +13836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     CDR.CDRToken.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(CDR.Id, CDR))
@@ -13863,7 +13939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     CDR.CDRToken.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (party.CDRs.TryAdd(CDR.Id, CDR))
@@ -13968,7 +14044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     CDR.CDRToken.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 #region Update an existing charge detail record
@@ -14167,7 +14243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     CDR.CDRToken.PartyId
                                 );
 
-            if (parties.TryGetValue(partyId, out var party))
+            if (TryGetPartyData(partyId, out var party))
             {
 
                 if (!party.CDRs.TryGetValue(CDR.Id, out var existingCDR))
@@ -14302,7 +14378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            "The given charge detail record patch must not be null or empty!"
                        );
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.CDRs.TryGetValue(CDRId, out var existingCDR))
@@ -14412,7 +14488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 if (party.CDRs.TryRemove(CDRId, out var cdr))
@@ -14506,7 +14582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var cdrs = new List<CDR>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 cdrs.AddRange(party.CDRs.Values);
                 party.CDRs.Clear();
@@ -14567,7 +14643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedCDRs   = new List<CDR>();
             var failedCDRs    = new List<RemoveResult<CDR>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var cdr in party.CDRs.Values)
                 {
@@ -14648,7 +14724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var removedCDRs   = new List<CDR>();
             var failedCDRs    = new List<RemoveResult<CDR>>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var cdr in party.CDRs.Values)
                 {
@@ -14725,7 +14801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (parties.TryGetValue(PartyId, out var party))
+            if (TryGetPartyData(PartyId, out var party))
             {
 
                 var matchingCDRs  = party.CDRs.Values;
@@ -14792,7 +14868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  CDR_Id      CDRId)
         {
 
-            if (parties.TryGetValue(PartyId, out var party) &&
+            if (TryGetPartyData(PartyId, out var party) &&
                 party.CDRs.ContainsKey(CDRId))
             {
                 return true;
@@ -14850,7 +14926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  [NotNullWhen(true)] out CDR?  CDR)
         {
 
-            if (parties.   TryGetValue(PartyId, out var party) &&
+            if (TryGetPartyData(PartyId, out var party) &&
                 party.CDRs.TryGetValue(CDRId,   out CDR))
             {
                 return true;
@@ -14892,7 +14968,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var sessions = new List<CDR>();
 
-            foreach (var party in parties.Values)
+            foreach (var party in AllPartyData)
             {
                 foreach (var cdr in party.CDRs.Values)
                 {
@@ -14914,7 +14990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (PartyId.HasValue)
             {
-                if (parties.TryGetValue(PartyId.Value, out var party))
+                if (TryGetPartyData(PartyId.Value, out var party))
                     return party.CDRs.Values;
             }
 
@@ -14923,7 +14999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 var sessions = new List<CDR>();
 
-                foreach (var party in parties.Values)
+                foreach (var party in AllPartyData)
                     sessions.AddRange(party.CDRs.Values);
 
                 return sessions;
