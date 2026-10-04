@@ -9722,23 +9722,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         patchResult.PatchedData is not null)
                     {
 
-                        party.Tariffs.TryUpdate(Tariff.Id, Tariff, patchResult.PatchedData);
+                        // The patched tariff in place of the existing one: a
+                        // ConcurrentDictionary compares with its third argument,
+                        // which was the patched one - nothing was stored.
+                        party.Tariffs.TryUpdate(Tariff.Id, patchResult.PatchedData, existingTariff);
 
                         await LogAsset(
                                   CommonHTTPAPI.updateTariff,
-                                  Tariff.ToJSON(true,
-                                                true,
-                                                true,
-                                                true,
-                                                CustomTariffSerializer,
-                                                CustomDisplayTextSerializer,
-                                                CustomPriceSerializer,
-                                                CustomTariffElementSerializer,
-                                                CustomPriceComponentSerializer,
-                                                CustomTariffRestrictionsSerializer,
-                                                CustomEnergyMixSerializer,
-                                                CustomEnergySourceSerializer,
-                                                CustomEnvironmentalImpactSerializer),
+                                  patchResult.PatchedData.ToJSON(true,
+                                                                 true,
+                                                                 true,
+                                                                 true,
+                                                                 CustomTariffSerializer,
+                                                                 CustomDisplayTextSerializer,
+                                                                 CustomPriceSerializer,
+                                                                 CustomTariffElementSerializer,
+                                                                 CustomPriceComponentSerializer,
+                                                                 CustomTariffRestrictionsSerializer,
+                                                                 CustomEnergyMixSerializer,
+                                                                 CustomEnergySourceSerializer,
+                                                                 CustomEnvironmentalImpactSerializer),
                                   EventTrackingId ?? EventTracking_Id.New,
                                   CurrentUserId
                               );

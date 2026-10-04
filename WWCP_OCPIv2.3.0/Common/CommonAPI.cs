@@ -12905,9 +12905,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                );
                     }
 
+                    // The version to replace first, then its replacement - unlike a
+                    // ConcurrentDictionary's TryUpdate: the other way round it put the
+                    // existing tariff in its own place, and no update changed anything.
                     if (party.Tariffs.TryUpdate(Tariff.Id,
-                                                Tariff,
-                                                existingTariff))
+                                                existingTariff,
+                                                Tariff))
                     {
 
                         Tariff.CommonAPI = this;
@@ -13099,9 +13102,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
+                // The version to replace first, then its replacement - unlike a
+                // ConcurrentDictionary's TryUpdate: the other way round it put the
+                // existing tariff in its own place, and no update changed anything.
                 if (party.Tariffs.TryUpdate(Tariff.Id,
-                                            Tariff,
-                                            existingTariff))
+                                            existingTariff,
+                                            Tariff))
                 {
 
                     Tariff.CommonAPI = this;
