@@ -666,7 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             LocationId  = locationId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",       EVSE_UId.        TryParse, out var evseUId))
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseUId",       EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -850,7 +850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("evseUId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -8997,14 +8997,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/cdrs/{CDRId}
+            #region ~/cdrs/{cdrId}
 
-            #region OPTIONS  ~/cdrs/{CDRId}
+            #region OPTIONS  ~/cdrs/{cdrId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 request =>
 
                     Task.FromResult(
@@ -9021,12 +9021,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region GET      ~/cdrs/{CDRId}     // The concrete URL is not specified by OCPI! m(
+            #region GET      ~/cdrs/{cdrId}     // The concrete URL is not specified by OCPI! m(
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 CPOEvents.GetCDRHTTPRequest,
                 CPOEvents.GetCDRHTTPResponse,
                 request => {

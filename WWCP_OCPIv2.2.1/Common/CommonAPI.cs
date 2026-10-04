@@ -179,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Location             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("location_Id", Location_Id.TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -725,7 +725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             Session              =  default;
             OCPIResponseBuilder  =  default;
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id", Session_Id.TryParse, out var sessionId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId", Session_Id.TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {

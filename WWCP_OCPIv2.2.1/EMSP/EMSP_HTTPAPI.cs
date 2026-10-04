@@ -1062,7 +1062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             LocationId  = locationId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",       EVSE_UId.        TryParse, out var evseUId))
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseUId",       EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1246,7 +1246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("evseUId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {

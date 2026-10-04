@@ -3478,14 +3478,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region ~/cdrs/{CDRId}
+            #region ~/cdrs/{cdrId}
 
-            #region OPTIONS  ~/cdrs/{CDRId}
+            #region OPTIONS  ~/cdrs/{cdrId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 request =>
 
                     Task.FromResult(
@@ -3502,12 +3502,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #endregion
 
-            #region GET      ~/cdrs/{CDRId}     // The concrete URL is not specified by OCPI! m(
+            #region GET      ~/cdrs/{cdrId}     // The concrete URL is not specified by OCPI! m(
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 HTTPEvents.GetCDRHTTPRequest,
                 HTTPEvents.GetCDRHTTPResponse,
                 request => {

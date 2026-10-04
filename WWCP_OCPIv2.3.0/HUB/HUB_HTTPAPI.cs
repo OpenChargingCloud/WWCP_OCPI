@@ -1689,11 +1689,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
             // For HUBs, but also for EMSPs, as SCSPs might talk to EMSPs!
-            #region ~/chargingprofiles/{session_id}
+            #region ~/chargingprofiles/{sessionId}
 
             // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
-            #region GET      ~/chargingprofiles/{session_id}?duration={duration}&response_url=https://client.com/12345/
+            #region GET      ~/chargingprofiles/{sessionId}?duration={duration}&response_url=https://client.com/12345/
 
             // 1. GET will just return a ChargingProfileResponse (result=ACCEPTED).
             // 2. The resposeURL will be called with a ActiveProfileResult object (result=ACCEPTED, ActiveChargingProfile).
@@ -1702,14 +1702,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region PUT      ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+            #region PUT      ~/chargingprofiles/{sessionId}?response_url=https://client.com/12345/
 
             // 1. PUT (with a resposeURL): SetChargingProfile object
             // 2. The resposeURL will be called later, e.g. POST https://client.com/12345/ with a ChargingProfileResult object.
 
             #endregion
 
-            #region DELETE   ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+            #region DELETE   ~/chargingprofiles/{sessionId}?response_url=https://client.com/12345/
 
             // 1. DELETE will just return a ChargingProfileResponse (result=ACCEPTED).
             // 2. The resposeURL will be called with a ClearProfileResult object (result=ACCEPTED).
@@ -1719,11 +1719,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             #endregion
 
 
-            #region ~/sessions/{session_id}/charging_preferences <= Yet to do!
+            #region ~/sessions/{sessionId}/charging_preferences <= Yet to do!
 
-            //ToDo: Implement ~/sessions/{session_id}/charging_preferences!
+            //ToDo: Implement ~/sessions/{sessionId}/charging_preferences!
 
-            #region PUT      ~/sessions/{session_id}/charging_preferences
+            #region PUT      ~/sessions/{sessionId}/charging_preferences
 
             // https://example.com/ocpi/2.2/hub/sessions/12454/charging_preferences
 
@@ -1888,14 +1888,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/cdrs/{CDRId}
+            #region ~/cdrs/{cdrId}
 
-            #region OPTIONS  ~/cdrs/{CDRId}
+            #region OPTIONS  ~/cdrs/{cdrId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 request =>
 
                     Task.FromResult(
@@ -1912,12 +1912,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region GET      ~/cdrs/{CDRId}     // The concrete URL is not specified by OCPI! m(
+            #region GET      ~/cdrs/{cdrId}     // The concrete URL is not specified by OCPI! m(
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 CPOEvents.GetCDRHTTPRequest,
                 CPOEvents.GetCDRHTTPResponse,
                 request => {
@@ -5722,14 +5722,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/sessions/{country_code}/{party_id}/{session_id}
+            #region ~/sessions/{country_code}/{party_id}/{sessionId}
 
-            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{session_id}    [NonStandard]
+            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{sessionId}",
                 request =>
 
                     Task.FromResult(
@@ -5747,12 +5747,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region GET      ~/sessions/{country_code}/{party_id}/{session_id}
+            #region GET      ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{sessionId}",
                 EMSPEvents.GetSessionHTTPRequest,
                 EMSPEvents.GetSessionHTTPResponse,
                 request => {
@@ -5818,12 +5818,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region PUT      ~/sessions/{country_code}/{party_id}/{session_id}
+            #region PUT      ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{sessionId}",
                 EMSPEvents.PutSessionHTTPRequest,
                 EMSPEvents.PutSessionHTTPResponse,
                 async request => {
@@ -5941,12 +5941,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region PATCH    ~/sessions/{country_code}/{party_id}/{session_id}
+            #region PATCH    ~/sessions/{country_code}/{party_id}/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.PATCH,
-                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{sessionId}",
                 EMSPEvents.PatchSessionHTTPRequest,
                 EMSPEvents.PatchSessionHTTPResponse,
                 async request => {
@@ -6039,12 +6039,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region DELETE   ~/sessions/{country_code}/{party_id}/{session_id}    [NonStandard]
+            #region DELETE   ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{session_id}",
+                URLPathPrefix + "receiver/sessions/{country_code}/{party_id}/{sessionId}",
                 EMSPEvents.DeleteSessionHTTPRequest,
                 EMSPEvents.DeleteSessionHTTPResponse,
                 async request => {
@@ -7747,33 +7747,33 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
 
             // For EMSPs and SCSPs
-            #region POST  ~/chargingprofiles/{session_id}
+            #region POST  ~/chargingprofiles/{sessionId}
 
             // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
 
-            #region POST  ~/chargingprofiles/{session_id}/activeChargingProfile
+            #region POST  ~/chargingprofiles/{sessionId}/activeChargingProfile
 
             // ActiveChargingProfileResult
             // Result of the GET ActiveChargingProfile request, from the Charge Point.
 
             #endregion
 
-            #region PUT   ~/chargingprofiles/{session_id}/activeChargingProfile
+            #region PUT   ~/chargingprofiles/{sessionId}/activeChargingProfile
 
             // ActiveChargingProfile update
 
             #endregion
 
 
-            #region POST  ~/chargingprofiles/{session_id}/chargingProfile
+            #region POST  ~/chargingprofiles/{sessionId}/chargingProfile
 
             // ChargingProfileResult
             // Result of the PUT ChargingProfile request, from the Charge Point.
 
             #endregion
 
-            #region POST  ~/chargingprofiles/{session_id}/clearProfile
+            #region POST  ~/chargingprofiles/{sessionId}/clearProfile
 
             // ClearProfileResult
             // Result of the DELETE ChargingProfile request, from the Charge Point.

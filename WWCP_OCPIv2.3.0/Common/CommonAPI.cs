@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Location             =  default;
             OCPIResponseBuilder  =  default;
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("location_Id", Location_Id.TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id> ("locationId", Location_Id.TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1013,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             LocationId  = locationId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseId",       EVSE_UId.        TryParse, out var evseUId))
+            if (!Request.HTTPRequest.TryParseURLParameter<EVSE_UId>    ("evseUId",       EVSE_UId.        TryParse, out var evseUId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1197,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("locationId",   Location_Id.     TryParse, out var locationId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Location_Id>("evseUId",   Location_Id.     TryParse, out var locationId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1833,7 +1833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId",   Session_Id.      TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1927,7 +1927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId",   Session_Id.      TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2039,7 +2039,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id",   Session_Id.      TryParse, out var sessionId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId",   Session_Id.      TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2098,7 +2098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Session              =  default;
             OCPIResponseBuilder  =  default;
 
-            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("session_id", Session_Id.TryParse, out var sessionId))
+            if (!Request.HTTPRequest.TryParseURLParameter<Session_Id> ("sessionId", Session_Id.TryParse, out var sessionId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2218,7 +2218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             PartyId     = partyId;
 
 
-            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>     ("cdr_Id",       CDR_Id.          TryParse, out var cdrId))
+            if (!Request.HTTPRequest.TryParseURLParameter<CDR_Id>     ("cdrId",       CDR_Id.          TryParse, out var cdrId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {

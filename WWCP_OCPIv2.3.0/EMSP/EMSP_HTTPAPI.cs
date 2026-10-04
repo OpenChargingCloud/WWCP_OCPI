@@ -8113,14 +8113,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             // Command result callbacks
 
-            #region ~/commands/RESERVE_NOW/{commandId}
+            #region ~/commands/RESERVE_NOW/{command_id}
 
-            #region OPTIONS  ~/commands/RESERVE_NOW/{commandId}
+            #region OPTIONS  ~/commands/RESERVE_NOW/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
                 request =>
 
                     Task.FromResult(
@@ -8136,12 +8136,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region POST     ~/commands/RESERVE_NOW/{commandId}
+            #region POST     ~/commands/RESERVE_NOW/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                URLPathPrefix + "commands/RESERVE_NOW/{command_id}",
                 HTTPEvents.ReserveNowCallbackHTTPRequest,
                 HTTPEvents.ReserveNowCallbackHTTPResponse,
                 request => {
@@ -8220,14 +8220,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/commands/CANCEL_RESERVATION/{commandId}
+            #region ~/commands/CANCEL_RESERVATION/{command_id}
 
-            #region OPTIONS  ~/commands/CANCEL_RESERVATION/{commandId}
+            #region OPTIONS  ~/commands/CANCEL_RESERVATION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
                 request =>
 
                     Task.FromResult(
@@ -8243,12 +8243,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region POST     ~/commands/CANCEL_RESERVATION/{commandId}
+            #region POST     ~/commands/CANCEL_RESERVATION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                URLPathPrefix + "commands/CANCEL_RESERVATION/{command_id}",
                 HTTPEvents.CancelReservationCallbackHTTPRequest,
                 HTTPEvents.CancelReservationCallbackHTTPResponse,
                 request => {
@@ -8327,14 +8327,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/commands/START_SESSION/{commandId}
+            #region ~/commands/START_SESSION/{command_id}
 
-            #region OPTIONS  ~/commands/START_SESSION/{commandId}
+            #region OPTIONS  ~/commands/START_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/START_SESSION/{commandId}",
+                URLPathPrefix + "commands/START_SESSION/{command_id}",
                 request =>
 
                     Task.FromResult(
@@ -8350,12 +8350,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region POST     ~/commands/START_SESSION/{commandId}
+            #region POST     ~/commands/START_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/START_SESSION/{commandId}",
+                URLPathPrefix + "commands/START_SESSION/{command_id}",
                 HTTPEvents.StartSessionCallbackHTTPRequest,
                 HTTPEvents.StartSessionCallbackHTTPResponse,
                 request => {
@@ -8434,14 +8434,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/commands/STOP_SESSION/{commandId}
+            #region ~/commands/STOP_SESSION/{command_id}
 
-            #region OPTIONS  ~/commands/STOP_SESSION/{commandId}
+            #region OPTIONS  ~/commands/STOP_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                URLPathPrefix + "commands/STOP_SESSION/{command_id}",
                 request =>
 
                     Task.FromResult(
@@ -8457,12 +8457,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region POST     ~/commands/STOP_SESSION/{commandId}
+            #region POST     ~/commands/STOP_SESSION/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                URLPathPrefix + "commands/STOP_SESSION/{command_id}",
                 HTTPEvents.StopSessionCallbackHTTPRequest,
                 HTTPEvents.StopSessionCallbackHTTPResponse,
                 request => {
@@ -8541,14 +8541,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region ~/commands/UNLOCK_CONNECTOR/{command_id}
 
-            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
                 request =>
 
                     Task.FromResult(
@@ -8564,12 +8564,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             #endregion
 
-            #region POST     ~/commands/UNLOCK_CONNECTOR/{commandId}
+            #region POST     ~/commands/UNLOCK_CONNECTOR/{command_id}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                URLPathPrefix + "commands/UNLOCK_CONNECTOR/{command_id}",
                 HTTPEvents.UnlockConnectorCallbackHTTPRequest,
                 HTTPEvents.UnlockConnectorCallbackHTTPResponse,
                 request => {

@@ -2179,14 +2179,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseId}
+            #region ~/locations/{locationId}/{evseUId}
 
-            #region OPTIONS  ~/locations/{locationId}/{evseId}
+            #region OPTIONS  ~/locations/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}/{evseId}",
+                URLPathPrefix + "locations/{locationId}/{evseUId}",
                 request =>
 
                     Task.FromResult(
@@ -2203,12 +2203,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/locations/{locationId}/{evseId}
+            #region GET      ~/locations/{locationId}/{evseUId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{locationId}/{evseId}",
+                URLPathPrefix + "locations/{locationId}/{evseUId}",
                 GetEVSEHTTPRequest,
                 GetEVSEHTTPResponse,
                 request => {
@@ -2282,14 +2282,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseId}/{connectorId}
+            #region ~/locations/{locationId}/{evseUId}/{connectorId}
 
-            #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}
+            #region OPTIONS  ~/locations/{locationId}/{evseUId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
+                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
                 request =>
 
                     Task.FromResult(
@@ -2306,12 +2306,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/locations/{locationId}/{evseId}/{connectorId}
+            #region GET      ~/locations/{locationId}/{evseUId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
+                URLPathPrefix + "locations/{locationId}/{evseUId}/{connectorId}",
                 GetConnectorHTTPRequest,
                 GetConnectorHTTPResponse,
                 request => {
@@ -2806,14 +2806,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/sessions/{session_id}      [NonStandard]
+            #region ~/sessions/{sessionId}      [NonStandard]
 
-            #region OPTIONS  ~/sessions/{session_id}
+            #region OPTIONS  ~/sessions/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{session_id}",
+                URLPathPrefix + "sessions/{sessionId}",
                 request =>
 
                     Task.FromResult(
@@ -2830,12 +2830,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/sessions/{session_id}
+            #region GET      ~/sessions/{sessionId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "sessions/{session_id}",
+                URLPathPrefix + "sessions/{sessionId}",
                 GetSessionHTTPRequest,
                 GetSessionHTTPResponse,
                 request => {
@@ -2921,14 +2921,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             //ToDo: Implement Setting of charging preferences!
 
-            #region ~/sessions/{session_id}/charging_preferences
+            #region ~/sessions/{sessionId}/charging_preferences
 
-            #region OPTIONS  ~/sessions/{session_id}/charging_preferences
+            #region OPTIONS  ~/sessions/{sessionId}/charging_preferences
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "sessions/{session_id}/charging_preferences",
+                URLPathPrefix + "sessions/{sessionId}/charging_preferences",
                 request =>
 
                     Task.FromResult(
@@ -2946,7 +2946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region PUT     ~/sessions/{session_id}/charging_preferences
+            #region PUT     ~/sessions/{sessionId}/charging_preferences
 
             // https://example.com/ocpi/2.2/cpo/sessions/12454/charging_preferences
 
@@ -3124,14 +3124,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region ~/cdrs/{CDRId}
+            #region ~/cdrs/{cdrId}
 
-            #region OPTIONS  ~/cdrs/{CDRId}
+            #region OPTIONS  ~/cdrs/{cdrId}
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 request =>
 
                     Task.FromResult(
@@ -3148,12 +3148,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region GET      ~/cdrs/{CDRId}     // The concrete URL is not specified by OCPI! m(
+            #region GET      ~/cdrs/{cdrId}     // The concrete URL is not specified by OCPI! m(
 
             CommonAPI.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "cdrs/{CDRId}",
+                URLPathPrefix + "cdrs/{cdrId}",
                 GetCDRHTTPRequest,
                 GetCDRHTTPResponse,
                 request => {
