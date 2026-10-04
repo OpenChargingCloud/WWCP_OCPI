@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Globalization;
 using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
@@ -2019,8 +2020,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                        loggingPath2, Path.DirectorySeparatorChar,
                        context.IsNotNullOrEmpty() ? context + Path.DirectorySeparatorChar : "",
                        logfileName, "_",
-                       Timestamp.Now.Year, "-",
-                       Timestamp.Now.Month.ToString("D2"),
+                       Timestamp.Now.ToString("yyyy-MM", CultureInfo.InvariantCulture),
                        ".log"
                    );
 

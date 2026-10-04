@@ -17,6 +17,7 @@
 
 #region Usings
 
+using System.Globalization;
 using System.Text;
 using System.Collections.Concurrent;
 
@@ -789,8 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                                     : null,
                                                                                                                 context is not null ? context + "_" : "",
                                                                                                                 logfileName, "_",
-                                                                                                                Timestamp.Now.Year, "-",
-                                                                                                                Timestamp.Now.Month.ToString("D2"),
+                                                                                                                Timestamp.Now.ToString("yyyy-MM", CultureInfo.InvariantCulture),
                                                                                                                 ".log"
                                                                                                             ));
 
