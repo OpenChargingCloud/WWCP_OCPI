@@ -122,10 +122,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public String?                          PhysicalReference          { get; }
 
         /// <summary>
-        /// The description of the available parking for the EVSE.
+        /// The parking spaces that can be used by vehicles charging at this EVSE: references to the
+        /// parking places of the location, each with the position of the EVSE at it and the access
+        /// level between them (OCPI Accessibility Extension 1.0.0).
         /// </summary>
-        [Mandatory]
-        public Parking                          Parking                    { get; }
+        [Optional]
+        public IEnumerable<EVSEParking>         Parking                    { get; }
 
         /// <summary>
         /// The optional enumeration of images related to the EVSE such as photos or logos.
@@ -179,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
         /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-        /// <param name="Parking">The description of the available parking for the EVSE.</param>
+        /// <param name="Parking">The parking spaces that can be used by vehicles charging at this EVSE (OCPI Accessibility Extension 1.0.0).</param>
         /// 
         /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">The optional current status of the EVSE. Since OCPI v3.0 this is a vendor extension!</param>
@@ -205,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public EVSE(EVSE_UId                                                      UId,
                     PresenceStatus                                                Presence,
                     IEnumerable<Connector>                                        Connectors,
-                    Parking                                                       Parking,
+                    IEnumerable<EVSEParking>?                                     Parking,
 
                     EVSE_Id?                                                      EVSEId                                       = null,
                     StatusType?                                                   Status                                       = null,
@@ -277,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
         /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-        /// <param name="Parking">The description of the available parking for the EVSE.</param>
+        /// <param name="Parking">The parking spaces that can be used by vehicles charging at this EVSE (OCPI Accessibility Extension 1.0.0).</param>
         /// 
         /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">The optional current status of the EVSE. Since OCPI v3.0 this is a vendor extension!</param>
@@ -304,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       EVSE_UId                                                      UId,
                       PresenceStatus                                                Presence,
                       IEnumerable<Connector>                                        Connectors,
-                      Parking                                                       Parking,
+                      IEnumerable<EVSEParking>?                                     Parking,
 
                       EVSE_Id?                                                      EVSEId                                       = null,
                       StatusType?                                                   Status                                       = null,
@@ -340,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.Presence               = Presence;
             this.Connectors             = Connectors?.    Distinct() ?? [];
-            this.Parking                = Parking;
+            this.Parking                = Parking?.       Distinct() ?? [];
 
             this.EVSEId                 = EVSEId;
             this.Status                 = Status;
@@ -519,15 +521,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse Parking                [mandatory]
+                #region Parse Parking                [optional]
 
-                if (!JSON.ParseMandatoryJSON("parking",
-                                             "parking",
-                                             OCPIv3_0.Parking.TryParse,
-                                             out Parking? Parking,
-                                             out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("parking",
+                                              "EVSE parking",
+                                              EVSEParking.TryParse,
+                                              out HashSet<EVSEParking> Parking,
+                                              out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -734,9 +737,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                                                   CustomConnectorSerializer))))
                                : null,
 
-                                 new JProperty("parking",                Parking .                ToJSON(CustomParkingSerializer,
-                                                                                                         CustomParkingRestrictionSerializer,
-                                                                                                         CustomImageSerializer)),
+                           Parking.Any()
+                               ? new JProperty("parking",                new JArray(Parking.Select(parking => parking.ToJSON())))
+                               : null,
 
 
                            EVSEId.HasValue
@@ -799,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    UId.                Clone(),
                    Presence.           Clone(),
                    Connectors.         Select(connector      => connector.     Clone()).ToArray(),
-                   Parking.            Clone(),
+                   Parking.            Select(parking => parking.Clone()),
 
                    EVSEId?.            Clone(),
                    Status?.            Clone(),
@@ -1561,10 +1564,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             public String?                          PhysicalReference          { get; set; }
 
             /// <summary>
-            /// The description of the available parking for the EVSE.
+            /// The parking spaces that can be used by vehicles charging at this EVSE
+            /// (OCPI Accessibility Extension 1.0.0).
             /// </summary>
-            [Mandatory]
-            public Parking?                         Parking                    { get; set; }
+            [Optional]
+            public HashSet<EVSEParking>             Parking                    { get; }
 
             /// <summary>
             /// The optional enumeration of images related to the EVSE such as photos or logos.
@@ -1615,7 +1619,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// 
             /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
             /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-            /// <param name="Parking">The description of the available parking for the EVSE.</param>
+            /// <param name="Parking">The parking spaces that can be used by vehicles charging at this EVSE (OCPI Accessibility Extension 1.0.0).</param>
             /// 
             /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
             /// <param name="Status">The optional current status of the EVSE. Since OCPI v3.0 this is a vendor extension!</param>
@@ -1634,7 +1638,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                              PresenceStatus?               Presence                = null,
                              IEnumerable<Connector>?       Connectors              = null,
-                             Parking?                      Parking                 = null,
+                             IEnumerable<EVSEParking>?     Parking                 = null,
 
                              EVSE_Id?                      EVSEId                  = null,
                              StatusType?                   Status                  = null,
@@ -1661,7 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.UId                    = UId;
                 this.Presence               = Presence;
                 this.Connectors             = Connectors     is not null ? [.. Connectors]     : [];
-                this.Parking                = Parking;
+                this.Parking                = Parking is not null ? [.. Parking] : [];
 
                 this.EVSEId                 = EVSEId;
                 this.Status                 = Status;
@@ -1723,9 +1727,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!Presence.HasValue)
                     warnings.Add(Warning.Create("The presence must not be null or empty!"));
-
-                if (Parking is null)
-                    warnings.Add(Warning.Create("The parking must not be null or empty!"));
 
                 Warnings = warnings;
 

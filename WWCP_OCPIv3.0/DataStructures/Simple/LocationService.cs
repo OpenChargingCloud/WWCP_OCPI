@@ -188,34 +188,45 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Note that more information on accessibility modifications can be provided using the various fields
         /// for images and in the parking field of the EVSE object.
         /// </summary>
-        public static LocationService  ACCESSIBLE_CHARGING    { get; }
+        public static LocationService  ACCESSIBLE_CHARGING     { get; }
             = new ("ACCESSIBLE_CHARGING");
 
         /// <summary>
-        /// Assistance from on-site staff is available to help a Driver charge at the Location.
+        /// The location provides toilet facilities that are accessible to people with disabilities
+        /// (OCPI Accessibility Extension 1.0.0).
         /// </summary>
-        public static LocationService  FLASSISTANCEAT         { get; }
+        public static LocationService  ACCESSIBLE_TOILETS      { get; }
+            = new ("ACCESSIBLE_TOILETS");
+
+        /// <summary>
+        /// Assistance from on-site staff is available to help a driver charge at the location.
+        /// </summary>
+        public static LocationService  ASSISTANCE              { get; }
             = new ("ASSISTANCE");
 
         /// <summary>
         /// Security monitoring with video cameras is in place at the location.
         /// </summary>
-        public static LocationService  CAMERA_SURVEILLANCE    { get; }
+        public static LocationService  CAMERA_SURVEILLANCE     { get; }
             = new ("CAMERA_SURVEILLANCE");
 
         /// <summary>
-        /// A voice communication channel is available for the Driver to contact security staff from the location.
+        /// A voice communication channel is available for the driver to contact security staff from the location.
         /// </summary>
-        public static LocationService  EMERGENCY_CALL         { get; }
+        public static LocationService  EMERGENCY_CALL          { get; }
             = new ("EMERGENCY_CALL");
 
         /// <summary>
-        /// Time charging: defined in hours, step_size multiplier: 1 second.
-        /// Can also be used in combination with a RESERVATION restriction to describe
-        /// the price of the reservation time.
+        /// Immediate help can be summoned in case of an incident (OCPI Accessibility Extension 1.0.0).
         /// </summary>
-        public static LocationService  TIME            { get; }
-            = new ("TIME");
+        public static LocationService  EMERGENCY_ASSISTANCE    { get; }
+            = new ("EMERGENCY_ASSISTANCE");
+
+        /// <summary>
+        /// A security fence or wall is in place around the location to keep unauthorized people out.
+        /// </summary>
+        public static LocationService  PERIMETER_FENCE         { get; }
+            = new ("PERIMETER_FENCE");
 
         #endregion
 

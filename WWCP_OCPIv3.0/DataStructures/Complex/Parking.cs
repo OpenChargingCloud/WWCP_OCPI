@@ -41,6 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Properties
 
         /// <summary>
+        /// The identification of the parking space within the charge point operator's platform
+        /// (and suboperator platforms), which an EVSE parking refers to.
+        /// </summary>
+        [Mandatory]
+        public Parking_Id                       Id                       { get; }
+
+        /// <summary>
         /// The vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.
         /// </summary>
         [Mandatory]
@@ -54,39 +61,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Kilogram?                        MaxVehicleWeight         { get; }
 
         /// <summary>
-        /// The maximum vehicle height that can park at the EVSE, in centimeters.A value for this field should be provided
+        /// The maximum vehicle height that can park at the EVSE, in meters.A value for this field should be provided
         /// unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
         public Meter?                           MaxVehicleHeight         { get; }
 
         /// <summary>
-        /// The maximum vehicle length that can park at the EVSE, in centimeters.A value for this field should be provided
+        /// The maximum vehicle length that can park at the EVSE, in meters.A value for this field should be provided
         /// unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
         public Meter?                           MaxVehicleLength         { get; }
 
         /// <summary>
-        /// The maximum vehicle width that can park at the EVSE, in centimeters.A value for this field should be provided
+        /// The maximum vehicle width that can park at the EVSE, in meters.A value for this field should be provided
         /// unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
         public Meter?                           MaxVehicleWidth          { get; }
 
         /// <summary>
-        /// The length of the parking bay, in centimeters. A value for this field should be provided unless the value of the
+        /// The length of the parking space, in meters. A value for this field should be provided unless the value of the
         /// vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
-        public Meter?                           ParkingBayLength         { get; }
+        public Meter?                           ParkingSpaceLength         { get; }
 
         /// <summary>
-        /// The width of the parking bay, in centimeters. A value for this field should be provided unless the value of the
+        /// The width of the parking space, in meters. A value for this field should be provided unless the value of the
         /// vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.
         /// </summary>
         [Optional]
-        public Meter?                           ParkingBayWidth          { get; }
+        public Meter?                           ParkingSpaceWidth          { get; }
 
         /// <summary>
         /// Whether vehicles loaded with dangerous substances are allowed to park at the EVSE.A value for this field should
@@ -94,12 +101,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         [Optional]
         public Boolean?                         DangerousGoodsAllowed    { get; }
-
-        /// <summary>
-        /// The position of the EVSE relative to the parking space.
-        /// </summary>
-        [Mandatory]
-        public EVSEPosition                     EVSEPosition             { get; }
 
         /// <summary>
         /// The direction in which the vehicle is to be parked next to this EVSE.
@@ -157,6 +158,25 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Optional]
         public IEnumerable<Standard>            Standards                  { get; }
 
+        /// <summary>
+        /// Whether the parking space includes an adjacent marked or hatched area,
+        /// for more room to get in and out of the vehicle (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Boolean?                         ProtectedArea              { get; }
+
+        /// <summary>
+        /// The surface of the parking bay (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Surface?                         Surface                    { get; }
+
+        /// <summary>
+        /// The slope of the parking bay (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Slope?                           Slope                      { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -164,18 +184,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create new parking.
         /// </summary>
+        /// <param name="Id">The identification of the parking space, which an EVSE parking refers to.</param>
         /// <param name="VehicleTypes">The vehicle types that the EVSE is intended for and that the associated parking is designed to accomodate.</param>
-        /// <param name="EVSEPosition">The position of the EVSE relative to the parking space.</param>
         /// <param name="Direction">The direction in which the vehicle is to be parked next to this EVSE.</param>
         /// <param name="RestrictedToType">Whether it is forbidden for vehicles of a type not listed in vehicle_types to park at this EVSE, even if they can physically park there safely.</param>
         /// <param name="ReservationRequired">Whether a reservation is required for parking at the EVSE.</param>
         /// 
         /// <param name="MaxVehicleWeight">The maximum vehicle weight that can park at the EVSE, in kilograms.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
-        /// <param name="MaxVehicleHeight">The maximum vehicle height that can park at the EVSE, in centimeters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
-        /// <param name="MaxVehicleLength">The maximum vehicle length that can park at the EVSE, in centimeters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
-        /// <param name="MaxVehicleWidth">The maximum vehicle width that can park at the EVSE, in centimeters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
-        /// <param name="ParkingBayLength">The length of the parking bay, in centimeters. A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
-        /// <param name="ParkingBayWidth">The width of the parking bay, in centimeters. A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
+        /// <param name="MaxVehicleHeight">The maximum vehicle height that can park at the EVSE, in meters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
+        /// <param name="MaxVehicleLength">The maximum vehicle length that can park at the EVSE, in meters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
+        /// <param name="MaxVehicleWidth">The maximum vehicle width that can park at the EVSE, in meters.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
+        /// <param name="ParkingSpaceLength">The length of the parking space, in meters. A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
+        /// <param name="ParkingSpaceWidth">The width of the parking space, in meters. A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
         /// <param name="DangerousGoodsAllowed">Whether vehicles loaded with dangerous substances are allowed to park at the EVSE.A value for this field should be provided unless the value of the vehicle_types field contains no values other than PERSONAL_VEHICLE or MOTORCYCLE.</param>
         /// <param name="ParkingRestrictions">All applicable restrictions on who can park at this EVSE, apart from those related to the vehicle type.</param>
         /// <param name="TimeLimit">A time limit. If this field is present, vehicles may not park in this parking longer than this number of minutes.</param>
@@ -183,8 +203,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Images">Photos of the parking space at the EVSE. At least one photograph should be provided if the value of vehicle_types includes the DISABLED vehicle type.</param>
         /// <param name="Lighting">Whether the parking space for the EVSE is lit by artificial lighting.</param>
         /// <param name="Standards">A list of standards that the parking space conforms to, e.g.PAS 1899 for parking for people with disabilities.</param>
-        public Parking(IEnumerable<VehicleType>          VehicleTypes,
-                       EVSEPosition                      EVSEPosition,
+        /// <param name="ProtectedArea">Whether the parking space includes an adjacent marked or hatched area (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Surface">The surface of the parking bay (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Slope">The slope of the parking bay (OCPI Accessibility Extension 1.0.0).</param>
+        public Parking(Parking_Id                        Id,
+                       IEnumerable<VehicleType>          VehicleTypes,
                        ParkingDirection                  Direction,
                        Boolean                           RestrictedToType,
                        Boolean                           ReservationRequired,
@@ -193,19 +216,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        Meter?                            MaxVehicleHeight        = null,
                        Meter?                            MaxVehicleLength        = null,
                        Meter?                            MaxVehicleWidth         = null,
-                       Meter?                            ParkingBayLength        = null,
-                       Meter?                            ParkingBayWidth         = null,
+                       Meter?                            ParkingSpaceLength        = null,
+                       Meter?                            ParkingSpaceWidth         = null,
                        Boolean?                          DangerousGoodsAllowed   = null,
                        IEnumerable<ParkingRestriction>?  ParkingRestrictions     = null,
                        TimeSpan?                         TimeLimit               = null,
                        Boolean?                          Roofed                  = null,
                        IEnumerable<Image>?               Images                  = null,
                        Boolean?                          Lighting                = null,
-                       IEnumerable<Standard>?            Standards               = null)
+                       IEnumerable<Standard>?            Standards               = null,
+                       Boolean?                          ProtectedArea           = null,
+                       Surface?                          Surface                 = null,
+                       Slope?                            Slope                   = null)
         {
 
+            this.Id                     = Id;
             this.VehicleTypes           = VehicleTypes;
-            this.EVSEPosition           = EVSEPosition;
             this.Direction              = Direction;
             this.RestrictedToType       = RestrictedToType;
             this.ReservationRequired    = ReservationRequired;
@@ -214,8 +240,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.MaxVehicleHeight       = MaxVehicleHeight;
             this.MaxVehicleLength       = MaxVehicleLength;
             this.MaxVehicleWidth        = MaxVehicleWidth;
-            this.ParkingBayLength       = ParkingBayLength;
-            this.ParkingBayWidth        = ParkingBayWidth;
+            this.ParkingSpaceLength       = ParkingSpaceLength;
+            this.ParkingSpaceWidth        = ParkingSpaceWidth;
             this.DangerousGoodsAllowed  = DangerousGoodsAllowed;
             this.ParkingRestrictions    = ParkingRestrictions?.Distinct() ?? [];
             this.TimeLimit              = TimeLimit;
@@ -223,12 +249,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Images                 = Images?.             Distinct() ?? [];
             this.Lighting               = Lighting;
             this.Standards              = Standards?.          Distinct() ?? [];
+            this.ProtectedArea          = ProtectedArea;
+            this.Surface                = Surface;
+            this.Slope                  = Slope;
 
             unchecked
             {
 
-                hashCode = this.VehicleTypes.          CalcHashCode()      * 11 ^
-                           this.EVSEPosition.          GetHashCode()       *  7 ^
+                hashCode = this.Id.                    GetHashCode()       * 13 ^
+                           this.VehicleTypes.          CalcHashCode()      * 11 ^
                            this.Direction.             GetHashCode()       * 5 ^
                            this.RestrictedToType.      GetHashCode()       * 11 ^
                            this.ReservationRequired.   GetHashCode()       *  7 ^
@@ -237,15 +266,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.MaxVehicleHeight?.     GetHashCode() ?? 0) *  3 ^
                           (this.MaxVehicleLength?.     GetHashCode() ?? 0) *  5 ^
                           (this.MaxVehicleWidth?.      GetHashCode() ?? 0) *  3 ^
-                          (this.ParkingBayLength?.     GetHashCode() ?? 0) *  5 ^
-                          (this.ParkingBayWidth?.      GetHashCode() ?? 0) *  3 ^
+                          (this.ParkingSpaceLength?.     GetHashCode() ?? 0) *  5 ^
+                          (this.ParkingSpaceWidth?.      GetHashCode() ?? 0) *  3 ^
                           (this.DangerousGoodsAllowed?.GetHashCode() ?? 0) *  5 ^
                            this.ParkingRestrictions.   CalcHashCode()      *  3 ^
                           (this.TimeLimit?.            GetHashCode() ?? 0) *  5 ^
                           (this.Roofed?.               GetHashCode() ?? 0) *  3 ^
                            this.Images.                CalcHashCode()      *  5 ^
                           (this.Lighting?.             GetHashCode() ?? 0) *  3 ^
-                           this.Standards.             CalcHashCode();
+                           this.Standards.             CalcHashCode()      ^
+                          (this.ProtectedArea?.        GetHashCode() ?? 0) * 17 ^
+                          (this.Surface?.              GetHashCode() ?? 0) * 19 ^
+                          (this.Slope?.                GetHashCode() ?? 0) * 23;
 
             }
 
@@ -324,6 +356,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
+                #region Parse Id                       [mandatory]
+
+                if (!JSON.ParseMandatory("id",
+                                         "parking identification",
+                                         Parking_Id.TryParse,
+                                         out Parking_Id Id,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse VehicleTypes             [mandatory]
 
                 if (!JSON.ParseMandatoryHashSet("vehicle_types",
@@ -337,18 +382,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse EVSEPosition             [mandatory]
-
-                if (!JSON.ParseMandatory("evse_position",
-                                         "EVSE position",
-                                         OCPIv3_0.EVSEPosition.TryParse,
-                                         out EVSEPosition EVSEPosition,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
 
                 #region Parse Direction                [mandatory]
 
@@ -450,12 +483,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse ParkingBayLength         [optional]
+                #region Parse ParkingSpaceLength         [optional]
 
-                if (JSON.ParseOptional("parking_bay_length",
-                                       "parking bay length",
+                if (JSON.ParseOptional("parking_space_length",
+                                       "parking space length",
                                        Meter.TryParse,
-                                       out Meter? ParkingBayLength,
+                                       out Meter? ParkingSpaceLength,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -464,12 +497,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse ParkingBayWidth          [optional]
+                #region Parse ParkingSpaceWidth          [optional]
 
-                if (JSON.ParseOptional("parking_bay_width",
-                                       "parking bay width",
+                if (JSON.ParseOptional("parking_space_width",
+                                       "parking space width",
                                        Meter.TryParse,
-                                       out Meter? ParkingBayWidth,
+                                       out Meter? ParkingSpaceWidth,
                                        out ErrorResponse))
                 {
 
@@ -585,11 +618,52 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse ProtectedArea            [optional]
+
+                if (JSON.ParseOptional("protected_area",
+                                       "protected area",
+                                       out Boolean? ProtectedArea,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Surface                  [optional]
+
+                if (JSON.ParseOptional("surface",
+                                       "surface",
+                                       OCPIv3_0.Surface.TryParse,
+                                       out Surface? Surface,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Slope                    [optional]
+
+                if (JSON.ParseOptional("slope",
+                                       "slope",
+                                       OCPIv3_0.Slope.TryParse,
+                                       out Slope? Slope,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 Parking = new Parking(
 
+                              Id,
                               VehicleTypes,
-                              EVSEPosition,
                               Direction,
                               RestrictedToType,
                               ReservationRequired,
@@ -598,15 +672,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               MaxVehicleHeight,
                               MaxVehicleLength,
                               MaxVehicleWidth,
-                              ParkingBayLength,
-                              ParkingBayWidth,
+                              ParkingSpaceLength,
+                              ParkingSpaceWidth,
                               DangerousGoodsAllowed,
                               ParkingRestrictions,
                               TimeLimit,
                               Roofed,
                               Images,
                               Lighting,
-                              Standards
+                              Standards,
+                              ProtectedArea,
+                              Surface,
+                              Slope
 
                           );
 
@@ -643,8 +720,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
+                                 new JProperty("id",                        Id.ToString()),
                                  new JProperty("vehicle_types",             new JArray(VehicleTypes.Select(vehicleType => vehicleType.ToString()))),
-                                 new JProperty("evse_position",             EVSEPosition.ToString()),
                                  new JProperty("direction",                 Direction.   ToString()),
                                  new JProperty("restricted_to_type",        RestrictedToType),
                                  new JProperty("reservation_required",      ReservationRequired),
@@ -665,12 +742,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("max_vehicle_width",         MaxVehicleWidth. Value.m)
                                : null,
 
-                           ParkingBayLength.     HasValue
-                               ? new JProperty("parking_bay_length",        ParkingBayLength.Value.m)
+                           ParkingSpaceLength.     HasValue
+                               ? new JProperty("parking_space_length",        ParkingSpaceLength.Value.m)
                                : null,
 
-                           ParkingBayWidth.      HasValue
-                               ? new JProperty("parking_bay_width",         ParkingBayWidth. Value.m)
+                           ParkingSpaceWidth.      HasValue
+                               ? new JProperty("parking_space_width",         ParkingSpaceWidth. Value.m)
                                : null,
 
                            DangerousGoodsAllowed.HasValue
@@ -699,6 +776,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            Standards.Any()
                                ? new JProperty("standards",                 new JArray(Standards.Select(standard => standard.ToString())))
+                               : null,
+
+                           ProtectedArea.        HasValue
+                               ? new JProperty("protected_area",            ProtectedArea.Value)
+                               : null,
+
+                           Surface.              HasValue
+                               ? new JProperty("surface",                   Surface.Value.ToString())
+                               : null,
+
+                           Slope.                HasValue
+                               ? new JProperty("slope",                     Slope.  Value.ToString())
                                : null
 
                        );
@@ -720,8 +809,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => new (
 
+                   Id.                 Clone(),
                    VehicleTypes.       Select(vehicleType        => vehicleType.       Clone()),
-                   EVSEPosition.       Clone(),
                    Direction.          Clone(),
                    RestrictedToType,
                    ReservationRequired,
@@ -730,15 +819,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    MaxVehicleHeight,
                    MaxVehicleLength,
                    MaxVehicleWidth,
-                   ParkingBayLength,
-                   ParkingBayWidth,
+                   ParkingSpaceLength,
+                   ParkingSpaceWidth,
                    DangerousGoodsAllowed,
                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction.Clone()),
                    TimeLimit,
                    Roofed,
                    Images.             Select(image              => image.             Clone()),
                    Lighting,
-                   Standards.          Select(standard           => standard.          Clone())
+                   Standards.          Select(standard           => standard.          Clone()),
+                   ProtectedArea,
+                   Surface?.           Clone(),
+                   Slope?.             Clone()
 
                );
 
@@ -868,10 +960,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (Parking is null)
                 throw new ArgumentNullException(nameof(Parking), "The given parking object must not be null!");
 
-            var c = VehicleTypes.Count().CompareTo(Parking.VehicleTypes.Count());
+            var c = Id.CompareTo(Parking.Id);
             if (c != 0) return c;
 
-            c = EVSEPosition.CompareTo(Parking.EVSEPosition);
+            c = VehicleTypes.Count().CompareTo(Parking.VehicleTypes.Count());
             if (c != 0) return c;
 
             c = Direction.CompareTo(Parking.Direction);
@@ -895,10 +987,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             c = MaxVehicleWidth?.CompareTo(Parking.MaxVehicleWidth) ?? (Parking.MaxVehicleWidth.HasValue ? -1 : 0);
             if (c != 0) return c;
 
-            c = ParkingBayLength?.CompareTo(Parking.ParkingBayLength) ?? (Parking.ParkingBayLength.HasValue ? -1 : 0);
+            c = ParkingSpaceLength?.CompareTo(Parking.ParkingSpaceLength) ?? (Parking.ParkingSpaceLength.HasValue ? -1 : 0);
             if (c != 0) return c;
 
-            c = ParkingBayWidth?.CompareTo(Parking.ParkingBayWidth) ?? (Parking.ParkingBayWidth.HasValue ? -1 : 0);
+            c = ParkingSpaceWidth?.CompareTo(Parking.ParkingSpaceWidth) ?? (Parking.ParkingSpaceWidth.HasValue ? -1 : 0);
             if (c != 0) return c;
 
             c = DangerousGoodsAllowed?.CompareTo(Parking.DangerousGoodsAllowed) ?? (Parking.DangerousGoodsAllowed.HasValue ? -1 : 0);
@@ -920,6 +1012,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (c != 0) return c;
 
             c = Standards.Count().CompareTo(Parking.Standards.Count());
+            if (c != 0) return c;
+
+            c = ProtectedArea?.CompareTo(Parking.ProtectedArea) ?? (Parking.ProtectedArea.HasValue ? -1 : 0);
+            if (c != 0) return c;
+
+            c = Surface?.CompareTo(Parking.Surface) ?? (Parking.Surface.HasValue ? -1 : 0);
+            if (c != 0) return c;
+
+            c = Slope?.CompareTo(Parking.Slope) ?? (Parking.Slope.HasValue ? -1 : 0);
             if (c != 0) return c;
 
             return c;
@@ -955,8 +1056,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => Parking is not null &&
 
+               Id.                 Equals       (Parking.Id)                  &&
                VehicleTypes.       SequenceEqual(Parking.VehicleTypes)        &&
-               EVSEPosition.       Equals       (Parking.EVSEPosition)        &&
                Direction.          Equals       (Parking.Direction)           &&
                RestrictedToType.   Equals       (Parking.RestrictedToType)    &&
                ReservationRequired.Equals       (Parking.ReservationRequired) &&
@@ -973,11 +1074,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
               ((!MaxVehicleWidth.      HasValue  && !Parking.MaxVehicleWidth.HasValue) ||
                 (MaxVehicleWidth.      HasValue  &&  Parking.MaxVehicleWidth.HasValue && MaxVehicleWidth.Value.Equals(Parking.MaxVehicleWidth.Value))) &&
 
-              ((!ParkingBayLength.     HasValue && !Parking.ParkingBayLength.HasValue) ||
-                (ParkingBayLength.     HasValue &&  Parking.ParkingBayLength.HasValue && ParkingBayLength.Value.Equals(Parking.ParkingBayLength.Value))) &&
+              ((!ParkingSpaceLength.     HasValue && !Parking.ParkingSpaceLength.HasValue) ||
+                (ParkingSpaceLength.     HasValue &&  Parking.ParkingSpaceLength.HasValue && ParkingSpaceLength.Value.Equals(Parking.ParkingSpaceLength.Value))) &&
 
-              ((!ParkingBayWidth.      HasValue && !Parking.ParkingBayWidth.HasValue) ||
-                (ParkingBayWidth.      HasValue &&  Parking.ParkingBayWidth.HasValue && ParkingBayWidth.Value.Equals(Parking.ParkingBayWidth.Value))) &&
+              ((!ParkingSpaceWidth.      HasValue && !Parking.ParkingSpaceWidth.HasValue) ||
+                (ParkingSpaceWidth.      HasValue &&  Parking.ParkingSpaceWidth.HasValue && ParkingSpaceWidth.Value.Equals(Parking.ParkingSpaceWidth.Value))) &&
 
               ((!DangerousGoodsAllowed.HasValue && !Parking.DangerousGoodsAllowed.HasValue) ||
                 (DangerousGoodsAllowed.HasValue &&  Parking.DangerousGoodsAllowed.HasValue && DangerousGoodsAllowed.Value.Equals(Parking.DangerousGoodsAllowed.Value))) &&
@@ -995,7 +1096,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
               ((!Lighting.HasValue && !Parking.Lighting.HasValue) ||
                 (Lighting.HasValue && Parking.Lighting.HasValue && Lighting.Value.Equals(Parking.Lighting.Value))) &&
 
-               Standards.SequenceEqual(Parking.Standards);
+               Standards.SequenceEqual(Parking.Standards) &&
+
+              ((!ProtectedArea.HasValue && !Parking.ProtectedArea.HasValue) ||
+                (ProtectedArea.HasValue &&  Parking.ProtectedArea.HasValue && ProtectedArea.Value.Equals(Parking.ProtectedArea.Value))) &&
+
+              ((!Surface.      HasValue && !Parking.Surface.      HasValue) ||
+                (Surface.      HasValue &&  Parking.Surface.      HasValue && Surface.      Value.Equals(Parking.Surface.      Value))) &&
+
+              ((!Slope.        HasValue && !Parking.Slope.        HasValue) ||
+                (Slope.        HasValue &&  Parking.Slope.        HasValue && Slope.        Value.Equals(Parking.Slope.        Value)));
 
         #endregion
 
@@ -1023,9 +1133,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => String.Concat(
 
-                   VehicleTypes.AggregateWith(", "),
+                   $"'{Id}': ",
 
-                   ", ", EVSEPosition
+                   VehicleTypes.AggregateWith(", ")
 
                );
 

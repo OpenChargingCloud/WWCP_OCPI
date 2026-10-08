@@ -201,6 +201,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public PhoneNumber?                        HelpPhone                { get; }
 
         /// <summary>
+        /// The parking places of the location, which the parking of its EVSEs refers to
+        /// (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Parking>                ParkingPlaces            { get; }
+
+        /// <summary>
+        /// Details about the assistance services available at the location: how to reach
+        /// them, when, and what kind of support they offer (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public String?                             AssistanceServiceDetails { get; }
+
+        /// <summary>
+        /// The standards the location conforms to, e.g. accessibility standards such as
+        /// PAS 1899 (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Standard>               Standards                { get; }
+
+        /// <summary>
         /// The optional enumeration of energy meters, e.g. at the grid connection point.
         /// </summary>
         [Optional]
@@ -286,6 +307,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// 
+        /// <param name="ParkingPlaces">The parking places of the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="AssistanceServiceDetails">Details about the assistance services available at the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the location conforms to (OCPI Accessibility Extension 1.0.0).</param>
         public Location(Party_Idv3                                                      PartyId,
                         Location_Id                                                     Id,
                         UInt64                                                          VersionId,
@@ -340,7 +365,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                     CustomEnergyMixSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergySource>?                  CustomEnergySourceSerializer                 = null,
-                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer          = null)
+                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer          = null,
+
+                        IEnumerable<Parking>?                                           ParkingPlaces                                = null,
+                        String?                                                         AssistanceServiceDetails                     = null,
+                        IEnumerable<Standard>?                                          Standards                                    = null)
 
             : this(null,
                    PartyId,
@@ -397,7 +426,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CustomHoursSerializer,
                    CustomEnergyMixSerializer,
                    CustomEnergySourceSerializer,
-                   CustomEnvironmentalImpactSerializer)
+                   CustomEnvironmentalImpactSerializer,
+
+                   ParkingPlaces,
+                   AssistanceServiceDetails,
+                   Standards)
 
         { }
 
@@ -457,6 +490,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// 
+        /// <param name="ParkingPlaces">The parking places of the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="AssistanceServiceDetails">Details about the assistance services available at the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the location conforms to (OCPI Accessibility Extension 1.0.0).</param>
         internal Location(CommonAPI?                                                      CommonAPI,
                           Party_Idv3                                                      PartyId,
                           Location_Id                                                     Id,
@@ -512,7 +549,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           CustomJObjectSerializerDelegate<Hours>?                         CustomHoursSerializer                        = null,
                           CustomJObjectSerializerDelegate<EnergyMix>?                     CustomEnergyMixSerializer                    = null,
                           CustomJObjectSerializerDelegate<EnergySource>?                  CustomEnergySourceSerializer                 = null,
-                          CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer          = null)
+                          CustomJObjectSerializerDelegate<EnvironmentalImpact>?           CustomEnvironmentalImpactSerializer          = null,
+
+                          IEnumerable<Parking>?                                           ParkingPlaces                                = null,
+                          String?                                                         AssistanceServiceDetails                     = null,
+                          IEnumerable<Standard>?                                          Standards                                    = null)
 
             : base(CommonAPI,
                    PartyId,
@@ -541,6 +582,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.EnergyMix           = EnergyMix;
             this.MaxPower            = MaxPower;
             this.HelpPhone           = HelpPhone;
+            this.ParkingPlaces       = ParkingPlaces?.   Distinct() ?? [];
+            this.AssistanceServiceDetails = AssistanceServiceDetails?.Trim();
+            this.Standards           = Standards?.       Distinct() ?? [];
 
             this.Created             = Created                      ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated         = LastUpdated                  ?? Created     ?? Timestamp.Now;
@@ -622,6 +666,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.EnergyMix?.         GetHashCode()  ?? 0) *  11 ^
                           (this.MaxPower?.          GetHashCode()  ?? 0) *   7 ^
                           (this.HelpPhone?.         GetHashCode()  ?? 0) *   5 ^
+                           this.ParkingPlaces.      CalcHashCode()       * 103 ^
+                          (this.AssistanceServiceDetails?.GetHashCode() ?? 0) * 107 ^
+                           this.Standards.          CalcHashCode()       * 109 ^
 
                            this.Created.            GetHashCode()        *   3 ^
                            this.LastUpdated.        GetHashCode();
@@ -1082,6 +1129,40 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse ParkingPlaces         [optional]
+
+                if (JSON.ParseOptionalHashSet("parking_places",
+                                              "parking places",
+                                              Parking.TryParse,
+                                              out HashSet<Parking> ParkingPlaces,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse AssistanceServiceDetails [optional]
+
+                var AssistanceServiceDetails = JSON["assistance_service_details"]?.Value<String>();
+
+                #endregion
+
+                #region Parse Standards             [optional]
+
+                if (JSON.ParseOptionalHashSet("standards",
+                                              "standards",
+                                              Standard.TryParse,
+                                              out HashSet<Standard> Standards,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created               [optional, NonStandard]
 
@@ -1142,7 +1223,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                null,
 
                                Created,
-                               LastUpdated
+                               LastUpdated,
+
+                               ParkingPlaces:             ParkingPlaces,
+                               AssistanceServiceDetails:  AssistanceServiceDetails,
+                               Standards:                 Standards
 
                            );
 
@@ -1338,6 +1423,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("help_phone",             HelpPhone.Value.  ToString())
                                : null,
 
+                           ParkingPlaces.Any()
+                               ? new JProperty("parking_places",         new JArray(ParkingPlaces.Select(parking  => parking. ToJSON(CustomParkingSerializer,
+                                                                                                                                     CustomParkingRestrictionSerializer,
+                                                                                                                                     CustomImageSerializer))))
+                               : null,
+
+                           AssistanceServiceDetails.IsNotNullOrEmpty()
+                               ? new JProperty("assistance_service_details", AssistanceServiceDetails)
+                               : null,
+
+                           Standards.Any()
+                               ? new JProperty("standards",              new JArray(Standards.    Select(standard => standard.ToString())))
+                               : null,
+
 
                            IncludeCreatedTimestamp
                                ? new JProperty("created",                Created.          ToISO8601())
@@ -1396,7 +1495,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    InternalData,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ParkingPlaces:             ParkingPlaces.Select(parking  => parking. Clone()),
+                   AssistanceServiceDetails:  AssistanceServiceDetails.CloneNullableString(),
+                   Standards:                 Standards.    Select(standard => standard.Clone())
 
                );
 
@@ -2098,7 +2201,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                ChargingPool.    All(evse                  => Location.ChargingPool.    Contains(evse))                  &&
                Directions.      All(displayText           => Location.Directions.      Contains(displayText))           &&
                Facilities.      All(facility              => Location.Facilities.      Contains(facility))              &&
-               Images.          All(image                 => Location.Images.          Contains(image));
+               Images.          All(image                 => Location.Images.          Contains(image))                 &&
+
+               ParkingPlaces.   Count().Equals(Location.ParkingPlaces.   Count()) &&
+               Standards.       Count().Equals(Location.Standards.       Count()) &&
+               ParkingPlaces.   All(parking               => Location.ParkingPlaces.   Contains(parking))               &&
+               Standards.       All(standard              => Location.Standards.       Contains(standard))              &&
+
+             ((AssistanceServiceDetails is     null && Location.AssistanceServiceDetails is     null) ||
+              (AssistanceServiceDetails is not null && Location.AssistanceServiceDetails is not null && AssistanceServiceDetails.Equals(Location.AssistanceServiceDetails)));
 
         #endregion
 
@@ -2172,7 +2283,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    InternalData,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ParkingPlaces,
+                   AssistanceServiceDetails,
+                   Standards
 
                );
 
@@ -2327,6 +2442,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             [Optional]
             public PhoneNumber?                    HelpPhone                { get; set; }
 
+            /// <summary>
+            /// The parking places of the location, which the parking of its EVSEs refers to
+            /// (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public HashSet<Parking>                ParkingPlaces            { get; }
+
+            /// <summary>
+            /// Details about the assistance services available at the location: how to reach
+            /// them, when, and what kind of support they offer (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public String?                         AssistanceServiceDetails { get; set; }
+
+            /// <summary>
+            /// The standards the location conforms to, e.g. accessibility standards such as
+            /// PAS 1899 (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public HashSet<Standard>               Standards                { get; }
+
 
             public JObject                         CustomData               { get; }
             public UserDefinedDictionary           InternalData             { get; }
@@ -2380,6 +2516,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// 
             /// <param name="Created">An optional timestamp when this location was created.</param>
             /// <param name="LastUpdated">An optional timestamp when this location was last updated (or created).</param>
+            ///
+            /// <param name="ParkingPlaces">The parking places of the location (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="AssistanceServiceDetails">Details about the assistance services available at the location (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="Standards">The standards the location conforms to (OCPI Accessibility Extension 1.0.0).</param>
             public Builder(CommonAPI?                           CommonAPI            = null,
                            Party_Idv3?                          PartyId              = null,
                            Location_Id?                         Id                   = null,
@@ -2412,7 +2552,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            UserDefinedDictionary?               InternalData         = null,
 
                            DateTimeOffset?                      Created              = null,
-                           DateTimeOffset?                      LastUpdated          = null)
+                           DateTimeOffset?                      LastUpdated          = null,
+
+                           IEnumerable<Parking>?                ParkingPlaces        = null,
+                           String?                              AssistanceServiceDetails = null,
+                           IEnumerable<Standard>?               Standards            = null)
 
                 : base(CommonAPI,
                        PartyId,
@@ -2442,6 +2586,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.EnergyMeters        = EnergyMeters     is not null ? [.. EnergyMeters]     : [];
                 this.MaxPower            = MaxPower;
                 this.HelpPhone           = HelpPhone;
+                this.ParkingPlaces       = ParkingPlaces    is not null ? [.. ParkingPlaces]    : [];
+                this.AssistanceServiceDetails = AssistanceServiceDetails;
+                this.Standards           = Standards        is not null ? [.. Standards]        : [];
 
                 this.Created             = Created;
                 this.LastUpdated         = LastUpdated;
@@ -2532,7 +2679,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                InternalData,
 
                                Created     ?? Timestamp.Now,
-                               LastUpdated ?? Timestamp.Now
+                               LastUpdated ?? Timestamp.Now,
+
+                               ParkingPlaces:             ParkingPlaces,
+                               AssistanceServiceDetails:  AssistanceServiceDetails,
+                               Standards:                 Standards
 
                            );
 

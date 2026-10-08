@@ -121,6 +121,33 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Optional]
         public IEnumerable<ConnectorCapability>  Capabilities          { get; }
 
+        /// <summary>
+        /// The effective handling weight of the charging cable, in kilograms, considering
+        /// its length, its stiffness and a cable management system, if there is one
+        /// (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Kilogram?                         CableWeight           { get; }
+
+        /// <summary>
+        /// Whether a system is present to assist with storing, lifting or organizing the cable
+        /// (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Boolean?                          CableManagementSystem { get; }
+
+        /// <summary>
+        /// Images related to the connector, e.g. photos of it (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Image>                Images                { get; }
+
+        /// <summary>
+        /// The standards the connector conforms to (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Standard>             Standards             { get; }
+
 
         /// <summary>
         /// The timestamp when this EVSE was created.
@@ -161,6 +188,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CableWeight">The effective handling weight of the charging cable (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="CableManagementSystem">Whether a system is present to assist with storing, lifting or organizing the cable (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Images">Images related to the connector (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the connector conforms to (OCPI Accessibility Extension 1.0.0).</param>
         public Connector(Connector_Id                                 Id,
                          ConnectorType                                Standard,
                          ConnectorFormats                             Format,
@@ -174,7 +205,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                          DateTimeOffset?                              Created                     = null,
                          DateTimeOffset?                              LastUpdated                 = null,
-                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null,
+
+                         Kilogram?                                    CableWeight                 = null,
+                         Boolean?                                     CableManagementSystem       = null,
+                         IEnumerable<Image>?                          Images                      = null,
+                         IEnumerable<Standard>?                       Standards                   = null)
 
             : this(null,
 
@@ -191,7 +227,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                    Created,
                    LastUpdated,
-                   CustomConnectorSerializer)
+                   CustomConnectorSerializer,
+
+                   CableWeight,
+                   CableManagementSystem,
+                   Images,
+                   Standards)
 
         { }
 
@@ -217,6 +258,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CableWeight">The effective handling weight of the charging cable (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="CableManagementSystem">Whether a system is present to assist with storing, lifting or organizing the cable (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Images">Images related to the connector (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the connector conforms to (OCPI Accessibility Extension 1.0.0).</param>
         internal Connector(EVSE?                                        ParentEVSE,
                            Connector_Id                                 Id,
 
@@ -232,7 +277,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            DateTimeOffset?                              Created                     = null,
                            DateTimeOffset?                              LastUpdated                 = null,
-                           CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+                           CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null,
+
+                           Kilogram?                                    CableWeight                 = null,
+                           Boolean?                                     CableManagementSystem       = null,
+                           IEnumerable<Image>?                          Images                      = null,
+                           IEnumerable<Standard>?                       Standards                   = null)
 
             : base(ParentEVSE,
                    Id)
@@ -250,6 +300,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.MaxElectricPower    = MaxElectricPower;
             this.TermsAndConditions  = TermsAndConditions;
             this.Capabilities        = Capabilities?.Distinct() ?? [];
+            this.CableWeight         = CableWeight;
+            this.CableManagementSystem = CableManagementSystem;
+            this.Images              = Images?.      Distinct() ?? [];
+            this.Standards           = Standards?.   Distinct() ?? [];
 
             this.Created             = Created                  ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated         = LastUpdated              ?? Created     ?? Timestamp.Now;
@@ -275,7 +329,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.MaxElectricPower?.  GetHashCode() ?? 0) *  7 ^
                           (this.TermsAndConditions?.GetHashCode() ?? 0) *  5 ^
                            this.Capabilities.       CalcHashCode()      *  3 ^
-                           this.LastUpdated.        GetHashCode();
+                           this.LastUpdated.        GetHashCode()       ^
+                          (this.CableWeight?.       GetHashCode() ?? 0) * 37 ^
+                          (this.CableManagementSystem?.GetHashCode() ?? 0) * 41 ^
+                           this.Images.             CalcHashCode()      * 43 ^
+                           this.Standards.          CalcHashCode()      * 47;
 
             }
 
@@ -491,6 +549,61 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse CableWeight         [optional]
+
+                if (JSON.ParseOptional("cable_weight",
+                                       "cable weight",
+                                       Kilogram.TryParseKG,
+                                       out Kilogram? CableWeight,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse CableManagementSystem [optional]
+
+                if (JSON.ParseOptional("cable_management_system",
+                                       "cable management system",
+                                       out Boolean? CableManagementSystem,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Images              [optional]
+
+                if (JSON.ParseOptionalHashSet("images",
+                                              "images",
+                                              Image.TryParse,
+                                              out HashSet<Image> Images,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Standards           [optional]
+
+                if (JSON.ParseOptionalHashSet("standards",
+                                              "standards",
+                                              OCPIv3_0.Standard.TryParse,
+                                              out HashSet<Standard> Standards,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created             [optional, NonStandard]
 
@@ -532,7 +645,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                 Capabilities,
 
                                 Created,
-                                LastUpdated
+                                LastUpdated,
+
+                                CableWeight:            CableWeight,
+                                CableManagementSystem:  CableManagementSystem,
+                                Images:                 Images,
+                                Standards:              Standards
 
                             );
 
@@ -589,6 +707,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("terms_and_conditions",   TermsAndConditions.ToString())
                                : null,
 
+                           CableWeight.HasValue
+                               ? new JProperty("cable_weight",           CableWeight.       Value.Value)
+                               : null,
+
+                           CableManagementSystem.HasValue
+                               ? new JProperty("cable_management_system", CableManagementSystem.Value)
+                               : null,
+
+                           Images.Any()
+                               ? new JProperty("images",                 new JArray(Images.   Select(image    => image.   ToJSON())))
+                               : null,
+
+                           Standards.Any()
+                               ? new JProperty("standards",              new JArray(Standards.Select(standard => standard.ToString())))
+                               : null,
+
                            IncludeCreatedTimestamp
                                ? new JProperty("created",                Created.           ToISO8601())
                                : null,
@@ -628,7 +762,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Capabilities.Select(capability => capability.Clone()),
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+                   null,
+
+                   CableWeight,
+                   CableManagementSystem,
+                   Images.      Select(image      => image.     Clone()),
+                   Standards.   Select(standard   => standard.  Clone())
 
                );
 
@@ -975,7 +1115,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
               (TermsAndConditions.HasValue   &&   Connector.TermsAndConditions.HasValue   && TermsAndConditions.Value.Equals(Connector.TermsAndConditions.Value))) &&
 
             ((!Capabilities?.Any() ?? true)  && (!Connector.Capabilities?.Any() ?? true) ||
-              (Capabilities?.Any() ?? false) &&  (Connector.Capabilities?.Any() ?? false) && Capabilities.SequenceEqual(Connector.Capabilities));
+              (Capabilities?.Any() ?? false) &&  (Connector.Capabilities?.Any() ?? false) && Capabilities.SequenceEqual(Connector.Capabilities)) &&
+
+            ((!CableWeight.          HasValue && !Connector.CableWeight.          HasValue) ||
+              (CableWeight.          HasValue &&  Connector.CableWeight.          HasValue && CableWeight.          Value.Equals(Connector.CableWeight.          Value))) &&
+
+            ((!CableManagementSystem.HasValue && !Connector.CableManagementSystem.HasValue) ||
+              (CableManagementSystem.HasValue &&  Connector.CableManagementSystem.HasValue && CableManagementSystem.Value.Equals(Connector.CableManagementSystem.Value))) &&
+
+               Images.   Count().Equals(Connector.Images.   Count()) &&
+               Images.   All(image    => Connector.Images.   Contains(image)) &&
+
+               Standards.Count().Equals(Connector.Standards.Count()) &&
+               Standards.All(standard => Connector.Standards.Contains(standard));
 
         #endregion
 

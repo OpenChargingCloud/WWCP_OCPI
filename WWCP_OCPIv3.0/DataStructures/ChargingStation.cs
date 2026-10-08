@@ -128,6 +128,35 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public IEnumerable<Image>               Images                     { get; }
 
         /// <summary>
+        /// The minimum perpendicular distance a driver has to reach between obstacles and
+        /// the key objects: connector, cable, displays and controls (in meters; OCPI Accessibility
+        /// Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Meter?                           ReachDistance              { get; }
+
+        /// <summary>
+        /// The maximum time allowed between key steps of the charging process before the
+        /// session expires or is cancelled (in seconds in JSON; OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public TimeSpan?                        OperationTimeout           { get; }
+
+        /// <summary>
+        /// Whether the system offers the option to extend its timeouts
+        /// (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Boolean?                         ExtendedOperationTimeout   { get; }
+
+        /// <summary>
+        /// The standards the charging station conforms to, e.g. accessibility or ergonomic
+        /// ones (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Standard>            Standards                  { get; }
+
+        /// <summary>
         /// The optional (uplink) energy meter for the entire charging station.
         /// </summary>
         [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
@@ -189,6 +218,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// 
+        /// <param name="ReachDistance">The minimum perpendicular distance a driver has to reach between obstacles and the key objects (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="OperationTimeout">The maximum time allowed between key steps of the charging process (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="ExtendedOperationTimeout">Whether the system offers the option to extend its timeouts (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the charging station conforms to (OCPI Accessibility Extension 1.0.0).</param>
         public ChargingStation(ChargingStation_Id                                              Id,
 
                                IEnumerable<EVSE>?                                              EVSEs                                        = null,
@@ -218,7 +252,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
                                CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
                                CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
-                               CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
+                               CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null,
+
+                               Meter?                                                          ReachDistance                                = null,
+                               TimeSpan?                                                       OperationTimeout                             = null,
+                               Boolean?                                                        ExtendedOperationTimeout                     = null,
+                               IEnumerable<Standard>?                                          Standards                                    = null)
 
             : this(null,
                    Id,
@@ -250,7 +289,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CustomEVSEEnergyMeterSerializer,
                    CustomTransparencySoftwareStatusSerializer,
                    CustomTransparencySoftwareSerializer,
-                   CustomDisplayTextSerializer)
+                   CustomDisplayTextSerializer,
+
+                   ReachDistance,
+                   OperationTimeout,
+                   ExtendedOperationTimeout,
+                   Standards)
 
             { }
 
@@ -287,6 +331,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// 
+        /// <param name="ReachDistance">The minimum perpendicular distance a driver has to reach between obstacles and the key objects (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="OperationTimeout">The maximum time allowed between key steps of the charging process (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="ExtendedOperationTimeout">Whether the system offers the option to extend its timeouts (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the charging station conforms to (OCPI Accessibility Extension 1.0.0).</param>
         internal ChargingStation(Location?                                                       ParentLocation,
                                  ChargingStation_Id                                              Id,
 
@@ -317,7 +366,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  CustomJObjectSerializerDelegate<EnergyMeter<EVSE>>?             CustomEVSEEnergyMeterSerializer              = null,
                                  CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?    CustomTransparencySoftwareStatusSerializer   = null,
                                  CustomJObjectSerializerDelegate<TransparencySoftware>?          CustomTransparencySoftwareSerializer         = null,
-                                 CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null)
+                                 CustomJObjectSerializerDelegate<DisplayText>?                   CustomDisplayTextSerializer                  = null,
+
+                                 Meter?                                                          ReachDistance                                = null,
+                                 TimeSpan?                                                       OperationTimeout                             = null,
+                                 Boolean?                                                        ExtendedOperationTimeout                     = null,
+                                 IEnumerable<Standard>?                                          Standards                                    = null)
 
             : base(ParentLocation,
                    Id)
@@ -331,6 +385,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Directions            = Directions?.       Distinct() ?? [];
             this.Images                = Images?.           Distinct() ?? [];
             this.EnergyMeter           = EnergyMeter;
+            this.ReachDistance         = ReachDistance;
+            this.OperationTimeout      = OperationTimeout;
+            this.ExtendedOperationTimeout = ExtendedOperationTimeout;
+            this.Standards             = Standards?.        Distinct() ?? [];
 
             this.CustomData            = CustomData                    ?? [];
             this.InternalData          = InternalData                  ?? new UserDefinedDictionary();
@@ -614,6 +672,61 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse ReachDistance          [optional]
+
+                if (JSON.ParseOptional("reach_distance",
+                                       "reach distance",
+                                       Meter.TryParse,
+                                       out Meter? ReachDistance,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse OperationTimeout       [optional]
+
+                if (JSON.ParseOptional("operation_timeout",
+                                       "operation timeout",
+                                       TimeSpanExtensions.TryParseSeconds,
+                                       out TimeSpan? OperationTimeout,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse ExtendedOperationTimeout [optional]
+
+                if (JSON.ParseOptional("extended_operation_timeout",
+                                       "extended operation timeout",
+                                       out Boolean? ExtendedOperationTimeout,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Standards              [optional]
+
+                if (JSON.ParseOptionalHashSet("standards",
+                                              "standards",
+                                              Standard.TryParse,
+                                              out HashSet<Standard> Standards,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse EnergyMeter            [optional]
 
                 if (JSON.ParseOptionalJSON("energy_meter",
@@ -674,7 +787,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                       null,
 
                                       Created,
-                                      LastUpdated
+                                      LastUpdated,
+
+                                      ReachDistance:             ReachDistance,
+                                      OperationTimeout:          OperationTimeout,
+                                      ExtendedOperationTimeout:  ExtendedOperationTimeout,
+                                      Standards:                 Standards
 
                                   );
 
@@ -788,6 +906,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("images",               new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
+                           ReachDistance.           HasValue
+                               ? new JProperty("reach_distance",       ReachDistance.           Value.m)
+                               : null,
+
+                           OperationTimeout.        HasValue
+                               ? new JProperty("operation_timeout",    OperationTimeout.        Value.TotalSeconds)
+                               : null,
+
+                           ExtendedOperationTimeout.HasValue
+                               ? new JProperty("extended_operation_timeout", ExtendedOperationTimeout.Value)
+                               : null,
+
+                           Standards.Any()
+                               ? new JProperty("standards",            new JArray(Standards.          Select (standard           => standard.          ToString())))
+                               : null,
+
                            EnergyMeter is not null
                                ? new JProperty("energy_meter",         EnergyMeter. ToJSON(CustomChargingStationEnergyMeterSerializer,
                                                                                            CustomTransparencySoftwareStatusSerializer,
@@ -837,7 +971,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    InternalData,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ReachDistance:             ReachDistance,
+                   OperationTimeout:          OperationTimeout,
+                   ExtendedOperationTimeout:  ExtendedOperationTimeout,
+                   Standards:                 Standards.Select(standard => standard.Clone())
 
                );
 
@@ -1395,7 +1534,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                EVSEs.              All(connector          => ChargingStation.EVSEs.              Contains(connector))          &&
                Capabilities.       All(capabilityType     => ChargingStation.Capabilities.       Contains(capabilityType))     &&
                Directions.         All(displayText        => ChargingStation.Directions.         Contains(displayText))        &&
-               Images.             All(image              => ChargingStation.Images.             Contains(image));
+               Images.             All(image              => ChargingStation.Images.             Contains(image))              &&
+
+               Standards.          Count().Equals(ChargingStation.Standards.Count()) &&
+               Standards.          All(standard           => ChargingStation.Standards.          Contains(standard))           &&
+
+            ((!ReachDistance.           HasValue && !ChargingStation.ReachDistance.           HasValue) ||
+              (ReachDistance.           HasValue &&  ChargingStation.ReachDistance.           HasValue && ReachDistance.           Value.Equals(ChargingStation.ReachDistance.           Value))) &&
+
+            ((!OperationTimeout.        HasValue && !ChargingStation.OperationTimeout.        HasValue) ||
+              (OperationTimeout.        HasValue &&  ChargingStation.OperationTimeout.        HasValue && OperationTimeout.        Value.Equals(ChargingStation.OperationTimeout.        Value))) &&
+
+            ((!ExtendedOperationTimeout.HasValue && !ChargingStation.ExtendedOperationTimeout.HasValue) ||
+              (ExtendedOperationTimeout.HasValue &&  ChargingStation.ExtendedOperationTimeout.HasValue && ExtendedOperationTimeout.Value.Equals(ChargingStation.ExtendedOperationTimeout.Value)));
 
         #endregion
 
@@ -1431,6 +1582,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Directions.        CalcHashCode()      *  7 ^
                                      Images.            CalcHashCode()      *  3 ^
                                     (EnergyMeter?.      GetHashCode() ?? 0) * 19 ^
+                                    (ReachDistance?.    GetHashCode() ?? 0) * 47 ^
+                                    (OperationTimeout?. GetHashCode() ?? 0) * 53 ^
+                                    (ExtendedOperationTimeout?.GetHashCode() ?? 0) * 59 ^
+                                     Standards.         CalcHashCode()      * 61 ^
                                      LastUpdated.       GetHashCode();
 
                     return cachedHashCode.Value;
@@ -1490,7 +1645,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    InternalData,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   ReachDistance,
+                   OperationTimeout,
+                   ExtendedOperationTimeout,
+                   Standards
 
                );
 
@@ -1570,6 +1730,35 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             [Optional, VendorExtension(VE.GraphDefined, VE.Eichrecht)]
             public EnergyMeter<ChargingStation>?    EnergyMeter                { get; set; }
 
+            /// <summary>
+            /// The minimum perpendicular distance a driver has to reach between obstacles and
+            /// the key objects: connector, cable, displays and controls (in meters; OCPI Accessibility
+            /// Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public Meter?                           ReachDistance              { get; set; }
+
+            /// <summary>
+            /// The maximum time allowed between key steps of the charging process before the
+            /// session expires or is cancelled (in seconds in JSON; OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public TimeSpan?                        OperationTimeout           { get; set; }
+
+            /// <summary>
+            /// Whether the system offers the option to extend its timeouts
+            /// (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public Boolean?                         ExtendedOperationTimeout   { get; set; }
+
+            /// <summary>
+            /// The standards the charging station conforms to, e.g. accessibility or ergonomic
+            /// ones (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public HashSet<Standard>                Standards                  { get; }
+
 
             public JObject                          CustomData                 { get; }
             public UserDefinedDictionary            InternalData               { get; }
@@ -1607,6 +1796,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// 
             /// <param name="Created">The optional timestamp when this charging station was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this charging station was last updated (or created).</param>
+            ///
+            /// <param name="ReachDistance">The minimum perpendicular distance a driver has to reach between obstacles and the key objects (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="OperationTimeout">The maximum time allowed between key steps of the charging process (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="ExtendedOperationTimeout">Whether the system offers the option to extend its timeouts (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="Standards">The standards the charging station conforms to (OCPI Accessibility Extension 1.0.0).</param>
             internal Builder(Location?                      ParentLocation      = null,
                              ChargingStation_Id?            Id                  = null,
 
@@ -1623,7 +1817,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              UserDefinedDictionary?         InternalData        = null,
 
                              DateTimeOffset?                Created             = null,
-                             DateTimeOffset?                LastUpdated         = null)
+                             DateTimeOffset?                LastUpdated         = null,
+
+                             Meter?                         ReachDistance       = null,
+                             TimeSpan?                      OperationTimeout    = null,
+                             Boolean?                       ExtendedOperationTimeout = null,
+                             IEnumerable<Standard>?         Standards           = null)
 
                 : base(ParentLocation,
                        Id)
@@ -1637,6 +1836,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Directions         = Directions   is not null ? [.. Directions]   : [];
                 this.Images             = Images       is not null ? [.. Images]       : [];
                 this.EnergyMeter        = EnergyMeter;
+                this.ReachDistance      = ReachDistance;
+                this.OperationTimeout   = OperationTimeout;
+                this.ExtendedOperationTimeout = ExtendedOperationTimeout;
+                this.Standards          = Standards    is not null ? [.. Standards]    : [];
 
                 this.CustomData         = CustomData                 ?? [];
                 this.InternalData       = InternalData               ?? new UserDefinedDictionary();
@@ -1723,7 +1926,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  InternalData,
 
                                  Created,
-                                 LastUpdated
+                                 LastUpdated,
+
+                                 ReachDistance:             ReachDistance,
+                                 OperationTimeout:          OperationTimeout,
+                                 ExtendedOperationTimeout:  ExtendedOperationTimeout,
+                                 Standards:                 Standards
 
                              );
 
