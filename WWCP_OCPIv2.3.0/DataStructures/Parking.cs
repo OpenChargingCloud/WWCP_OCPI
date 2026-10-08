@@ -185,6 +185,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         [Optional]
         public String?                          APDSReference              { get; }
 
+        /// <summary>
+        /// Whether the parking space includes an adjacent marked or hatched area,
+        /// for more room to get in and out of the vehicle (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Boolean?                         ProtectedArea              { get; }
+
+        /// <summary>
+        /// The surface of the parking bay (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Surface?                         Surface                    { get; }
+
+        /// <summary>
+        /// The slope of the parking bay (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public Slope?                           Slope                      { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -215,6 +234,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="RefrigerationOutlet">Whether a power outlet is available to power a transport truck’s load refrigeration while the vehicle is parked.</param>
         /// <param name="Standards">A list of standards that the parking space conforms to, e.g.PAS 1899 for parking for people with disabilities.</param>
         /// <param name="APDSReference">Reference to an Alliance for Parking Data Standards (APDS) element describing this parking. The referenced element may be a Place, Space or other hierarchy element defined by APDS.</param>
+        /// <param name="ProtectedArea">Whether the parking space includes an adjacent marked or hatched area (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Surface">The surface of the parking bay (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Slope">The slope of the parking bay (OCPI Accessibility Extension 1.0.0).</param>
         public Parking(Parking_Id                        Id,
                        IEnumerable<VehicleType>          VehicleTypes,
                        Boolean                           RestrictedToType,
@@ -237,7 +259,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                        Boolean?                          Lighting                = null,
                        Boolean?                          RefrigerationOutlet     = null,
                        IEnumerable<Standard>?            Standards               = null,
-                       String?                           APDSReference           = null)
+                       String?                           APDSReference           = null,
+                       Boolean?                          ProtectedArea           = null,
+                       Surface?                          Surface                 = null,
+                       Slope?                            Slope                   = null)
         {
 
             this.Id                     = Id;
@@ -263,6 +288,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.RefrigerationOutlet    = RefrigerationOutlet;
             this.Standards              = Standards?.          Distinct() ?? [];
             this.APDSReference          = APDSReference;
+            this.ProtectedArea          = ProtectedArea;
+            this.Surface                = Surface;
+            this.Slope                  = Slope;
 
             unchecked
             {
@@ -290,7 +318,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                           (this.Lighting?.             GetHashCode() ?? 0) *   7 ^
                           (this.RefrigerationOutlet?.  GetHashCode() ?? 0) *   5 ^
                            this.Standards.             CalcHashCode()      *   3 ^
-                          (this.APDSReference?.        GetHashCode() ?? 0);
+                          (this.APDSReference?.        GetHashCode() ?? 0)       ^
+                          (this.ProtectedArea?.        GetHashCode() ?? 0) * 107 ^
+                          (this.Surface?.              GetHashCode() ?? 0) * 103 ^
+                          (this.Slope?.                GetHashCode() ?? 0) * 101;
 
             }
 
@@ -671,6 +702,49 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse ProtectedArea            [optional]
+
+                if (JSON.ParseOptional("protected_area",
+                                       "protected area",
+                                       out Boolean? ProtectedArea,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse is not null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Surface                  [optional]
+
+                if (JSON.ParseOptional("surface",
+                                       "surface",
+                                       OCPIv2_3_0.Surface.TryParse,
+                                       out Surface? Surface,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Slope                    [optional]
+
+                if (JSON.ParseOptional("slope",
+                                       "slope",
+                                       OCPIv2_3_0.Slope.TryParse,
+                                       out Slope? Slope,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 Parking = new Parking(
 
@@ -696,7 +770,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                               Lighting,
                               RefrigerationOutlet,
                               Standards,
-                              APDSReference
+                              APDSReference,
+                              ProtectedArea,
+                              Surface,
+                              Slope
 
                           );
 
@@ -806,6 +883,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                            APDSReference.IsNotNullOrEmpty()
                                ? new JProperty("apds_reference",            APDSReference)
+                               : null,
+
+                           ProtectedArea.        HasValue
+                               ? new JProperty("protected_area",            ProtectedArea.Value)
+                               : null,
+
+                           Surface.              HasValue
+                               ? new JProperty("surface",                   Surface.              Value.ToString())
+                               : null,
+
+                           Slope.                HasValue
+                               ? new JProperty("slope",                     Slope.                Value.ToString())
                                : null
 
                        );
@@ -849,7 +938,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    Lighting,
                    RefrigerationOutlet,
                    Standards.          Select(standard    => standard.   Clone()),
-                   APDSReference?.     CloneString()
+                   APDSReference?.     CloneString(),
+                   ProtectedArea,
+                   Surface?.           Clone(),
+                   Slope?.             Clone()
 
                );
 
@@ -1036,6 +1128,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             c = Standards.Count().CompareTo(Parking.Standards.Count());
             if (c != 0) return c;
 
+            c = ProtectedArea?.CompareTo(Parking.ProtectedArea) ?? (Parking.ProtectedArea.HasValue ? -1 : 0);
+            if (c != 0) return c;
+
+            c = Surface?.CompareTo(Parking.Surface) ?? (Parking.Surface.HasValue ? -1 : 0);
+            if (c != 0) return c;
+
+            c = Slope?.CompareTo(Parking.Slope) ?? (Parking.Slope.HasValue ? -1 : 0);
+            if (c != 0) return c;
+
             return c;
 
         }
@@ -1124,7 +1225,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                Standards.SequenceEqual(Parking.Standards) &&
 
              ((APDSReference is     null && Parking.APDSReference is     null) ||
-              (APDSReference is not null && Parking.APDSReference is not null && APDSReference.Equals(Parking.APDSReference)));
+              (APDSReference is not null && Parking.APDSReference is not null && APDSReference.Equals(Parking.APDSReference))) &&
+
+            ((!ProtectedArea.        HasValue && !Parking.ProtectedArea.        HasValue) ||
+              (ProtectedArea.        HasValue &&  Parking.ProtectedArea.        HasValue && ProtectedArea.Value.Equals(Parking.ProtectedArea.Value))) &&
+
+            ((!Surface.              HasValue && !Parking.Surface.              HasValue) ||
+              (Surface.              HasValue &&  Parking.Surface.              HasValue && Surface.      Value.Equals(Parking.Surface.      Value))) &&
+
+            ((!Slope.                HasValue && !Parking.Slope.                HasValue) ||
+              (Slope.                HasValue &&  Parking.Slope.                HasValue && Slope.        Value.Equals(Parking.Slope.        Value)));
 
         #endregion
 

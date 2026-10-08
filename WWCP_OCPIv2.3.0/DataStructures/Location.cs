@@ -273,6 +273,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         [Optional]
         public PhoneNumber?                        HelpPhone                { get; }
 
+        /// <summary>
+        /// The services offered at the location by the CPO or its affiliated partners,
+        /// e.g. assistance or accessible toilets (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<LocationService>        Services                 { get; }
+
+        /// <summary>
+        /// Details about the assistance services available at the location: how to reach
+        /// them, when, and what kind of support they offer (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public String?                             AssistanceServiceDetails { get; }
+
+        /// <summary>
+        /// The standards the location conforms to, e.g. accessibility standards such as
+        /// PAS 1899 (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public IEnumerable<Standard>               Standards                { get; }
+
 
         public JObject                             CustomData               { get; }
         public UserDefinedDictionary               InternalData             { get; }
@@ -355,6 +376,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// 
+        /// <param name="Services">The services offered at the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="AssistanceServiceDetails">Details about the assistance services available at the location (OCPI Accessibility Extension 1.0.0).</param>
+        /// <param name="Standards">The standards the location conforms to (OCPI Accessibility Extension 1.0.0).</param>
         public Location(CountryCode                                                   CountryCode,
                         Party_Id                                                      PartyId,
                         Location_Id                                                   Id,
@@ -413,7 +438,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
-                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
+                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null,
+
+                        IEnumerable<LocationService>?                                 Services                                     = null,
+                        String?                                                       AssistanceServiceDetails                     = null,
+                        IEnumerable<Standard>?                                        Standards                                    = null)
 
         {
 
@@ -444,6 +473,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.Images               = Images?.          Distinct() ?? [];
             this.EnergyMix            = EnergyMix;
             this.HelpPhone            = HelpPhone;
+            this.Services             = Services?.        Distinct() ?? [];
+            this.AssistanceServiceDetails = AssistanceServiceDetails?.Trim();
+            this.Standards            = Standards?.       Distinct() ?? [];
 
             this.CustomData           = CustomData                   ?? [];
             this.InternalData         = InternalData                 ?? new UserDefinedDictionary();
@@ -534,7 +566,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            this.Images.             CalcHashCode()       *   5 ^
                           (this.EnergyMix?.         GetHashCode()  ?? 0) *   3 ^
                            this.EnergyMeters.       CalcHashCode()       *   3 ^
-                          (this.HelpPhone?.         GetHashCode() ?? 0);
+                          (this.HelpPhone?.         GetHashCode() ?? 0)        ^
+                           this.Services.           CalcHashCode()       * 131 ^
+                          (this.AssistanceServiceDetails?.GetHashCode() ?? 0) * 127 ^
+                           this.Standards.          CalcHashCode()       * 113;
 
             }
 
@@ -1024,6 +1059,40 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 #endregion
 
+                #region Parse Services              [optional]
+
+                if (JSON.ParseOptionalHashSet("services",
+                                              "location services",
+                                              LocationService.TryParse,
+                                              out HashSet<LocationService> services,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse AssistanceServiceDetails [optional]
+
+                var assistanceServiceDetails = JSON["assistance_service_details"]?.Value<String>();
+
+                #endregion
+
+                #region Parse Standards             [optional]
+
+                if (JSON.ParseOptionalHashSet("standards",
+                                              "standards",
+                                              Standard.TryParse,
+                                              out HashSet<Standard> standards,
+                                              out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 #region Parse Created               [optional, VendorExtension]
 
@@ -1087,7 +1156,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                null,
 
                                Created,
-                               LastUpdated
+                               LastUpdated,
+
+                               Services:                  services,
+                               AssistanceServiceDetails:  assistanceServiceDetails,
+                               Standards:                 standards
 
                            );
 
@@ -1271,6 +1344,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                ? new JProperty("help_phone",             HelpPhone.Value.  ToString())
                                : null,
 
+                           Services.Any()
+                               ? new JProperty("services",               new JArray(Services. Select(service  => service. ToString())))
+                               : null,
+
+                           AssistanceServiceDetails.IsNotNullOrEmpty()
+                               ? new JProperty("assistance_service_details", AssistanceServiceDetails)
+                               : null,
+
+                           Standards.Any()
+                               ? new JProperty("standards",              new JArray(Standards.Select(standard => standard.ToString())))
+                               : null,
+
 
                            IncludeCreatedTimestamp
                                ? new JProperty("created",                Created.          ToISO8601())
@@ -1334,7 +1419,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    LastUpdated,
                    ETag.            CloneString(),
 
-                   CommonAPI
+                   CommonAPI,
+
+                   Services:                  Services. Select(service  => service. Clone()),
+                   AssistanceServiceDetails:  AssistanceServiceDetails.CloneNullableString(),
+                   Standards:                 Standards.Select(standard => standard.Clone())
 
                );
 
@@ -2052,6 +2141,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
              ((EnergyMix          is     null &&  Location.EnergyMix          is     null) ||
               (EnergyMix          is not null &&  Location.EnergyMix          is not null && EnergyMix.            Equals(Location.EnergyMix)))                &&
 
+             ((AssistanceServiceDetails is     null && Location.AssistanceServiceDetails is     null) ||
+              (AssistanceServiceDetails is not null && Location.AssistanceServiceDetails is not null && AssistanceServiceDetails.Equals(Location.AssistanceServiceDetails))) &&
+
+               Services.        Count().Equals(Location.Services.        Count()) &&
+               Standards.       Count().Equals(Location.Standards.       Count()) &&
+               Services.        All(service               => Location.Services.        Contains(service))               &&
+               Standards.       All(standard              => Location.Standards.       Contains(standard))              &&
+
                PublishAllowedTo.Count().Equals(Location.PublishAllowedTo.Count()) &&
                RelatedLocations.Count().Equals(Location.RelatedLocations.Count()) &&
                EVSEs.           Count().Equals(Location.EVSEs.           Count()) &&
@@ -2152,7 +2249,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                    InternalData,
 
                    Created,
-                   LastUpdated
+                   LastUpdated,
+
+                   Services,
+                   AssistanceServiceDetails,
+                   Standards
 
                );
 
@@ -2370,6 +2471,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             [Optional]
             public HashSet<EnergyMeter<Location>>      EnergyMeters             { get; }
 
+            /// <summary>
+            /// The services offered at the location by the CPO or its affiliated partners,
+            /// e.g. assistance or accessible toilets (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public HashSet<LocationService>            Services                 { get; }
+
+            /// <summary>
+            /// Details about the assistance services available at the location: how to reach
+            /// them, when, and what kind of support they offer (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public String?                             AssistanceServiceDetails { get; set; }
+
+            /// <summary>
+            /// The standards the location conforms to, e.g. accessibility standards such as
+            /// PAS 1899 (OCPI Accessibility Extension 1.0.0).
+            /// </summary>
+            [Optional]
+            public HashSet<Standard>                   Standards                { get; }
+
 
             public JObject                             CustomData               { get; }
             public UserDefinedDictionary               InternalData             { get; }
@@ -2431,6 +2553,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             /// 
             /// <param name="Created">The timestamp when this location was created.</param>
             /// <param name="LastUpdated">The timestamp when this location was last updated (or created).</param>
+            ///
+            /// <param name="Services">The services offered at the location (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="AssistanceServiceDetails">Details about the assistance services available at the location (OCPI Accessibility Extension 1.0.0).</param>
+            /// <param name="Standards">The standards the location conforms to (OCPI Accessibility Extension 1.0.0).</param>
             public Builder(CommonAPI?                           CommonAPI            = null,
 
                            CountryCode?                         CountryCode          = null,
@@ -2467,7 +2593,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                            UserDefinedDictionary?               InternalData         = null,
 
                            DateTimeOffset?                      Created              = null,
-                           DateTimeOffset?                      LastUpdated          = null)
+                           DateTimeOffset?                      LastUpdated          = null,
+
+                           IEnumerable<LocationService>?        Services             = null,
+                           String?                              AssistanceServiceDetails = null,
+                           IEnumerable<Standard>?               Standards            = null)
 
             {
 
@@ -2502,6 +2632,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 this.EnergyMix           = EnergyMix;
                 this.EnergyMeters        = EnergyMeters     is not null ? [.. EnergyMeters]     : [];
                 this.HelpPhone           = HelpPhone;
+                this.Services            = Services         is not null ? [.. Services]         : [];
+                this.AssistanceServiceDetails = AssistanceServiceDetails;
+                this.Standards           = Standards        is not null ? [.. Standards]        : [];
 
                 this.CustomData          = CustomData   ?? [];
                 this.InternalData        = InternalData ?? new UserDefinedDictionary();
@@ -2641,7 +2774,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  LastUpdated ?? Timestamp.Now,
                                  null,
 
-                                 CommonAPI
+                                 CommonAPI,
+
+                                 Services:                  Services,
+                                 AssistanceServiceDetails:  AssistanceServiceDetails,
+                                 Standards:                 Standards
 
                              );
 

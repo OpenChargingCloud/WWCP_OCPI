@@ -190,6 +190,12 @@ namespace cloud.charging.open.protocols.OCPI
             = new ("CHARGER");
 
         /// <summary>
+        /// Photo of a connector (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        public static ImageCategory  CONNECTOR   { get; }
+            = new ("CONNECTOR");
+
+        /// <summary>
         /// Location entrance photo. Should show the car entrance to the location from street side.
         /// </summary>
         public static ImageCategory  ENTRANCE    { get; }
@@ -224,6 +230,12 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public static ImageCategory  OWNER       { get; }
             = new ("OWNER");
+
+        /// <summary>
+        /// Photo of the parking bay (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        public static ImageCategory  PARKING     { get; }
+            = new ("PARKING");
 
         #endregion
 

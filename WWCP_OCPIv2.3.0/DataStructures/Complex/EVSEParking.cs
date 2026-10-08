@@ -55,6 +55,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         [Optional]
         public EVSEPosition?  EVSEPosition    { get; }
 
+        /// <summary>
+        /// Whether the parking bay and the charging station are located on the same level,
+        /// providing step-free or otherwise accessible access between them
+        /// (OCPI Accessibility Extension 1.0.0).
+        /// </summary>
+        [Optional]
+        public AccessLevel?   AccessLevel     { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -64,13 +72,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="ParkingId">The identification of the parking space.</param>
         /// <param name="EVSEPosition">The optional position of the EVSE relative to the parking space.</param>
+        /// <param name="AccessLevel">Whether the parking bay and the charging station are located on the same level (OCPI Accessibility Extension 1.0.0).</param>
         public EVSEParking(Parking_Id     ParkingId,
-                           EVSEPosition?  EVSEPosition   = null)
+                           EVSEPosition?  EVSEPosition   = null,
+                           AccessLevel?   AccessLevel    = null)
 
         {
 
             this.ParkingId     = ParkingId;
             this.EVSEPosition  = EVSEPosition;
+            this.AccessLevel   = AccessLevel;
 
         }
 
@@ -165,7 +176,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (JSON.ParseOptional("evse_position",
                                        "EVSE position",
                                        OCPIv2_3_0.EVSEPosition.TryParse,
-                                       out EVSEPosition evsePosition,
+                                       out EVSEPosition? evsePosition,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse AccessLevel     [optional]
+
+                if (JSON.ParseOptional("access_level",
+                                       "access level",
+                                       OCPIv2_3_0.AccessLevel.TryParse,
+                                       out AccessLevel? accessLevel,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -177,7 +202,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 EVSEParking = new EVSEParking(
                                   parkingId,
-                                  evsePosition
+                                  evsePosition,
+                                  accessLevel
                               );
 
 
@@ -213,7 +239,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                  new JProperty("parking_id",      ParkingId.   ToString()),
 
                            EVSEPosition.HasValue
-                               ? new JProperty("evse_position",   EVSEPosition.ToString())
+                               ? new JProperty("evse_position",   EVSEPosition.Value.ToString())
+                               : null,
+
+                           AccessLevel. HasValue
+                               ? new JProperty("access_level",    AccessLevel. Value.ToString())
                                : null
 
                        );
@@ -235,7 +265,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             => new (
                    ParkingId.    Clone(),
-                   EVSEPosition?.Clone()
+                   EVSEPosition?.Clone(),
+                   AccessLevel?. Clone()
                );
 
         #endregion
@@ -382,6 +413,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (c == 0 && EVSEPosition.HasValue && EVSEParking.EVSEPosition.HasValue)
                 c = EVSEPosition.Value.CompareTo(EVSEParking.EVSEPosition.Value);
 
+            if (c == 0)
+                c = AccessLevel?.CompareTo(EVSEParking.AccessLevel) ?? (EVSEParking.AccessLevel.HasValue ? -1 : 0);
+
             return c;
 
         }
@@ -418,7 +452,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                ParkingId.Equals(EVSEParking.ParkingId) &&
 
             ((!EVSEPosition.HasValue && !EVSEParking.EVSEPosition.HasValue) ||
-              (EVSEPosition.HasValue &&  EVSEParking.EVSEPosition.HasValue && EVSEPosition.Equals(EVSEParking.EVSEPosition)));
+              (EVSEPosition.HasValue &&  EVSEParking.EVSEPosition.HasValue && EVSEPosition.Equals(EVSEParking.EVSEPosition))) &&
+
+            ((!AccessLevel. HasValue && !EVSEParking.AccessLevel. HasValue) ||
+              (AccessLevel. HasValue &&  EVSEParking.AccessLevel. HasValue && AccessLevel. Equals(EVSEParking.AccessLevel)));
 
         #endregion
 
@@ -431,8 +468,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public override Int32 GetHashCode()
 
-            => ParkingId.    GetHashCode() * 3 ^
-              (EVSEPosition?.GetHashCode() ?? 0);
+            => ParkingId.    GetHashCode() * 5 ^
+              (EVSEPosition?.GetHashCode() ?? 0) * 3 ^
+              (AccessLevel?. GetHashCode() ?? 0);
 
         #endregion
 
@@ -449,6 +487,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                    EVSEPosition.HasValue
                        ? $", {EVSEPosition}"
+                       : "",
+
+                   AccessLevel.HasValue
+                       ? $", {AccessLevel}"
                        : ""
 
                );
