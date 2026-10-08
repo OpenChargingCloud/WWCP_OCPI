@@ -163,6 +163,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.Datastructures
             var json = station.ToJSON();
 
             Assert.Multiple(() => {
+                Assert.That(json["evses"]?[0]?["uid"]?.Value<String>(),             Is.EqualTo("DE*GEF*E0001*1"));
+                Assert.That(json.ContainsKey("evse"),                               Is.False, "The EVSEs are written as \"evse\".");
                 Assert.That(json["reach_distance"]?.Value<Decimal>(),               Is.EqualTo(0.6M));
                 Assert.That(json["operation_timeout"]?.Value<Decimal>(),            Is.EqualTo(120M));
                 Assert.That(json["extended_operation_timeout"]?.Value<Boolean>(),   Is.True);
@@ -194,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.Datastructures
 
             var json = new ChargingStation(ChargingStation_Id.Parse("CS2"), []).ToJSON();
 
-            Assert.That(json.ContainsKey("evse"),                                               Is.False);
+            Assert.That(json.ContainsKey("evses"),                                              Is.False);
             Assert.That(ChargingStation.TryParse(json, out var again, out var errorResponse),   Is.True, errorResponse);
             Assert.That(again!.EVSEs,                                                           Is.Empty);
 

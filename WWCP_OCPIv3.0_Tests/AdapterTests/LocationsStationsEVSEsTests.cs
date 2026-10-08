@@ -408,10 +408,10 @@
 //                    ClassicAssert.IsNotNull(jsonChargingStation1B);
 //                    ClassicAssert.IsNotNull(jsonChargingStation2A);
 
-//                    var jsonEVSE1A1 = (jsonChargingStation1A!["evse"] as JArray)!.First();
-//                    var jsonEVSE1A2 = (jsonChargingStation1A!["evse"] as JArray)!.First();
-//                    var jsonEVSE1B1 = (jsonChargingStation1B!["evse"] as JArray)!.First();
-//                    var jsonEVSE2A1 = (jsonChargingStation2A!["evse"] as JArray)!.First();
+//                    var jsonEVSE1A1 = (jsonChargingStation1A!["evses"] as JArray)!.First();
+//                    var jsonEVSE1A2 = (jsonChargingStation1A!["evses"] as JArray)!.First();
+//                    var jsonEVSE1B1 = (jsonChargingStation1B!["evses"] as JArray)!.First();
+//                    var jsonEVSE2A1 = (jsonChargingStation2A!["evses"] as JArray)!.First();
 //                    ClassicAssert.IsNotNull(jsonEVSE1A1);
 //                    ClassicAssert.IsNotNull(jsonEVSE1A2);
 //                    ClassicAssert.IsNotNull(jsonEVSE1B1);
@@ -478,10 +478,10 @@
 //                    ClassicAssert.IsNotNull(jsonChargingStation1B);
 //                    ClassicAssert.IsNotNull(jsonChargingStation2A);
 
-//                    var jsonEVSE1A1 = (jsonChargingStation1A!["evse"] as JArray)!.First();
-//                    var jsonEVSE1A2 = (jsonChargingStation1A!["evse"] as JArray)!.First();
-//                    var jsonEVSE1B1 = (jsonChargingStation1B!["evse"] as JArray)!.First();
-//                    var jsonEVSE2A1 = (jsonChargingStation2A!["evse"] as JArray)!.First();
+//                    var jsonEVSE1A1 = (jsonChargingStation1A!["evses"] as JArray)!.First();
+//                    var jsonEVSE1A2 = (jsonChargingStation1A!["evses"] as JArray)!.First();
+//                    var jsonEVSE1B1 = (jsonChargingStation1B!["evses"] as JArray)!.First();
+//                    var jsonEVSE2A1 = (jsonChargingStation2A!["evses"] as JArray)!.First();
 //                    ClassicAssert.IsNotNull(jsonEVSE1A1);
 //                    ClassicAssert.IsNotNull(jsonEVSE1A2);
 //                    ClassicAssert.IsNotNull(jsonEVSE1B1);

@@ -581,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse EVSEs                  [optional]
 
-                if (JSON.ParseOptionalHashSet("evse",
+                if (JSON.ParseOptionalHashSet("evses",
                                               "EVSEs",
                                               EVSE.TryParse,
                                               out HashSet<EVSE> EVSEs,
@@ -853,7 +853,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                            EVSEs.Any()
-                               ? new JProperty("evse",                 new JArray(EVSEs.              OrderBy(evse               => evse.UId).
+                               ? new JProperty("evses",                new JArray(EVSEs.              OrderBy(evse               => evse.UId).
                                                                                                       Select (evse               => evse.              ToJSON(true,
                                                                                                                                                               true,
                                                                                                                                                               CustomEVSESerializer,
@@ -986,9 +986,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'unique identification' of a charging station is not allowed!");
 
-                else if (property.Key == "evse")
+                else if (property.Key == "evses")
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
-                                                       "Patching the 'evse' array of a charging station is not allowed!");
+                                                       "Patching the 'evses' array of a charging station is not allowed!");
                 //{
 
                 //    if (property.Value is null)
