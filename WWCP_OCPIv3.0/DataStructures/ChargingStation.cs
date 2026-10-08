@@ -525,12 +525,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         return false;
                 }
 
-                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
-                {
-                    ErrorResponse = "The party identification is missing!";
-                    return false;
-                }
-
                 if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
                 {
                     ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
@@ -576,12 +570,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         return false;
                 }
 
-                if (!VersionIdURL.HasValue && !VersionIdBody.HasValue)
-                {
-                    ErrorResponse = "The version identification is missing!";
-                    return false;
-                }
-
                 if (VersionIdURL.HasValue && VersionIdBody.HasValue && VersionIdURL.Value != VersionIdBody.Value)
                 {
                     ErrorResponse = "The optional version identification given within the JSON body does not match the one given in the URL!";
@@ -593,13 +581,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse EVSEs                  [optional]
 
-                if (!JSON.ParseMandatoryJSON<EVSE, EVSE_UId>("connectors",
-                                                             "connectors",
-                                                             EVSE.TryParse,
-                                                             out IEnumerable<EVSE> EVSEs,
-                                                             out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("evse",
+                                              "EVSEs",
+                                              EVSE.TryParse,
+                                              out HashSet<EVSE> EVSEs,
+                                              out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -997,9 +986,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'unique identification' of a charging station is not allowed!");
 
-                else if (property.Key == "connectors")
+                else if (property.Key == "evse")
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
-                                                       "Patching the 'connectors' array of a charging station is not allowed!");
+                                                       "Patching the 'evse' array of a charging station is not allowed!");
                 //{
 
                 //    if (property.Value is null)

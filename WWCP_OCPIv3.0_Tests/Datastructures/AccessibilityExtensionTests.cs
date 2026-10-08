@@ -145,15 +145,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.Datastructures
 
         #endregion
 
-        #region AChargingStationWritesWhatTheExtensionAdds()
+        #region AChargingStationIsWrittenAndReadWithWhatTheExtensionAdds()
 
-        /// <summary>
-        /// Written only: a charging station is read with its EVSEs from "connectors"
-        /// and writes them as "evse", so it does not read back what it wrote - which
-        /// is not the extension's, and is left as it is.
-        /// </summary>
         [Test]
-        public void AChargingStationWritesWhatTheExtensionAdds()
+        public void AChargingStationIsWrittenAndReadWithWhatTheExtensionAdds()
         {
 
             var station = new ChargingStation(
@@ -172,6 +167,68 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.Datastructures
                 Assert.That(json["operation_timeout"]?.Value<Decimal>(),            Is.EqualTo(120M));
                 Assert.That(json["extended_operation_timeout"]?.Value<Boolean>(),   Is.True);
                 Assert.That(json["standards"]?.ToObject<String[]>(),                Is.EqualTo(new[] { "PAS 1899" }));
+            });
+
+            Assert.That(ChargingStation.TryParse(json, out var again, out var errorResponse), Is.True, errorResponse);
+
+            Assert.Multiple(() => {
+                Assert.That(again!.EVSEs.Select(evse => evse.UId),  Is.EqualTo(new[] { EVSE_UId.Parse("DE*GEF*E0001*1") }), "The EVSEs are not read from where they are written.");
+                Assert.That(again.ReachDistance,                    Is.EqualTo(station.ReachDistance));
+                Assert.That(again.OperationTimeout,                 Is.EqualTo(station.OperationTimeout));
+                Assert.That(again.ExtendedOperationTimeout,         Is.EqualTo(station.ExtendedOperationTimeout));
+                Assert.That(again.Standards,                        Is.EquivalentTo(station.Standards));
+            });
+
+        }
+
+        #endregion
+
+        #region AChargingStationWithoutEVSEsIsReadBack()
+
+        /// <summary>
+        /// A charging station without EVSEs writes none, and reads back without them.
+        /// </summary>
+        [Test]
+        public void AChargingStationWithoutEVSEsIsReadBack()
+        {
+
+            var json = new ChargingStation(ChargingStation_Id.Parse("CS2"), []).ToJSON();
+
+            Assert.That(json.ContainsKey("evse"),                                               Is.False);
+            Assert.That(ChargingStation.TryParse(json, out var again, out var errorResponse),   Is.True, errorResponse);
+            Assert.That(again!.EVSEs,                                                           Is.Empty);
+
+        }
+
+        #endregion
+
+        #region ALocationReadsBackItsChargingPool()
+
+        /// <summary>
+        /// A charging station has neither a party nor a version of its own, so a
+        /// station in the charging pool of a location is read without them.
+        /// </summary>
+        [Test]
+        public void ALocationReadsBackItsChargingPool()
+        {
+
+            var location = new Location(
+                               partyId,
+                               Location_Id.Parse("LOC0002"),
+                               1,
+                               true,
+                               "Europe/Berlin",
+                               ChargingPool:  [ new ChargingStation(ChargingStation_Id.Parse("CS1"), [ AnEVSE() ]) ],
+                               LastUpdated:   start
+                           );
+
+            Assert.That(Location.TryParse(location.ToJSON(), out var again, out var errorResponse), Is.True, errorResponse);
+
+            var station = again!.ChargingPool.Single();
+
+            Assert.Multiple(() => {
+                Assert.That(station.Id,                            Is.EqualTo(ChargingStation_Id.Parse("CS1")));
+                Assert.That(station.EVSEs.Single().UId,            Is.EqualTo(EVSE_UId.Parse("DE*GEF*E0001*1")));
             });
 
         }
