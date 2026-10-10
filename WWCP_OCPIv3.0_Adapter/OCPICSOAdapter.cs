@@ -38,13 +38,13 @@
 //namespace cloud.charging.open.protocols.OCPIv3_0
 //{
 
-//    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.RoamingNetwork_Id?           RoamingNetworkId,
-//                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-//                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-//                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-//                                                                  WWCP.EVSE_Id?                     EVSEId,
-//                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-//                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+//    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.POI.RoamingNetwork_Id?           RoamingNetworkId,
+//                                                                  WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId,
+//                                                                  WWCP.POI.ChargingPool_Id?             ChargingPoolId,
+//                                                                  WWCP.POI.ChargingStation_Id?          ChargingStationId,
+//                                                                  WWCP.POI.EVSE_Id?                     EVSEId,
+//                                                                  WWCP.POI.ChargingConnector_Id?        ChargingConnectorId,
+//                                                                  WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId);
 
 
 //    /// <summary>
@@ -216,11 +216,11 @@
 
 //                              WWCP.IncludeChargingStationOperatorIdDelegate?  IncludeChargingStationOperatorIds   = null,
 //                              WWCP.IncludeChargingStationOperatorDelegate?    IncludeChargingStationOperators     = null,
-//                              WWCP.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
+//                              WWCP.POI.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
 //                              WWCP.IncludeChargingPoolDelegate?               IncludeChargingPools                = null,
-//                              WWCP.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
+//                              WWCP.POI.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
 //                              WWCP.IncludeChargingStationDelegate?            IncludeChargingStations             = null,
-//                              WWCP.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
+//                              WWCP.POI.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
 //                              WWCP.IncludeEVSEDelegate?                       IncludeEVSEs                        = null,
 //                              WWCP.ChargeDetailRecordFilterDelegate?          ChargeDetailRecordFilter            = null,
 
@@ -326,17 +326,17 @@
 
 //                        return this.GetTariffIds(
 //                                   this.RoamingNetwork.Id,
-//                                   WWCP.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
+//                                   WWCP.POI.ChargingStationOperator_Id.Parse($"{cpoPartyId}"),
 //                                   CustomLocationIdConverter is not null
 //                                       ? CustomLocationIdConverter(cpoPartyId, locationId.Value)
-//                                       : WWCP.ChargingPool_Id.     Parse($"{cpoPartyId}*P{locationId.Value}"),
+//                                       : WWCP.POI.ChargingPool_Id.     Parse($"{cpoPartyId}*P{locationId.Value}"),
 //                                   null,
 //                                   CustomEVSEUId2Converter is not null
 //                                       ? CustomEVSEUId2Converter(evseUId.Value)
-//                                       : WWCP.EVSE_Id.             Parse(evse.EVSEId.Value.ToString()),
-//                                   WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
+//                                       : WWCP.POI.EVSE_Id.             Parse(evse.EVSEId.Value.ToString()),
+//                                   WWCP.POI.ChargingConnector_Id.      Parse(connectorId.Value.ToString()),
 //                                   remotePartyId.HasValue
-//                                       ? WWCP.EMobilityProvider_Id.Parse($"{remotePartyId.Value.CountryCode}-{remotePartyId.Value.PartyId}")
+//                                       ? WWCP.POI.EMobilityProvider_Id.Parse($"{remotePartyId.Value.CountryCode}-{remotePartyId.Value.PartyId}")
 //                                       : null
 //                               );
 //                    }
@@ -387,11 +387,11 @@
 //        #endregion
 
 
-//        //public IEnumerable<Tariff_Id> GetTariffIds(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-//        //                                           WWCP.ChargingPool_Id?             ChargingPoolId,
-//        //                                           WWCP.ChargingStation_Id?          ChargingStationId,
-//        //                                           WWCP.EVSE_Id?                     EVSEId,
-//        //                                           WWCP.ChargingConnector_Id?        ChargingConnectorId)
+//        //public IEnumerable<Tariff_Id> GetTariffIds(WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId,
+//        //                                           WWCP.POI.ChargingPool_Id?             ChargingPoolId,
+//        //                                           WWCP.POI.ChargingStation_Id?          ChargingStationId,
+//        //                                           WWCP.POI.EVSE_Id?                     EVSEId,
+//        //                                           WWCP.POI.ChargingConnector_Id?        ChargingConnectorId)
 //        //{
 
 //        //    var isDC = EVSEId.HasValue && ChargingConnectorId.HasValue
@@ -1775,7 +1775,7 @@
 //        /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
 //        async Task<WWCP.PushEVSEStatusResult>
 
-//            WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
+//            WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.POI.EVSEStatusUpdate>  EVSEStatusUpdates,
 //                                              WWCP.TransmissionTypes              TransmissionType,
 
 //                                              DateTimeOffset?                     Timestamp,
@@ -1905,9 +1905,9 @@
 //        private async Task<AuthorizationInfo>
 
 //            PostToken(WWCP.LocalAuthentication          LocalAuthentication,
-//                      WWCP.ChargingLocation?            ChargingLocation            = null,
-//                    //  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-//                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+//                      WWCP.POI.ChargingLocation?            ChargingLocation            = null,
+//                    //  WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+//                      WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
 //                      DateTimeOffset?                   RequestTimestamp            = null,
 //                      EventTracking_Id?                 EventTrackingId             = null,
@@ -2193,12 +2193,12 @@
 //        public async Task<WWCP.AuthStartResult>
 
 //            Authorize(WWCP.LocalAuthentication          LocalAuthentication,
-//                      WWCP.ChargingLocation?            ChargingLocation            = null,
+//                      WWCP.POI.ChargingLocation?            ChargingLocation            = null,
 //                      WWCP.ChargingProduct?             ChargingProduct             = null,
 //                      WWCP.ChargingSession_Id?          SessionId                   = null,
 //                      WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-//                      //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-//                      WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+//                      //WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+//                      WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
 //                      DateTimeOffset?                   RequestTimestamp            = null,
 //                      EventTracking_Id?                 EventTrackingId             = null,
@@ -2423,12 +2423,12 @@
 //        public async Task<WWCP.AuthStartResult>
 
 //            AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
-//                           WWCP.ChargingLocation?            ChargingLocation            = null,
+//                           WWCP.POI.ChargingLocation?            ChargingLocation            = null,
 //                           WWCP.ChargingProduct?             ChargingProduct             = null,
 //                           WWCP.ChargingSession_Id?          SessionId                   = null,
 //                           WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-//                           //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-//                           WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+//                           //WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+//                           WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
 //                           DateTimeOffset?                   RequestTimestamp            = null,
 //                           EventTracking_Id?                 EventTrackingId             = null,
@@ -2654,10 +2654,10 @@
 
 //            AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
 //                          WWCP.LocalAuthentication          LocalAuthentication,
-//                          WWCP.ChargingLocation?            ChargingLocation            = null,
+//                          WWCP.POI.ChargingLocation?            ChargingLocation            = null,
 //                          WWCP.ChargingSession_Id?          CPOPartnerSessionId         = null,
-//                          //WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
-//                          WWCP.EMobilityProvider_Id?        EMobilityProviderId         = null,
+//                          //WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId   = null,
+//                          WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId         = null,
 
 //                          DateTimeOffset?                   RequestTimestamp            = null,
 //                          EventTracking_Id?                 EventTrackingId             = null,

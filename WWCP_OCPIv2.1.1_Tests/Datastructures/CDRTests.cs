@@ -28,6 +28,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 
+using cloud.charging.open.protocols.WWCP.POI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
@@ -119,9 +121,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    [
                                        new OCPI.TransparencySoftwareStatus(
                                            new OCPI.TransparencySoftware(
-                                               "Chargy Transparency Software Desktop Application",
+                                               [new DisplayText(Languages.en, "Chargy Transparency Software Desktop Application")],
                                                "v1.00",
-                                               SoftwareLicense.AGPL3,
+                                               [SoftwareLicense.AGPL3],
                                                "GraphDefined GmbH",
                                                URL.Parse("https://open.charging.cloud/logo.svg"),
                                                URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -136,9 +138,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        ),
                                        new OCPI.TransparencySoftwareStatus(
                                            new OCPI.TransparencySoftware(
-                                               "Chargy Transparency Software Mobile Application",
+                                               [new DisplayText(Languages.en, "Chargy Transparency Software Mobile Application")],
                                                "v1.00",
-                                               SoftwareLicense.AGPL3,
+                                               [SoftwareLicense.AGPL3],
                                                "GraphDefined GmbH",
                                                URL.Parse("https://open.charging.cloud/logo.svg"),
                                                URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -483,7 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                 Name:                 I18NString.Create("Test station #1A"),
                                                 Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -505,7 +507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-                                      Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                      Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                       Name:                 I18NString.Create("Test EVSE #1A1"),
                                       Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -536,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
-                                      Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+                                      Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                       Name:                 I18NString.Create("Test EVSE #1A2"),
                                       Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
@@ -616,7 +618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                               //EnergyMeterId:                // automagic!
                               EnergyMeter:                    new EnergyMeter(
-                                                                  WWCP.EnergyMeter_Id.Parse("12345678")
+                                                                  WWCP.POI.EnergyMeter_Id.Parse("12345678")
                                                               ),
                               EnergyMeteringValues:           [
                                                                   new EnergyMeteringValue(startTime,                             WattHour.FromKWh( 0), EnergyMeteringValueTypes.Start),

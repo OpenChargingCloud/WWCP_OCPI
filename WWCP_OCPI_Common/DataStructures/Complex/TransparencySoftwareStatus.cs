@@ -469,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TransparencySoftwareStatus is null)
                 throw new ArgumentNullException(nameof(TransparencySoftwareStatus), "The give transparency software status must not be null!");
 
-            var c = TransparencySoftware.Name.CompareTo(TransparencySoftwareStatus.TransparencySoftware.Name);
+            var c = TransparencySoftware.CompareTo(TransparencySoftwareStatus.TransparencySoftware);
 
             if (c == 0)
                 c = LegalStatus.              CompareTo(TransparencySoftwareStatus.LegalStatus);

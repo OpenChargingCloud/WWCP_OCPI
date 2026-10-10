@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj" />
     <ProjectReference Include="..\..\Styx\Styx\Styx.csproj" />
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
+    <ProjectReference Include="..\..\WWCP_POI\WWCP_POI2\WWCP_POI2.csproj" />
   </ItemGroup>
 
 </Project>

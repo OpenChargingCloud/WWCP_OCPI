@@ -214,7 +214,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -240,7 +240,7 @@
 
 //                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
 //                                                    Name:                 I18NString.Create("Test station #1B"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -266,7 +266,7 @@
 
 //                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
 //                                                    Name:                 I18NString.Create("Test station #2A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -294,7 +294,7 @@
 //                // Will call OCPICSOAdapter.AddStaticData(EVSE, ...)!
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -348,7 +348,7 @@
 
 //                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A2"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
@@ -381,7 +381,7 @@
 
 //                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1B1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
@@ -414,7 +414,7 @@
 
 //                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #2A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
@@ -620,7 +620,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -645,7 +645,7 @@
 
 //                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
 //                                                    Name:                 I18NString.Create("Test station #1B"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -670,7 +670,7 @@
 
 //                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
 //                                                    Name:                 I18NString.Create("Test station #2A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -696,7 +696,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -729,7 +729,7 @@
 
 //                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A2"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
@@ -762,7 +762,7 @@
 
 //                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1B1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
@@ -795,7 +795,7 @@
 
 //                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #2A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
@@ -865,8 +865,8 @@
 //                #region Update Add DE*GEF*POOL2, DE*GEF*STATION*2*A, DE*GEF*POOL2
 
 //                var updatedPoolProperties     = new List<PropertyUpdateInfo<ChargingPool_Id>>();
-//                var updatedStationProperties  = new List<PropertyUpdateInfo<WWCP.ChargingStation_Id>>();
-//                var updatedEVSEProperties     = new List<PropertyUpdateInfo<WWCP.EVSE_Id>>();
+//                var updatedStationProperties  = new List<PropertyUpdateInfo<WWCP.POI.ChargingStation_Id>>();
+//                var updatedEVSEProperties     = new List<PropertyUpdateInfo<WWCP.POI.EVSE_Id>>();
 
 //                #region Subscribe charging pool events
 
@@ -934,7 +934,7 @@
 //                                                        oldValue,
 //                                                        dataSource) => {
 
-//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.POI.ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -947,7 +947,7 @@
 //                                                    oldValue,
 //                                                    dataSource) => {
 
-//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.POI.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -960,7 +960,7 @@
 //                                                                 oldValue,
 //                                                                 dataSource) => {
 
-//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.POI.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -973,7 +973,7 @@
 //                                                                   oldValue,
 //                                                                   dataSource) => {
 
-//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.POI.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -990,7 +990,7 @@
 //                                             oldValue,
 //                                             dataSource) => {
 
-//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.POI.EVSE_Id>((evse as IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -1003,7 +1003,7 @@
 //                                         oldValue,
 //                                         dataSource) => {
 
-//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.POI.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -1016,7 +1016,7 @@
 //                                                      oldValue,
 //                                                      dataSource) => {
 
-//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.POI.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -1029,7 +1029,7 @@
 //                                                        oldValue,
 //                                                        dataSource) => {
 
-//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
+//                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.POI.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
 //                    return Task.CompletedTask;
 
 //                };
@@ -1228,7 +1228,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -1253,7 +1253,7 @@
 
 //                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
 //                                                    Name:                 I18NString.Create("Test station #1B"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -1278,7 +1278,7 @@
 
 //                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
 //                                                    Name:                 I18NString.Create("Test station #2A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -1304,7 +1304,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -1337,7 +1337,7 @@
 
 //                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A2"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
@@ -1370,7 +1370,7 @@
 
 //                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1B1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
@@ -1403,7 +1403,7 @@
 
 //                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #2A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
@@ -1703,7 +1703,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -1728,7 +1728,7 @@
 
 //                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
 //                                                    Name:                 I18NString.Create("Test station #1B"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -1753,7 +1753,7 @@
 
 //                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
 //                                                    Name:                 I18NString.Create("Test station #2A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -1779,7 +1779,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -1802,7 +1802,7 @@
 
 //                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A2"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
@@ -1825,7 +1825,7 @@
 
 //                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1B1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
@@ -1848,7 +1848,7 @@
 
 //                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #2A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
@@ -2015,7 +2015,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -2040,7 +2040,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -2240,7 +2240,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -2265,7 +2265,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
@@ -2543,7 +2543,7 @@
 
 //                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-//                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+//                                                    Id:                   WWCP.POI.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
 //                                                    Name:                 I18NString.Create("Test station #1A"),
 //                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -2568,7 +2568,7 @@
 
 //                var addEVSE1Result1 = await chargingStation1!.AddVirtualEVSE(
 
-//                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+//                                          Id:                   WWCP.POI.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
 //                                          Name:                 I18NString.Create("Test EVSE #1A1"),
 //                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 

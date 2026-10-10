@@ -651,7 +651,7 @@
 //            throw new NotImplementedException();
 //        }
 
-//        public Task<StatusPull<WWCP.EVSEStatus>> PullEVSEStatus(DateTimeOffset? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EVSEStatusType? EVSEStatusFilter = null, EMobilityProvider_Id? ProviderId = null, DateTimeOffset? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
+//        public Task<StatusPull<WWCP.POI.EVSEStatus>> PullEVSEStatus(DateTimeOffset? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EVSEStatusType? EVSEStatusFilter = null, EMobilityProvider_Id? ProviderId = null, DateTimeOffset? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
 //        {
 //            throw new NotImplementedException();
 //        }

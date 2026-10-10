@@ -31,6 +31,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 
+using cloud.charging.open.protocols.WWCP.POI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -651,7 +653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             throw new NotImplementedException();
         }
 
-        Task<StatusPull<WWCP.EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
+        Task<StatusPull<WWCP.POI.EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTimeOffset? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTimeOffset? Timestamp, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             throw new NotImplementedException();
         }

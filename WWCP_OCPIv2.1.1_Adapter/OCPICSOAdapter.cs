@@ -42,21 +42,21 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.RoamingNetwork_Id?           RoamingNetworkId,
-                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                  WWCP.EVSE_Id?                     EVSEId,
-                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.POI.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                  WWCP.POI.ChargingPool_Id?             ChargingPoolId,
+                                                                  WWCP.POI.ChargingStation_Id?          ChargingStationId,
+                                                                  WWCP.POI.EVSE_Id?                     EVSEId,
+                                                                  WWCP.POI.ChargingConnector_Id?        ChargingConnectorId,
+                                                                  WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.RoamingNetwork_Id?           RoamingNetworkId,
-                                                                  WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                  WWCP.EVSE_Id?                     EVSEId,
-                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.POI.RoamingNetwork_Id?           RoamingNetworkId,
+                                                                  WWCP.POI.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                  WWCP.POI.ChargingPool_Id?             ChargingPoolId,
+                                                                  WWCP.POI.ChargingStation_Id?          ChargingStationId,
+                                                                  WWCP.POI.EVSE_Id?                     EVSEId,
+                                                                  WWCP.POI.ChargingConnector_Id?        ChargingConnectorId,
+                                                                  WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId);
 
 
     /// <summary>
@@ -227,11 +227,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                               WWCP.IncludeChargingStationOperatorIdDelegate?  IncludeChargingStationOperatorIds   = null,
                               WWCP.IncludeChargingStationOperatorDelegate?    IncludeChargingStationOperators     = null,
-                              WWCP.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
+                              WWCP.POI.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
                               WWCP.IncludeChargingPoolDelegate?               IncludeChargingPools                = null,
-                              WWCP.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
+                              WWCP.POI.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
                               WWCP.IncludeChargingStationDelegate?            IncludeChargingStations             = null,
-                              WWCP.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
+                              WWCP.POI.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
                               WWCP.IncludeEVSEDelegate?                       IncludeEVSEs                        = null,
                               WWCP.ChargeDetailRecordFilterDelegate?          ChargeDetailRecordFilter            = null,
 
@@ -334,12 +334,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     this.GetTariffIds(
                         this.RoamingNetwork.Id,
-                        WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                        locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
+                        WWCP.POI.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                        locationId. HasValue ? WWCP.POI.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
                         null,
-                        evseId.     HasValue ? WWCP.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
-                        connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                        empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null
+                        evseId.     HasValue ? WWCP.POI.EVSE_Id.                   Parse(evseId.     Value.ToString()) : null,
+                        connectorId.HasValue ? WWCP.POI.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
+                        empId.      HasValue ? WWCP.POI.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null
                     );
 
             }
@@ -436,14 +436,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 var providerId  = emspId.ToWWCP();
 
                 var result      = await RoamingNetwork.RemoteStart(
-                                            WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                            WWCP.POI.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
                                             null,                                   // ChargingProduct
                                             null,                                   // ReservationId
                                             providerId.HasValue                     // OCPI does not have its own charging session identification!
                                                 ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
                                                 : WWCP.ChargingSession_Id.NewRandom(),
                                             providerId,
-                                            WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
+                                            WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.POI.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
                                             null,
                                             WWCP.Auth_Path.Parse(                   // Authentication path == CSO Roaming Provider identification!
                                                 Id.ToString()
@@ -1959,7 +1959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">A cancellation token to cancel the operation.</param>
         async Task<WWCP.PushEVSEStatusResult>
 
-            WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
+            WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.POI.EVSEStatusUpdate>  EVSEStatusUpdates,
                                               WWCP.TransmissionTypes              TransmissionType,
 
                                               DateTimeOffset?                     RequestTimestamp,
@@ -2300,12 +2300,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public async Task<WWCP.AuthStartResult>
 
             AuthorizeStart(WWCP.LocalAuthentication          LocalAuthentication,
-                           WWCP.ChargingLocation?            ChargingLocation      = null,
+                           WWCP.POI.ChargingLocation?            ChargingLocation      = null,
                            WWCP.ChargingProduct?             ChargingProduct       = null,
                            WWCP.ChargingSession_Id?          SessionId             = null,
                            WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                           //WWCP.ChargingStationOperator_Id?  OperatorId            = null,
-                           WWCP.EMobilityProvider_Id?        EMobilityProviderId   = null,
+                           //WWCP.POI.ChargingStationOperator_Id?  OperatorId            = null,
+                           WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId   = null,
 
                            DateTimeOffset?                   RequestTimestamp      = null,
                            EventTracking_Id?                 EventTrackingId       = null,
@@ -2495,7 +2495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           ListOfAuthStopTokens:      null,
                                           ListOfAuthStopPINs:        null,
                                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                     //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                     //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                           Description:               null,
                                           AdditionalInfo:            null,
                                           NumberOfRetries:           0
@@ -2512,7 +2512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                           SessionId:                 SessionId,
                                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                     //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                     //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                           Description:               null,
                                           AdditionalInfo:            null,
                                           NumberOfRetries:           0
@@ -2529,7 +2529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                           SessionId:                 SessionId,
                                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                     //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                     //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                           Description:               null,
                                           AdditionalInfo:            null,
                                           NumberOfRetries:           0
@@ -2546,7 +2546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                           SessionId:                 SessionId,
                                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                     //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                     //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                           Description:               null,
                                           AdditionalInfo:            null,
                                           NumberOfRetries:           0
@@ -2640,10 +2640,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
                           WWCP.LocalAuthentication          LocalAuthentication,
-                          WWCP.ChargingLocation?            ChargingLocation      = null,
+                          WWCP.POI.ChargingLocation?            ChargingLocation      = null,
                           WWCP.ChargingSession_Id?          CPOPartnerSessionId   = null,
-                          //WWCP.ChargingStationOperator_Id?  OperatorId            = null,
-                          WWCP.EMobilityProvider_Id?        EMobilityProviderId   = null,
+                          //WWCP.POI.ChargingStationOperator_Id?  OperatorId            = null,
+                          WWCP.POI.EMobilityProvider_Id?        EMobilityProviderId   = null,
 
                           DateTimeOffset?                   RequestTimestamp      = null,
                           EventTracking_Id?                 EventTrackingId       = null,
@@ -2826,7 +2826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                          SessionId:                 SessionId,
                                          ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                    //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                    //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                          Description:               null,
                                          AdditionalInfo:            null,
                                          NumberOfRetries:           0
@@ -2843,7 +2843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                          SessionId:                 SessionId,
                                          ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                                    //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                                                                    //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                                          Description:               null,
                                          AdditionalInfo:            null,
                                          NumberOfRetries:           0
@@ -2856,7 +2856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 //                         ISendAuthorizeStartStop:   this,
                 //                         SessionId:                 SessionId,
                 //                         ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                //                                                    //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                //                                                    //WWCP.POI.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                 //                         Description:               null,
                 //                         AdditionalInfo:            null,
                 //                         NumberOfRetries:           0,

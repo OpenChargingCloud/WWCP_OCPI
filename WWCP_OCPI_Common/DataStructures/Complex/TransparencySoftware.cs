@@ -42,52 +42,52 @@ namespace cloud.charging.open.protocols.OCPI
         #region Properties
 
         /// <summary>
-        /// The name of the transparency software.
+        /// The multi-language name of the transparency software.
         /// </summary>
         [Mandatory]
-        public String             Name                     { get; }
+        public IEnumerable<DisplayText>      Name                     { get; }
 
         /// <summary>
         /// The version of the transparency software.
         /// </summary>
         [Mandatory]
-        public String             Version                  { get; }
+        public String                        Version                  { get; }
 
         /// <summary>
-        /// The Open Source license of the transparency software.
+        /// The Open Source licenses of the transparency software, at least one.
         /// </summary>
         [Mandatory]
-        public SoftwareLicense  OpenSourceLicense        { get; }
+        public IEnumerable<SoftwareLicense>  OpenSourceLicenses       { get; }
 
         /// <summary>
         /// The vendor of the transparency software.
         /// </summary>
         [Mandatory]
-        public String             Vendor                   { get; }
+        public String                        Vendor                   { get; }
 
         /// <summary>
         /// The optional URL where to find a small logo of the transparency software.
         /// </summary>
         [Optional]
-        public URL?               Logo                     { get; }
+        public URL?                          Logo                     { get; }
 
         /// <summary>
         /// The optional URL where to find a manual how to use the transparency software.
         /// </summary>
         [Optional]
-        public URL?               HowToUse                 { get; }
+        public URL?                          HowToUse                 { get; }
 
         /// <summary>
         /// The optional URL where to find more information about the transparency software.
         /// </summary>
         [Optional]
-        public URL?               MoreInformation          { get; }
+        public URL?                          MoreInformation          { get; }
 
         /// <summary>
         /// The optional URL where to find the source code of the transparency software.
         /// </summary>
         [Optional]
-        public URL?               SourceCodeRepository     { get; }
+        public URL?                          SourceCodeRepository     { get; }
 
         #endregion
 
@@ -96,29 +96,44 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create new charging transparency software.
         /// </summary>
-        /// <param name="Name">The name of the transparency software.</param>
+        /// <param name="Name">The multi-language name of the transparency software.</param>
         /// <param name="Version">The version of the transparency software.</param>
-        /// <param name="OpenSourceLicense">The Open Source license of the transparency software.</param>
+        /// <param name="OpenSourceLicenses">The Open Source licenses of the transparency software, at least one.</param>
         /// <param name="Vendor">The vendor of the transparency software.</param>
         /// 
         /// <param name="Logo">An optional URL where to find a small logo of the transparency software.</param>
         /// <param name="HowToUse">An optional URL where to find a manual how to use the transparency software.</param>
         /// <param name="MoreInformation">An optional URL where to find more information about the transparency software.</param>
         /// <param name="SourceCodeRepository">An optional URL where to find the source code of the transparency software.</param>
-        public TransparencySoftware(String             Name,
-                                    String             Version,
-                                    SoftwareLicense  OpenSourceLicense,
-                                    String             Vendor,
+        public TransparencySoftware(IEnumerable<DisplayText>      Name,
+                                    String                        Version,
+                                    IEnumerable<SoftwareLicense>  OpenSourceLicenses,
+                                    String                        Vendor,
 
-                                    URL?               Logo                   = null,
-                                    URL?               HowToUse               = null,
-                                    URL?               MoreInformation        = null,
-                                    URL?               SourceCodeRepository   = null)
+                                    URL?                          Logo                   = null,
+                                    URL?                          HowToUse               = null,
+                                    URL?                          MoreInformation        = null,
+                                    URL?                          SourceCodeRepository   = null)
         {
 
-            this.Name                  = Name;
+            var names     = (Name               ?? []).Distinct().Order().ToArray();
+            var licenses  = (OpenSourceLicenses ?? []).Distinct().Order().ToArray();
+
+            if (names.Length == 0 || names.Any(name => String.IsNullOrWhiteSpace(name.Text)))
+                throw new ArgumentException("A name with a nonempty text in each language is required!", nameof(Name));
+
+            if (names.Select(name => name.Language).Distinct().Count() != names.Length)
+                throw new ArgumentException("The name must have only one text per language!", nameof(Name));
+
+            if (licenses.Length == 0)
+                throw new ArgumentException("At least one Open Source license is required!", nameof(OpenSourceLicenses));
+
+            if (licenses.Select(license => license.Id).Distinct().Count() != licenses.Length)
+                throw new ArgumentException("An Open Source license must not be given twice!", nameof(OpenSourceLicenses));
+
+            this.Name                  = names;
             this.Version               = Version;
-            this.OpenSourceLicense     = OpenSourceLicense;
+            this.OpenSourceLicenses    = licenses;
             this.Vendor                = Vendor;
 
             this.Logo                  = Logo;
@@ -203,10 +218,11 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #region Parse Name                      [mandatory]
 
-                if (!JSON.ParseMandatoryText("name",
-                                             "name",
-                                             out String? Name,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("name",
+                                                "name",
+                                                DisplayText.TryParse,
+                                                out HashSet<DisplayText> Name,
+                                                out ErrorResponse))
                 {
                     return false;
                 }
@@ -225,13 +241,13 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
-                #region Parse OpenSourceLicense         [mandatory]
+                #region Parse OpenSourceLicenses        [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("open_source_license",
-                                             "Open Source License",
-                                             OCPI.SoftwareLicense.TryParse,
-                                             out SoftwareLicense? OpenSourceLicense,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("open_source_licenses",
+                                                "Open Source licenses",
+                                                OCPI.SoftwareLicense.TryParse,
+                                                out HashSet<SoftwareLicense> OpenSourceLicenses,
+                                                out ErrorResponse))
                 {
                     return false;
                 }
@@ -306,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPI
                 TransparencySoftware = new TransparencySoftware(
                                            Name,
                                            Version,
-                                           OpenSourceLicense,
+                                           OpenSourceLicenses,
                                            Vendor,
                                            Logo,
                                            HowToUse,
@@ -343,9 +359,9 @@ namespace cloud.charging.open.protocols.OCPI
 
             var JSON = JSONObject.Create(
 
-                                 new JProperty("name",                    Name),
+                                 new JProperty("name",                    new JArray(Name.              Select(name    => name.   ToJSON()))),
                                  new JProperty("version",                 Version),
-                                 new JProperty("open_source_license",     OpenSourceLicense.   ToJSON()),
+                                 new JProperty("open_source_licenses",    new JArray(OpenSourceLicenses.Select(license => license.ToJSON()))),
                                  new JProperty("vendor",                  Vendor),
 
                            Logo.                HasValue
@@ -382,9 +398,9 @@ namespace cloud.charging.open.protocols.OCPI
         public TransparencySoftware Clone()
 
             => new (
-                   Name.                 CloneString(),
+                   Name.                 Select(name    => name.   Clone()),
                    Version.              CloneString(),
-                   OpenSourceLicense.    Clone(),
+                   OpenSourceLicenses.   Select(license => license.Clone()),
                    Vendor.               CloneString(),
                    Logo?.                Clone(),
                    HowToUse?.            Clone(),
@@ -531,13 +547,13 @@ namespace cloud.charging.open.protocols.OCPI
             if (TransparencySoftware is null)
                 throw new ArgumentNullException(nameof(TransparencySoftware), "The give transparency software must not be null!");
 
-            var c = Name.             CompareTo(TransparencySoftware.Name);
+            var c = Compare(Name, TransparencySoftware.Name);
 
             if (c == 0)
                 c = Version.          CompareTo(TransparencySoftware.Version);
 
             if (c == 0)
-                c = OpenSourceLicense.CompareTo(TransparencySoftware.OpenSourceLicense);
+                c = Compare(OpenSourceLicenses, TransparencySoftware.OpenSourceLicenses);
 
             if (c == 0)
                 c = Vendor.           CompareTo(TransparencySoftware.Vendor);
@@ -555,6 +571,37 @@ namespace cloud.charging.open.protocols.OCPI
                 c = SourceCodeRepository.Value.CompareTo(TransparencySoftware.SourceCodeRepository.Value);
 
             return c;
+
+        }
+
+        #endregion
+
+        #region (private static) Compare(First, Second)
+
+        /// <summary>
+        /// Compares two sorted sequences element by element, then by their length.
+        /// </summary>
+        private static Int32 Compare<T>(IEnumerable<T> First, IEnumerable<T> Second)
+            where T : IComparable<T>
+        {
+
+            using var first  = First. GetEnumerator();
+            using var second = Second.GetEnumerator();
+
+            while (true)
+            {
+
+                var hasFirst   = first. MoveNext();
+                var hasSecond  = second.MoveNext();
+
+                if (!hasFirst || !hasSecond)
+                    return hasFirst.CompareTo(hasSecond);
+
+                var c = first.Current.CompareTo(second.Current);
+                if (c != 0)
+                    return c;
+
+            }
 
         }
 
@@ -587,9 +634,9 @@ namespace cloud.charging.open.protocols.OCPI
 
             => TransparencySoftware is not null &&
 
-               Name.             Equals(TransparencySoftware.Name)              &&
-               Version.          Equals(TransparencySoftware.Version)           &&
-               OpenSourceLicense.Equals(TransparencySoftware.OpenSourceLicense) &&
+               Name.              SequenceEqual(TransparencySoftware.Name)               &&
+               Version.           Equals       (TransparencySoftware.Version)            &&
+               OpenSourceLicenses.SequenceEqual(TransparencySoftware.OpenSourceLicenses) &&
                Vendor.           Equals(TransparencySoftware.Vendor)            &&
 
             ((!Logo.                HasValue && !TransparencySoftware.Logo.                HasValue) ||
@@ -619,9 +666,9 @@ namespace cloud.charging.open.protocols.OCPI
             unchecked
             {
 
-                return Name.                 GetHashCode()       * 23 ^
+                return Name.              Aggregate(0, (hash, name)    => hash * 31 ^ name.   GetHashCode()) * 23 ^
                        Version.              GetHashCode()       * 19 ^
-                       OpenSourceLicense.    GetHashCode()       * 13 ^
+                       OpenSourceLicenses.Aggregate(0, (hash, license) => hash * 31 ^ license.GetHashCode()) * 13 ^
                        Vendor.               GetHashCode()       * 11 ^
                       (Logo?.                GetHashCode() ?? 0) * 7 ^
                       (HowToUse?.            GetHashCode() ?? 0) * 5 ^
@@ -642,10 +689,10 @@ namespace cloud.charging.open.protocols.OCPI
 
             => String.Concat(
 
-                   Name,    ", ",
-                   Version, ", ",
-                   Vendor,  ", ",
-                   OpenSourceLicense
+                   Name.FirstOrDefault().Text, ", ",
+                   Version,                    ", ",
+                   Vendor,                     ", ",
+                   OpenSourceLicenses.Select(license => license.Id).AggregateWith(" / ")
 
                );
 

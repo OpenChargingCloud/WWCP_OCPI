@@ -49,14 +49,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// </summary>
     /// <param name="WWCPEVSEStatusUpdate">A WWCP EVSE status update.</param>
     /// <param name="OCPIStatusType">An OICP status type.</param>
-    public delegate StatusType               WWCPEVSEStatusUpdate_2_StatusType_Delegate (WWCP.EVSEStatusUpdate    WWCPEVSEStatusUpdate,
+    public delegate StatusType               WWCPEVSEStatusUpdate_2_StatusType_Delegate (WWCP.POI.EVSEStatusUpdate    WWCPEVSEStatusUpdate,
                                                                                          StatusType               OCPIStatusType);
 
     /// <summary>
     /// A delegate which allows you to modify the conversion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="OCPIStatusType">An OICP status type.</param>
-    public delegate WWCP.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
+    public delegate WWCP.POI.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
 
 
     /// <summary>
@@ -91,23 +91,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Convert the given OCPI EVSE/connector status into a corresponding WWCP EVSE status.
         /// </summary>
         /// <param name="EVSEStatus">An OCPI EVSE/connector status.</param>
-        public static WWCP.EVSEStatusType AsWWCPEVSEStatus(this StatusType EVSEStatus)
+        public static WWCP.POI.EVSEStatusType AsWWCPEVSEStatus(this StatusType EVSEStatus)
         {
 
             if (EVSEStatus == StatusType.AVAILABLE)
-                return WWCP.EVSEStatusType.Available;
+                return WWCP.POI.EVSEStatusType.Available;
 
             if (EVSEStatus == StatusType.BLOCKED)
-                return WWCP.EVSEStatusType.OutOfService;
+                return WWCP.POI.EVSEStatusType.OutOfService;
 
             if (EVSEStatus == StatusType.CHARGING)
-                return WWCP.EVSEStatusType.Charging;
+                return WWCP.POI.EVSEStatusType.Charging;
 
             if (EVSEStatus == StatusType.INOPERATIVE)
-                return WWCP.EVSEStatusType.OutOfService;
+                return WWCP.POI.EVSEStatusType.OutOfService;
 
             if (EVSEStatus == StatusType.OUTOFORDER)
-                return WWCP.EVSEStatusType.Error;
+                return WWCP.POI.EVSEStatusType.Error;
 
             //if (EVSEStatus == StatusType.PLANNED)
             //    return WWCP.EVSEStatusTypes.Planned;
@@ -116,9 +116,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             //    return WWCP.EVSEStatusTypes.Removed;
 
             if (EVSEStatus == StatusType.RESERVED)
-                return WWCP.EVSEStatusType.Reserved;
+                return WWCP.POI.EVSEStatusType.Reserved;
 
-            return WWCP.EVSEStatusType.Unspecified;
+            return WWCP.POI.EVSEStatusType.Unspecified;
 
         }
 
@@ -130,34 +130,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Convert a WWCP EVSE status into OCPI EVSE status.
         /// </summary>
         /// <param name="EVSEStatus">A WWCP EVSE status.</param>
-        public static StatusType ToOCPI(this WWCP.EVSEStatusType EVSEStatus)
+        public static StatusType ToOCPI(this WWCP.POI.EVSEStatusType EVSEStatus)
         {
 
-            if      (EVSEStatus == WWCP.EVSEStatusType.Available)
+            if      (EVSEStatus == WWCP.POI.EVSEStatusType.Available)
                 return StatusType.AVAILABLE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Blocked)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Blocked)
                 return StatusType.BLOCKED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Charging)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Charging)
                 return StatusType.CHARGING;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.OutOfService)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.OutOfService)
                 return StatusType.INOPERATIVE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Offline)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Offline)
                 return StatusType.INOPERATIVE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Error)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Error)
                 return StatusType.OUTOFORDER;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.InDeployment)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.InDeployment)
                 return StatusType.PLANNED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Removed)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Removed)
                 return StatusType.REMOVED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusType.Reserved)
+            else if (EVSEStatus == WWCP.POI.EVSEStatusType.Reserved)
                 return StatusType.RESERVED;
 
             else
@@ -272,11 +272,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToWWCP (this EMSPId)
 
-        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id EMSPId)
+        public static WWCP.POI.EMobilityProvider_Id? ToWWCP(this EMSP_Id EMSPId)
 
-            => WWCP.EMobilityProvider_Id.TryParse(EMSPId.ToString());
+            => WWCP.POI.EMobilityProvider_Id.TryParse(EMSPId.ToString());
 
-        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id? EMSPId)
+        public static WWCP.POI.EMobilityProvider_Id? ToWWCP(this EMSP_Id? EMSPId)
 
             => EMSPId.HasValue
                    ? EMSPId.Value.ToWWCP()
@@ -286,11 +286,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToWWCP (this CPOId)
 
-        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id CPOId)
+        public static WWCP.POI.ChargingStationOperator_Id? ToWWCP(this CPO_Id CPOId)
 
-            => WWCP.ChargingStationOperator_Id.TryParse(CPOId.ToString());
+            => WWCP.POI.ChargingStationOperator_Id.TryParse(CPOId.ToString());
 
-        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id? CPOId)
+        public static WWCP.POI.ChargingStationOperator_Id? ToWWCP(this CPO_Id? CPOId)
 
             => CPOId.HasValue
                    ? CPOId.Value.ToWWCP()
@@ -301,14 +301,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI_EVSEUId(this EVSEId)
 
-        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id               EVSEId,
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.POI.EVSE_Id               EVSEId,
                                                WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEIdConverter   = null)
 
             => CustomEVSEIdConverter is not null
                    ? EVSE_UId.TryParse(CustomEVSEIdConverter(EVSEId).ToString())
                    : EVSE_UId.TryParse(EVSEId.ToString());
 
-        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id?              EVSEId,
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.POI.EVSE_Id?              EVSEId,
                                                WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEIdConverter   = null)
 
             => EVSEId.HasValue
@@ -319,14 +319,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI_EVSEId (this EVSEId, CustomEVSEIdConverter = null)
 
-        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id              EVSEId,
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.POI.EVSE_Id              EVSEId,
                                              WWCPEVSEId_2_EVSEId_Delegate?  CustomEVSEIdConverter   = null)
 
             => CustomEVSEIdConverter is not null
                    ? EVSE_Id.TryParse(CustomEVSEIdConverter(EVSEId).ToString())
                    : EVSE_Id.TryParse(EVSEId.ToString());
 
-        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id?             EVSEId,
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.POI.EVSE_Id?             EVSEId,
                                              WWCPEVSEId_2_EVSEId_Delegate?  CustomEVSEIdConverter   = null)
 
             => EVSEId.HasValue
@@ -344,25 +344,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var capabilities = new HashSet<Capability>();
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.RFID)       ||
-                ChargingStation.UIFeatures.    Contains(WWCP.UIFeatures.    RFID))
+                ChargingStation.UIFeatures.    Contains(WWCP.POI.UIFeatures.    RFID))
                 capabilities.Add(Capability.RFID_READER);
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.CreditCard) ||
-                ChargingStation.PaymentOptions.Contains(WWCP.PaymentOptions.CreditCard) ||
-                ChargingStation.UIFeatures.    Contains(WWCP.UIFeatures.    CreditCard))
+                ChargingStation.PaymentOptions.Contains(WWCP.POI.PaymentOptions.CreditCard) ||
+                ChargingStation.UIFeatures.    Contains(WWCP.POI.UIFeatures.    CreditCard))
                 capabilities.Add(Capability.CREDIT_CARD_PAYABLE);
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.DebitCard)  ||
-                ChargingStation.PaymentOptions.Contains(WWCP.PaymentOptions.DebitCard) ||
-                ChargingStation.UIFeatures.    Contains(WWCP.UIFeatures.    DebitCard))
+                ChargingStation.PaymentOptions.Contains(WWCP.POI.PaymentOptions.DebitCard) ||
+                ChargingStation.UIFeatures.    Contains(WWCP.POI.UIFeatures.    DebitCard))
                 capabilities.Add(Capability.DEBIT_CARD_PAYABLE);
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.NFC)        ||
-                ChargingStation.UIFeatures.    Contains(WWCP.UIFeatures.    NFC))
+                ChargingStation.UIFeatures.    Contains(WWCP.POI.UIFeatures.    NFC))
                 capabilities.Add(Capability.CONTACTLESS_CARD_SUPPORT);
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.PINPAD)     ||
-                ChargingStation.UIFeatures.    Contains(WWCP.UIFeatures.    Pinpad))
+                ChargingStation.UIFeatures.    Contains(WWCP.POI.UIFeatures.    Pinpad))
                 capabilities.Add(Capability.PED_TERMINAL);
 
             if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is WWCP.AuthenticationModes.REMOTE))
@@ -396,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI             (this Facilities)
 
-        public static IEnumerable<Facility> ToOCPI(this IEnumerable<WWCP.Facility> Facilities)
+        public static IEnumerable<Facility> ToOCPI(this IEnumerable<WWCP.POI.Facility> Facilities)
         {
 
             var facilities = new HashSet<Facility>();
@@ -439,31 +439,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        public static ParkingType ToOICP(this WWCP.ParkingType Parkingtype)
+        public static ParkingType ToOICP(this WWCP.POI.ParkingType Parkingtype)
         {
 
-            if (Parkingtype == WWCP.ParkingType.UNKNOWN)
+            if (Parkingtype == WWCP.POI.ParkingType.UNKNOWN)
                 return ParkingType.UNKNOWN;
 
-            if (Parkingtype == WWCP.ParkingType.ALONG_MOTORWAY)
+            if (Parkingtype == WWCP.POI.ParkingType.ALONG_MOTORWAY)
                 return ParkingType.ALONG_MOTORWAY;
 
-            if (Parkingtype == WWCP.ParkingType.PARKING_GARAGE)
+            if (Parkingtype == WWCP.POI.ParkingType.PARKING_GARAGE)
                 return ParkingType.PARKING_GARAGE;
 
-            if (Parkingtype == WWCP.ParkingType.PARKING_LOT)
+            if (Parkingtype == WWCP.POI.ParkingType.PARKING_LOT)
                 return ParkingType.PARKING_LOT;
 
-            if (Parkingtype == WWCP.ParkingType.ON_DRIVEWAY)
+            if (Parkingtype == WWCP.POI.ParkingType.ON_DRIVEWAY)
                 return ParkingType.ON_DRIVEWAY;
 
-            if (Parkingtype == WWCP.ParkingType.ON_STREET)
+            if (Parkingtype == WWCP.POI.ParkingType.ON_STREET)
                 return ParkingType.ON_STREET;
 
-            if (Parkingtype == WWCP.ParkingType.UNDERGROUND_GARAGE)
+            if (Parkingtype == WWCP.POI.ParkingType.UNDERGROUND_GARAGE)
                 return ParkingType.UNDERGROUND_GARAGE;
 
-            if (Parkingtype == WWCP.ParkingType.OTHER)
+            if (Parkingtype == WWCP.POI.ParkingType.OTHER)
                 return ParkingType.UNKNOWN;
 
             throw new ArgumentException("Invalid parking type!");
@@ -477,8 +477,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
-                                       WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
-                                       WWCP.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
+                                       WWCP.POI.IncludeEVSEIdDelegate               IncludeEVSEIds,
+                                       WWCP.POI.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
                                        ref List<Warning>                        Warnings)
         {
 
@@ -504,8 +504,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                        WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
-                                       WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
-                                       WWCP.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
+                                       WWCP.POI.IncludeEVSEIdDelegate               IncludeEVSEIds,
+                                       WWCP.POI.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
                                        out IEnumerable<Warning>                 Warnings)
         {
 
@@ -653,8 +653,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
-                                                   WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
-                                                   WWCP.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
+                                                   WWCP.POI.IncludeEVSEIdDelegate               IncludeEVSEIds,
+                                                   WWCP.POI.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
                                                    ref List<Warning>                        Warnings)
         {
 
@@ -680,8 +680,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                    ChargingPoolId_2_LocationId_Delegate?    CustomChargingPoolIdConverter,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?           CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?            CustomEVSEIdConverter,
-                                                   WWCP.IncludeEVSEIdDelegate               IncludeEVSEIds,
-                                                   WWCP.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
+                                                   WWCP.POI.IncludeEVSEIdDelegate               IncludeEVSEIds,
+                                                   WWCP.POI.IncludeChargingConnectorIdDelegate  IncludeChargingConnectorIds,
                                                    out IEnumerable<Warning>                 Warnings)
         {
 
@@ -735,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this LegalStatus)
 
-        public static LegalStatus ToOCPI(this WWCP.LegalStatus LegalStatus)
+        public static LegalStatus ToOCPI(this WWCP.POI.LegalStatus LegalStatus)
 
             => OCPI.LegalStatus.Parse(LegalStatus.ToString());
 
@@ -743,11 +743,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this TransparencySoftware)
 
-        public static TransparencySoftware ToOCPI(this WWCP.TransparencySoftware TransparencySoftware)
+        public static TransparencySoftware ToOCPI(this WWCP.POI.TransparencySoftware TransparencySoftware)
 
-            => new (TransparencySoftware.Name,
-                    TransparencySoftware.Version,
-                    TransparencySoftware.OpenSourceLicense.ToOCPI(),
+            => new (TransparencySoftware.Name.              Select(name    => new DisplayText(name.Language, name.Text)),
+                    TransparencySoftware.Version.           ToString(),
+                    TransparencySoftware.OpenSourceLicenses.Select(license => license.ToOCPI()),
                     TransparencySoftware.Vendor,
                     TransparencySoftware.Logo,
                     TransparencySoftware.HowToUse,
@@ -758,14 +758,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this TransparencySoftwareStatus)
 
-        public static TransparencySoftwareStatus ToOCPI(this WWCP.TransparencySoftwareStatus TransparencySoftwareStatus)
+        public static TransparencySoftwareStatus ToOCPI(this WWCP.POI.TransparencySoftwareStatus TransparencySoftwareStatus)
 
             => new (TransparencySoftwareStatus.TransparencySoftware.ToOCPI(),
                     TransparencySoftwareStatus.LegalStatus.         ToOCPI(),
-                    TransparencySoftwareStatus.Certificate,
-                    TransparencySoftwareStatus.CertificateIssuer,
-                    TransparencySoftwareStatus.NotBefore,
-                    TransparencySoftwareStatus.NotAfter);
+                    TransparencySoftwareStatus.Certificate?.DocumentNumber ?? TransparencySoftwareStatus.Certificate?.Id.ToString(),
+                    TransparencySoftwareStatus.Certificate?.Issuer,
+                    TransparencySoftwareStatus.Certificate?.NotBefore,
+                    TransparencySoftwareStatus.Certificate?.NotAfter);
 
         #endregion
 
@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                           EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
-                                   WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
+                                   WWCP.POI.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                    DateTimeOffset?                           LastUpdate,
                                    ref List<Warning>                         Warnings)
         {
@@ -826,7 +826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                           EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
-                                   WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
+                                   WWCP.POI.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                    DateTimeOffset?                           LastUpdate,
                                    out IEnumerable<Warning>                  Warnings)
         {
@@ -941,7 +941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>              EVSEs,
                                                WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
-                                               WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
+                                               WWCP.POI.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                                ref List<Warning>                         Warnings)
         {
 
@@ -966,7 +966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>              EVSEs,
                                                WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
-                                               WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
+                                               WWCP.POI.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
                                                out IEnumerable<Warning>                  Warnings)
         {
 
@@ -1013,11 +1013,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this ChargingConnectorId)
 
-        public static Connector_Id? ToOCPI(this WWCP.ChargingConnector_Id ChargingConnectorId)
+        public static Connector_Id? ToOCPI(this WWCP.POI.ChargingConnector_Id ChargingConnectorId)
 
             => Connector_Id.TryParse(ChargingConnectorId.ToString());
 
-        public static Connector_Id? ToOCPI(this WWCP.ChargingConnector_Id? ChargingConnectorId)
+        public static Connector_Id? ToOCPI(this WWCP.POI.ChargingConnector_Id? ChargingConnectorId)
 
             => ChargingConnectorId.HasValue
                    ? Connector_Id.TryParse(ChargingConnectorId.Value.ToString())
@@ -1699,7 +1699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region ToOCPI(this ChargingLocation)
 
-        public static LocationReference? ToOCPI(this WWCP.ChargingLocation?            ChargingLocation,
+        public static LocationReference? ToOCPI(this WWCP.POI.ChargingLocation?            ChargingLocation,
                                                 ChargingPoolId_2_LocationId_Delegate?  CustomChargingPoolIdConverter   = null,
                                                 WWCPEVSEId_2_EVSEUId_Delegate?         CustomEVSEIdConverter           = null)
         {
@@ -1760,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             if (Token.Type == TokenType.APP_USER)
-                if (WWCP.EMobilityAccount_Id.TryParse(
+                if (WWCP.POI.EMobilityAccount_Id.TryParse(
                         Token.Id.ToString(),
                         out var eMAId))
                 {
