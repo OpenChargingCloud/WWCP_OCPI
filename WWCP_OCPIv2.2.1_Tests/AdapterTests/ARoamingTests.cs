@@ -124,8 +124,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                      Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
                                                      Name:                                I18NString.Create("GraphDefined CSO"),
                                                      Description:                         I18NString.Create("GraphDefined CSO Services"),
-                                                     InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
-                                                     InitialStatus:                       ChargingStationOperatorStatusTypes.Available
+                                                     InitialAdminStatus:                  ChargingStationOperatorAdminStatusType.Operational,
+                                                     InitialStatus:                       ChargingStationOperatorStatusType.Available
                                                  );
 
             Assert.That(result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, Is.True);
@@ -138,8 +138,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //                              Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
             //                              Name:                                I18NString.Create("GraphDefined EMP"),
             //                              Description:                         I18NString.Create("GraphDefined EMP Services"),
-            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
+            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusType.Operational,
+            //                              InitialStatus:                       EMobilityProviderStatusType.Available,
             //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
 
             //                                                                       var empAdapter = new OCPIEMPAdapter(
@@ -162,8 +162,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //                              Id:                                  EMPRoamingProvider_Id.Parse("DE*GDF"),
             //                              Name:                                I18NString.Create("GraphDefined EMP"),
             //                              Description:                         I18NString.Create("GraphDefined EMP Services"),
-            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
+            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusType.Operational,
+            //                              InitialStatus:                       EMobilityProviderStatusType.Available,
             //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
 
             //                                                                       var empAdapter = new OCPIEMPAdapter(
@@ -193,8 +193,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //                          Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
             //                          Name:                                I18NString.Create("GraphDefined EMP"),
             //                          Description:                         I18NString.Create("GraphDefined EMP Services"),
-            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
+            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusType.Operational,
+            //                          InitialStatus:                       EMobilityProviderStatusType.Available
             //                      ).Result.EMobilityProvider;
 
 
@@ -206,8 +206,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             //                          Id:                                  EMobilityProvider_Id.Parse("DE*EMP"),
             //                          Name:                                I18NString.Create("example EMP"),
             //                          Description:                         I18NString.Create("example EMP Services"),
-            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
+            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusType.Operational,
+            //                          InitialStatus:                       EMobilityProviderStatusType.Available
             //                      ).Result.EMobilityProvider;
 
 

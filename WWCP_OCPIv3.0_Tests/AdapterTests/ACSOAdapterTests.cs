@@ -276,8 +276,8 @@
 //                                   Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
 //                                   Name:                I18NString.Create("GraphDefined CSO"),
 //                                   Description:         I18NString.Create("GraphDefined CSO Services"),
-//                                   InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
-//                                   InitialStatus:       ChargingStationOperatorStatusTypes.Available
+//                                   InitialAdminStatus:  ChargingStationOperatorAdminStatusType.Operational,
+//                                   InitialStatus:       ChargingStationOperatorStatusType.Available
 //                               ).Result.ChargingStationOperator;
 
 //            Assert.That(graphDefinedCSO, Is.Not.Null);

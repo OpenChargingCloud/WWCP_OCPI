@@ -114,8 +114,8 @@
 //                                                                 Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
 //                                                                 Name:                 I18NString.Create("GraphDefined CSO"),
 //                                                                 Description:          I18NString.Create("GraphDefined CSO Services"),
-//                                                                 InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
-//                                                                 InitialStatus:        ChargingStationOperatorStatusTypes.Available
+//                                                                 InitialAdminStatus:   ChargingStationOperatorAdminStatusType.Operational,
+//                                                                 InitialStatus:        ChargingStationOperatorStatusType.Available
 //                                                             );
 
 //            ClassicAssert.IsTrue   (csoResult.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
@@ -130,8 +130,8 @@
 //                                                                  Id:                               EMobilityProvider_Id.Parse("DE-GDF"),
 //                                                                  Name:                             I18NString.Create("GraphDefined EMP #1"),
 //                                                                  Description:                      I18NString.Create("GraphDefined EMP #1 Services"),
-//                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
-//                                                                  InitialStatus:                    EMobilityProviderStatusTypes.Available,
+//                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusType.Operational,
+//                                                                  InitialStatus:                    EMobilityProviderStatusType.Available,
 
 //                                                                  RemoteEMobilityProviderCreator:   eMobilityProvider => new VirtualEMobilityProvider(
 //                                                                                                                             EMobilityProvider_Id.Parse("DE-GDF"),
@@ -152,8 +152,8 @@
 //                                                                  Id:                               EMobilityProvider_Id.Parse("DE-GD2"),
 //                                                                  Name:                             I18NString.Create("GraphDefined EMP #2"),
 //                                                                  Description:                      I18NString.Create("GraphDefined EMP #2 Services"),
-//                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
-//                                                                  InitialStatus:                    EMobilityProviderStatusTypes.Available,
+//                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusType.Operational,
+//                                                                  InitialStatus:                    EMobilityProviderStatusType.Available,
 
 //                                                                  RemoteEMobilityProviderCreator:   eMobilityProvider => new VirtualEMobilityProvider(
 //                                                                                                                             EMobilityProvider_Id.Parse("DE-GD2"),

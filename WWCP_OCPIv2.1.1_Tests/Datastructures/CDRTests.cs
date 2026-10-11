@@ -30,6 +30,10 @@ using cloud.charging.open.protocols.OCPI;
 
 using cloud.charging.open.protocols.WWCP.POI;
 
+using EnergyMix            = cloud.charging.open.protocols.OCPI.EnergyMix;
+using EnergySourceCategory = cloud.charging.open.protocols.OCPI.EnergySourceCategory;
+using EnvironmentalImpact  = cloud.charging.open.protocols.OCPI.EnvironmentalImpact;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
