@@ -39,14 +39,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
         #region Data
 
-        protected  RoamingNetwork?            csoRoamingNetwork;
+        protected  WWCP.RoamingNetwork?       csoRoamingNetwork;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
         protected  IEMobilityProvider?        graphDefinedEMP;
-        protected  RoamingNetwork?            emp1RoamingNetwork;
+        protected  WWCP.RoamingNetwork?       emp1RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP_remote;
 
-        protected  RoamingNetwork?            emp2RoamingNetwork;
+        protected  WWCP.RoamingNetwork?       emp2RoamingNetwork;
         protected  IEMobilityProvider?        exampleEMP;
         protected  IEMobilityProvider?        exampleEMP_remote;
 
@@ -88,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             #region Create cso/emp1/emp2 roaming network
 
-            csoRoamingNetwork    = new RoamingNetwork(
+            csoRoamingNetwork    = new WWCP.RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_cso"),
                                        Name:                I18NString.Create("CSO EV Roaming Test Network"),
                                        Description:         I18NString.Create("The EV roaming test network at the charging station operator"),
@@ -96,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
-            emp1RoamingNetwork   = new RoamingNetwork(
+            emp1RoamingNetwork   = new WWCP.RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp1"),
                                        Name:                I18NString.Create("EV Roaming Test Network EMP1"),
                                        Description:         I18NString.Create("The EV roaming test network at the 1st e-mobility provider"),
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                                        InitialStatus:       RoamingNetworkStatusType.Available
                                    );
 
-            emp2RoamingNetwork   = new RoamingNetwork(
+            emp2RoamingNetwork   = new WWCP.RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp2"),
                                        Name:                I18NString.Create("EV Roaming Test Network EMP2"),
                                        Description:         I18NString.Create("The EV roaming test network at the 2nd e-mobility provider"),
