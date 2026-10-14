@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                 : null,
                        ChargingWhenClosed:  ChargingPool.ChargingWhenClosed,
                        Images:              ChargingPool.Images.Select(ToOCPI),
-                       EnergyMix:           ChargingPool.EnergyMix?.ToOCPI(),
+                       EnergyMix:           ChargingPool.EnergyMix?.ToOCPI($"charging pool '{ChargingPool.Id}'", Warnings),
                        HelpPhone:           ChargingPool.HotlinePhoneNumber ?? chargingStationOperator.HotlinePhoneNumber,
 
                        Created:             ChargingPool.Created,
@@ -469,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        TaxIncluded:    TaxIncluded.NA,
                        TariffAltText:  ToDisplayTexts(ChargingTariff.Name).Concat(ToDisplayTexts(ChargingTariff.Description)),
                        TariffAltURL:   ChargingTariff.TariffURL,
-                       EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI(),
+                       EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI($"charging tariff '{ChargingTariff.Id}'", Warnings),
                        Created:        ChargingTariff.Created,
                        LastUpdated:    NotBefore.HasValue && NotBefore.Value > ChargingTariff.LastChangeDate
                                            ? NotBefore.Value
@@ -558,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 ParkingType:          Location.ParkingType.HasValue ? POI.ParkingType.TryParse(Location.ParkingType.Value.ToString()) : null,
                                 HotlinePhoneNumber:   Location.HelpPhone,
                                 OpeningTimes:         Location.OpeningTimes is not null ? new ImmutableOpeningTimes(Location.OpeningTimes.ToPOI3()) : null,
-                                EnergyMix:            Location.EnergyMix?.ToPOI3(Language),
+                                EnergyMix:            Location.EnergyMix?.ToPOI3(Language, $"location '{Location.Id}'", Warnings),
                                 Images:               Location.Images.Select(ToPOI3),
                                 TimeZone:             Time_Zone.TryParse(Location.TimeZone),
                                 Facilities:           Location.Facilities.Select(facility => POI.Facility.TryParse(facility.ToString())).
@@ -830,7 +830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Elements:     elements,
                        Name:         ToI18NString(Tariff.TariffAltText),
                        TariffURL:    Tariff.TariffAltURL,
-                       EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language),
+                       EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language, $"tariff '{Tariff.Id}'", Warnings),
                        Created:      Tariff.Created,
                        LastChange:   Tariff.LastUpdated
                    );
@@ -954,16 +954,55 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     Image.Height,
                     Image.Thumbnail);
 
-        private static EnergyMix ToOCPI(this POI.EnergyMix EnergyMix)
+        /// <summary>
+        /// The OCPI energy source categories of the POI3 ones: waste and unknown have none.
+        /// </summary>
+        private static readonly Dictionary<POI.EnergySourceCategory, EnergySourceCategory> ocpiEnergySourceCategories = new() {
+            { POI.EnergySourceCategory.Gas,            EnergySourceCategory.GAS            },
+            { POI.EnergySourceCategory.Coal,           EnergySourceCategory.COAL           },
+            { POI.EnergySourceCategory.StoneCoal,      EnergySourceCategory.COAL           },
+            { POI.EnergySourceCategory.Oil,            EnergySourceCategory.GENERAL_FOSSIL },
+            { POI.EnergySourceCategory.OtherFossil,    EnergySourceCategory.GENERAL_FOSSIL },
+            { POI.EnergySourceCategory.NuclearFision,  EnergySourceCategory.NUCLEAR        },
+            { POI.EnergySourceCategory.NuclearFusion,  EnergySourceCategory.NUCLEAR        },
+            { POI.EnergySourceCategory.Sun,            EnergySourceCategory.SOLAR          },
+            { POI.EnergySourceCategory.Wind,           EnergySourceCategory.WIND           },
+            { POI.EnergySourceCategory.Geothermal,     EnergySourceCategory.GENERAL_GREEN  },
+            { POI.EnergySourceCategory.Biogas,         EnergySourceCategory.GENERAL_GREEN  },
+            { POI.EnergySourceCategory.OtherGreen,     EnergySourceCategory.GENERAL_GREEN  }
+        };
+
+        /// <summary>
+        /// The POI3 energy source categories of the OCPI ones: POI3 has no water, which becomes other green.
+        /// </summary>
+        private static readonly Dictionary<EnergySourceCategory, POI.EnergySourceCategory> poi3EnergySourceCategories = new() {
+            { EnergySourceCategory.GAS,             POI.EnergySourceCategory.Gas           },
+            { EnergySourceCategory.COAL,            POI.EnergySourceCategory.Coal          },
+            { EnergySourceCategory.GENERAL_FOSSIL,  POI.EnergySourceCategory.OtherFossil   },
+            { EnergySourceCategory.NUCLEAR,         POI.EnergySourceCategory.NuclearFision },
+            { EnergySourceCategory.SOLAR,           POI.EnergySourceCategory.Sun           },
+            { EnergySourceCategory.WIND,            POI.EnergySourceCategory.Wind          },
+            { EnergySourceCategory.WATER,           POI.EnergySourceCategory.OtherGreen    },
+            { EnergySourceCategory.GENERAL_GREEN,   POI.EnergySourceCategory.OtherGreen    }
+        };
+
+        /// <param name="Of">What the energy mix belongs to, for warnings, e.g. "charging pool 'DE*GEF*P1'".</param>
+        private static EnergyMix ToOCPI(this POI.EnergyMix    EnergyMix,
+                                        String                Of,
+                                        ICollection<Warning>? Warnings   = null)
         {
 
-            var sources = EnergyMix.EnergySources.
-                              Select(source => (Category: EnergySourceCategory.TryParse(source.Value.ToString()), source.Percent)).
-                              Where (source => source.Category.HasValue).
-                              Select(source => new EnergySource(source.Category!.Value, source.Percent)).
-                              ToArray();
+            var sources = new List<EnergySource>();
 
-            var green   = sources.Length > 0 &&
+            foreach (var source in EnergyMix.EnergySources)
+            {
+                if (ocpiEnergySourceCategories.TryGetValue(source.Value, out var category))
+                    sources.Add(new EnergySource(category, source.Percent));
+                else
+                    Warnings?.Add(Warning.Create($"The energy source '{source.Value}' of the {Of} has no OCPI counterpart and is left out!"));
+            }
+
+            var green   = sources.Count > 0 &&
                           sources.All(source => source.Source == EnergySourceCategory.GENERAL_GREEN ||
                                                 source.Source == EnergySourceCategory.SOLAR         ||
                                                 source.Source == EnergySourceCategory.WIND          ||
@@ -977,15 +1016,29 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         }
 
-        private static POI.EnergyMix ToPOI3(this EnergyMix EnergyMix, Languages Language)
+        /// <param name="Of">What the energy mix belongs to, for warnings, e.g. "location 'P1'".</param>
+        private static POI.EnergyMix ToPOI3(this EnergyMix        EnergyMix,
+                                            Languages             Language,
+                                            String                Of,
+                                            ICollection<Warning>? Warnings   = null)
+        {
 
-            => new (EnergyMix.EnergySources.
-                        Select(source => (Category: POI.EnergySourceCategory.TryParse(source.Source.ToString()), source.Percentage)).
-                        Where (source => source.Category.HasValue).
-                        Select(source => new PercentageOf<POI.EnergySourceCategory>(source.Category!.Value, (Single) source.Percentage)),
-                    [],
-                    new ImmutableI18NString(I18NString.Create(Language, EnergyMix.SupplierName      ?? "")),
-                    new ImmutableI18NString(I18NString.Create(Language, EnergyMix.EnergyProductName ?? "")));
+            var sources = new List<PercentageOf<POI.EnergySourceCategory>>();
+
+            foreach (var source in EnergyMix.EnergySources)
+            {
+                if (poi3EnergySourceCategories.TryGetValue(source.Source, out var category))
+                    sources.Add(new PercentageOf<POI.EnergySourceCategory>(category, (Single) source.Percentage));
+                else
+                    Warnings?.Add(Warning.Create($"The energy source '{source.Source}' of the {Of} has no POI3 counterpart and is left out!"));
+            }
+
+            return new (sources,
+                        [],
+                        new ImmutableI18NString(I18NString.Create(Language, EnergyMix.SupplierName      ?? "")),
+                        new ImmutableI18NString(I18NString.Create(Language, EnergyMix.EnergyProductName ?? "")));
+
+        }
 
         private static OpeningTimes ToPOI3(this Hours Hours)
         {

@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
         #endregion
 
-        #region (private static) ATariff() / AnEVSE(MaxPower) / APool(...) / ANetwork(WithPools)
+        #region (private static) ATariff() / AnEVSE(MaxPower) / APool(MaxPower, EnergyMix) / ANetwork(WithPools)
 
         private static POI.ChargingTariff ATariff()
 
@@ -145,7 +145,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     ChargingTariffIds:   [ T1 ],
                     Created:             Created);
 
-        private static POI.ChargingPool APool(Int32 MaxPower = 22000)
+        private static POI.ChargingPool APool(Int32           MaxPower    = 22000,
+                                              POI.EnergyMix?  EnergyMix   = null)
 
             => new (P1,
                     I18NString.Create(Languages.en, "Biberweg"),
@@ -154,6 +155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     ParkingType:          POI.ParkingType.PARKING_LOT,
                     TimeZone:             Time_Zone.Parse("Europe/Berlin"),
                     Facilities:           [ POI.Facility.CAFE ],
+                    EnergyMix:            EnergyMix,
                     AuthenticationModes:  [ POI.AuthenticationMode.RFID(), POI.AuthenticationMode.REMOTE ],
                     ChargingStations:     [ new POI.ChargingStation(S1,
                                                                     Features:  [ POI.ChargingStationFeature.Reservable ],
@@ -236,6 +238,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(connector.MaxElectricPower?.Value,    Is.EqualTo(22000));
                 Assert.That(connector.TariffIds.Select(tariffId => tariffId.ToString()),  Is.EqualTo(new[] { "1" }));
 
+            });
+
+        }
+
+        #endregion
+
+        #region AnEnergyMixMapsBothWays()
+
+        [Test]
+        public void AnEnergyMixMapsBothWays()
+        {
+
+            var energyMix  = new POI.EnergyMix([ new PercentageOf<POI.EnergySourceCategory>(POI.EnergySourceCategory.Sun,  60),
+                                                 new PercentageOf<POI.EnergySourceCategory>(POI.EnergySourceCategory.Wind, 40) ],
+                                               [],
+                                               new ImmutableI18NString(I18NString.Create(Languages.en, "Stadtwerke Jena")),
+                                               new ImmutableI18NString(I18NString.Create(Languages.en, "Ökostrom")));
+
+            var network    = ANetwork();
+            var warnings   = new List<Warning>();
+            var location   = APool(EnergyMix: energyMix).ToOCPI(network, warnings);
+
+            Assert.That(location?.EnergyMix, Is.Not.Null, String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+
+            var back       = location!.ToPOI3(GEF, null, Languages.en, warnings);
+
+            Assert.That(back?["energyMix"], Is.InstanceOf<JObject>(), String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+
+            var backMix    = POI.EnergyMix.Parse((JObject) back!["energyMix"]!);
+
+            Assert.Multiple(() => {
+                Assert.That(location.EnergyMix!.IsGreenEnergy,                                                    Is.True);
+                Assert.That(location.EnergyMix.EnergySources.Select(source => (source.Source, source.Percentage)), Is.EquivalentTo(new[] { (EnergySourceCategory.SOLAR, 60.0),
+                                                                                                                                        (EnergySourceCategory.WIND,  40.0) }));
+                Assert.That(backMix.EnergySources.Select(source => (source.Value, source.Percent)),                 Is.EquivalentTo(new[] { (POI.EnergySourceCategory.Sun,  60f),
+                                                                                                                                        (POI.EnergySourceCategory.Wind, 40f) }));
+                Assert.That(warnings,                                                                              Is.Empty);
             });
 
         }

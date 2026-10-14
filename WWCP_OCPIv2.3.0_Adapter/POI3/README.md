@@ -71,7 +71,7 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | `openingTimes` (none: 24/7) | `opening_times` |
 | `chargingWhenClosed` | `charging_when_closed` |
 | `images` | `images` (content type ↔ file type, category by name) |
-| `energyMix`: energy sources, supplier, product | `energy_mix` (`is_green_energy` when every source is green) |
+| `energyMix`: energy sources, supplier, product | `energy_mix` (`is_green_energy` when every source is green): Gas → `GAS`, Coal/StoneCoal → `COAL`, Oil/OtherFossil → `GENERAL_FOSSIL`, NuclearFision/NuclearFusion → `NUCLEAR`, Sun → `SOLAR`, Wind → `WIND`, Geothermal/Biogas/OtherGreen → `GENERAL_GREEN` (import: `GAS` → Gas, `COAL` → Coal, `GENERAL_FOSSIL` → OtherFossil, `NUCLEAR` → NuclearFision, `SOLAR` → Sun, `WIND` → Wind, `WATER`/`GENERAL_GREEN` → OtherGreen) |
 | `hotline`, else the operator's | `help_phone` |
 | `created`, latest `lastChange` of pool, stations, EVSEs and EVSE status | `created`, `last_updated` |
 
@@ -125,7 +125,7 @@ powers, and the union of their tariffs.
 | — | `tax_included` = `N/A` |
 | `name`, `description` | `tariff_alt_text` (import: into `name`) |
 | `tariffURL` | `tariff_alt_url` |
-| `energyMix` | `energy_mix` |
+| `energyMix` | `energy_mix` (energy sources as for locations) |
 | element: price components, restrictions | `elements` |
 | price component `ENERGY`, `TIME`, `PARKING_TIME`, `FLAT`: price, VAT, step size | `ENERGY` (per kWh, step in Wh), `TIME`/`PARKING_TIME` (per hour, step in s), `FLAT` (step 1) |
 | restrictions: start/end time, start/end date, min/max energy (Wh), min/max current, min/max power (W), min/max duration (s), days of week | `start_time`, `end_time`, `start_date`, `end_date`, `min_kwh`/`max_kwh` (kWh), `min_current`/`max_current`, `min_power`/`max_power` (kW), `min_duration`/`max_duration`, `day_of_week` |
@@ -154,6 +154,9 @@ What one side has and the other does not, or not alike:
   `Parking` objects vs. POI3 parking garages and spaces), no energy meters of locations, no accessibility extension
   (`services`, `assistance_service_details`, `standards`). The house number is joined with the street and not split again.
   Environmental impacts of energy mixes are not mapped (OCPI: g/kWh, POI3: in a percentage).
+- **Energy sources:** OCPI has fewer categories than POI3: stone coal, oil, nuclear fusion, geothermal and biogas come back
+  as Coal, OtherFossil, NuclearFision and OtherGreen. POI3 has no water, which becomes OtherGreen; OCPI has no waste, which
+  is left out (with a warning), as are unknown sources.
 - **POI3 only:** descriptions, entrance/exit addresses and locations, location languages, payment options and authentication
   modes beyond the capabilities above, pool features, grid connection points, data licenses, groups, brands (beyond the
   first as sub-operator), energy status of EVSEs and stations, charging pool and station status.
