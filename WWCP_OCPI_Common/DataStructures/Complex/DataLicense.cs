@@ -387,10 +387,10 @@ namespace cloud.charging.open.protocols.OCPI
                                                                                     URL.Parse("https://www.govdata.de/dl-de/by-2-0"));
 
         /// <summary>
-        /// Datenlizenz Deutschland – Namensnennung – Version 2.0
+        /// Datenlizenz Deutschland – Zero – Version 2.0
         /// </summary>
         public static readonly DataLicense DatenlizenzDeutschland_Zero_2     = new (DataLicense_Id.Parse("dl-de/zero-2-0"),
-                                                                                    DisplayTexts.Create(Languages.de, "Datenlizenz Deutschland – Namensnennung – Version 2.0"),
+                                                                                    DisplayTexts.Create(Languages.de, "Datenlizenz Deutschland – Zero – Version 2.0"),
                                                                                     URL.Parse("https://www.govdata.de/dl-de/zero-2-0"));
 
         /// <summary>
