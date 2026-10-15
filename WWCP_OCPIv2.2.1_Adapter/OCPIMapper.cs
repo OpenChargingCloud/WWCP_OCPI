@@ -737,7 +737,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public static LegalStatus ToOCPI(this WWCP.POI.LegalStatus LegalStatus)
 
-            => OCPI.LegalStatus.Parse(LegalStatus.ToString());
+            // OCPI writes the predefined legal statuses in its own spelling.
+            => LegalStatus == WWCP.POI.LegalStatus.ForInformationOnly    ? OCPI.LegalStatus.ForInformationOnly
+             : LegalStatus == WWCP.POI.LegalStatus.Verified              ? OCPI.LegalStatus.Verified
+             : LegalStatus == WWCP.POI.LegalStatus.GermanCalibrationLaw  ? OCPI.LegalStatus.GermanCalibrationLaw
+             : OCPI.LegalStatus.Parse(LegalStatus.ToString());
 
         #endregion
 
