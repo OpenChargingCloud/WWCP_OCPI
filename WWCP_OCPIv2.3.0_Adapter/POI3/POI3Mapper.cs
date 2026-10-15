@@ -467,8 +467,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Currency:       ChargingTariff.Currency,
                        TariffElements: elements,
                        TaxIncluded:    TaxIncluded.NA,
+                       TariffType:     ChargingTariff.TariffType.HasValue ? TariffType.Parse(ChargingTariff.TariffType.Value.ToString()) : null,
                        TariffAltText:  ToDisplayTexts(ChargingTariff.Name).Concat(ToDisplayTexts(ChargingTariff.Description)),
                        TariffAltURL:   ChargingTariff.TariffURL,
+                       MinPrice:       ChargingTariff.MinPrice?.ToOCPI(),
+                       MaxPrice:       ChargingTariff.MaxPrice?.ToOCPI(),
                        EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI($"charging tariff '{ChargingTariff.Id}'", Warnings),
                        Created:        ChargingTariff.Created,
                        LastUpdated:    NotBefore.HasValue && NotBefore.Value > ChargingTariff.LastChangeDate
@@ -477,6 +480,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                    );
 
         }
+
+        /// <summary>
+        /// The OCPI price limit of the given price limit: before taxes is excluding VAT, after taxes including it.
+        /// </summary>
+        public static PriceLimit ToOCPI(this POI.ChargingPriceLimit PriceLimit)
+
+            => new (PriceLimit.ExcludingVAT,
+                    PriceLimit.IncludingVAT);
+
+        /// <summary>
+        /// The price limit of the given OCPI price limit: before taxes is excluding VAT, after taxes including it.
+        /// </summary>
+        public static POI.ChargingPriceLimit ToPOI3(this PriceLimit PriceLimit)
+
+            => new (PriceLimit.BeforeTaxes,
+                    PriceLimit.AfterTaxes);
 
         /// <summary>
         /// The OCPI restrictions of the given charging tariff restrictions: energy in Wh becomes kWh, power in W becomes kW.
@@ -832,19 +851,47 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             }
 
-            if (Tariff.TariffType.HasValue || Tariff.MinPrice.HasValue || Tariff.MaxPrice.HasValue || Tariff.Start.HasValue || Tariff.End.HasValue)
-                Warnings.Add(Warning.Create($"The tariff type, minimum and maximum price, start and end of the tariff '{Tariff.Id}' have no counterpart and are left out!"));
+            if (Tariff.Start.HasValue || Tariff.End.HasValue)
+                Warnings.Add(Warning.Create($"The start and end of the tariff '{Tariff.Id}' have no counterpart and are left out!"));
 
-            return new POI.ChargingTariff(
-                       Id:           tariffId.Value,
-                       Currency:     Tariff.Currency,
-                       Elements:     elements,
-                       Name:         ToI18NString(Tariff.TariffAltText),
-                       TariffURL:    Tariff.TariffAltURL,
-                       EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language, $"tariff '{Tariff.Id}'", Warnings),
-                       Created:      Tariff.Created,
-                       LastChange:   Tariff.LastUpdated
-                   );
+            POI.ChargingTariffType? tariffType = null;
+
+            if (Tariff.TariffType.HasValue)
+            {
+                if (Enum.TryParse<POI.ChargingTariffType>(Tariff.TariffType.Value.ToString(), ignoreCase: false, out var type) &&
+                    Enum.IsDefined(type))
+                {
+                    tariffType = type;
+                }
+                else
+                    Warnings.Add(Warning.Create($"The tariff type '{Tariff.TariffType}' of the tariff '{Tariff.Id}' has no counterpart and is left out!"));
+            }
+
+            var minPrice = Tariff.MinPrice?.ToPOI3();
+            var maxPrice = Tariff.MaxPrice?.ToPOI3();
+
+            try
+            {
+                return new POI.ChargingTariff(
+                           Id:           tariffId.Value,
+                           Currency:     Tariff.Currency,
+                           Elements:     elements,
+                           Name:         ToI18NString(Tariff.TariffAltText),
+                           TariffURL:    Tariff.TariffAltURL,
+                           EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language, $"tariff '{Tariff.Id}'", Warnings),
+                           TariffType:   tariffType,
+                           MinPrice:     minPrice,
+                           MaxPrice:     maxPrice,
+                           Created:      Tariff.Created,
+                           LastChange:   Tariff.LastUpdated
+                       );
+            }
+            // E.g. a minimum price above the maximum price.
+            catch (ArgumentException e)
+            {
+                Warnings.Add(Warning.Create(e.Message));
+                return null;
+            }
 
         }
 

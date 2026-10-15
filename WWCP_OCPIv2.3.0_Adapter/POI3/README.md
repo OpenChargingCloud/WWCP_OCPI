@@ -28,7 +28,10 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   stored with `AddOrUpdateLocation`/`AddOrUpdateTariff`. Every commit maps the head again: what changed is stored, what
   is gone is removed (`RemoveLocation`/`RemoveTariff`). Every change of the status or admin status of an EVSE stores its
   OCPI EVSE (`AddOrUpdateEVSE`). `last_updated` is always later than what the CommonAPI holds, which it requires.
-  The parties of the operators must be parties of the CommonAPI. Pushing to remote EMSPs is the CommonAPI's business:
+  The parties of the operators must be parties of the CommonAPI, and what it holds for them is the publisher's: at the
+  start, what is no longer in the head is removed, e.g. what was removed while no publisher ran. Without `OperatorIds`
+  these are the operators of the head, so the data of an operator removed in the meantime stays.
+  Pushing to remote EMSPs is the CommonAPI's business:
   the publisher only keeps its store up to date, which EMSPs pull from.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
   charging tariff as OCPI tells it, onto the one there is, with what only POI3 knows kept (see below). The difference is
@@ -126,6 +129,8 @@ powers, and the union of their tariffs.
 | — | `tax_included` = `N/A` |
 | `name`, `description` | `tariff_alt_text` (import: into `name`) |
 | `tariffURL` | `tariff_alt_url` |
+| `tariffType` | `type` (the same names; import: a type POI3 does not know is left out with a warning) |
+| `minPrice`, `maxPrice`: excluding VAT, including VAT | `min_price`, `max_price`: `before_taxes`, `after_taxes` (import: a minimum above the maximum refuses the tariff with a warning) |
 | `energyMix` | `energy_mix` (energy sources as for locations) |
 | element: price components, restrictions | `elements` |
 | price component `ENERGY`, `TIME`, `PARKING_TIME`, `FLAT`: price, VAT, step size | `ENERGY` (per kWh, step in Wh), `TIME`/`PARKING_TIME` (per hour, step in s), `FLAT` (step 1) |
@@ -173,8 +178,8 @@ What one side has and the other does not, or not alike:
   accessibility fields (`reach_distance`, `operation_timeout`); OCPI has no charging modes, reservation duration,
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
-  published); OCPI's `type`, `min_price`, `max_price`, `start_date_time`, `end_date_time`, the reservation restriction and
-  `tax_included` have no POI3 counterpart (left out with a warning).
+  published); OCPI's `start_date_time`, `end_date_time`, the reservation restriction and `tax_included` have no POI3
+  counterpart (left out with a warning).
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.

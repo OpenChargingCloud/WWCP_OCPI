@@ -133,7 +133,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     ],
                     I18NString.Create(Languages.en, "Standard"),
                     Description,
-                    Created: Created);
+                    TariffType:  POI.ChargingTariffType.REGULAR,
+                    MinPrice:    new POI.ChargingPriceLimit(2.5m, 2.98m),
+                    MaxPrice:    new POI.ChargingPriceLimit(50),
+                    Created:     Created);
 
         private static POI.EVSE AnEVSE(Int32    MaxPower     = 22000,
                                        Boolean  OwnTariffs   = true)
@@ -316,6 +319,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
             Assert.Multiple(() => {
                 Assert.That(tariff.Id.ToString(),                                    Is.EqualTo("1"));
                 Assert.That(tariff.Currency,                                         Is.EqualTo(Currency.EUR));
+                Assert.That(tariff.TariffType,                                       Is.EqualTo(TariffType.REGULAR));
+                Assert.That(tariff.MinPrice,                                         Is.EqualTo(new PriceLimit(2.5m, 2.98m)));
+                Assert.That(tariff.MaxPrice,                                         Is.EqualTo(new PriceLimit(50, null)));
                 Assert.That(timed.TariffRestrictions?.MinPower,                      Is.EqualTo(3.7m));
                 Assert.That(timed.TariffRestrictions?.MinkWh,                        Is.EqualTo(5m));
                 Assert.That(timed.TariffRestrictions?.MaxDuration,                   Is.EqualTo(TimeSpan.FromHours(1)));
@@ -493,6 +499,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                           [ new POI.ChargingTariffElement([ new POI.ChargingPriceComponent(POI.ChargingDimensionTypes.MIN_CURRENT, 1, StepSize: 1) ]) ],
                                                           Created: Created).ToOCPI(tariffWarnings);
 
+            // A tariff type POI3 does not know is left out; a minimum price above the maximum refuses the tariff.
+            var ocpiTariff       = ATariff().ToOCPI([])!;
+            var typeWarnings     = new List<Warning>();
+            var unknownType      = new Tariff(ocpiTariff.CountryCode, ocpiTariff.PartyId, ocpiTariff.Id, ocpiTariff.Currency, ocpiTariff.TariffElements, TaxIncluded.NA,
+                                              TariffType: TariffType.Parse("PROFILE_NIGHT"), Created: Created, LastUpdated: T0).ToPOI3(GEF, Languages.en, typeWarnings);
+            var limitWarnings    = new List<Warning>();
+            var minAboveMax      = new Tariff(ocpiTariff.CountryCode, ocpiTariff.PartyId, ocpiTariff.Id, ocpiTariff.Currency, ocpiTariff.TariffElements, TaxIncluded.NA,
+                                              MinPrice: new PriceLimit(10, null), MaxPrice: new PriceLimit(5, null), Created: Created, LastUpdated: T0).ToPOI3(GEF, Languages.en, limitWarnings);
+
             // A connector with a plug type OCPI does not know is left out.
             var plugWarnings     = new List<Warning>();
             var evse             = new POI.EVSE(E1,
@@ -512,6 +527,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
                 Assert.That(minCurrent,                                            Is.Null);
                 Assert.That(tariffWarnings.Single().Text.FirstText(),              Does.Contain("MIN_CURRENT"));
+
+                Assert.That(unknownType?.TariffType,                               Is.Null);
+                Assert.That(typeWarnings.Single().Text.FirstText(),                Does.Contain("PROFILE_NIGHT"));
+                Assert.That(minAboveMax,                                           Is.Null);
+                Assert.That(limitWarnings.Single().Text.FirstText(),               Does.Contain("must not exceed its maximum price"));
 
                 Assert.That(ocpiEVSE?.Connectors.Select(connector => connector.Id.ToString()), Is.EqualTo(new[] { "1" }));
                 Assert.That(plugWarnings.Single().Text.FirstText(),                Does.Contain("NO_SUCH_PLUG"));
@@ -563,6 +583,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
             lock (errors)
                 Assert.That(errors, Is.Empty);
+
+        }
+
+        #endregion
+
+        #region ThePublisherRemovesWhatWasRemovedWhileItWasStopped()
+
+        [Test]
+        public async Task ThePublisherRemovesWhatWasRemovedWhileItWasStopped()
+        {
+
+            var history    = POI.RoamingNetworkHistory.Start(ANetwork());
+            var errors     = new List<String>();
+            var locationId = Location_Id.Parse("1");
+            var tariffId   = Tariff_Id.  Parse("1");
+
+            await using (var publisher = new POI3ToOCPIPublisher(history, api))
+                await publisher.StartAsync();
+
+            Assert.That(api.TryGetLocation(Party, locationId, out _), Is.True);
+
+            // Removed while no publisher runs...
+            var head = history.Head.RoamingNetwork;
+            Assert.That(history.Commit(head.CreateSignedChangeSet([ POI.RoamingNetworkChange.Remove(P1) ], CreatedAt: T0)).IsCommitted);
+
+            // ...is removed by the next one at its start; what is still in the head stays.
+            await using var next = new POI3ToOCPIPublisher(history, api);
+            next.OnError += (sender, description, warnings) => { lock (errors) errors.Add(description); };
+
+            await next.StartAsync();
+
+            Assert.Multiple(() => {
+                Assert.That(api.TryGetLocation(Party, locationId, out _),  Is.False, "The charging pool removed while no publisher ran is still a location.");
+                Assert.That(api.TryGetTariff  (Party, tariffId,   out _),  Is.True);
+                Assert.That(errors,                                         Is.Empty);
+            });
 
         }
 

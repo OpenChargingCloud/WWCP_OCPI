@@ -422,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                       desired,
                                                       desired.Properties().
                                                               Select(property => property.Name).
-                                                              Concat([ "name", "description", "tariffURL", "energyMix" ]).
+                                                              Concat([ "name", "description", "tariffType", "tariffURL", "minPrice", "maxPrice", "energyMix" ]).
                                                               Distinct().
                                                               Where(property => property is not "created" and not "lastChange" &&
                                                                                 !POI3Mapper.SameValue(unchanged, desired, property)));

@@ -49,7 +49,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
     /// <remarks>
     /// At the start, every charging pool and charging tariff of the selected operators is stored as an OCPI location
     /// and tariff. Every new commit maps the head again: what changed is stored, what is gone is removed. Every change of the
-    /// status or admin status of an EVSE updates its OCPI EVSE. The parties of the operators must be parties of the CommonAPI.
+    /// status or admin status of an EVSE updates its OCPI EVSE. The parties of the operators must be parties of the CommonAPI,
+    /// and what it holds for them is the publisher's: at the start, what is no longer in the head is removed, e.g. what was
+    /// removed while the publisher was not running.
     /// The work is done one after the other, in the order it came.
     /// </remarks>
     public sealed class POI3ToOCPIPublisher : IAsyncDisposable
@@ -133,6 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             var published = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
             work.Writer.TryWrite(async () => {
+                AdoptStored();
                 await PublishHeadAsync();
                 published.TrySetResult();
             });
@@ -197,6 +200,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     RaiseError($"Publishing failed: {e.Message}", []);
                 }
             }
+        }
+
+        #endregion
+
+        #region (private) AdoptStored()
+
+        /// <summary>
+        /// Take what the CommonAPI holds for the parties of the selected operators as published before, so that the first
+        /// publication removes what is no longer in the head. Without selected operators, those of the head: the locations
+        /// and tariffs of an operator removed from the roaming network while the publisher was not running stay.
+        /// </summary>
+        private void AdoptStored()
+        {
+
+            var parties = (OperatorIds ?? History.Head.RoamingNetwork.ChargingStationOperators.Select(chargingStationOperator => chargingStationOperator.Id)).
+                              Select(operatorId => operatorId.ToOCPIParty()).
+                              ToHashSet();
+
+            foreach (var party in parties)
+            {
+
+                foreach (var location in CommonAPI.GetLocations(party))
+                    locations.Add((party, location.Id));
+
+                foreach (var tariff in CommonAPI.GetTariffs(party))
+                    tariffs.Add((party, tariff.Id));
+
+            }
+
         }
 
         #endregion
