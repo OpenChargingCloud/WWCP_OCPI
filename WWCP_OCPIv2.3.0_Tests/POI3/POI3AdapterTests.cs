@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
         #region (private static) ATariff() / AnEVSE(MaxPower) / APool(MaxPower, EnergyMix) / ANetwork(WithPools)
 
-        private static POI.ChargingTariff ATariff()
+        private static POI.ChargingTariff ATariff(I18NString? Description = null)
 
             => new (T1,
                     Currency.EUR,
@@ -132,9 +132,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                                                          DaysOfWeek:  [ DayOfWeek.Sunday ]))
                     ],
                     I18NString.Create(Languages.en, "Standard"),
+                    Description,
                     Created: Created);
 
-        private static POI.EVSE AnEVSE(Int32 MaxPower = 22000)
+        private static POI.EVSE AnEVSE(Int32    MaxPower     = 22000,
+                                       Boolean  OwnTariffs   = true)
 
             => new (E1,
                     CurrentTypes:        POI.CurrentTypes.AC_ThreePhases,
@@ -142,14 +144,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     MaxCurrent:          Ampere.FromA(32),
                     MaxPower:            Watt.  FromW(MaxPower),
                     ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"), POI.ChargingConnectorType.IEC_62196_T2) ],
-                    ChargingTariffIds:   [ T1 ],
+                    ChargingTariffIds:   OwnTariffs ? [ T1 ] : null,
                     Created:             Created);
 
-        private static POI.ChargingPool APool(Int32           MaxPower    = 22000,
-                                              POI.EnergyMix?  EnergyMix   = null)
+        private static POI.ChargingPool APool(Int32           MaxPower      = 22000,
+                                              POI.EnergyMix?  EnergyMix     = null,
+                                              I18NString?     Description   = null,
+                                              String          Name          = "Biberweg",
+                                              Boolean         OwnTariffs    = true)
 
             => new (P1,
-                    I18NString.Create(Languages.en, "Biberweg"),
+                    I18NString.Create(Languages.en, Name),
+                    Description:          Description,
                     Address:              new Address("Biberweg", "07749", I18NString.Create(Languages.de, "Jena"), Country.Germany, HouseNumber: "18"),
                     GeoLocation:          GeoCoordinate.Parse(50.92, 11.58),
                     ParkingType:          POI.ParkingType.PARKING_LOT,
@@ -159,19 +165,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     AuthenticationModes:  [ POI.AuthenticationMode.RFID(), POI.AuthenticationMode.REMOTE ],
                     ChargingStations:     [ new POI.ChargingStation(S1,
                                                                     Features:  [ POI.ChargingStationFeature.Reservable ],
-                                                                    EVSEs:     [ AnEVSE(MaxPower) ],
+                                                                    EVSEs:     [ AnEVSE(MaxPower, OwnTariffs) ],
                                                                     Created:   Created) ],
                     Created:              Created);
 
-        private static POI.RoamingNetwork ANetwork(Boolean WithPools = true)
+        private static POI.RoamingNetwork ANetwork(Boolean WithPools      = true,
+                                                   Boolean WithPOI3Only   = false)
 
             => new POI.RoamingNetwork(POI.RoamingNetwork_Id.Parse("rn1"),
                                       Created:                   Created,
                                       ChargingStationOperators:  [ new POI.ChargingStationOperator(GEF,
                                                                                                    Name:            I18NString.Create(Languages.en, "GraphDefined"),
                                                                                                    Homepage:        URL.Parse("https://graphdefined.com"),
-                                                                                                   ChargingTariffs: WithPools ? [ ATariff() ] : null,
-                                                                                                   ChargingPools:   WithPools ? [ APool()   ] : null,
+                                                                                                   ChargingTariffs: WithPools ? [ ATariff(WithPOI3Only ? I18NString.Create(Languages.de, "Der Standardtarif") : null) ] : null,
+                                                                                                   ChargingPools:   WithPools ? [ APool(Description: WithPOI3Only ? I18NString.Create(Languages.de, "Hinter dem Haus") : null,
+                                                                                                                                       OwnTariffs:  !WithPOI3Only) ] : null,
+                                                                                                   EVSEGroups:      WithPools && WithPOI3Only ? [ new POI.EVSEGroup(POI.EVSEGroup_Id.Parse(GEF, "1"), EVSEIds: [ E1 ], ChargingTariffId: T1, Created: Created) ] : null,
                                                                                                    Created:         Created) ]).WithKeys();
 
         #endregion
@@ -466,6 +475,249 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
         }
 
         #endregion
+
+        #region WhatDoesNotMapIsToldAsWarnings()
+
+        [Test]
+        public void WhatDoesNotMapIsToldAsWarnings()
+        {
+
+            var network          = ANetwork();
+            var op               = network.GetChargingStationOperatorById(GEF)!;
+            var pool             = op.ChargingPools.Single();
+
+            // A tariff with a dimension OCPI 2.3.0 does not have is not published.
+            var tariffWarnings   = new List<Warning>();
+            var minCurrent       = new POI.ChargingTariff(T1,
+                                                          Currency.EUR,
+                                                          [ new POI.ChargingTariffElement([ new POI.ChargingPriceComponent(POI.ChargingDimensionTypes.MIN_CURRENT, 1, StepSize: 1) ]) ],
+                                                          Created: Created).ToOCPI(tariffWarnings);
+
+            // A connector with a plug type OCPI does not know is left out.
+            var plugWarnings     = new List<Warning>();
+            var evse             = new POI.EVSE(E1,
+                                                CurrentTypes:        POI.CurrentTypes.AC_ThreePhases,
+                                                ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"), POI.ChargingConnectorType.IEC_62196_T2),
+                                                                       new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("2"), POI.ChargingConnectorType.Parse("NO_SUCH_PLUG")) ],
+                                                Created:             Created);
+            var ocpiEVSE         = evse.ToOCPI(pool.ChargingStations.Single(), pool, op, plugWarnings);
+
+            // A location identification that is no charging pool suffix is refused.
+            var idWarnings       = new List<Warning>();
+            var location         = pool.ToOCPI(network, [])!;
+            var badLocation      = new Location(location.CountryCode, location.PartyId, Location_Id.Parse("A-1"), true, location.Address, location.City,
+                                                location.Country, location.Coordinates, location.TimeZone, Created: Created, LastUpdated: T0);
+
+            Assert.Multiple(() => {
+
+                Assert.That(minCurrent,                                            Is.Null);
+                Assert.That(tariffWarnings.Single().Text.FirstText(),              Does.Contain("MIN_CURRENT"));
+
+                Assert.That(ocpiEVSE?.Connectors.Select(connector => connector.Id.ToString()), Is.EqualTo(new[] { "1" }));
+                Assert.That(plugWarnings.Single().Text.FirstText(),                Does.Contain("NO_SUCH_PLUG"));
+
+                Assert.That(badLocation.ToPOI3(GEF, null, Languages.en, idWarnings), Is.Null);
+                Assert.That(idWarnings.Single().Text.FirstText(),                  Does.Contain("A-1"));
+
+                Assert.That(POI3Mapper.ToPOI3Operator(CountryCode.Parse("DE"), Party_Id.Parse("GE")), Is.Null);
+
+            });
+
+        }
+
+        #endregion
+
+
+        #region ThePublisherRemovesWhatIsGone()
+
+        [Test]
+        public async Task ThePublisherRemovesWhatIsGone()
+        {
+
+            var history    = POI.RoamingNetworkHistory.Start(ANetwork());
+            var errors     = new List<String>();
+
+            await using var publisher = new POI3ToOCPIPublisher(history, api);
+            publisher.OnError += (sender, description, warnings) => { lock (errors) errors.Add(description); };
+
+            await publisher.StartAsync();
+
+            var locationId = Location_Id.Parse("1");
+            var tariffId   = Tariff_Id.  Parse("1");
+
+            // A removed EVSE...
+            var head = history.Head.RoamingNetwork;
+            Assert.That(history.Commit(head.CreateSignedChangeSet([ POI.RoamingNetworkChange.Remove(E1) ], CreatedAt: T0)).IsCommitted);
+
+            Assert.That(await Eventually(() => api.TryGetLocation(Party, locationId, out var location) && !location.EVSEs.Any()),
+                        Is.True, "The removed EVSE is still an EVSE of the location.");
+
+            // ...and a removed charging tariff, no longer named by the EVSE.
+            head = history.Head.RoamingNetwork;
+            Assert.That(history.Commit(head.CreateSignedChangeSet([ POI.RoamingNetworkChange.Remove(T1) ], CreatedAt: T0.AddMinutes(1))).IsCommitted);
+
+            Assert.That(await Eventually(() => !api.TryGetTariff(Party, tariffId, out _)),
+                        Is.True, "The removed charging tariff is still a tariff.");
+
+            Assert.That(api.TryGetLocation(Party, locationId, out _), Is.True);
+
+            lock (errors)
+                Assert.That(errors, Is.Empty);
+
+        }
+
+        #endregion
+
+        #region TheImporterRemovesWhatOCPIRemoves()
+
+        [Test]
+        public async Task TheImporterRemovesWhatOCPIRemoves()
+        {
+
+            var history    = POI.RoamingNetworkHistory.Start(ANetwork(WithPools: false));
+            var errors     = new List<String>();
+
+            await using var importer = new OCPIToPOI3Importer(api, history, changeSet => changeSet.SignedByAll(history.Head.RoamingNetwork));
+            importer.OnError += (sender, description, warnings) => {
+                lock (errors)
+                    errors.Add(description + " " + String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+            };
+
+            importer.Start();
+
+            var source     = ANetwork();
+            var tariff     = source.GetChargingStationOperatorById(GEF)!.ChargingTariffs.Single().ToOCPI([])!;
+            var location   = source.GetChargingStationOperatorById(GEF)!.ChargingPools.  Single().ToOCPI(source, [])!;
+
+            Assert.That((await api.AddOrUpdateTariff  (tariff)).  IsSuccess);
+            Assert.That((await api.AddOrUpdateLocation(location)).IsSuccess);
+
+            POI.ChargingStationOperator Operator()
+                => history.Head.RoamingNetwork.GetChargingStationOperatorById(GEF)!;
+
+            Assert.That(await Eventually(() => Operator().EVSEs.Any()), Is.True, String.Join("\n", errors));
+
+            // An EVSE stored as removed...
+            Assert.That(api.TryGetLocation(Party, location.Id, out var stored), Is.True);
+
+            var removed    = new EVSE(stored!.EVSEs.Single().UId,
+                                      StatusType.REMOVED,
+                                      stored.EVSEs.Single().Connectors,
+                                      stored.EVSEs.Single().EVSEId,
+                                      LastUpdated: T0);
+
+            Assert.That((await api.AddOrUpdateEVSE(stored, removed)).IsSuccess);
+
+            Assert.That(await Eventually(() => !Operator().EVSEs.Any()), Is.True, "The removed EVSE was not removed. " + String.Join("\n", errors));
+
+            // ...a removed location...
+            Assert.That((await api.RemoveLocation(Party, location.Id)).IsSuccess);
+
+            Assert.That(await Eventually(() => !Operator().ChargingPools.Any()), Is.True, "The removed location was not removed. " + String.Join("\n", errors));
+
+            // ...and a removed tariff.
+            Assert.That((await api.RemoveTariff(Party, tariff.Id)).IsSuccess);
+
+            Assert.That(await Eventually(() => !Operator().ChargingTariffs.Any()), Is.True, "The removed tariff was not removed. " + String.Join("\n", errors));
+
+            lock (errors)
+                Assert.That(errors, Is.Empty);
+
+        }
+
+        #endregion
+
+        #region ARoundTripCommitsNothing()
+
+        [Test]
+        public async Task ARoundTripCommitsNothing()
+        {
+
+            // What a POI3 network publishes, imported back into it: nothing changed, nothing is committed,
+            // although OCPI joins the house number with the street, has no language of the city, one text for
+            // both the name and the description of a tariff, and tariffs of connectors only, not of EVSE groups.
+            var network    = ANetwork(WithPOI3Only: true);
+            var history    = POI.RoamingNetworkHistory.Start(network);
+            var revision   = history.Head.Commit.Revision;
+            var errors     = new List<String>();
+
+            await using var importer = new OCPIToPOI3Importer(api, history, changeSet => changeSet.SignedByAll(history.Head.RoamingNetwork));
+            importer.OnError += (sender, description, warnings) => {
+                lock (errors)
+                    errors.Add(description + " " + String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+            };
+
+            importer.Start();
+
+            var warnings   = new List<Warning>();
+            var tariff     = network.GetChargingStationOperatorById(GEF)!.ChargingTariffs.Single().ToOCPI(warnings)!;
+            var location   = network.GetChargingStationOperatorById(GEF)!.ChargingPools.  Single().ToOCPI(network, warnings)!;
+
+            await importer.ImportAsync(tariff);
+            await importer.ImportAsync(location);
+
+            Assert.Multiple(() => {
+                Assert.That(location.EVSEs.Single().Connectors.Single().TariffIds, Is.EqualTo(new[] { tariff.Id }));
+                Assert.That(warnings,                                              Is.Empty);
+                Assert.That(errors,                                                Is.Empty);
+                Assert.That(history.Head.Commit.Revision,                          Is.EqualTo(revision),
+                            String.Join(", ", history.Head.Commit.ChangeSet?.Changes.Select(change => $"{change.Kind} {change.EntityId} {change.PropertyName}") ?? []));
+            });
+
+        }
+
+        #endregion
+
+        #region AnImportKeepsWhatOnlyPOI3Knows()
+
+        [Test]
+        public async Task AnImportKeepsWhatOnlyPOI3Knows()
+        {
+
+            var network    = ANetwork(WithPOI3Only: true);
+            var history    = POI.RoamingNetworkHistory.Start(network);
+            var revision   = history.Head.Commit.Revision;
+            var errors     = new List<String>();
+
+            await using var importer = new OCPIToPOI3Importer(api, history, changeSet => changeSet.SignedByAll(history.Head.RoamingNetwork));
+            importer.OnError += (sender, description, warnings) => {
+                lock (errors)
+                    errors.Add(description + " " + String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+            };
+
+            importer.Start();
+
+            // A location renamed, and with less power.
+            var changed    = APool(MaxPower: 11000, Name: "Biberweg Nord").ToOCPI(network, [], T0)!;
+
+            await importer.ImportAsync(changed);
+
+            var op         = history.Head.RoamingNetwork.GetChargingStationOperatorById(GEF)!;
+            var pool       = op.ChargingPools.Single();
+
+            Assert.Multiple(() => {
+
+                Assert.That(errors,                                                Is.Empty);
+                Assert.That(history.Head.Commit.Revision,                          Is.EqualTo(revision + 1));
+                Assert.That(history.Head.Commit.ChangeSet?.Changes.Select(change => change.PropertyName),
+                            Is.EquivalentTo(new[] { "name", "maxPower" }));
+
+                Assert.That(pool.Name?.FirstText(),                                Is.EqualTo("Biberweg Nord"));
+                Assert.That(op.EVSEs.Single().MaxPower?.Value,                     Is.EqualTo(11000));
+
+                Assert.That(pool.Description?.FirstText(),                         Is.EqualTo("Hinter dem Haus"));
+                Assert.That(pool.Address?.Street,                                  Is.EqualTo("Biberweg"));
+                Assert.That(pool.Address?.HouseNumber,                             Is.EqualTo("18"));
+                Assert.That(pool.Address?.City.FirstText(),                        Is.EqualTo("Jena"));
+                Assert.That(pool.AuthenticationModes.Length,                       Is.EqualTo(2));
+                Assert.That(op.ChargingStations.Single().Features,                 Is.EqualTo(new[] { POI.ChargingStationFeature.Reservable }));
+
+            });
+
+        }
+
+        #endregion
+
 
     }
 

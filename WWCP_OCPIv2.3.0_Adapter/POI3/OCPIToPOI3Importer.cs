@@ -230,14 +230,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         }
 
-        // The status and 'last updated' of the EVSE itself: AddOrUpdateEVSE gives the old status as the new one,
-        // and the time of the call rather than of the status.
         private Task EVSEStatusChanged(DateTimeOffset  Timestamp,
                                        EVSE            EVSE,
                                        StatusType      NewStatus,
                                        StatusType?     OldStatus)
         {
-            work.Writer.TryWrite(() => { ImportStatus(EVSE, EVSE.Status, EVSE.LastUpdated); return Task.CompletedTask; });
+            // A removed EVSE is gone with the location as it is stored now.
+            if (NewStatus != StatusType.REMOVED)
+                work.Writer.TryWrite(() => { ImportStatus(EVSE, NewStatus, Timestamp); return Task.CompletedTask; });
             return Task.CompletedTask;
         }
 
@@ -314,13 +314,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             ChangeOperator(operatorId.Value,
                            $"OCPI location {Location.Id}",
                            Location.LastUpdated,
-                           (operatorJSON, warnings) => {
+                           (head, operatorJSON, warnings) => {
 
-                               var pools     = POI3Mapper.ArrayOf(operatorJSON, "chargingPools");
+                               var pools      = POI3Mapper.ArrayOf(operatorJSON, "chargingPools");
 
-                               var poolId    = POI3Mapper.ToPOI3PoolId(operatorId.Value, Location.Id)?.ToString();
-                               var existing  = pools.OfType<JObject>().FirstOrDefault(pool => pool["@id"]?.Value<String>() == poolId);
-                               var desired   = Location.ToPOI3(operatorId.Value, existing, Language, warnings);
+                               var poolId     = POI3Mapper.ToPOI3PoolId(operatorId.Value, Location.Id);
+                               var existing   = pools.OfType<JObject>().FirstOrDefault(pool => pool["@id"]?.Value<String>() == poolId?.ToString());
+
+                               // The existing charging pool as OCPI tells it: what the location tells alike is kept.
+                               var unchanged  = poolId.HasValue &&
+                                                head.TryGetChargingStationOperatorById(operatorId.Value, out var chargingStationOperator) &&
+                                                chargingStationOperator.TryGetChargingPool(poolId.Value, out var chargingPool)
+                                                    ? chargingPool.ToOCPI(head, [])
+                                                    : null;
+
+                               var desired    = Location.ToPOI3(operatorId.Value, existing, Language, warnings, unchanged);
 
                                if (desired is null)
                                    return false;
@@ -335,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                            });
 
             // The status of every EVSE, e.g. of new ones, which start as available.
-            foreach (var evse in Location.EVSEs)
+            foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
                 ImportStatus(evse, evse.Status, evse.LastUpdated);
 
         }
@@ -355,7 +363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             ChangeOperator(operatorId.Value,
                            $"OCPI location {Location.Id} removed",
                            Timestamp.Now,
-                           (operatorJSON, warnings) => {
+                           (head, operatorJSON, warnings) => {
 
                                var poolId    = POI3Mapper.ToPOI3PoolId(operatorId.Value, Location.Id)?.ToString();
                                var existing  = (operatorJSON["chargingPools"] as JArray ?? []).OfType<JObject>().FirstOrDefault(pool => pool["@id"]?.Value<String>() == poolId);
@@ -385,26 +393,42 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             ChangeOperator(operatorId.Value,
                            $"OCPI tariff {Tariff.Id}",
                            Tariff.LastUpdated,
-                           (operatorJSON, warnings) => {
+                           (head, operatorJSON, warnings) => {
 
                                var chargingTariff = Tariff.ToPOI3(operatorId.Value, Language, warnings);
 
                                if (chargingTariff is null)
                                    return false;
 
-                               var tariffs   = POI3Mapper.ArrayOf(operatorJSON, "chargingTariffs");
+                               var tariffs    = POI3Mapper.ArrayOf(operatorJSON, "chargingTariffs");
 
-                               var existing  = tariffs.OfType<JObject>().FirstOrDefault(tariff => tariff["@id"]?.Value<String>() == chargingTariff.Id.ToString());
-                               var desired   = chargingTariff.ToJSON();
+                               var existing   = tariffs.OfType<JObject>().FirstOrDefault(tariff => tariff["@id"]?.Value<String>() == chargingTariff.Id.ToString());
+                               var desired    = chargingTariff.ToJSON();
 
                                if (existing is not null)
                                {
+
+                                   // The existing charging tariff as OCPI tells it: what the tariff tells alike is kept,
+                                   // e.g. a name and a description OCPI tells as one text.
+                                   var unchanged  = head.TryGetChargingStationOperatorById(operatorId.Value, out var chargingStationOperator) &&
+                                                    chargingStationOperator.TryGetChargingTariff(chargingTariff.Id, out var existingTariff)
+                                                        ? existingTariff.ToOCPI([])?.ToPOI3(operatorId.Value, Language, [])?.ToJSON()
+                                                        : null;
+
                                    // What only POI3 knows is kept.
-                                   var merged = (JObject) existing.DeepClone();
-                                   foreach (var property in desired.Properties().Where(property => property.Name is not "created" and not "lastChange"))
-                                       merged[property.Name] = property.Value.DeepClone();
-                                   POI3Mapper.Overlay(merged, desired, [ "name", "description", "tariffURL", "energyMix" ]);
+                                   var merged     = (JObject) existing.DeepClone();
+
+                                   POI3Mapper.Overlay(merged,
+                                                      desired,
+                                                      desired.Properties().
+                                                              Select(property => property.Name).
+                                                              Concat([ "name", "description", "tariffURL", "energyMix" ]).
+                                                              Distinct().
+                                                              Where(property => property is not "created" and not "lastChange" &&
+                                                                                !POI3Mapper.SameValue(unchanged, desired, property)));
+
                                    existing.Replace(merged);
+
                                }
                                else
                                    tariffs.Add(desired);
@@ -430,7 +454,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             ChangeOperator(operatorId.Value,
                            $"OCPI tariff {Tariff.Id} removed",
                            Timestamp.Now,
-                           (operatorJSON, warnings) => {
+                           (head, operatorJSON, warnings) => {
 
                                var tariffId  = POI3Mapper.ToPOI3TariffId(operatorId.Value, Tariff.Id)?.ToString();
                                var existing  = (operatorJSON["chargingTariffs"] as JArray ?? []).OfType<JObject>().FirstOrDefault(tariff => tariff["@id"]?.Value<String>() == tariffId);
@@ -484,10 +508,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// <summary>
         /// Change the JSON of the given operator in the head, and commit the difference, signed.
         /// </summary>
-        private void ChangeOperator(POI.ChargingStationOperator_Id                  OperatorId,
-                                    String                                          Description,
-                                    DateTimeOffset                                  CreatedAt,
-                                    Func<JObject, ICollection<Warning>, Boolean>    Change)
+        private void ChangeOperator(POI.ChargingStationOperator_Id                                      OperatorId,
+                                    String                                                              Description,
+                                    DateTimeOffset                                                      CreatedAt,
+                                    Func<POI.RoamingNetwork, JObject, ICollection<Warning>, Boolean>    Change)
         {
 
             var head          = History.Head.RoamingNetwork;
@@ -504,7 +528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             var warnings = new List<Warning>();
 
-            if (!Change(operatorJSON, warnings))
+            if (!Change(head, operatorJSON, warnings))
             {
                 if (warnings.Count > 0)
                     RaiseError($"{Description} can not be imported!", warnings);

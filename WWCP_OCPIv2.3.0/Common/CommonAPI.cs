@@ -11176,28 +11176,58 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
                             {
 
-                                if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingLocation.GetEVSE(evseUId)! != Location.GetEVSE(evseUId)!)
+                                if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                                 {
 
-                                    if (existingLocation.TryGetEVSE(evseUId, out var evse))
-                                        await LogEvent(
-                                                  OnEVSEChanged,
-                                                  loggingDelegate => loggingDelegate.Invoke(
-                                                      evse
-                                                  )
-                                              );
+                                    if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
+                                        Location.        TryGetEVSE(evseUId, out var newEVSE))
+                                    {
+
+                                        if (oldEVSE != newEVSE)
+                                            await LogEvent(
+                                                      OnEVSEChanged,
+                                                      loggingDelegate => loggingDelegate.Invoke(
+                                                          newEVSE
+                                                      )
+                                                  );
+
+                                        if (oldEVSE.Status != newEVSE.Status)
+                                            await LogEvent(
+                                                      OnEVSEStatusChanged,
+                                                      loggingDelegate => loggingDelegate.Invoke(
+                                                          newEVSE.LastUpdated,
+                                                          newEVSE,
+                                                          newEVSE.Status,
+                                                          oldEVSE.Status
+                                                      )
+                                                  );
+
+                                    }
 
                                 }
                                 else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                                 {
 
-                                    if (existingLocation.TryGetEVSE(evseUId, out var evse))
+                                    if (Location.TryGetEVSE(evseUId, out var evse))
+                                    {
+
                                         await LogEvent(
                                                   OnEVSEAdded,
                                                   loggingDelegate => loggingDelegate.Invoke(
                                                       evse
                                                   )
                                               );
+
+                                        await LogEvent(
+                                                  OnEVSEStatusChanged,
+                                                  loggingDelegate => loggingDelegate.Invoke(
+                                                      evse.LastUpdated,
+                                                      evse,
+                                                      evse.Status
+                                                  )
+                                              );
+
+                                    }
 
                                 }
                                 else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
@@ -11451,7 +11481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         await LogEvent(
                                                   OnEVSEStatusChanged,
                                                   loggingDelegate => loggingDelegate.Invoke(
-                                                      Timestamp.Now,
+                                                      newEVSE.LastUpdated,
                                                       newEVSE,
                                                       newEVSE.Status,
                                                       oldEVSE.Status
@@ -11477,7 +11507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                     await LogEvent(
                                               OnEVSEStatusChanged,
                                               loggingDelegate => loggingDelegate.Invoke(
-                                                  Timestamp.Now,
+                                                  evse.LastUpdated,
                                                   evse,
                                                   evse.Status
                                               )
@@ -11496,20 +11526,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                   evse
                                               )
                                           );
-
-                                if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
-                                    Location.        TryGetEVSE(evseUId, out var newEVSE))
-                                {
-                                    await LogEvent(
-                                              OnEVSEStatusChanged,
-                                              loggingDelegate => loggingDelegate.Invoke(
-                                                  Timestamp.Now,
-                                                  oldEVSE,
-                                                  newEVSE.Status,
-                                                  oldEVSE.Status
-                                              )
-                                          );
-                                }
 
                             }
 
@@ -12214,25 +12230,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             }
 
 
-            Location.SetEVSE(EVSE);
+            // A removed EVSE is removed before the location is stored, not from the location stored before.
+            if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                Location.SetEVSE   (EVSE);
+            else
+                Location.RemoveEVSE(EVSE);
 
-            // Update location timestamp!
+            // Update location timestamp: the latest of the location and its EVSEs.
+            // The EVSE was checked against downgrades above, the location never goes back.
             var builder = Location.ToBuilder();
-            builder.LastUpdated = EVSE.LastUpdated;
-            await AddOrUpdateLocation(
-                      builder,
-                      (AllowDowngrades ?? this.AllowDowngrades) == false,
-                      true,
-                      EventTrackingId,
-                      CurrentUserId,
-                      CancellationToken
-                  );
+            if (EVSE.LastUpdated > builder.LastUpdated)
+                builder.LastUpdated = EVSE.LastUpdated;
+            var addOrUpdateLocationResult = await AddOrUpdateLocation(
+                                                      builder,
+                                                      true,
+                                                      true,
+                                                      EventTrackingId,
+                                                      CurrentUserId,
+                                                      CancellationToken
+                                                  );
 
-            if (EVSE.ParentLocation is not null)
+            if (addOrUpdateLocationResult.IsSuccessAndDataNotNull(out var storedLocation))
                 await LogEvent(
                           OnLocationChanged,
                           loggingDelegate => loggingDelegate.Invoke(
-                              EVSE.ParentLocation
+                              storedLocation
                           )
                       );
 
@@ -12240,7 +12262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             if (existingEVSE is not null)
             {
 
-                if (existingEVSE.Status != StatusType.REMOVED)
+                if (EVSE.Status != StatusType.REMOVED)
                 {
 
                     await LogEvent(
@@ -12256,10 +12278,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         await LogEvent(
                                   OnEVSEStatusChanged,
                                   loggingDelegate => loggingDelegate.Invoke(
-                                      Timestamp.Now,
+                                      EVSE.LastUpdated,
                                       EVSE,
-                                      existingEVSE.Status,
-                                      EVSE.Status
+                                      EVSE.Status,
+                                      existingEVSE.Status
                                   )
                               );
 
@@ -12268,9 +12290,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 }
                 else
                 {
-
-                    if (!KeepRemovedEVSEs(EVSE))
-                        Location.RemoveEVSE(EVSE);
 
                     await LogEvent(
                               OnEVSERemoved,
@@ -12332,12 +12351,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 else
                     Location.RemoveEVSE(data);
 
-                // Update location timestamp!
+                // Update location timestamp: the latest of the location and its EVSEs.
+                // The patch was checked against downgrades above, the location never goes back.
                 var builder = Location.ToBuilder();
-                builder.LastUpdated = data.LastUpdated;
+                if (data.LastUpdated > builder.LastUpdated)
+                    builder.LastUpdated = data.LastUpdated;
                 await AddOrUpdateLocation(
                           builder,
-                          (AllowDowngrades ?? this.AllowDowngrades) == false,
+                          true,
                           SkipNotifications: true,
                           EventTrackingId,
                           CurrentUserId,
@@ -12345,26 +12366,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                       );
 
 
-                if (EVSE.Status != StatusType.REMOVED)
+                if (data.Status != StatusType.REMOVED)
                 {
 
-                    if (justAStatusChange)
-                    {
-
-                        await LogEvent(
-                                  OnEVSEStatusChanged,
-                                  loggingDelegate => loggingDelegate.Invoke(
-                                      data.LastUpdated,
-                                      EVSE,
-                                      EVSE.Status,
-                                      data.Status
-                                  )
-                              );
-
-                    }
-                    else
-                    {
-
+                    if (!justAStatusChange)
                         await LogEvent(
                                   OnEVSEChanged,
                                   loggingDelegate => loggingDelegate.Invoke(
@@ -12372,7 +12377,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                   )
                               );
 
-                    }
+                    if (data.Status != EVSE.Status)
+                        await LogEvent(
+                                  OnEVSEStatusChanged,
+                                  loggingDelegate => loggingDelegate.Invoke(
+                                      data.LastUpdated,
+                                      data,
+                                      data.Status,
+                                      EVSE.Status
+                                  )
+                              );
 
                 }
                 else

@@ -506,19 +506,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         /// <summary>
         /// The charging pool of the given OCPI location, as JSON: the existing one, if any, with what OCPI says about it.
-        /// What only POI3 knows is kept; EVSEs stay in their charging stations, new ones go into the first charging station
-        /// of the pool, or into a new one named after the location.
+        /// What only POI3 knows is kept, and so is what OCPI tells as it would tell the existing charging pool, e.g. a house
+        /// number apart from its street. EVSEs stay in their charging stations, new ones go into the first charging station
+        /// of the pool, or into a new one named after the location. EVSEs whose status is REMOVED are gone.
         /// </summary>
         /// <param name="Location">An OCPI location.</param>
         /// <param name="OperatorId">The operator of the location.</param>
         /// <param name="Existing">The JSON of the existing charging pool, if any.</param>
         /// <param name="Language">The language of texts OCPI gives without one.</param>
         /// <param name="Warnings">Where to tell what could not be mapped.</param>
+        /// <param name="Unchanged">The existing charging pool as OCPI tells it, if any: what the location tells alike is kept as it is.</param>
         public static JObject? ToPOI3(this Location                    Location,
                                       POI.ChargingStationOperator_Id   OperatorId,
                                       JObject?                         Existing,
                                       Languages                        Language,
-                                      ICollection<Warning>             Warnings)
+                                      ICollection<Warning>             Warnings,
+                                      Location?                        Unchanged   = null)
         {
 
             var poolId = ToPOI3PoolId(OperatorId, Location.Id);
@@ -531,9 +534,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             #region The charging pool as OCPI tells it
 
-            var mappedEVSEs = new List<POI.EVSE>();
+            var evses        = Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED).ToArray();
+            var mappedEVSEs  = new List<POI.EVSE>();
 
-            foreach (var evse in Location.EVSEs)
+            foreach (var evse in evses)
             {
                 var mappedEVSE = evse.ToPOI3(OperatorId, Location.LastUpdated, Warnings);
                 if (mappedEVSE is not null)
@@ -548,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 Region:      Location.State
                             );
 
-            var capabilities = Location.EVSEs.SelectMany(evse => evse.Capabilities).ToHashSet();
+            var capabilities = evses.SelectMany(evse => evse.Capabilities).ToHashSet();
 
             var mapped    = new POI.ChargingPool(
                                 Id:                   poolId.Value,
@@ -568,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 AuthenticationModes:  AuthenticationModesOf(capabilities),
                                 ArrivalInstructions:  ToI18NString(Location.Directions),
                                 ChargingWhenClosed:   Location.ChargingWhenClosed,
-                                ParkingRestrictions:  Location.EVSEs.SelectMany(evse => evse.ParkingRestrictions).
+                                ParkingRestrictions:  evses.SelectMany(evse => evse.ParkingRestrictions).
                                                                      Select    (restriction => restriction.ToString() == "TAXIS" ? "TAXI" : restriction.ToString()).
                                                                      Select    (text => POI.ParkingRestrictionGroup.TryParse(text, out var group) ? group : (POI.ParkingRestrictionGroup?) null).
                                                                      Where     (group => group.HasValue).
@@ -618,9 +622,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             #region Existing: what OCPI tells, onto it
 
-            var desired = (JObject) Existing.DeepClone();
+            var desired          = (JObject) Existing.DeepClone();
 
-            Overlay(desired, mapped, PoolProperties);
+            var unchanged        = Unchanged?.ToPOI3(OperatorId, null, Language, []);
+            var unchangedEVSEs   = (unchanged?["chargingStations"] as JArray ?? []).
+                                       OfType<JObject>().
+                                       SelectMany(station => (station["EVSEs"] as JArray ?? []).OfType<JObject>()).
+                                       ToDictionary(evse => evse["@id"]?.Value<String>() ?? "");
+
+            Overlay(desired, mapped, PoolProperties.Where(property => !SameValue(unchanged, mapped, property)));
 
             var stations     = ArrayOf(desired, "chargingStations");
 
@@ -639,7 +649,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                     if (wanted.TryGetValue(evseId, out var mappedEVSE))
                     {
-                        Overlay(evseJSON, mappedEVSE, EVSEProperties);
+                        var unchangedEVSE = unchangedEVSEs.GetValueOrDefault(evseId);
+                        Overlay(evseJSON, mappedEVSE, EVSEProperties.Where(property => !SameValue(unchangedEVSE, mappedEVSE, property)));
                         placed.Add(evseId);
                     }
 
@@ -874,6 +885,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             return array;
 
         }
+
+        /// <summary>
+        /// Whether the given property is the same in both, also when neither has it; never without the first.
+        /// </summary>
+        internal static Boolean SameValue(JObject?  JSON1,
+                                          JObject   JSON2,
+                                          String    Property)
+
+            => JSON1 is not null &&
+               JToken.DeepEquals(JSON1[Property], JSON2[Property]);
 
         /// <summary>
         /// Set the given properties of the target to those of the source; one the source does not have is removed.

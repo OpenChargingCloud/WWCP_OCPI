@@ -35,7 +35,8 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   computed as a three-way merge whose left side is its base (`RoamingNetwork.TryMerge(head, head, desired)`), so only what
   changed is in the change set; nothing changed, nothing is committed. It is signed by the given delegate, since an
   operator owns its data and every change set must be signed by its owners, and committed. A removed location or tariff
-  removes its charging pool or charging tariff. EVSE status goes into the runtime status of the history (`DataSource` "OCPI").
+  removes its charging pool or charging tariff, and an EVSE whose status is `REMOVED` its EVSE (the CommonAPI keeps such
+  EVSEs by default). EVSE status goes into the runtime status of the history (`DataSource` "OCPI").
   The operators must be in the roaming network already: adding them is up to the roaming network operator.
 - Both work one job after the other, in the order the events came. **Do not use both on the same history and
   CommonAPI:** each would feed the other's changes back.
@@ -137,7 +138,14 @@ A location imported onto an existing charging pool sets only `name`, `address`, 
 `relatedLocations`; an existing EVSE only `physicalReference`, `currentTypes`, `maxVoltage`, `maxCurrent`, `maxPower`,
 `chargingConnectors`, `chargingTariffIds`, `images` and `geoLocation`. Everything else of POI3 stays as it is,
 e.g. descriptions, data licenses, brands, grid connection, energy meters, authentication modes, features, accessibility,
-EVSE charging modes and reservation duration. EVSEs no longer at OCPI are removed; new ones are added (see above).
+EVSE charging modes and reservation duration. EVSEs no longer at OCPI, or `REMOVED`, are removed; new ones are added
+(see above).
+
+Of these, what OCPI tells as it would tell the existing charging pool, EVSE or charging tariff is kept as it is: the
+existing one is mapped to OCPI and back, and only where that differs from what OCPI tells does OCPI's value win. So a
+street keeps its house number apart, a city its language, an EVSE no coordinates of its own when it has those of its
+station or pool, a tariff its name and description apart, and EVSEs the tariffs of their groups. What a POI3 network
+publishes, imported back into it, commits nothing.
 
 ## Gaps
 
@@ -152,7 +160,8 @@ What one side has and the other does not, or not alike:
   `lockable` has no OCPI counterpart. A plug type OCPI does not know leaves the connector out (with a warning).
 - **Location:** POI3 has no `publish`/`publish_allowed_to` (always published), no `owner`, no parking places (the OCPI 2.3
   `Parking` objects vs. POI3 parking garages and spaces), no energy meters of locations, no accessibility extension
-  (`services`, `assistance_service_details`, `standards`). The house number is joined with the street and not split again.
+  (`services`, `assistance_service_details`, `standards`). The house number is joined with the street, and only split
+  again where the address is as before (see above).
   Environmental impacts of energy mixes are not mapped (OCPI: g/kWh, POI3: in a percentage).
 - **Energy sources:** OCPI has fewer categories than POI3: stone coal, oil, nuclear fusion, geothermal and biogas come back
   as Coal, OtherFossil, NuclearFision and OtherGreen. POI3 has no water, which becomes OtherGreen; OCPI has no waste, which
@@ -169,11 +178,10 @@ What one side has and the other does not, or not alike:
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.
-- **Import of groups and operators:** tariffs of EVSE, station or pool groups become connector tariffs on export, but the
-  import attaches tariffs to EVSEs only; operators are never created by the import.
+- **Import of groups and operators:** tariffs of EVSE, station or pool groups become connector tariffs on export; the
+  import keeps them in their groups while the tariffs of a connector are as before, else attaches them to the EVSE.
+  Operators are never created by the import.
 - **Capabilities on import** are taken for new charging pools only; existing ones keep their authentication modes,
   payment options and features.
 - **Status timestamps:** the importer follows OCPI's status, also where the history holds a later one (e.g. the default
-  status of an EVSE just imported): the CommonAPI keeps an EVSE only with a later `last_updated`. Its
-  `OnEVSEStatusChanged` gives the old status as the new one and the time of the call, so the importer reads both from
-  the EVSE itself.
+  status of an EVSE just imported): the CommonAPI keeps an EVSE only with a later `last_updated`.
