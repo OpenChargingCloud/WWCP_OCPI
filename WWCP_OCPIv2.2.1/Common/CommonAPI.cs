@@ -10110,9 +10110,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
 
+            // The EVSEs were checked against downgrades above, the location never goes back.
             var updateLocationResult = await UpdateLocation(
                                                  newLocation,
-                                                 AllowDowngrades ?? this.AllowDowngrades,
+                                                 true,
                                                  SkipNotifications,
                                                  EventTrackingId,
                                                  CurrentUserId,

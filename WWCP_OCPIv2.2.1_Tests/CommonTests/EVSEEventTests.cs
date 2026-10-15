@@ -39,7 +39,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
     /// AddOrUpdateEVSE gave the old status as the new one and the time of the call. AddOrUpdateLocation
     /// gave the EVSE as it was before, never told of EVSEs added to a location stored before, and of no
     /// change of status at all. An EVSE stored as REMOVED was removed from a location no longer stored.
-    /// Removed EVSEs are not kept here, which the Common API does by default.
+    /// AddOrUpdateEVSEs refused EVSEs older than their location. Removed EVSEs are not kept here, which the
+    /// Common API does by default.
     /// </remarks>
     [TestFixture]
     public class EVSEEventTests
@@ -228,6 +229,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
             Assert.Multiple(() => {
                 Assert.That(Stored().GetEVSE(uid1)?.Status,                  Is.EqualTo(StatusType.CHARGING));
+                Assert.That(Stored().LastUpdated,                            Is.EqualTo(t0.AddMinutes(5)));
+            });
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateEVSEs_AcceptsEVSEsOlderThanTheLocation()
+
+        [Test]
+        public async Task AddOrUpdateEVSEs_AcceptsEVSEsOlderThanTheLocation()
+        {
+
+            Assert.That((await api.AddOrUpdateLocation(ALocation(t0.AddMinutes(5), AnEVSE(uid1, StatusType.AVAILABLE, t0),
+                                                                                   AnEVSE(uid2, StatusType.AVAILABLE, t0)))).IsSuccess);
+
+            var result = await api.AddOrUpdateEVSEs(Stored(), [ AnEVSE(uid1, StatusType.CHARGING, t0.AddMinutes(1)),
+                                                                AnEVSE(uid2, StatusType.BLOCKED,  t0.AddMinutes(2)) ]);
+
+            Assert.That(result.IsSuccess, result.ErrorResponse);
+
+            Assert.Multiple(() => {
+                Assert.That(Stored().GetEVSE(uid1)?.Status,                  Is.EqualTo(StatusType.CHARGING));
+                Assert.That(Stored().GetEVSE(uid2)?.Status,                  Is.EqualTo(StatusType.BLOCKED));
                 Assert.That(Stored().LastUpdated,                            Is.EqualTo(t0.AddMinutes(5)));
             });
 
