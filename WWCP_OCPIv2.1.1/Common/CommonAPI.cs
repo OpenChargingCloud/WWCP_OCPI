@@ -7696,28 +7696,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
                         {
 
-                            if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingLocation.GetEVSE(evseUId)! != Location.GetEVSE(evseUId)!)
+                            if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                             {
 
-                                if (existingLocation.TryGetEVSE(evseUId, out var evse))
-                                    await LogEvent(
-                                              OnEVSEChanged,
-                                              loggingDelegate => loggingDelegate.Invoke(
-                                                  evse
-                                              )
-                                          );
+                                if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
+                                    Location.        TryGetEVSE(evseUId, out var newEVSE))
+                                {
+
+                                    if (oldEVSE != newEVSE)
+                                        await LogEvent(
+                                                  OnEVSEChanged,
+                                                  loggingDelegate => loggingDelegate.Invoke(
+                                                      newEVSE
+                                                  )
+                                              );
+
+                                    if (oldEVSE.Status != newEVSE.Status)
+                                        await LogEvent(
+                                                  OnEVSEStatusChanged,
+                                                  loggingDelegate => loggingDelegate.Invoke(
+                                                      newEVSE.LastUpdated,
+                                                      newEVSE,
+                                                      newEVSE.Status,
+                                                      oldEVSE.Status
+                                                  )
+                                              );
+
+                                }
 
                             }
                             else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                             {
 
-                                if (existingLocation.TryGetEVSE(evseUId, out var evse))
+                                if (Location.TryGetEVSE(evseUId, out var evse))
+                                {
+
                                     await LogEvent(
                                               OnEVSEAdded,
                                               loggingDelegate => loggingDelegate.Invoke(
                                                   evse
                                               )
                                           );
+
+                                    await LogEvent(
+                                              OnEVSEStatusChanged,
+                                              loggingDelegate => loggingDelegate.Invoke(
+                                                  evse.LastUpdated,
+                                                  evse,
+                                                  evse.Status
+                                              )
+                                          );
+
+                                }
 
                             }
                             else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
@@ -7947,7 +7977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     await LogEvent(
                                               OnEVSEStatusChanged,
                                               loggingDelegate => loggingDelegate.Invoke(
-                                                  Timestamp.Now,
+                                                  newEVSE.LastUpdated,
                                                   newEVSE,
                                                   newEVSE.Status,
                                                   oldEVSE.Status
@@ -7973,7 +8003,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 await LogEvent(
                                           OnEVSEStatusChanged,
                                           loggingDelegate => loggingDelegate.Invoke(
-                                              Timestamp.Now,
+                                              evse.LastUpdated,
                                               evse,
                                               evse.Status
                                           )
@@ -7992,20 +8022,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               evse
                                           )
                                       );
-
-                            if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
-                                Location.        TryGetEVSE(evseUId, out var newEVSE))
-                            {
-                                await LogEvent(
-                                          OnEVSEStatusChanged,
-                                          loggingDelegate => loggingDelegate.Invoke(
-                                              Timestamp.Now,
-                                              oldEVSE,
-                                              newEVSE.Status,
-                                              oldEVSE.Status
-                                          )
-                                      );
-                            }
 
                         }
 
@@ -8951,7 +8967,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       else
                                           locationBuilder.RemoveEVSE(EVSE);
 
-                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                      // The latest of the location and its EVSEs.
+                                      if (EVSE.LastUpdated > locationBuilder.LastUpdated)
+                                          locationBuilder.LastUpdated  = EVSE.LastUpdated;
 
                                   },
                                   out var warnings
@@ -8965,9 +8983,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
 
+            // The EVSE was checked against downgrades above, the location never goes back.
             var updateLocationResult = await UpdateLocation(
                                                  newLocation,
-                                                 AllowDowngrades ?? this.AllowDowngrades,
+                                                 true,
                                                  SkipNotifications,
                                                  EventTrackingId,
                                                  CurrentUserId,
@@ -9036,7 +9055,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       else
                                           locationBuilder.RemoveEVSE(EVSE);
 
-                                      locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                      // The latest of the location and its EVSEs.
+                                      if (EVSE.LastUpdated > locationBuilder.LastUpdated)
+                                          locationBuilder.LastUpdated  = EVSE.LastUpdated;
 
                                   },
                                   out var warnings
@@ -9050,9 +9071,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
 
+            // The EVSE was checked against downgrades above, the location never goes back.
             var updateLocationResult = await UpdateLocation(
                                                  newLocation,
-                                                 AllowDowngrades ?? this.AllowDowngrades,
+                                                 true,
                                                  SkipNotifications,
                                                  EventTrackingId,
                                                  CurrentUserId,
