@@ -324,6 +324,101 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
         #endregion
 
+        #region (private static) ABrand(Id, Name, Homepage, Logo) / ABrandedNetwork(PoolBrands)
+
+        private static POI.Brand ABrand(String   Id,
+                                        String   Name,
+                                        String?  Homepage  = null,
+                                        String?  Logo      = null)
+
+            => new (POI.Brand_Id.Parse(Id),
+                    new ImmutableI18NString(I18NString.Create(Languages.en, Name)),
+                    Logo:      Logo     is not null ? URL.Parse(Logo)     : null,
+                    Homepage:  Homepage is not null ? URL.Parse(Homepage) : null);
+
+        /// <summary>
+        /// Brands on every level, each meaning something of its own: the operator a white label of "white-charge",
+        /// the station and the EVSE also appearing under "station-charge" and "evse-charge"; the pool under the given ones.
+        /// </summary>
+        private static POI.RoamingNetwork ABrandedNetwork(params POI.Brand[] PoolBrands)
+
+            => new POI.RoamingNetwork(POI.RoamingNetwork_Id.Parse("rn1"),
+                                      Created:                   Created,
+                                      ChargingStationOperators:  [ new POI.ChargingStationOperator(GEF,
+                                                                                                   Name:           I18NString.Create(Languages.en, "GraphDefined"),
+                                                                                                   Brands:         [ ABrand("white-charge", "White Charge", "https://white.example") ],
+                                                                                                   ChargingPools:  [ new POI.ChargingPool(P1,
+                                                                                                                                          I18NString.Create(Languages.en, "Biberweg"),
+                                                                                                                                          Address:           new Address("Biberweg", "07749", I18NString.Create(Languages.de, "Jena"), Country.Germany, HouseNumber: "18"),
+                                                                                                                                          GeoLocation:       GeoCoordinate.Parse(50.92, 11.58),
+                                                                                                                                          TimeZone:          Time_Zone.Parse("Europe/Berlin"),
+                                                                                                                                          Brands:            PoolBrands,
+                                                                                                                                          ChargingStations:  [ new POI.ChargingStation(S1,
+                                                                                                                                                                                       Brands:   [ ABrand("station-charge", "Station Charge") ],
+                                                                                                                                                                                       EVSEs:    [ new POI.EVSE(E1,
+                                                                                                                                                                                                                CurrentTypes:        POI.CurrentTypes.AC_ThreePhases,
+                                                                                                                                                                                                                MaxVoltage:          Volt.  FromV(400),
+                                                                                                                                                                                                                MaxCurrent:          Ampere.FromA(32),
+                                                                                                                                                                                                                MaxPower:            Watt.  FromW(22000),
+                                                                                                                                                                                                                ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"),
+                                                                                                                                                                                                                                                                 POI.ChargingConnectorType.IEC_62196_T2) ],
+                                                                                                                                                                                                                Brands:              [ ABrand("evse-charge", "EVSE Charge") ],
+                                                                                                                                                                                                                Created:             Created) ],
+                                                                                                                                                                                       Created:  Created) ],
+                                                                                                                                          Created:           Created) ],
+                                                                                                   Created:        Created) ]).WithKeys();
+
+        #endregion
+
+        #region ThePoolsFirstBrandIsTheSubOperator()
+
+        [Test]
+        public void ThePoolsFirstBrandIsTheSubOperator()
+        {
+
+            var network   = ABrandedNetwork(ABrand("zeta-charge",  "Zeta Charge"),
+                                            ABrand("city-charge",  "City Charge", "https://city.example", "https://city.example/logo.png"));
+            var warnings  = new List<Warning>();
+            var location  = network.GetChargingStationOperatorById(GEF)!.ChargingPools.Single().ToOCPI(network, warnings);
+
+            Assert.That(location, Is.Not.Null, String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+
+            Assert.Multiple(() => {
+
+                // The first in the order of the identifications, whatever order they were given in.
+                Assert.That(location!.SubOperator?.Name,              Is.EqualTo("City Charge"));
+                Assert.That(location.SubOperator?.Website?.ToString(), Is.EqualTo("https://city.example"));
+                Assert.That(location.SubOperator?.Logo?.URL.ToString(), Is.EqualTo("https://city.example/logo.png"));
+                Assert.That(location.SubOperator?.Logo?.Category,     Is.EqualTo(ImageCategory.NETWORK));
+
+                // The operator stays the operator: its white label is not the location's suboperator.
+                Assert.That(location.Operator?.Name,                  Is.EqualTo("GraphDefined"));
+
+            });
+
+        }
+
+        #endregion
+
+        #region APoolWithoutBrandsHasNoSubOperatorWhateverTheOtherLevelsHave()
+
+        [Test]
+        public void APoolWithoutBrandsHasNoSubOperatorWhateverTheOtherLevelsHave()
+        {
+
+            var network   = ABrandedNetwork();
+            var warnings  = new List<Warning>();
+            var location  = network.GetChargingStationOperatorById(GEF)!.ChargingPools.Single().ToOCPI(network, warnings);
+
+            Assert.That(location, Is.Not.Null, String.Join(" ", warnings.Select(warning => warning.Text.FirstText())));
+
+            // Neither the operator's white label nor the brands of its station or EVSE: every level its own.
+            Assert.That(location!.SubOperator, Is.Null);
+
+        }
+
+        #endregion
+
         #region AnEnergyMixMapsBothWays()
 
         [Test]
