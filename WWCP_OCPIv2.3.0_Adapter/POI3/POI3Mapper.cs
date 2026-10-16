@@ -479,7 +479,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Id:             tariffId.Value,
                        Currency:       ChargingTariff.Currency,
                        TariffElements: elements,
-                       TaxIncluded:    TaxIncluded.NA,
+                       // POI3 prices exclude VAT.
+                       TaxIncluded:    TaxIncluded.No,
                        TariffType:     ChargingTariff.TariffType.HasValue ? TariffType.Parse(ChargingTariff.TariffType.Value.ToString()) : null,
                        TariffAltText:  ToDisplayTexts(ChargingTariff.Name).Concat(ToDisplayTexts(ChargingTariff.Description)),
                        TariffAltURL:   ChargingTariff.TariffURL,
@@ -495,6 +496,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                    );
 
         }
+
+        /// <summary>
+        /// The price excluding VAT of the given OCPI price: one including taxes is divided by its VAT, if any applies,
+        /// and rounded to six decimal places; one excluding taxes, or without any, is as it is.
+        /// </summary>
+        public static Decimal NetPrice(Decimal      Price,
+                                       Decimal?     VAT,
+                                       TaxIncluded  TaxIncluded)
+
+            => TaxIncluded == TaxIncluded.Yes && VAT > 0
+                   ? Math.Round(Price / (1 + VAT.Value / 100), 6)
+                   : Price;
 
         /// <summary>
         /// The OCPI price limit of the given price limit: before taxes is excluding VAT, after taxes including it.
@@ -858,8 +871,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                                                                "PARKING_TIME"  => POI.ChargingDimensionTypes.PARKING_TIME,
                                                                                                _               => POI.ChargingDimensionTypes.FLAT
                                                                                            },
-                                                                                           priceComponent.Price,
-                                                                                           priceComponent.VAT,
+                                                                                           NetPrice(priceComponent.Price, priceComponent.VAT, Tariff.TaxIncluded),
+                                                                                           // No VAT applies: none given, or none at all.
+                                                                                           priceComponent.VAT ?? (Tariff.TaxIncluded == TaxIncluded.NA ? 0 : null),
                                                                                            priceComponent.Type.ToString() == "FLAT" ? null : priceComponent.StepSize
                                                                                        )).ToArray();
 

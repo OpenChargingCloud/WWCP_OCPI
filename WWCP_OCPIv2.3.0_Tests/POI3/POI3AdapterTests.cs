@@ -347,6 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(tariff.Id.ToString(),                                    Is.EqualTo("1"));
                 Assert.That(tariff.Currency,                                         Is.EqualTo(Currency.EUR));
                 Assert.That(tariff.TariffType,                                       Is.EqualTo(TariffType.REGULAR));
+                Assert.That(tariff.TaxIncluded,                                      Is.EqualTo(TaxIncluded.No), "POI3 prices exclude VAT.");
                 Assert.That(tariff.MinPrice,                                         Is.EqualTo(new PriceLimit(2.5m, 2.98m)));
                 Assert.That(tariff.MaxPrice,                                         Is.EqualTo(new PriceLimit(50, null)));
                 Assert.That(tariff.Start,                                            Is.EqualTo(DateTimeOffset.Parse("2026-01-01T00:00:00Z")));
@@ -359,6 +360,48 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(timed.PriceComponents.First().StepSize,                  Is.EqualTo(60));
                 Assert.That(JToken.DeepEquals(expected, actual),                     Is.True, $"{expected}\n{actual}");
                 Assert.That(warnings,                                                Is.Empty);
+            });
+
+        }
+
+        #endregion
+
+        #region PricesIncludingTaxesBecomeNetPrices()
+
+        [Test]
+        public void PricesIncludingTaxesBecomeNetPrices()
+        {
+
+            Tariff ATariffOf(TaxIncluded TaxIncluded)
+
+                => new (CountryCode.Parse("DE"), Party_Id.Parse("GEF"), Tariff_Id.Parse("1"), Currency.EUR,
+                        [ new TariffElement(new PriceComponent(TariffDimension.ENERGY, 0.4641m, 19, 1),
+                                            new PriceComponent(TariffDimension.FLAT,   1,       null, 1)) ],
+                        TaxIncluded,
+                        Created:      Created,
+                        LastUpdated:  T0);
+
+            var warnings  = new List<Warning>();
+            var gross     = ATariffOf(TaxIncluded.Yes).ToPOI3(GEF, Languages.en, warnings)!;
+            var net       = ATariffOf(TaxIncluded.No). ToPOI3(GEF, Languages.en, warnings)!;
+            var untaxed   = ATariffOf(TaxIncluded.NA). ToPOI3(GEF, Languages.en, warnings)!;
+
+            Assert.Multiple(() => {
+
+                // Including 19 % VAT; without any VAT given, none applies.
+                Assert.That(gross.  Elements[0].PriceComponents.Select(component => (component.Price, component.VAT)),
+                            Is.EqualTo(new (Decimal, Decimal?)[] { (0.39m,   19), (1, null) }));
+
+                // Excluding VAT, as POI3 prices are.
+                Assert.That(net.    Elements[0].PriceComponents.Select(component => (component.Price, component.VAT)),
+                            Is.EqualTo(new (Decimal, Decimal?)[] { (0.4641m, 19), (1, null) }));
+
+                // No taxes apply.
+                Assert.That(untaxed.Elements[0].PriceComponents.Select(component => (component.Price, component.VAT)),
+                            Is.EqualTo(new (Decimal, Decimal?)[] { (0.4641m, 19), (1, 0) }));
+
+                Assert.That(warnings,  Is.Empty);
+
             });
 
         }

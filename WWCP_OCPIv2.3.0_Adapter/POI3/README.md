@@ -130,7 +130,7 @@ powers, and the union of their tariffs.
 | POI3 | OCPI tariff |
 |---|---|
 | `currency` | `currency` |
-| — | `tax_included` = `N/A` |
+| prices excluding VAT | `tax_included` = `NO` (import: prices of `YES` are divided by their VAT, if any, and rounded to six decimal places; `N/A` means no VAT, written as 0 % where none is given) |
 | `name`, `description` | `tariff_alt_text` (import: into `name`) |
 | `tariffURL` | `tariff_alt_url` |
 | `tariffType` | `type` (the same names; import: a type POI3 does not know is left out with a warning) |
@@ -182,7 +182,7 @@ What one side has and the other does not, or not alike:
 - **EVSE:** POI3 has no floor level, `status_schedule`, EVSE `parking` references or `accepted_service_providers`; OCPI has no charging modes, reservation duration,
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
-  published); OCPI's `tax_included` has no POI3 counterpart: POI3 prices exclude VAT.
+  published). An OCPI price component without `vat` has no VAT; a POI3 one without `vat` has an unknown VAT.
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.
