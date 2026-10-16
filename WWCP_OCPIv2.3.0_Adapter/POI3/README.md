@@ -32,10 +32,11 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   start, what is no longer in the head is removed, e.g. what was removed while no publisher ran. Without `OperatorIds`
   these are the operators of the head, so the data of an operator removed in the meantime stays.
   Pushing to remote EMSPs is the CommonAPI's business:
-  the publisher only keeps its store up to date, which EMSPs pull from. It publishes the effective charging stations,
-  with the properties their charging station groups give them (`EffectiveChargingPools`), e.g. a feature `Reservable`
-  or a physical reference given once for all stations of a group; a change of a group changes the locations of its
-  members, its `lastChange` being the last change of their charging stations and pools.
+  the publisher only keeps its store up to date, which EMSPs pull from. It publishes the effective charging pools,
+  stations and EVSEs, with the properties their groups give them (`EffectiveChargingPools`), e.g. the facilities of a
+  pool, a feature `Reservable` or a physical reference of a station, the connectors of an EVSE, given once for all
+  members of a group; a change of a group changes the locations of its members, its `lastChange` being the last change
+  of these and of what embeds them.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
   charging tariff as OCPI tells it, onto the one there is, with what only POI3 knows kept (see below). The difference is
   computed as a three-way merge whose left side is its base (`RoamingNetwork.TryMerge(head, head, desired)`), so only what
@@ -141,7 +142,7 @@ warning, and so is a `parking_id` of an EVSE that is no parking space. Parking s
 | EVSE `maxVoltage`, else 230 V AC / 400 V DC | `max_voltage` |
 | EVSE `maxCurrent`, else 16 A AC / 50 A DC | `max_amperage` |
 | EVSE `maxPower` | `max_electric_power` |
-| EVSE `chargingTariffIds` ∪ tariffs of the EVSE, charging station and charging pool groups it belongs to | `tariff_ids` |
+| EVSE `chargingTariffIds`, else the `chargingTariffId` of its most specific EVSE, charging station or charging pool groups, as its effective EVSE has them | `tariff_ids` |
 | operator `termsAndConditionsURL` | `terms_and_conditions` |
 
 Import: the EVSE takes the union of the current types of its connectors, the maximum of their voltages, amperages and
@@ -177,9 +178,9 @@ the access type (`accessibility`), EVSE charging modes and reservation duration.
 Of these, what OCPI tells as it would tell the existing charging pool, EVSE or charging tariff is kept as it is: the
 existing one is mapped to OCPI and back, and only where that differs from what OCPI tells does OCPI's value win. So a
 street keeps its house number apart, a city its language, an EVSE no coordinates of its own when it has those of its
-station or pool, a tariff its name and description apart, EVSEs the tariffs of their groups, and charging stations the
-properties their groups give them: the existing charging pool is mapped with its effective charging stations. What a
-POI3 network publishes, imported back into it, commits nothing.
+station or pool, a tariff its name and description apart, EVSEs the tariffs of their groups, and charging pools,
+stations and EVSEs the properties their groups give them: the existing charging pool is mapped as it is at runtime,
+its effective one. What a POI3 network publishes, imported back into it, commits nothing.
 
 ## Gaps
 
@@ -211,8 +212,9 @@ What one side has and the other does not, or not alike:
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.
-- **Import of groups and operators:** tariffs of EVSE, station or pool groups become connector tariffs on export; the
-  import keeps them in their groups while the tariffs of a connector are as before, else attaches them to the EVSE.
+- **Import of groups and operators:** the tariff an EVSE without tariffs of its own takes from its EVSE, station or
+  pool groups becomes the connector tariff on export; the import keeps it in its groups while the tariffs of a
+  connector are as before, else attaches them to the EVSE.
   Operators are never created by the import.
 - **Capabilities on import** are taken for new charging pools only; existing ones keep their authentication modes,
   payment options and features.

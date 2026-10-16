@@ -1311,26 +1311,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         }
 
         /// <summary>
-        /// The tariffs of an EVSE: its own, and those of the EVSE, charging station and charging pool groups it belongs to.
+        /// The tariffs of an EVSE as it is at runtime: its own, else the one of its most specific groups, of the EVSE,
+        /// charging station or charging pool groups it belongs to (ChargingStationOperator.EffectiveEVSE(…)).
         /// </summary>
         private static IEnumerable<Tariff_Id> TariffIdsOf(POI.EVSE                     EVSE,
                                                           POI.ChargingStation          ChargingStation,
                                                           POI.ChargingPool             ChargingPool,
                                                           POI.ChargingStationOperator  Operator)
-        {
 
-            var tariffIds = new List<POI.ChargingTariff_Id>(EVSE.ChargingTariffIds);
-
-            tariffIds.AddRange(Operator.EVSEGroups.           Where(group => group.ChargingTariffId.HasValue && group.EVSEIds.           Contains(EVSE.Id)).           Select(group => group.ChargingTariffId!.Value));
-            tariffIds.AddRange(Operator.ChargingStationGroups.Where(group => group.ChargingTariffId.HasValue && group.ChargingStationIds.Contains(ChargingStation.Id)).Select(group => group.ChargingTariffId!.Value));
-            tariffIds.AddRange(Operator.ChargingPoolGroups.   Where(group => group.ChargingTariffId.HasValue && group.ChargingPoolIds.   Contains(ChargingPool.Id)).   Select(group => group.ChargingTariffId!.Value));
-
-            return tariffIds.Distinct().
-                             Select(tariffId => tariffId.ToOCPITariffId()).
-                             Where (tariffId => tariffId.HasValue).
-                             Select(tariffId => tariffId!.Value);
-
-        }
+            => Operator.EffectiveEVSE(EVSE).ChargingTariffIds.
+                   Select(tariffId => tariffId.ToOCPITariffId()).
+                   Where (tariffId => tariffId.HasValue).
+                   Select(tariffId => tariffId!.Value);
 
         /// <summary>
         /// The OCPI capabilities of an EVSE: from the authentication modes, payment options and UI features of its

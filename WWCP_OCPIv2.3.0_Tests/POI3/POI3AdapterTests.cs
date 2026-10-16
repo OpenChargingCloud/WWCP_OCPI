@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     GeoLocation:          GeoCoordinate.Parse(50.92, 11.58),
                     ParkingType:          POI.ParkingType.PARKING_LOT,
                     TimeZone:             Time_Zone.Parse("Europe/Berlin"),
-                    Facilities:           [ POI.Facility.CAFE ],
+                    Facilities:           FeaturesByGroup ? null : [ POI.Facility.CAFE ],
                     EnergyMix:            EnergyMix,
                     AuthenticationModes:  [ POI.AuthenticationMode.RFID(), POI.AuthenticationMode.REMOTE ],
                     Services:                  [ POI.LocationService.ACCESSIBLE_CHARGING, POI.LocationService.ASSISTANCE ],
@@ -229,6 +229,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                                                                                                                                                        PhysicalReference:   "A",
                                                                                                                                                                                        Features:            [ POI.ChargingStationFeature.Reservable ],
                                                                                                                                                                                        Created:             Created) ] : null,
+                                                                                                   ChargingPoolGroups:    WithPools && FeaturesByGroup ? [ new POI.ChargingPoolGroup(POI.ChargingPoolGroup_Id.Parse("DE*GEF*PG1"),
+                                                                                                                                                                                 ChargingPoolIds:  [ P1 ],
+                                                                                                                                                                                 Facilities:       [ POI.Facility.CAFE ],
+                                                                                                                                                                                 Created:          Created) ] : null,
                                                                                                    EVSEGroups:      WithPools && WithPOI3Only ? [ new POI.EVSEGroup(POI.EVSEGroup_Id.Parse(GEF, "1"), EVSEIds: [ E1 ], ChargingTariffId: T1, Created: Created) ] : null,
                                                                                                    ParkingSpaces:   WithPools ? [ AParkingSpace() ] : null,
                                                                                                    Created:         Created) ],
@@ -849,7 +853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
         public async Task WhatGroupsGiveIsPublishedAndImportedBackUnchanged()
         {
 
-            // The charging station is reservable and labelled by its group only.
+            // The charging station is reservable and labelled, the charging pool has a cafe, by their groups only.
             var history    = POI.RoamingNetworkHistory.Start(ANetwork(FeaturesByGroup: true));
             var revision   = history.Head.Commit.Revision;
             var errors     = new List<String>();
@@ -881,6 +885,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
             Assert.Multiple(() => {
                 Assert.That(location!.EVSEs.Single().Capabilities,                 Does.Contain(Capability.RESERVABLE));
                 Assert.That(location.EVSEs.Single().PhysicalReference,             Is.EqualTo("A"));
+                Assert.That(location.Facilities,                                   Does.Contain(Facility.CAFE));
+                Assert.That(op.ChargingPools.Single().Facilities,                  Is.Empty);
                 Assert.That(errors,                                                Is.Empty);
                 Assert.That(history.Head.Commit.Revision,                          Is.EqualTo(revision),
                             String.Join(", ", history.Head.Commit.ChangeSet?.Changes.Select(change => $"{change.Kind} {change.EntityId} {change.PropertyName}") ?? []));
