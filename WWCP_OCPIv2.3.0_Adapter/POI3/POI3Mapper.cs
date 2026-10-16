@@ -222,9 +222,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (NotBefore.HasValue && NotBefore.Value > lastUpdated)
                 lastUpdated = NotBefore.Value;
 
-            var brand = ChargingPool.BrandIds.
-                            Select(brandId => RoamingNetwork.TryGetBrandById(brandId, out var found) ? found : null).
-                            FirstOrDefault(found => found is not null);
+            // The first brand the pool also appears under: its own, not its operator's white label.
+            var brand = ChargingPool.Brands.FirstOrDefault();
 
             return new Location(
 
