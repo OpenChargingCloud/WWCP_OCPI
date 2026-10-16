@@ -322,9 +322,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                var existing   = pools.OfType<JObject>().FirstOrDefault(pool => pool["@id"]?.Value<String>() == poolId?.ToString());
 
                                // The existing charging pool as OCPI tells it: what the location tells alike is kept.
+                               // With the properties their groups give its charging stations, which so stay in the groups.
                                var unchanged  = poolId.HasValue &&
                                                 head.TryGetChargingStationOperatorById(operatorId.Value, out var chargingStationOperator) &&
-                                                chargingStationOperator.TryGetChargingPool(poolId.Value, out var chargingPool)
+                                                chargingStationOperator.TryGetEffectiveChargingPool(poolId.Value, out var chargingPool)
                                                     ? chargingPool.ToOCPI(head, [])
                                                     : null;
 

@@ -32,7 +32,10 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   start, what is no longer in the head is removed, e.g. what was removed while no publisher ran. Without `OperatorIds`
   these are the operators of the head, so the data of an operator removed in the meantime stays.
   Pushing to remote EMSPs is the CommonAPI's business:
-  the publisher only keeps its store up to date, which EMSPs pull from.
+  the publisher only keeps its store up to date, which EMSPs pull from. It publishes the effective charging stations,
+  with the properties their charging station groups give them (`EffectiveChargingPools`), e.g. a feature `Reservable`
+  or a physical reference given once for all stations of a group; a change of a group changes the locations of its
+  members, its `lastChange` being the last change of their charging stations and pools.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
   charging tariff as OCPI tells it, onto the one there is, with what only POI3 knows kept (see below). The difference is
   computed as a three-way merge whose left side is its base (`RoamingNetwork.TryMerge(head, head, desired)`), so only what
@@ -174,8 +177,9 @@ the access type (`accessibility`), EVSE charging modes and reservation duration.
 Of these, what OCPI tells as it would tell the existing charging pool, EVSE or charging tariff is kept as it is: the
 existing one is mapped to OCPI and back, and only where that differs from what OCPI tells does OCPI's value win. So a
 street keeps its house number apart, a city its language, an EVSE no coordinates of its own when it has those of its
-station or pool, a tariff its name and description apart, and EVSEs the tariffs of their groups. What a POI3 network
-publishes, imported back into it, commits nothing.
+station or pool, a tariff its name and description apart, EVSEs the tariffs of their groups, and charging stations the
+properties their groups give them: the existing charging pool is mapped with its effective charging stations. What a
+POI3 network publishes, imported back into it, commits nothing.
 
 ## Gaps
 

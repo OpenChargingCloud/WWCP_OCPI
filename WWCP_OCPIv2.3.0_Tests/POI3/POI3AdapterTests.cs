@@ -167,11 +167,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     Standards:                 [ POI.Standard.PAS1899_2022 ],
                     Created:             Created);
 
-        private static POI.ChargingPool APool(Int32           MaxPower      = 22000,
-                                              POI.EnergyMix?  EnergyMix     = null,
-                                              I18NString?     Description   = null,
-                                              String          Name          = "Biberweg",
-                                              Boolean         OwnTariffs    = true)
+        private static POI.ChargingPool APool(Int32           MaxPower         = 22000,
+                                              POI.EnergyMix?  EnergyMix        = null,
+                                              I18NString?     Description      = null,
+                                              String          Name             = "Biberweg",
+                                              Boolean         OwnTariffs       = true,
+                                              Boolean         FeaturesByGroup  = false)
 
             => new (P1,
                     I18NString.Create(Languages.en, Name),
@@ -187,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     AssistanceServiceDetails:  I18NString.Create(Languages.en, "Ring at the kiosk"),
                     Standards:                 [ POI.Standard.PAS1899_2022 ],
                     ChargingStations:     [ new POI.ChargingStation(S1,
-                                                                    Features:         [ POI.ChargingStationFeature.Reservable ],
+                                                                    Features:         FeaturesByGroup ? null : [ POI.ChargingStationFeature.Reservable ],
                                                                     ParkingSpaceIds:  [ GS1, PS1 ],
                                                                     EVSEs:     [ AnEVSE(MaxPower, OwnTariffs) ],
                                                                     Created:   Created) ],
@@ -210,8 +211,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     Standards:                 [ POI.Standard.PAS1899_2022 ],
                     Created:                   Created);
 
-        private static POI.RoamingNetwork ANetwork(Boolean WithPools      = true,
-                                                   Boolean WithPOI3Only   = false)
+        private static POI.RoamingNetwork ANetwork(Boolean WithPools        = true,
+                                                   Boolean WithPOI3Only     = false,
+                                                   Boolean FeaturesByGroup  = false)
 
             => new POI.RoamingNetwork(POI.RoamingNetwork_Id.Parse("rn1"),
                                       Created:                   Created,
@@ -220,7 +222,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                                                                    Homepage:        URL.Parse("https://graphdefined.com"),
                                                                                                    ChargingTariffs: WithPools ? [ ATariff(WithPOI3Only ? I18NString.Create(Languages.de, "Der Standardtarif") : null) ] : null,
                                                                                                    ChargingPools:   WithPools ? [ APool(Description: WithPOI3Only ? I18NString.Create(Languages.de, "Hinter dem Haus") : null,
-                                                                                                                                       OwnTariffs:  !WithPOI3Only) ] : null,
+                                                                                                                                       OwnTariffs:  !WithPOI3Only,
+                                                                                                                                       FeaturesByGroup: FeaturesByGroup) ] : null,
+                                                                                                   ChargingStationGroups: WithPools && FeaturesByGroup ? [ new POI.ChargingStationGroup(POI.ChargingStationGroup_Id.Parse("DE*GEF*SG1"),
+                                                                                                                                                                                       ChargingStationIds:  [ S1 ],
+                                                                                                                                                                                       PhysicalReference:   "A",
+                                                                                                                                                                                       Features:            [ POI.ChargingStationFeature.Reservable ],
+                                                                                                                                                                                       Created:             Created) ] : null,
                                                                                                    EVSEGroups:      WithPools && WithPOI3Only ? [ new POI.EVSEGroup(POI.EVSEGroup_Id.Parse(GEF, "1"), EVSEIds: [ E1 ], ChargingTariffId: T1, Created: Created) ] : null,
                                                                                                    ParkingSpaces:   WithPools ? [ AParkingSpace() ] : null,
                                                                                                    Created:         Created) ],
@@ -829,6 +837,55 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(errors,                                                Is.Empty);
                 Assert.That(history.Head.Commit.Revision,                          Is.EqualTo(revision),
                             String.Join(", ", history.Head.Commit.ChangeSet?.Changes.Select(change => $"{change.Kind} {change.EntityId} {change.PropertyName}") ?? []));
+            });
+
+        }
+
+        #endregion
+
+        #region WhatGroupsGiveIsPublishedAndImportedBackUnchanged()
+
+        [Test]
+        public async Task WhatGroupsGiveIsPublishedAndImportedBackUnchanged()
+        {
+
+            // The charging station is reservable and labelled by its group only.
+            var history    = POI.RoamingNetworkHistory.Start(ANetwork(FeaturesByGroup: true));
+            var revision   = history.Head.Commit.Revision;
+            var errors     = new List<String>();
+
+            await using (var publisher = new POI3ToOCPIPublisher(history, api))
+            {
+
+                publisher.OnError += (sender, description, warnings) => { lock (errors) errors.Add(description); };
+
+                await publisher.StartAsync();
+
+            }
+
+            Assert.That(api.TryGetLocation(Party, Location_Id.Parse("1"), out var location),  Is.True);
+
+            // Imported back: what the location tells alike stays in the group.
+            await using (var importer = new OCPIToPOI3Importer(api, history, changeSet => changeSet.SignedByAll(history.Head.RoamingNetwork)))
+            {
+
+                importer.OnError += (sender, description, warnings) => { lock (errors) errors.Add(description); };
+                importer.Start();
+
+                await importer.ImportAsync(location!);
+
+            }
+
+            var op = history.Head.RoamingNetwork.GetChargingStationOperatorById(GEF)!;
+
+            Assert.Multiple(() => {
+                Assert.That(location!.EVSEs.Single().Capabilities,                 Does.Contain(Capability.RESERVABLE));
+                Assert.That(location.EVSEs.Single().PhysicalReference,             Is.EqualTo("A"));
+                Assert.That(errors,                                                Is.Empty);
+                Assert.That(history.Head.Commit.Revision,                          Is.EqualTo(revision),
+                            String.Join(", ", history.Head.Commit.ChangeSet?.Changes.Select(change => $"{change.Kind} {change.EntityId} {change.PropertyName}") ?? []));
+                Assert.That(op.ChargingStations.Single().Features,                 Is.Empty);
+                Assert.That(op.ChargingStations.Single().PhysicalReference,        Is.Null);
             });
 
         }

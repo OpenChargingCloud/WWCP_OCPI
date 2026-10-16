@@ -283,7 +283,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                 }
 
-                foreach (var chargingPool in chargingStationOperator.ChargingPools)
+                // With the properties their groups give its charging stations.
+                foreach (var chargingPool in chargingStationOperator.EffectiveChargingPools)
                 {
 
                     var warnings  = new List<Warning>();
@@ -351,7 +352,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return;
             }
 
-            foreach (var chargingPool in chargingStationOperator.ChargingPools)
+            // As its location tells it: with the properties their groups give its charging stations.
+            foreach (var chargingPool in chargingStationOperator.EffectiveChargingPools)
             {
                 foreach (var chargingStation in chargingPool.ChargingStations)
                 {
