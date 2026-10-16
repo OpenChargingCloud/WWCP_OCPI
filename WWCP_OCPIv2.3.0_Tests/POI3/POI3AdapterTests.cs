@@ -129,13 +129,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                                                          MinEnergy:   5000,
                                                                                          MinPower:    3700,
                                                                                          MaxDuration: 3600,
-                                                                                         DaysOfWeek:  [ DayOfWeek.Sunday ]))
+                                                                                         DaysOfWeek:  [ DayOfWeek.Sunday ])),
+                        new POI.ChargingTariffElement([ new POI.ChargingPriceComponent(POI.ChargingDimensionTypes.TIME, 2, StepSize: 60) ],
+                                                      new POI.ChargingTariffRestrictions(Reservation: POI.ChargingReservationRestriction.RESERVATION))
                     ],
                     I18NString.Create(Languages.en, "Standard"),
                     Description,
                     TariffType:  POI.ChargingTariffType.REGULAR,
                     MinPrice:    new POI.ChargingPriceLimit(2.5m, 2.98m),
                     MaxPrice:    new POI.ChargingPriceLimit(50),
+                    ValidFrom:   DateTimeOffset.Parse("2026-01-01T00:00:00Z"),
+                    ValidUntil:  DateTimeOffset.Parse("2027-01-01T00:00:00Z"),
                     Created:     Created);
 
         private static POI.EVSE AnEVSE(Int32    MaxPower     = 22000,
@@ -146,8 +150,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     MaxVoltage:          Volt.  FromV(400),
                     MaxCurrent:          Ampere.FromA(32),
                     MaxPower:            Watt.  FromW(MaxPower),
-                    ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"), POI.ChargingConnectorType.IEC_62196_T2) ],
+                    ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"),
+                                                                     POI.ChargingConnectorType.IEC_62196_T2,
+                                                                     Format:                 POI.ChargingConnectorFormat.CABLE,
+                                                                     CableLength:            Meter.   From_m (5),
+                                                                     CableWeight:            Kilogram.FromKG(2.5m),
+                                                                     CableManagementSystem:  true,
+                                                                     Standards:              [ POI.Standard.PAS1899_2022 ]) ],
                     ChargingTariffIds:   OwnTariffs ? [ T1 ] : null,
+                    ReachDistance:             Meter.From_m(0.6m),
+                    OperationTimeout:          TimeSpan.FromSeconds(90),
+                    ExtendedOperationTimeout:  true,
+                    Standards:                 [ POI.Standard.PAS1899_2022 ],
                     Created:             Created);
 
         private static POI.ChargingPool APool(Int32           MaxPower      = 22000,
@@ -166,6 +180,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     Facilities:           [ POI.Facility.CAFE ],
                     EnergyMix:            EnergyMix,
                     AuthenticationModes:  [ POI.AuthenticationMode.RFID(), POI.AuthenticationMode.REMOTE ],
+                    Services:                  [ POI.LocationService.ACCESSIBLE_CHARGING, POI.LocationService.ASSISTANCE ],
+                    AssistanceServiceDetails:  I18NString.Create(Languages.en, "Ring at the kiosk"),
+                    Standards:                 [ POI.Standard.PAS1899_2022 ],
                     ChargingStations:     [ new POI.ChargingStation(S1,
                                                                     Features:  [ POI.ChargingStationFeature.Reservable ],
                                                                     EVSEs:     [ AnEVSE(MaxPower, OwnTariffs) ],
@@ -235,6 +252,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(location.ParkingType,                 Is.EqualTo(ParkingType.PARKING_LOT));
                 Assert.That(location.Facilities,                  Is.EqualTo(new[] { Facility.CAFE }));
                 Assert.That(location.Operator?.Name,              Is.EqualTo("GraphDefined"));
+                Assert.That(location.Services,                    Is.EquivalentTo(new[] { LocationService.ACCESSIBLE_CHARGING, LocationService.ASSISTANCE }));
+                Assert.That(location.AssistanceServiceDetails,    Is.EqualTo("Ring at the kiosk"));
+                Assert.That(location.Standards,                   Is.EqualTo(new[] { Standard.PAS1899_2022 }));
+                Assert.That(evse.ReachDistance?.cm,               Is.EqualTo(60));
+                Assert.That(evse.OperationTimeout,                Is.EqualTo(TimeSpan.FromSeconds(90)));
+                Assert.That(evse.ExtendedOperationTimeout,        Is.True);
+                Assert.That(evse.Standards,                       Is.EqualTo(new[] { Standard.PAS1899_2022 }));
+                Assert.That(connector.CableLength?.m,             Is.EqualTo(5));
+                Assert.That(connector.CableWeight?.Value,         Is.EqualTo(2.5m));
+                Assert.That(connector.CableManagementSystem,      Is.True);
 
                 Assert.That(evse.UId.ToString(),                  Is.EqualTo("DE*GEF*E1*1"));
                 Assert.That(evse.EVSEId?.ToString(),              Is.EqualTo("DE*GEF*E1*1"));
@@ -243,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
                 Assert.That(connector.Id.ToString(),              Is.EqualTo("1"));
                 Assert.That(connector.Standard,                   Is.EqualTo(ConnectorType.IEC_62196_T2));
-                Assert.That(connector.Format,                     Is.EqualTo(ConnectorFormats.SOCKET));
+                Assert.That(connector.Format,                     Is.EqualTo(ConnectorFormats.CABLE));
                 Assert.That(connector.PowerType,                  Is.EqualTo(PowerTypes.AC_3_PHASE));
                 Assert.That(connector.MaxVoltage.Value,           Is.EqualTo(400));
                 Assert.That(connector.MaxAmperage.Value,          Is.EqualTo(32));
@@ -322,6 +349,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(tariff.TariffType,                                       Is.EqualTo(TariffType.REGULAR));
                 Assert.That(tariff.MinPrice,                                         Is.EqualTo(new PriceLimit(2.5m, 2.98m)));
                 Assert.That(tariff.MaxPrice,                                         Is.EqualTo(new PriceLimit(50, null)));
+                Assert.That(tariff.Start,                                            Is.EqualTo(DateTimeOffset.Parse("2026-01-01T00:00:00Z")));
+                Assert.That(tariff.End,                                              Is.EqualTo(DateTimeOffset.Parse("2027-01-01T00:00:00Z")));
+                Assert.That(tariff.TariffElements.ElementAt(2).TariffRestrictions?.Reservation,
+                                                                                     Is.EqualTo(ReservationRestrictions.RESERVATION));
                 Assert.That(timed.TariffRestrictions?.MinPower,                      Is.EqualTo(3.7m));
                 Assert.That(timed.TariffRestrictions?.MinkWh,                        Is.EqualTo(5m));
                 Assert.That(timed.TariffRestrictions?.MaxDuration,                   Is.EqualTo(TimeSpan.FromHours(1)));

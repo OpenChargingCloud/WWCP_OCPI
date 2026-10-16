@@ -276,6 +276,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Images:              ChargingPool.Images.Select(ToOCPI),
                        EnergyMix:           ChargingPool.EnergyMix?.ToOCPI($"charging pool '{ChargingPool.Id}'", Warnings),
                        HelpPhone:           ChargingPool.HotlinePhoneNumber ?? chargingStationOperator.HotlinePhoneNumber,
+                       Services:                  ChargingPool.Services. Select(service  => LocationService.Parse(service. ToString())),
+                       AssistanceServiceDetails:  FirstText(ChargingPool.AssistanceServiceDetails),
+                       Standards:                 ChargingPool.Standards.Select(standard => Standard.       Parse(standard.ToString())),
 
                        Created:             ChargingPool.Created,
                        LastUpdated:         lastUpdated
@@ -342,7 +345,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Images:               EVSE.Images.Concat(ChargingStation.Images).Select(ToOCPI).Distinct(),
 
                        Created:              EVSE.Created,
-                       LastUpdated:          lastUpdated
+                       LastUpdated:          lastUpdated,
+
+                       ReachDistance:             EVSE.ReachDistance,
+                       OperationTimeout:          EVSE.OperationTimeout,
+                       ExtendedOperationTimeout:  EVSE.ExtendedOperationTimeout,
+                       Standards:                 EVSE.Standards.Select(standard => Standard.Parse(standard.ToString()))
 
                    );
 
@@ -390,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             return new Connector(
                        Id:                     connectorId.Value,
                        Standard:               standard.Value,
-                       Format:                 ConnectorFormats.SOCKET,
+                       Format:                 ChargingConnector.Format == POI.ChargingConnectorFormat.CABLE ? ConnectorFormats.CABLE : ConnectorFormats.SOCKET,
                        PowerType:              powerType,
                        MaxVoltage:             EVSE.MaxVoltage ?? (isDC ? Volt.  FromV(400) : Volt.  FromV(230)),
                        MaxAmperage:            EVSE.MaxCurrent ?? (isDC ? Ampere.FromA(50)  : Ampere.FromA(16)),
@@ -398,7 +406,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        TariffIds:              TariffIds,
                        TermsAndConditionsURL:  Operator.TermsAndConditionsURL,
                        Created:                EVSE.Created,
-                       LastUpdated:            EVSE.LastChangeDate
+                       LastUpdated:            EVSE.LastChangeDate,
+                       CableLength:            ChargingConnector.CableLength,
+                       CableWeight:            ChargingConnector.CableWeight,
+                       CableManagementSystem:  ChargingConnector.CableManagementSystem,
+                       Standards:              ChargingConnector.Standards.Select(standard => Standard.Parse(standard.ToString())),
+                       Images:                 ChargingConnector.Images.Select(ToOCPI)
                    );
 
         }
@@ -472,6 +485,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        TariffAltURL:   ChargingTariff.TariffURL,
                        MinPrice:       ChargingTariff.MinPrice?.ToOCPI(),
                        MaxPrice:       ChargingTariff.MaxPrice?.ToOCPI(),
+                       Start:          ChargingTariff.ValidFrom,
+                       End:            ChargingTariff.ValidUntil,
                        EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI($"charging tariff '{ChargingTariff.Id}'", Warnings),
                        Created:        ChargingTariff.Created,
                        LastUpdated:    NotBefore.HasValue && NotBefore.Value > ChargingTariff.LastChangeDate
@@ -515,7 +530,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                    MaxPower:     Restrictions.MaxPower  / 1000,
                    MinDuration:  Restrictions.MinDuration.HasValue ? TimeSpan.FromSeconds((Double) Restrictions.MinDuration.Value) : null,
                    MaxDuration:  Restrictions.MaxDuration.HasValue ? TimeSpan.FromSeconds((Double) Restrictions.MaxDuration.Value) : null,
-                   DayOfWeek:    Restrictions.DaysOfWeek
+                   DayOfWeek:    Restrictions.DaysOfWeek,
+                   Reservation:  Restrictions.Reservation switch {
+                                     POI.ChargingReservationRestriction.RESERVATION          => ReservationRestrictions.RESERVATION,
+                                     POI.ChargingReservationRestriction.RESERVATION_EXPIRES  => ReservationRestrictions.RESERVATION_EXPIRES,
+                                     _                                                       => null
+                                 }
                );
 
         #endregion
@@ -603,6 +623,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                                                                                   ? new ImmutableI18NString(I18NString.Create(relatedLocation.Name.Value.Language, relatedLocation.Name.Value.Text))
                                                                                                                   : null
                                                                                                           )),
+                                Services:                  Location.Services. Select(service  => POI.LocationService.Parse(service. ToString())),
+                                AssistanceServiceDetails:  Location.AssistanceServiceDetails.IsNotNullOrEmpty() ? I18NString.Create(Language, Location.AssistanceServiceDetails) : null,
+                                Standards:                 Location.Standards.Select(standard => POI.Standard.       Parse(standard.ToString())),
                                 Created:              Location.Created,
                                 LastChange:           Location.LastUpdated
                             ).ToJSON();
@@ -744,7 +767,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     continue;
                 }
 
-                connectors.Add(new POI.ChargingConnector(POI.ChargingConnector_Id.Parse(connector.Id.ToString()), type.Value));
+                // A socket has no cable of its own.
+                var isCable = connector.Format == ConnectorFormats.CABLE;
+
+                if (!isCable && (connector.CableLength.HasValue || connector.CableWeight.HasValue || connector.CableManagementSystem.HasValue))
+                    Warnings.Add(Warning.Create($"The connector '{connector.Id}' of the EVSE '{evseId}' is a socket: its cable is left out!"));
+
+                connectors.Add(new POI.ChargingConnector(POI.ChargingConnector_Id.Parse(connector.Id.ToString()),
+                                                         type.Value,
+                                                         Format:                 isCable ? POI.ChargingConnectorFormat.CABLE : POI.ChargingConnectorFormat.SOCKET,
+                                                         CableLength:            isCable && connector.CableLength?.m     > 0 ? connector.CableLength : null,
+                                                         CableWeight:            isCable && connector.CableWeight?.Value > 0 ? connector.CableWeight : null,
+                                                         CableManagementSystem:  isCable ? connector.CableManagementSystem : null,
+                                                         Standards:              connector.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
+                                                         Images:                 connector.Images.Select(ToPOI3)));
 
                 currentTypes |= connector.PowerType switch {
                                     PowerTypes.DC          => POI.CurrentTypes.DC,
@@ -779,6 +815,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Images:              EVSE.Images.Select(ToPOI3),
                        GeoLocation:         EVSE.Coordinates,
                        InitialStatus:       new Timestamped<POI.EVSEStatusType>(EVSE.LastUpdated, EVSE.Status.ToPOI3Status()),
+                       ReachDistance:             EVSE.ReachDistance?.m >= 0 ? EVSE.ReachDistance : null,
+                       OperationTimeout:          EVSE.OperationTimeout >= TimeSpan.Zero ? EVSE.OperationTimeout : null,
+                       ExtendedOperationTimeout:  EVSE.ExtendedOperationTimeout,
+                       Standards:                 EVSE.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
                        Created:             EVSE.Created,
                        LastChange:          EVSE.LastUpdated
                    );
@@ -825,9 +865,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                 var restrictions    = element.TariffRestrictions;
 
-                if (restrictions?.Reservation is not null)
-                    Warnings.Add(Warning.Create($"The reservation restriction of the tariff '{Tariff.Id}' has no counterpart and is left out!"));
-
                 elements.Add(new POI.ChargingTariffElement(
                                  priceComponents,
                                  restrictions is null
@@ -845,14 +882,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                            MaxPower:     restrictions.MaxPower * 1000,
                                            MinDuration:  restrictions.MinDuration.HasValue ? (Decimal) restrictions.MinDuration.Value.TotalSeconds : null,
                                            MaxDuration:  restrictions.MaxDuration.HasValue ? (Decimal) restrictions.MaxDuration.Value.TotalSeconds : null,
-                                           DaysOfWeek:   restrictions.DayOfWeek
+                                           DaysOfWeek:   restrictions.DayOfWeek,
+                                           Reservation:  restrictions.Reservation switch {
+                                                             ReservationRestrictions.RESERVATION          => POI.ChargingReservationRestriction.RESERVATION,
+                                                             ReservationRestrictions.RESERVATION_EXPIRES  => POI.ChargingReservationRestriction.RESERVATION_EXPIRES,
+                                                             _                                            => null
+                                                         }
                                        )
                              ));
 
             }
-
-            if (Tariff.Start.HasValue || Tariff.End.HasValue)
-                Warnings.Add(Warning.Create($"The start and end of the tariff '{Tariff.Id}' have no counterpart and are left out!"));
 
             POI.ChargingTariffType? tariffType = null;
 
@@ -882,6 +921,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                            TariffType:   tariffType,
                            MinPrice:     minPrice,
                            MaxPrice:     maxPrice,
+                           ValidFrom:    Tariff.Start,
+                           ValidUntil:   Tariff.End,
                            Created:      Tariff.Created,
                            LastChange:   Tariff.LastUpdated
                        );
@@ -905,7 +946,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// </summary>
         internal static readonly String[] PoolProperties = [
             "name", "address", "geoLocation", "timeZone", "parkingType", "hotline", "openingTimes", "energyMix", "images",
-            "facilities", "arrivalInstructions", "chargingWhenClosed", "relatedLocations"
+            "facilities", "arrivalInstructions", "chargingWhenClosed", "relatedLocations", "services", "assistanceServiceDetails",
+            "standards"
         ];
 
         /// <summary>
@@ -913,7 +955,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// </summary>
         internal static readonly String[] EVSEProperties = [
             "physicalReference", "currentTypes", "maxVoltage", "maxCurrent", "maxPower", "chargingConnectors",
-            "chargingTariffIds", "images", "geoLocation"
+            "chargingTariffIds", "images", "geoLocation", "reachDistance", "operationTimeout", "extendedOperationTimeout", "standards"
         ];
 
         /// <summary>
