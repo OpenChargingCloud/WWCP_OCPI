@@ -333,6 +333,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                if (desired is null)
                                    return false;
 
+                               ImportParking(Location, head, operatorId.Value, operatorJSON, desired, warnings);
+
                                if (existing is not null)
                                    existing.Replace(desired);
                                else
@@ -345,6 +347,119 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             // The status of every EVSE, e.g. of new ones, which start as available.
             foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
                 ImportStatus(evse, evse.Status, evse.LastUpdated);
+
+        }
+
+        #endregion
+
+        #region (private) ImportParking(Location, Head, OperatorId, OperatorJSON, Pool, Warnings)
+
+        /// <summary>
+        /// The parking places of the given location as parking spaces, and the parking of its EVSEs as the parking spaces
+        /// their charging stations name.
+        /// </summary>
+        /// <remarks>
+        /// A parking place a parking operator already defines is named, not changed: the parking operator owns it.
+        /// Every other one is a parking space of the charging station operator, added or changed, with what only POI3
+        /// knows of it kept, and what OCPI tells as it would tell it as well. One another charging station operator
+        /// defines is left out, with a warning. Parking spaces no location names any more stay.
+        /// </remarks>
+        private static void ImportParking(Location                        Location,
+                                          POI.RoamingNetwork              Head,
+                                          POI.ChargingStationOperator_Id  OperatorId,
+                                          JObject                         OperatorJSON,
+                                          JObject                         Pool,
+                                          ICollection<Warning>            Warnings)
+        {
+
+            Head.TryGetChargingStationOperatorById(OperatorId, out var chargingStationOperator);
+
+            var spaces    = OperatorJSON["parkingSpaces"] as JArray;
+            var nameable  = new HashSet<String>();
+
+            #region The parking places
+
+            foreach (var parking in Location.ParkingPlaces)
+            {
+
+                var mapped = parking.ToPOI3(Location.Created, Location.LastUpdated, Warnings);
+
+                if (mapped is null)
+                    continue;
+
+                // One of a parking operator, or of another charging station operator.
+                if (Head.ParkingOperators.Any(parkingOperator => parkingOperator.TryGetParkingSpace(mapped.Id, out _)))
+                {
+                    nameable.Add(mapped.Id.ToString());
+                    continue;
+                }
+
+                if (Head.ChargingStationOperators.Any(other => other.Id != OperatorId && other.TryGetParkingSpace(mapped.Id, out _)))
+                {
+                    Warnings.Add(Warning.Create($"The parking '{parking.Id}' of the location '{Location.Id}' is a parking space of another charging station operator, and is left out!"));
+                    continue;
+                }
+
+                var mappedJSON  = mapped.ToJSON();
+                var existing    = spaces?.OfType<JObject>().FirstOrDefault(space => POI.ParkingSpace_Id.TryParse(space["@id"]?.Value<String>() ?? "", out var id) && id == mapped.Id);
+
+                if (existing is null)
+                {
+                    spaces ??= POI3Mapper.ArrayOf(OperatorJSON, "parkingSpaces");
+                    spaces.Add(mappedJSON);
+                }
+
+                else
+                {
+
+                    // The existing parking space as OCPI tells it: what the parking tells alike is kept.
+                    var unchanged = chargingStationOperator is not null && chargingStationOperator.TryGetParkingSpace(mapped.Id, out var existingSpace)
+                                        ? existingSpace.ToOCPI().ToPOI3(Location.Created, Location.LastUpdated, [])?.ToJSON()
+                                        : null;
+
+                    POI3Mapper.Overlay(existing, mappedJSON, POI3Mapper.ParkingSpaceProperties.Where(property => !POI3Mapper.SameValue(unchanged, mappedJSON, property)));
+
+                }
+
+                nameable.Add(mapped.Id.ToString());
+
+            }
+
+            #endregion
+
+            #region The parking spaces of the charging stations: those of their EVSEs at OCPI
+
+            var parkingOfEVSEs = Location.EVSEs.ToDictionary(evse => evse.EVSEId?.ToString() ?? evse.UId.ToString(),
+                                                             evse => evse.Parking.Select(parking => parking.ParkingId.ToString()).ToArray());
+
+            foreach (var station in (Pool["chargingStations"] as JArray ?? []).OfType<JObject>())
+            {
+
+                var named = (station["EVSEs"] as JArray ?? []).OfType<JObject>().
+                                SelectMany(evse => parkingOfEVSEs.GetValueOrDefault(evse["@id"]?.Value<String>() ?? "") ?? []).
+                                ToHashSet();
+
+                foreach (var parkingId in named.Where(parkingId => !nameable.Contains(parkingId) &&
+                                                                   !(POI.ParkingSpace_Id.TryParse(parkingId, out var id) && Head.TryGetParkingSpaceById(id, out _))).ToArray())
+                {
+                    Warnings.Add(Warning.Create($"The parking '{parkingId}' of the location '{Location.Id}' is no parking space, and is left out!"));
+                    named.Remove(parkingId);
+                }
+
+                // Named as before, also as written before.
+                var before = (station["parkingSpaceIds"] as JArray ?? []).Values<String>().OfType<String>().ToHashSet();
+
+                if (named.SetEquals(before))
+                    continue;
+
+                if (named.Count > 0)
+                    station["parkingSpaceIds"] = new JArray(named.Order(StringComparer.Ordinal));
+                else
+                    station.Remove("parkingSpaceIds");
+
+            }
+
+            #endregion
 
         }
 

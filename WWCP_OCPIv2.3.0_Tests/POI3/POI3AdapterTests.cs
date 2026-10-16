@@ -54,6 +54,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
         private static readonly POI.ChargingStation_Id              S1        = POI.ChargingStation_Id.        Parse("DE*GEF*S1");
         private static readonly POI.EVSE_Id                         E1        = POI.EVSE_Id.                   Parse("DE*GEF*E1*1");
         private static readonly POI.ChargingTariff_Id               T1        = POI.ChargingTariff_Id.         Parse("DE*GEF*T1");
+        private static readonly POI.ParkingOperator_Id              PAR       = POI.ParkingOperator_Id.        Parse("DE*PAR");
+        private static readonly POI.ParkingSpace_Id                 GS1       = POI.ParkingSpace_Id.           Parse("GEF-1");
+        private static readonly POI.ParkingSpace_Id                 PS1       = POI.ParkingSpace_Id.           Parse("PAR-1");
 
         private static readonly Party_Idv3                          Party     = Party_Idv3.From(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
@@ -184,10 +187,28 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                     AssistanceServiceDetails:  I18NString.Create(Languages.en, "Ring at the kiosk"),
                     Standards:                 [ POI.Standard.PAS1899_2022 ],
                     ChargingStations:     [ new POI.ChargingStation(S1,
-                                                                    Features:  [ POI.ChargingStationFeature.Reservable ],
+                                                                    Features:         [ POI.ChargingStationFeature.Reservable ],
+                                                                    ParkingSpaceIds:  [ GS1, PS1 ],
                                                                     EVSEs:     [ AnEVSE(MaxPower, OwnTariffs) ],
                                                                     Created:   Created) ],
                     Created:              Created);
+
+        private static POI.ParkingSpace AParkingSpace()
+
+            => new (GS1,
+                    PhysicalReference:         "1",
+                    VehicleTypes:              [ POI.VehicleType.PERSONAL_VEHICLE ],
+                    MaxVehicleHeight:          Meter.From_m(2.1m),
+                    Length:                    Meter.From_m(5),
+                    Width:                     Meter.From_m(3.5m),
+                    EVSEPosition:              POI.EVSEPosition.LEFT,
+                    Direction:                 POI.ParkingDirection.PERPENDICULAR,
+                    Surface:                   POI.ParkingSurface.ASPHALT,
+                    TimeLimit:                 TimeSpan.FromHours(4),
+                    Roofed:                    true,
+                    Illuminated:               true,
+                    Standards:                 [ POI.Standard.PAS1899_2022 ],
+                    Created:                   Created);
 
         private static POI.RoamingNetwork ANetwork(Boolean WithPools      = true,
                                                    Boolean WithPOI3Only   = false)
@@ -201,7 +222,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                                                                    ChargingPools:   WithPools ? [ APool(Description: WithPOI3Only ? I18NString.Create(Languages.de, "Hinter dem Haus") : null,
                                                                                                                                        OwnTariffs:  !WithPOI3Only) ] : null,
                                                                                                    EVSEGroups:      WithPools && WithPOI3Only ? [ new POI.EVSEGroup(POI.EVSEGroup_Id.Parse(GEF, "1"), EVSEIds: [ E1 ], ChargingTariffId: T1, Created: Created) ] : null,
-                                                                                                   Created:         Created) ]).WithKeys();
+                                                                                                   ParkingSpaces:   WithPools ? [ AParkingSpace() ] : null,
+                                                                                                   Created:         Created) ],
+                                      ParkingOperators:          [ new POI.ParkingOperator(PAR, Created: Created, ParkingSpaces: [ new POI.ParkingSpace(PS1, Created: Created) ]) ]).WithKeys();
 
         #endregion
 
@@ -253,6 +276,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(location.Facilities,                  Is.EqualTo(new[] { Facility.CAFE }));
                 Assert.That(location.Operator?.Name,              Is.EqualTo("GraphDefined"));
                 Assert.That(location.Services,                    Is.EquivalentTo(new[] { LocationService.ACCESSIBLE_CHARGING, LocationService.ASSISTANCE }));
+                Assert.That(location.ParkingPlaces.Select(parking => parking.Id.ToString()),  Is.EqualTo(new[] { "GEF-1", "PAR-1" }));
+                Assert.That(location.ParkingPlaces.First().ParkingSpaceLength?.m,             Is.EqualTo(5));
+                Assert.That(location.ParkingPlaces.First().Direction,                         Is.EqualTo(ParkingDirection.PERPENDICULAR));
+                Assert.That(location.ParkingPlaces.First().Lighting,                          Is.True);
+                Assert.That(location.ParkingPlaces.First().RestrictedToType,                  Is.False, "Unknown in POI3, required by OCPI.");
+                Assert.That(evse.Parking.Select(parking => parking.ParkingId.ToString()),     Is.EqualTo(new[] { "GEF-1", "PAR-1" }));
                 Assert.That(location.AssistanceServiceDetails,    Is.EqualTo("Ring at the kiosk"));
                 Assert.That(location.Standards,                   Is.EqualTo(new[] { Standard.PAS1899_2022 }));
                 Assert.That(evse.ReachDistance?.cm,               Is.EqualTo(60));
@@ -518,6 +547,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(imported.EVSEs.Single().Id,                               Is.EqualTo(E1));
                 Assert.That(imported.EVSEs.Single().MaxPower?.Value,                  Is.EqualTo(22000));
                 Assert.That(imported.EVSEs.Single().ChargingTariffIds,                Is.EqualTo(new[] { T1 }));
+
+                // The parking place of no parking operator is one of the operator; the one of a parking operator is named.
+                Assert.That(imported.ParkingSpaces.Select(space => space.Id),         Is.EqualTo(new[] { GS1 }));
+                Assert.That(imported.ParkingSpaces.Single().Width?.m,                 Is.EqualTo(3.5m));
+                Assert.That(imported.ParkingSpaces.Single().EVSEPosition,             Is.EqualTo(POI.EVSEPosition.LEFT));
+                Assert.That(imported.ChargingStations.Single().ParkingSpaceIds,       Is.EqualTo(new[] { GS1, PS1 }));
+                Assert.That(history.Head.RoamingNetwork.ParkingOperators.Single().ParkingSpaces.Single().ToJSON().ToString(),
+                            Is.EqualTo(new POI.ParkingSpace(PS1, Created: Created).ToJSON().ToString()));
             });
 
             // A changed location: only what changed is committed.

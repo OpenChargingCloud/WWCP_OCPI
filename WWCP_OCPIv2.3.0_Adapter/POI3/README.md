@@ -108,6 +108,25 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 Import: `AVAILABLE` → available, `BLOCKED` → blocked, `CHARGING` → charging, `INOPERATIVE` → inoperative,
 `OUTOFORDER` → outOfOrder, `PLANNED` → inDeployment, `REMOVED` → removed, `RESERVED` → reserved, else unknown.
 
+### Parking space ↔ parking
+
+| POI3 | OCPI 2.3 |
+|---|---|
+| the parking spaces the charging stations of a pool name (`parkingSpaceIds`), of parking operators or of the charging station operator | location `parking_places` |
+| the `parkingSpaceIds` of the EVSE's charging station | EVSE `parking` (`parking_id`; import: the union of its EVSEs' for a charging station) |
+| `@id` | `id` |
+| `physicalReference`, `vehicleTypes`, `restrictedToVehicleTypes` (unknown: false), `reservationRequired` (unknown: false) | `physical_reference`, `vehicle_types`, `restricted_to_type`, `reservation_required` |
+| `maxVehicleWeight` (kg), `maxVehicleHeight`/`Length`/`Width`, `length`, `width` (m) | `max_vehicle_weight`, `max_vehicle_height`/`length`/`width`, `parking_space_length`/`width` (import: measures not positive are left out) |
+| `evsePosition`, `direction`, `surface`, `slope` | `evse_position`, `direction`, `surface`, `slope` |
+| `timeLimit` (s) | `time_limit` |
+| `driveThrough`, `roofed`, `illuminated`, `refrigerationOutlet`, `dangerousGoodsAllowed`, `protectedArea` | `drive_through`, `roofed`, `lighting`, `refrigeration_outlet`, `dangerous_goods_allowed`, `protected_area` |
+| `apdsReference`, `standards`, `images` | `apds_reference`, `standards`, `images` |
+
+Import: a parking place a parking operator defines is named by the charging station, not changed: the parking operator
+owns it. Every other one is a parking space the charging station operator defines itself, added or, with what only POI3
+knows kept and what OCPI tells alike as well, changed. One another charging station operator defines is left out with a
+warning, and so is a `parking_id` of an EVSE that is no parking space. Parking spaces no location names any more stay.
+
 ### Charging connector ↔ connector
 
 | POI3 | OCPI connector |
@@ -168,8 +187,7 @@ What one side has and the other does not, or not alike:
   or one new station per location.
 - **Connectors:** POI3 has no per-connector voltage, amperage, power or tariffs, and no connector capabilities
   (ISO 15118 Plug & Charge): they come from the EVSE. `lockable` has no OCPI counterpart. A plug type OCPI does not know leaves the connector out (with a warning).
-- **Location:** POI3 has no `publish`/`publish_allowed_to` (always published), no `owner`, no parking places (the OCPI 2.3
-  `Parking` objects, closest to POI3 parking spaces, which belong to parking operators), no energy meters of locations.
+- **Location:** POI3 has no `publish`/`publish_allowed_to` (always published), no `owner`, no energy meters of locations.
   `assistance_service_details` is one text, POI3 has one per language. The house number is joined with the street, and only split
   again where the address is as before (see above).
   Environmental impacts of energy mixes are not mapped (OCPI: g/kWh, POI3: in a percentage).
@@ -179,7 +197,10 @@ What one side has and the other does not, or not alike:
 - **POI3 only:** descriptions, entrance/exit addresses and locations, location languages, payment options and authentication
   modes beyond the capabilities above, pool features, grid connection points, data licenses, groups, brands (beyond the
   first as sub-operator), energy status of EVSEs and stations, charging pool and station status.
-- **EVSE:** POI3 has no floor level, `status_schedule`, EVSE `parking` references or `accepted_service_providers`; OCPI has no charging modes, reservation duration,
+- **Parking:** POI3 names parking spaces by charging stations, OCPI by EVSEs; the `access_level` of an EVSE's `parking`
+  has no POI3 counterpart, and its `evse_position` is the parking space's. Names, descriptions, garages, sensors,
+  products, `parkingRestrictions` and `euVehicleCategories` of parking spaces have no OCPI counterpart.
+- **EVSE:** POI3 has no floor level, `status_schedule` or `accepted_service_providers`; OCPI has no charging modes, reservation duration,
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
   published). An OCPI price component without `vat` has no VAT; a POI3 one without `vat` has an unknown VAT.

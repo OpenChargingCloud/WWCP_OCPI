@@ -274,6 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                 : null,
                        ChargingWhenClosed:  ChargingPool.ChargingWhenClosed,
                        Images:              ChargingPool.Images.Select(ToOCPI),
+                       ParkingPlaces:       ParkingSpacesOf(ChargingPool, RoamingNetwork).Select(ToOCPI),
                        EnergyMix:           ChargingPool.EnergyMix?.ToOCPI($"charging pool '{ChargingPool.Id}'", Warnings),
                        HelpPhone:           ChargingPool.HotlinePhoneNumber ?? chargingStationOperator.HotlinePhoneNumber,
                        Services:                  ChargingPool.Services. Select(service  => LocationService.Parse(service. ToString())),
@@ -342,6 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Coordinates:          EVSE.GeoLocation ?? ChargingStation.GeoLocation ?? ChargingPool.GeoLocation,
                        PhysicalReference:    EVSE.PhysicalReference ?? ChargingStation.PhysicalReference,
                        ParkingRestrictions:  ParkingRestrictionsOf(ChargingPool),
+                       Parking:              ChargingStation.ParkingSpaceIds.Select(parkingSpaceId => new EVSEParking(Parking_Id.Parse(parkingSpaceId.ToString()))),
                        Images:               EVSE.Images.Concat(ChargingStation.Images).Select(ToOCPI).Distinct(),
 
                        Created:              EVSE.Created,
@@ -840,6 +842,116 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         #endregion
 
+        #region ParkingSpacesOf(ChargingPool, RoamingNetwork)
+
+        /// <summary>
+        /// The parking spaces the charging stations of the given charging pool name, of parking operators or of charging
+        /// station operators, each once, in the order of their identifications.
+        /// </summary>
+        public static IEnumerable<POI.ParkingSpace> ParkingSpacesOf(POI.ChargingPool    ChargingPool,
+                                                                    POI.RoamingNetwork  RoamingNetwork)
+
+            => ChargingPool.ChargingStations.SelectMany(chargingStation => chargingStation.ParkingSpaceIds).
+                                             Distinct().
+                                             OrderBy   (parkingSpaceId  => parkingSpaceId.ToString(), StringComparer.Ordinal).
+                                             Select    (parkingSpaceId  => RoamingNetwork.TryGetParkingSpaceById(parkingSpaceId, out var parkingSpace) ? parkingSpace : null).
+                                             Where     (parkingSpace    => parkingSpace is not null).
+                                             Select    (parkingSpace    => parkingSpace!);
+
+        #endregion
+
+        #region ToOCPI(ParkingSpace) / ToPOI3(Parking, Created, LastChange)
+
+        /// <summary>
+        /// The OCPI parking of the given parking space: what OCPI requires and POI3 does not know is false.
+        /// </summary>
+        public static Parking ToOCPI(this POI.ParkingSpace ParkingSpace)
+
+            => new (Id:                     Parking_Id.Parse(ParkingSpace.Id.ToString()),
+                    VehicleTypes:           ParkingSpace.VehicleTypes.Select(vehicleType => VehicleType.Parse(vehicleType.ToString())),
+                    RestrictedToType:       ParkingSpace.RestrictedToVehicleTypes ?? false,
+                    ReservationRequired:    ParkingSpace.ReservationRequired      ?? false,
+                    PhysicalReference:      ParkingSpace.PhysicalReference,
+                    MaxVehicleWeight:       ParkingSpace.MaxVehicleWeight,
+                    MaxVehicleHeight:       ParkingSpace.MaxVehicleHeight,
+                    MaxVehicleLength:       ParkingSpace.MaxVehicleLength,
+                    MaxVehicleWidth:        ParkingSpace.MaxVehicleWidth,
+                    ParkingSpaceLength:     ParkingSpace.Length,
+                    ParkingSpaceWidth:      ParkingSpace.Width,
+                    DangerousGoodsAllowed:  ParkingSpace.DangerousGoodsAllowed,
+                    EVSEPosition:           ParkingSpace.EVSEPosition.HasValue ? EVSEPosition.    Parse(ParkingSpace.EVSEPosition.Value.ToString()) : null,
+                    Direction:              ParkingSpace.Direction.   HasValue ? ParkingDirection.Parse(ParkingSpace.Direction.   Value.ToString()) : null,
+                    DriveThrough:           ParkingSpace.DriveThrough,
+                    TimeLimit:              ParkingSpace.TimeLimit,
+                    Roofed:                 ParkingSpace.Roofed,
+                    Images:                 ParkingSpace.Images.Select(ToOCPI),
+                    Lighting:               ParkingSpace.Illuminated,
+                    RefrigerationOutlet:    ParkingSpace.RefrigerationOutlet,
+                    Standards:              ParkingSpace.Standards.Select(standard => Standard.Parse(standard.ToString())),
+                    APDSReference:          ParkingSpace.APDSReference,
+                    ProtectedArea:          ParkingSpace.ProtectedArea,
+                    Surface:                ParkingSpace.Surface.     HasValue ? Surface.         Parse(ParkingSpace.Surface.     Value.ToString()) : null,
+                    Slope:                  ParkingSpace.Slope.       HasValue ? Slope.           Parse(ParkingSpace.Slope.       Value.ToString()) : null);
+
+        /// <summary>
+        /// The parking space of the given OCPI parking, or null when its identification is none of a parking space.
+        /// Measures that are not positive, and values POI3 does not know, are left out.
+        /// </summary>
+        public static POI.ParkingSpace? ToPOI3(this Parking          Parking,
+                                               DateTimeOffset        Created,
+                                               DateTimeOffset        LastChange,
+                                               ICollection<Warning>  Warnings)
+        {
+
+            if (!POI.ParkingSpace_Id.TryParse(Parking.Id.ToString(), out var parkingSpaceId))
+            {
+                Warnings.Add(Warning.Create($"The parking identification '{Parking.Id}' is no parking space identification!"));
+                return null;
+            }
+
+            static TEnum? EnumOf<TEnum>(Object? Value) where TEnum : struct, Enum
+
+                => Value is not null && Enum.TryParse<TEnum>(Value.ToString(), ignoreCase: false, out var value) && Enum.IsDefined(value)
+                       ? value
+                       : null;
+
+            static Meter? Positive(Meter? Meter)
+                => Meter?.m > 0 ? Meter : null;
+
+            return new POI.ParkingSpace(
+                       parkingSpaceId,
+                       PhysicalReference:         Parking.PhysicalReference,
+                       VehicleTypes:              Parking.VehicleTypes.Select(vehicleType => POI.VehicleType.Parse(vehicleType.ToString())),
+                       MaxVehicleWeight:          Parking.MaxVehicleWeight?.Value > 0 ? Parking.MaxVehicleWeight : null,
+                       MaxVehicleHeight:          Positive(Parking.MaxVehicleHeight),
+                       MaxVehicleLength:          Positive(Parking.MaxVehicleLength),
+                       MaxVehicleWidth:           Positive(Parking.MaxVehicleWidth),
+                       Length:                    Positive(Parking.ParkingSpaceLength),
+                       Width:                     Positive(Parking.ParkingSpaceWidth),
+                       EVSEPosition:              EnumOf<POI.EVSEPosition>    (Parking.EVSEPosition),
+                       Direction:                 EnumOf<POI.ParkingDirection>(Parking.Direction),
+                       Surface:                   EnumOf<POI.ParkingSurface>  (Parking.Surface),
+                       Slope:                     EnumOf<POI.ParkingSlope>    (Parking.Slope),
+                       TimeLimit:                 Parking.TimeLimit >= TimeSpan.Zero ? Parking.TimeLimit : null,
+                       RestrictedToVehicleTypes:  Parking.RestrictedToType,
+                       DriveThrough:              Parking.DriveThrough,
+                       ReservationRequired:       Parking.ReservationRequired,
+                       Roofed:                    Parking.Roofed,
+                       Illuminated:               Parking.Lighting,
+                       RefrigerationOutlet:       Parking.RefrigerationOutlet,
+                       DangerousGoodsAllowed:     Parking.DangerousGoodsAllowed,
+                       ProtectedArea:             Parking.ProtectedArea,
+                       APDSReference:             Parking.APDSReference,
+                       Standards:                 Parking.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
+                       Images:                    Parking.Images.Select(ToPOI3),
+                       Created:                   Created,
+                       LastChange:                LastChange
+                   );
+
+        }
+
+        #endregion
+
         #region ToPOI3(Tariff, OperatorId, Language, Warnings)
 
         /// <summary>
@@ -952,6 +1064,21 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         #endregion
 
+
+        #region (internal) ParkingSpaceProperties
+
+        /// <summary>
+        /// The properties of a parking space OCPI tells: imported onto an existing parking space of a charging station
+        /// operator, the others are kept.
+        /// </summary>
+        internal static readonly String[] ParkingSpaceProperties = [
+            "physicalReference", "vehicleTypes", "restrictedToVehicleTypes", "maxVehicleWeight", "maxVehicleHeight",
+            "maxVehicleLength", "maxVehicleWidth", "length", "width", "evsePosition", "direction", "surface", "slope",
+            "timeLimit", "driveThrough", "reservationRequired", "roofed", "illuminated", "refrigerationOutlet",
+            "dangerousGoodsAllowed", "protectedArea", "apdsReference", "standards", "images"
+        ];
+
+        #endregion
 
         #region (internal) PoolProperties / EVSEProperties
 
