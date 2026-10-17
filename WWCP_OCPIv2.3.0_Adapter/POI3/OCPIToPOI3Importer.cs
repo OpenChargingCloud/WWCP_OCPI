@@ -348,9 +348,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                            });
 
-            // The status of every EVSE, e.g. of new ones, which start as available.
+            // The status of every EVSE, e.g. of new ones, which start as available, and the status planned.
             foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
-                ImportStatus(evse, evse.Status, evse.LastUpdated);
+            {
+                ImportStatus        (evse, evse.Status, evse.LastUpdated);
+                ImportStatusSchedule(evse);
+            }
 
             ImportPrices(Location, operatorId.Value, Location.LastUpdated);
 
@@ -435,8 +438,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             #region The parking spaces of the charging stations: those of their EVSEs at OCPI
 
-            var parkingOfEVSEs = Location.EVSEs.ToDictionary(evse => evse.EVSEId?.ToString() ?? evse.UId.ToString(),
-                                                             evse => evse.Parking.Select(parking => parking.ParkingId.ToString()).ToArray());
+            // Of the EVSEs that are there, as ToPOI3 takes them: a REMOVED one may have the EVSE ID of the one that
+            // replaced it, which OCPI allows. Of two of the same identification the last one.
+            var parkingOfEVSEs = new Dictionary<String, String[]>();
+
+            foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
+                parkingOfEVSEs[evse.EVSEId?.ToString() ?? evse.UId.ToString()] = [.. evse.Parking.Select(parking => parking.ParkingId.ToString())];
 
             foreach (var station in (Pool["chargingStations"] as JArray ?? []).OfType<JObject>())
             {
@@ -829,6 +836,59 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             if (result == POI.POIStatusUpdateResult.Refused)
                 RaiseError($"The prices of the {EntityType} '{EntityId}' can not be taken: {errorResponse}", []);
+
+        }
+
+        #endregion
+
+        #region (private) ImportStatusSchedule(EVSE)
+
+        /// <summary>
+        /// The status schedule of the given EVSE as planned status: every period beginning later than now is planned
+        /// at its begin, and its end, where no other period begins then, plans the current status of the EVSE again.
+        /// A status planned before and no longer told stays planned.
+        /// </summary>
+        private void ImportStatusSchedule(EVSE EVSE)
+        {
+
+            var now      = Timestamp.Now;
+            var evseId   = EVSE.EVSEId?.ToString() ?? EVSE.UId.ToString();
+            var periods  = EVSE.StatusSchedule.Where(period => period.Begin > now).ToArray();
+
+            if (periods.Length == 0 || !POI.EVSE_Id.TryParse(evseId, out var id))
+                return;
+
+            // What is planned already is not planned again.
+            var planned  = History.Head.RoamingNetwork.TryGetChargingStationOperatorById(id.OperatorId, out var chargingStationOperator) &&
+                           chargingStationOperator.TryGetEVSE(id, out var poiEVSE)
+                               ? poiEVSE.StatusSchedule(timestamp => timestamp > now).Select(status => (status.Timestamp, status.Value.ToString())).ToHashSet()
+                               : [];
+
+            var plans    = periods.Select(period => (period.Begin, period.Status)).
+                                   Concat(periods.Where (period => period.End.HasValue && !periods.Any(other => other.Begin == period.End)).
+                                                  Select(period => (period.End!.Value, EVSE.Status)));
+
+            foreach (var (at, status) in plans)
+            {
+
+                var value = status.ToPOI3Status().ToString();
+
+                if (planned.Contains((at, value)))
+                    continue;
+
+                var result = History.RuntimeStatus.TryUpdate(POI.POIRuntimeStatusKind.Status,
+                                                             nameof(POI.EVSE),
+                                                             evseId,
+                                                             value,
+                                                             at,
+                                                             out _,
+                                                             out var errorResponse,
+                                                             DataSource: "OCPI");
+
+                if (result == POI.POIStatusUpdateResult.Refused)
+                    RaiseError($"The status planned for the EVSE '{evseId}' at {at:o} can not be taken: {errorResponse}", []);
+
+            }
 
         }
 

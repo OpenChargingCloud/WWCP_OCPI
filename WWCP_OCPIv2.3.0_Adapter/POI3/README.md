@@ -26,8 +26,8 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 
 - **Publisher:** at the start, every charging pool and charging tariff of the selected operators (all, unless given) is
   stored with `AddOrUpdateLocation`/`AddOrUpdateTariff`. Every commit maps the head again: what changed is stored, what
-  is gone is removed (`RemoveLocation`/`RemoveTariff`). Every change of the status or admin status of an EVSE stores its
-  OCPI EVSE (`AddOrUpdateEVSE`). `last_updated` is always later than what the CommonAPI holds, which it requires.
+  is gone is removed (`RemoveLocation`/`RemoveTariff`). Every change of the status or admin status of an EVSE, and every
+  one planned, stores its OCPI EVSE (`AddOrUpdateEVSE`), the planned one in its `status_schedule`. `last_updated` is always later than what the CommonAPI holds, which it requires.
   The parties of the operators must be parties of the CommonAPI, and what it holds for them is the publisher's: at the
   start, what is no longer in the head is removed, e.g. what was removed while no publisher ran. Without `OperatorIds`
   these are the operators of the head, so the data of an operator removed in the meantime stays.
@@ -95,7 +95,8 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | POI3 | OCPI EVSE |
 |---|---|
 | EVSE status, and admin status where not operational: planned/inDeployment → `PLANNED`, deleted → `REMOVED`, outOfService → `INOPERATIVE`, blocked → `BLOCKED` | `status` |
-| pool authentication modes, payment options, UI features; station features | `capabilities`: RFID → `RFID_READER`, CreditCard → `CREDIT_CARD_PAYABLE`, DebitCard → `DEBIT_CARD_PAYABLE`, NFC → `CONTACTLESS_CARD_SUPPORT`, PINPAD → `PED_TERMINAL`, REMOTE → `REMOTE_START_STOP_CAPABLE`, Reservable → `RESERVABLE`, ChargingProfilesSupported → `CHARGING_PROFILE_CAPABLE`, ChargingPreferencesSupported → `CHARGING_PREFERENCES_CAPABLE`, TokenGroupsSupported → `TOKEN_GROUP_CAPABLE`, CSOUnlockSupported → `UNLOCK_CAPABLE` (import: for new pools only) |
+| planned EVSE status and admin status (later than now) | `status_schedule`: the periods of another status than the current one, each until the next planned change, the last one open; a return to the current status ends the period before it (import: each period beginning later than now is planned at its begin, and its end, where no other period begins then, plans the current status again; what was planned before and is no longer told stays planned) |
+| pool authentication modes, payment options, UI features; station features | `capabilities`: RFID → `RFID_READER`, CreditCard → `CREDIT_CARD_PAYABLE`, DebitCard → `DEBIT_CARD_PAYABLE`, NFC → `CONTACTLESS_CARD_SUPPORT`, PINPAD → `PED_TERMINAL`, REMOTE → `REMOTE_START_STOP_CAPABLE`, Reservable → `RESERVABLE`, ChargingProfilesSupported → `CHARGING_PROFILE_CAPABLE`, ChargingPreferencesSupported → `CHARGING_PREFERENCES_CAPABLE`, TokenGroupsSupported → `TOKEN_GROUP_CAPABLE`, CSOUnlockSupported → `UNLOCK_CAPABLE` (import: new pools take them as they are; onto an existing pool only what differs from what it tells: a capability told now adds the authentication mode and payment option, or the station feature, giving it, one no longer told removes all that gives it, e.g. a credit card authentication mode, payment option and UI feature; everything else stays, e.g. the card types of an RFID mode; what a group gives stays in the group) |
 | EVSE `geoLocation`, else the station's, else the pool's | `coordinates` |
 | EVSE `physicalReference`, else the station's | `physical_reference` |
 | pool `parkingRestrictions` (TAXI ↔ TAXIS) | `parking_restrictions` |
@@ -241,7 +242,7 @@ What one side has and the other does not, or not alike:
 - **Parking:** POI3 names parking spaces by charging stations, OCPI by EVSEs; the `access_level` of an EVSE's `parking`
   has no POI3 counterpart, and its `evse_position` is the parking space's. Names, descriptions, garages, sensors,
   products, `parkingRestrictions` and `euVehicleCategories` of parking spaces have no OCPI counterpart.
-- **EVSE:** POI3 has no `status_schedule`; OCPI has no charging modes, reservation duration,
+- **EVSE:** OCPI has no charging modes, reservation duration,
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
   published). An OCPI price component without `vat` has no VAT; a POI3 one without `vat` has an unknown VAT.
@@ -255,7 +256,8 @@ What one side has and the other does not, or not alike:
   pool groups becomes the connector tariff on export; the import keeps it in its groups while the tariffs of a
   connector are as before, else attaches them to the EVSE.
   Operators are never created by the import.
-- **Capabilities on import** are taken for new charging pools only; existing ones keep their authentication modes,
-  payment options and features.
+- **Capabilities** are told for every EVSE, but are of the charging pool (authentication modes, payment options) or of
+  the charging station (features): imported, those of all EVSEs of a pool, or of a station, are united. A capability a
+  group gives can not be removed by an import.
 - **Status timestamps:** the importer follows OCPI's status, also where the history holds a later one (e.g. the default
   status of an EVSE just imported): the CommonAPI keeps an EVSE only with a later `last_updated`.

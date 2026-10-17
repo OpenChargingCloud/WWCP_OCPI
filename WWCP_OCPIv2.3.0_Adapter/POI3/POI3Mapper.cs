@@ -393,6 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                        UId:                  uid.Value,
                        Status:               ToOCPIStatus(EVSE.Status.Value, EVSE.AdminStatus.Value),
+                       StatusSchedule:       StatusScheduleOf(EVSE),
                        Connectors:           connectors,
                        EVSEId:               EVSE_Id.TryParse(EVSE.Id.ToString()),
                        Capabilities:         CapabilitiesOf(ChargingStation, ChargingPool),
@@ -738,7 +739,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                      new POI.ChargingStation(
                                                          Id:          stationId.Value,
                                                          EVSEs:       mappedEVSEs,
-                                                         Features:    capabilities.Contains(Capability.RESERVABLE) ? [ POI.ChargingStationFeature.Reservable ] : null,
+                                                         Features:    FeaturesOf(capabilities),
                                                          Created:     Location.Created,
                                                          LastChange:  Location.LastUpdated
                                                      ).ToJSON()
@@ -828,6 +829,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 }
 
             }
+
+            ImportCapabilities(desired, Existing, Effective, Location, Unchanged);
 
             return desired;
 
@@ -1566,6 +1569,250 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             return capabilities;
 
         }
+
+        /// <summary>
+        /// The capabilities an EVSE takes from its charging pool, with the authentication modes, payment options and user
+        /// interface features giving them.
+        /// </summary>
+        private static readonly (Capability Capability, String[] ModeTypes, POI.PaymentOptions[] PaymentOptions, POI.UIFeatures[] UIFeatures)[] poolCapabilities = [
+            (Capability.RFID_READER,                [ POI.AuthenticationMode.RFIDType       ], [],                                [ POI.UIFeatures.RFID       ]),
+            (Capability.REMOTE_START_STOP_CAPABLE,  [ POI.AuthenticationMode.REMOTEType     ], [],                                []),
+            (Capability.CREDIT_CARD_PAYABLE,        [ POI.AuthenticationMode.CreditCardType ], [ POI.PaymentOptions.CreditCard ], [ POI.UIFeatures.CreditCard ]),
+            (Capability.DEBIT_CARD_PAYABLE,         [ POI.AuthenticationMode.DebitCardType  ], [ POI.PaymentOptions.DebitCard  ], [ POI.UIFeatures.DebitCard  ]),
+            (Capability.CONTACTLESS_CARD_SUPPORT,   [ POI.AuthenticationMode.NFCType        ], [],                                [ POI.UIFeatures.NFC        ]),
+            (Capability.PED_TERMINAL,               [ POI.AuthenticationMode.PINPADType     ], [],                                [ POI.UIFeatures.Pinpad     ])
+        ];
+
+        /// <summary>
+        /// The capabilities an EVSE takes from the features of its charging station.
+        /// </summary>
+        private static readonly (Capability Capability, POI.ChargingStationFeature Feature)[] stationCapabilities = [
+            (Capability.RESERVABLE,                    POI.ChargingStationFeature.Reservable),
+            (Capability.CHARGING_PROFILE_CAPABLE,      POI.ChargingStationFeature.ChargingProfilesSupported),
+            (Capability.CHARGING_PREFERENCES_CAPABLE,  POI.ChargingStationFeature.ChargingPreferencesSupported),
+            (Capability.TOKEN_GROUP_CAPABLE,           POI.ChargingStationFeature.TokenGroupsSupported),
+            (Capability.UNLOCK_CAPABLE,                POI.ChargingStationFeature.CSOUnlockSupported)
+        ];
+
+        /// <summary>
+        /// The properties of a charging pool its capabilities tell.
+        /// </summary>
+        private static readonly String[] poolCapabilityProperties = [ "authenticationModes", "paymentOptions", "uiFeatures" ];
+
+        private static IEnumerable<POI.ChargingStationFeature> FeaturesOf(IReadOnlySet<Capability> Capabilities)
+
+            => stationCapabilities.Where (entry => Capabilities.Contains(entry.Capability)).
+                                   Select(entry => entry.Feature);
+
+        #region (private static) ImportCapabilities(Desired, Existing, Effective, Location, Unchanged)
+
+        /// <summary>
+        /// What the capabilities of the EVSEs of the given location tell other than those of the existing charging pool
+        /// as OCPI tells it, onto the pool and its charging stations: a capability told now adds the authentication mode
+        /// and payment option, or the feature of the station, giving it; one no longer told removes everything giving it.
+        /// Everything else stays, e.g. an RFID authentication mode with its card types, or a QR code. What a group gives
+        /// stays in the group.
+        /// </summary>
+        private static void ImportCapabilities(JObject    Desired,
+                                               JObject    Existing,
+                                               JObject?   Effective,
+                                               Location   Location,
+                                               Location?  Unchanged)
+        {
+
+            static Dictionary<String, HashSet<Capability>> CapabilitiesByEVSE(IEnumerable<EVSE> EVSEs)
+            {
+
+                var byEVSE = new Dictionary<String, HashSet<Capability>>();
+
+                foreach (var evse in EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
+                {
+
+                    var key = POI.EVSE_Id.TryParse(evse.EVSEId?.ToString() ?? evse.UId.ToString())?.ToString() ?? "";
+
+                    if (!byEVSE.TryGetValue(key, out var capabilities))
+                        byEVSE[key] = capabilities = [];
+
+                    capabilities.UnionWith(evse.Capabilities);
+
+                }
+
+                return byEVSE;
+
+            }
+
+            var told    = CapabilitiesByEVSE(Location.EVSEs);
+            var before  = CapabilitiesByEVSE(Unchanged?.EVSEs ?? []);
+
+            #region The charging pool: what all its EVSEs tell
+
+            var toldOfPool    = told.  Values.SelectMany(capabilities => capabilities).ToHashSet();
+            var beforeOfPool  = before.Values.SelectMany(capabilities => capabilities).ToHashSet();
+            var added         = poolCapabilities.Where(entry =>  toldOfPool.Contains(entry.Capability) && !beforeOfPool.Contains(entry.Capability)).ToArray();
+            var removed       = poolCapabilities.Where(entry => !toldOfPool.Contains(entry.Capability) &&  beforeOfPool.Contains(entry.Capability)).ToArray();
+
+            if (added.Length > 0 || removed.Length > 0)
+            {
+
+                // As it is at runtime, with what its groups give it.
+                var source           = Effective ?? Existing;
+                var newCapabilities  = added.Select(entry => entry.Capability).ToHashSet();
+
+                var removedModes     = removed.SelectMany(entry => entry.ModeTypes).ToHashSet();
+                var removedOptions   = removed.SelectMany(entry => entry.PaymentOptions).Select(option  => option. ToString()).ToHashSet();
+                var removedUI        = removed.SelectMany(entry => entry.UIFeatures).    Select(feature => feature.ToString()).ToHashSet();
+
+                var modes            = (source["authenticationModes"] as JArray ?? []).
+                                           Where (mode => !removedModes.Contains(mode["type"]?.Value<String>() ?? "")).
+                                           Select(mode => mode.DeepClone()).
+                                           Concat(AuthenticationModesOf(newCapabilities).Select(mode => mode.ToJSON())).
+                                           ToArray();
+
+                var options          = (source["paymentOptions"] as JArray ?? []).
+                                           Values<String>().OfType<String>().
+                                           Where (option => !removedOptions.Contains(option)).
+                                           Concat(PaymentOptionsOf(newCapabilities).Select(option => option.ToString())).
+                                           Distinct().
+                                           Order (StringComparer.Ordinal).
+                                           ToArray();
+
+                var ui               = (source["uiFeatures"] as JArray ?? []).
+                                           Values<String>().OfType<String>().
+                                           Where (feature => !removedUI.Contains(feature)).
+                                           ToArray();
+
+                void Set(String Property, JToken[] Values)
+                {
+                    if (Values.Length > 0)
+                        Desired[Property] = new JArray(Values);
+                    else
+                        Desired.Remove(Property);
+                }
+
+                Set("authenticationModes",  modes);
+                Set("paymentOptions",       [.. options.Select(option  => (JToken) option)]);
+                Set("uiFeatures",           [.. ui.     Select(feature => (JToken) feature)]);
+
+                if (Effective is not null)
+                    POI.POIGroupMembers.KeepWhatGroupsGive(Desired, Existing, Effective, poolCapabilityProperties);
+
+            }
+
+            #endregion
+
+            #region Its charging stations: what their EVSEs tell
+
+            static Dictionary<String, JObject> StationsOf(JObject? Pool)
+
+                => (Pool?["chargingStations"] as JArray ?? []).
+                       OfType<JObject>().
+                       GroupBy (station => station["@id"]?.Value<String>() ?? "").
+                       ToDictionary(group => group.Key, group => group.First());
+
+            var storedStations     = StationsOf(Existing);
+            var effectiveStations  = StationsOf(Effective);
+
+            foreach (var station in (Desired["chargingStations"] as JArray ?? []).OfType<JObject>())
+            {
+
+                var evseIds          = (station["EVSEs"] as JArray ?? []).OfType<JObject>().Select(evse => evse["@id"]?.Value<String>() ?? "").ToArray();
+                var toldOfStation    = evseIds.SelectMany(evseId => told.  GetValueOrDefault(evseId) ?? []).ToHashSet();
+                var beforeOfStation  = evseIds.SelectMany(evseId => before.GetValueOrDefault(evseId) ?? []).ToHashSet();
+
+                var addedFeatures    = stationCapabilities.Where (entry =>  toldOfStation.Contains(entry.Capability) && !beforeOfStation.Contains(entry.Capability)).
+                                                           Select(entry => entry.Feature.ToString()).
+                                                           ToArray();
+
+                var removedFeatures  = stationCapabilities.Where (entry => !toldOfStation.Contains(entry.Capability) &&  beforeOfStation.Contains(entry.Capability)).
+                                                           Select(entry => entry.Feature.ToString()).
+                                                           ToHashSet();
+
+                if (addedFeatures.Length == 0 && removedFeatures.Count == 0)
+                    continue;
+
+                var stationId         = station["@id"]?.Value<String>() ?? "";
+                var effectiveStation  = effectiveStations.GetValueOrDefault(stationId);
+
+                // As it is at runtime, with what its groups give it.
+                var features          = ((effectiveStation ?? station)["features"] as JArray ?? []).
+                                            Values<String>().
+                                            OfType<String>().
+                                            Where (feature => !removedFeatures.Contains(feature)).
+                                            Concat(addedFeatures).
+                                            Distinct().
+                                            Order (StringComparer.Ordinal).
+                                            ToArray();
+
+                if (features.Length > 0)
+                    station["features"] = new JArray(features);
+                else
+                    station.Remove("features");
+
+                if (effectiveStation is not null)
+                    POI.POIGroupMembers.KeepWhatGroupsGive(station, storedStations.GetValueOrDefault(stationId), effectiveStation, [ "features" ]);
+
+            }
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region (private static) StatusScheduleOf(EVSE)
+
+        /// <summary>
+        /// The planned status of the given EVSE as OCPI tells it: from its planned status and admin status, the periods
+        /// of another status than its current one, each until the next planned change, the last one open. A return to the
+        /// current status is the end of the period before it.
+        /// </summary>
+        private static IEnumerable<StatusSchedule> StatusScheduleOf(POI.EVSE EVSE)
+        {
+
+            var now       = Timestamp.Now;
+            var statuses  = EVSE.StatusSchedule().     OrderBy(status => status.Timestamp).ToArray();
+            var admin     = EVSE.AdminStatusSchedule().OrderBy(status => status.Timestamp).ToArray();
+            var changes   = statuses.Select(status => status.Timestamp).
+                                Concat(admin.Select(status => status.Timestamp)).
+                                Where (timestamp => timestamp > now).
+                                Distinct().
+                                Order().
+                                ToArray();
+
+            if (changes.Length == 0)
+                return [];
+
+            var current   = ToOCPIStatus(EVSE.Status.Value, EVSE.AdminStatus.Value);
+            var periods   = new List<(DateTimeOffset Begin, StatusType Status)>();
+            var previous  = current;
+
+            foreach (var change in changes)
+            {
+
+                var status = ToOCPIStatus(statuses.LastOrDefault(entry => entry.Timestamp <= change, EVSE.Status).     Value,
+                                          admin.   LastOrDefault(entry => entry.Timestamp <= change, EVSE.AdminStatus).Value);
+
+                if (status != previous)
+                {
+                    periods.Add((change, status));
+                    previous = status;
+                }
+
+            }
+
+            var schedule = new List<StatusSchedule>();
+
+            for (var i = 0; i < periods.Count; i++)
+                if (periods[i].Status != current)
+                    schedule.Add(new StatusSchedule(periods[i].Status,
+                                                    periods[i].Begin,
+                                                    i + 1 < periods.Count ? periods[i + 1].Begin : null));
+
+            return schedule;
+
+        }
+
+        #endregion
 
         private static IEnumerable<POI.AuthenticationMode> AuthenticationModesOf(IReadOnlySet<Capability> Capabilities)
         {

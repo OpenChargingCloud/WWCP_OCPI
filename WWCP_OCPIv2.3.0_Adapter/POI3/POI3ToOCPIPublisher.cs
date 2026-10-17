@@ -128,8 +128,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (worker is not null)
                 throw new InvalidOperationException("The publisher has been started already!");
 
-            History.OnCommitAnnouncement          += Announced;
-            History.RuntimeStatus.OnStatusUpdate  += StatusUpdated;
+            History.OnCommitAnnouncement           += Announced;
+            History.RuntimeStatus.OnStatusUpdate   += StatusUpdated;
+            History.RuntimeStatus.OnStatusPlanned  += StatusUpdated;
 
             worker = Task.Run(WorkAsync);
 
@@ -155,8 +156,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         public async ValueTask DisposeAsync()
         {
 
-            History.OnCommitAnnouncement          -= Announced;
-            History.RuntimeStatus.OnStatusUpdate  -= StatusUpdated;
+            History.OnCommitAnnouncement           -= Announced;
+            History.RuntimeStatus.OnStatusUpdate   -= StatusUpdated;
+            History.RuntimeStatus.OnStatusPlanned  -= StatusUpdated;
 
             work.Writer.TryComplete();
 
@@ -174,7 +176,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             => work.Writer.TryWrite(PublishHeadAsync);
 
-        // Raised while the status schedule of the EVSE is locked: only queued here.
+        // Raised while the status schedule of the EVSE is locked: only queued here. A planned status as well: the
+        // status schedule of the OCPI EVSE.
         private void StatusUpdated(POI.POIStatusUpdate StatusUpdate)
         {
 
@@ -432,8 +435,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     if (location.TryGetEVSE(ocpiEVSE.UId, out var stored))
                     {
 
-                        if (stored.Status == ocpiEVSE.Status)
+                        if (stored.Status == ocpiEVSE.Status &&
+                            JToken.DeepEquals(new JArray(stored.  StatusSchedule.Select(period => period.ToJSON())),
+                                              new JArray(ocpiEVSE.StatusSchedule.Select(period => period.ToJSON()))))
+                        {
                             return;
+                        }
 
                         if (ocpiEVSE.LastUpdated <= stored.LastUpdated)
                             ocpiEVSE = evse.ToOCPI(chargingStation, chargingPool, chargingStationOperator, warnings, stored.LastUpdated.AddMilliseconds(1))!;
