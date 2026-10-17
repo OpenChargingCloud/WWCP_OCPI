@@ -36,14 +36,18 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   stations and EVSEs, with the properties their groups give them (`EffectiveChargingPools`), e.g. the facilities of a
   pool, a feature `Reservable` or a physical reference of a station, the connectors of an EVSE, given once for all
   members of a group; a change of a group changes the locations of its members, its `lastChange` being the last change
-  of these and of what embeds them.
+  of these and of what embeds them. New prices of the price status of charging pools, stations and EVSEs are tariffs of
+  their own, which the EVSEs name (see [Prices at runtime](#prices-at-runtime--tariffs-of-their-own)); a change of a
+  price status publishes the head again, once for all reported until then.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
   charging tariff as OCPI tells it, onto the one there is, with what only POI3 knows kept (see below). The difference is
   computed as a three-way merge whose left side is its base (`RoamingNetwork.TryMerge(head, head, desired)`), so only what
   changed is in the change set; nothing changed, nothing is committed. It is signed by the given delegate, since an
   operator owns its data and every change set must be signed by its owners, and committed. A removed location or tariff
   removes its charging pool or charging tariff, and an EVSE whose status is `REMOVED` its EVSE (the CommonAPI keeps such
-  EVSEs by default). EVSE status goes into the runtime status of the history (`DataSource` "OCPI").
+  EVSEs by default). EVSE status goes into the runtime status of the history (`DataSource` "OCPI"), and so do prices:
+  a tariff changed in its elements only is not committed, its prices become the price status of the charging pools
+  and EVSEs naming it (see [Prices at runtime](#prices-at-runtime--tariffs-of-their-own)).
   The operators must be in the roaming network already: adding them is up to the roaming network operator.
 - Both work one job after the other, in the order the events came. **Do not use both on the same history and
   CommonAPI:** each would feed the other's changes back.
@@ -59,6 +63,7 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | EVSE `DE*GEF*E1*1` | EVSE `uid` and `evse_id` `DE*GEF*E1*1` (import: from `evse_id`, else `uid`) |
 | charging connector `1` | connector `id` `1` |
 | charging tariff `DE*GEF*T1` | tariff `id` `1` |
+| charging tariff `DE*GEF*T1` with new prices of a price status | tariff `id` `1~` + the first 8 hex digits of the SHA-256 of the compact JSON of their elements, e.g. `1~3fa9c10b` (no charging tariff identification has a `~`) |
 | charging station | — (import: new EVSEs go into the first charging station of the pool, or into `DE*GEF*S1` named after the location) |
 
 ### Charging pool ↔ location
@@ -164,6 +169,27 @@ powers, and the union of their tariffs.
 | price component `ENERGY`, `TIME`, `PARKING_TIME`, `FLAT`: price, VAT, step size | `ENERGY` (per kWh, step in Wh), `TIME`/`PARKING_TIME` (per hour, step in s), `FLAT` (step 1) |
 | restrictions: start/end time, start/end date, min/max energy (Wh), min/max current, min/max power (W), min/max duration (s), days of week, reservation | `start_time`, `end_time`, `start_date`, `end_date`, `min_kwh`/`max_kwh` (kWh), `min_current`/`max_current`, `min_power`/`max_power` (kW), `min_duration`/`max_duration`, `day_of_week`, `reservation` (`RESERVATION`, `RESERVATION_EXPIRES`) |
 
+### Prices at runtime ↔ tariffs of their own
+
+The price status of a charging pool, charging station or EVSE gives charging tariffs new elements at runtime, e.g. ad
+hoc prices following the electricity market, without a commit; at an EVSE the most specific one naming a tariff applies,
+its own before its station's before its pool's (`ChargingPrices.Effective`). OCPI 2.3.0 tariffs apply wherever a
+connector names them, so:
+
+- **Publisher:** a charging tariff with the new prices in effect at an EVSE is a tariff of its own: the tariff as it is,
+  with the elements of the prices and the identification `1~…` of their hash (see above), the same for the same prices
+  wherever they apply. Its `last_updated` is the earliest time since when they do. The connectors of the EVSE name it
+  instead of the tariff, and the EVSE, its connectors and so the location are updated since the prices apply. A tariff
+  of prices in effect nowhere any more is removed; the tariff itself always stays.
+- **Importer:** a tariff whose elements only changed is not committed: its elements become the price status of the
+  locations naming it (also as `1~…`). Prices the same at every EVSE of a location naming a tariff are the price
+  status of its charging pool, others the EVSE's own; where the prices are the tariff's, they are removed from it. The
+  price status of a charging station is followed, never set: an EVSE whose station has other prices gets its own. A
+  tariff `1~…` names its charging tariff `DE*GEF*T1`, is never a charging tariff of its own, and tells the prices of the
+  EVSEs naming it. A tariff changed in more than its elements is committed as a whole, its elements as well. A tariff
+  the CommonAPI does not hold (yet) tells nothing: the prices stay as they are. So what a POI3 network publishes,
+  imported back into it, sets no price status again.
+
 ### What the import keeps
 
 A location imported onto an existing charging pool sets only `name`, `address`, `geoLocation`, `timeZone`, `parkingType`,
@@ -209,6 +235,9 @@ What one side has and the other does not, or not alike:
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
   published). An OCPI price component without `vat` has no VAT; a POI3 one without `vat` has an unknown VAT.
+  OCPI cannot tell new prices from a changed tariff: a change of the elements of a tariff in POI3, committed, is a price
+  status after an import elsewhere. Tariff identifications with new prices may exceed the 36 characters of OCPI where the
+  suffix of the charging tariff has more than 27.
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.

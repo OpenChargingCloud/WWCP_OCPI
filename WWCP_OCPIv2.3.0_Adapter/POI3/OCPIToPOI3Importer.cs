@@ -349,6 +349,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
                 ImportStatus(evse, evse.Status, evse.LastUpdated);
 
+            ImportPrices(Location, operatorId.Value, Location.LastUpdated);
+
         }
 
         #endregion
@@ -506,6 +508,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return;
             }
 
+            // A tariff with new prices of a charging tariff: the price status of the locations naming it.
+            if (Tariff.Id.HasPrices())
+            {
+                ImportPricesOf(Tariff, operatorId.Value);
+                return;
+            }
+
             ChangeOperator(operatorId.Value,
                            $"OCPI tariff {Tariff.Id}",
                            Tariff.LastUpdated,
@@ -543,6 +552,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                               Where(property => property is not "created" and not "lastChange" &&
                                                                                 !POI3Mapper.SameValue(unchanged, desired, property)));
 
+                                   // Only new prices are runtime data, e.g. ad hoc prices following the electricity
+                                   // market: the price status of the locations naming the tariff, not a commit.
+                                   if (JToken.DeepEquals(WithoutElements(merged), WithoutElements(existing)))
+                                       merged["elements"] = existing["elements"]?.DeepClone();
+
                                    existing.Replace(merged);
 
                                }
@@ -553,7 +567,156 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                            });
 
+            ImportPricesOf(Tariff, operatorId.Value);
+
         }
+
+        private static JObject WithoutElements(JObject ChargingTariff)
+        {
+            var copy = (JObject) ChargingTariff.DeepClone();
+            copy.Remove("elements");
+            return copy;
+        }
+
+        #endregion
+
+        #region (private) ImportPricesOf(Tariff, OperatorId) / ImportPrices(Location, OperatorId, Timestamp)
+
+        /// <summary>
+        /// The prices of the given tariff at the locations naming it, also with other prices.
+        /// </summary>
+        private void ImportPricesOf(Tariff                          Tariff,
+                                    POI.ChargingStationOperator_Id  OperatorId)
+        {
+
+            var chargingTariffId = POI3Mapper.ToPOI3TariffIdOf(OperatorId, Tariff.Id);
+
+            if (!chargingTariffId.HasValue)
+                return;
+
+            foreach (var location in CommonAPI.GetLocations(Party_Idv3.From(Tariff.CountryCode, Tariff.PartyId)))
+                if (location.EVSEs.Any(evse => evse.Connectors.Any(connector => connector.TariffIds.Any(tariffId => POI3Mapper.ToPOI3TariffIdOf(OperatorId, tariffId) == chargingTariffId))))
+                    ImportPrices(location, OperatorId, Tariff.LastUpdated);
+
+        }
+
+        /// <summary>
+        /// The prices OCPI tells at the EVSEs of the given location as the price status of its charging pool and EVSEs:
+        /// for every charging tariff, the elements of the tariff the connectors name, where they are not the tariff's.
+        /// </summary>
+        /// <remarks>
+        /// Prices the same at every EVSE of the location naming a charging tariff are the charging pool's, others the
+        /// EVSE's own. The price status of a charging station is followed, never set: an EVSE whose station has other
+        /// prices gets its own. A tariff the CommonAPI does not hold (yet) tells nothing: its prices stay as they are.
+        /// </remarks>
+        private void ImportPrices(Location                        Location,
+                                  POI.ChargingStationOperator_Id  OperatorId,
+                                  DateTimeOffset                  Timestamp)
+        {
+
+            var poolId = POI3Mapper.ToPOI3PoolId(OperatorId, Location.Id);
+
+            if (!poolId.HasValue ||
+                !History.Head.RoamingNetwork.TryGetChargingStationOperatorById(OperatorId, out var chargingStationOperator) ||
+                !chargingStationOperator.TryGetEffectiveChargingPool(poolId.Value, out var chargingPool))
+            {
+                return;
+            }
+
+            var party  = Party_Idv3.From(Location.CountryCode, Location.PartyId);
+            var told   = new Dictionary<(POI.EVSE_Id EVSEId, POI.ChargingTariff_Id TariffId), POI.ChargingTariffPrices>();
+
+            foreach (var evse in Location.EVSEs.Where(evse => evse.Status != StatusType.REMOVED))
+            {
+
+                if (!POI.EVSE_Id.TryParse(evse.EVSEId?.ToString() ?? evse.UId.ToString(), out var evseId))
+                    continue;
+
+                foreach (var tariffId in evse.Connectors.SelectMany(connector => connector.TariffIds).Distinct())
+                {
+
+                    var chargingTariffId = POI3Mapper.ToPOI3TariffIdOf(OperatorId, tariffId);
+
+                    if (chargingTariffId.HasValue &&
+                        chargingStationOperator.TryGetChargingTariff(chargingTariffId.Value, out _) &&
+                        CommonAPI.TryGetTariff(party, tariffId, out var tariff) &&
+                        tariff.ToPOI3Elements() is { Count: > 0 } elements)
+                    {
+                        told[(evseId, chargingTariffId.Value)] = new POI.ChargingTariffPrices(chargingTariffId.Value, elements);
+                    }
+
+                }
+
+            }
+
+            String ElementsOf(POI.ChargingTariff_Id ChargingTariffId)
+                => chargingStationOperator.TryGetChargingTariff(ChargingTariffId, out var chargingTariff)
+                       ? POI3Mapper.ElementsText(chargingTariff.Elements)
+                       : "";
+
+            #region The charging pool: the prices the same at all its EVSEs naming a tariff
+
+            var poolPrices = PricesOf(chargingPool.PriceStatus);
+
+            foreach (var byTariff in told.GroupBy(entry => entry.Key.TariffId))
+            {
+
+                var prices = byTariff.Select(entry => entry.Value).DistinctBy(price => POI3Mapper.ElementsText(price.Elements)).ToArray();
+
+                // Other prices at other EVSEs: theirs.
+                if (prices.Length != 1)
+                    continue;
+
+                if (POI3Mapper.ElementsText(prices[0].Elements) == ElementsOf(byTariff.Key))
+                    poolPrices.Remove(byTariff.Key);
+                else
+                    poolPrices[byTariff.Key] = prices[0];
+
+            }
+
+            ImportPriceStatus(nameof(POI.ChargingPool), chargingPool.Id.ToString(), chargingPool.PriceStatus, poolPrices, Timestamp);
+
+            #endregion
+
+            #region The EVSEs: what the charging pool and their charging station do not tell
+
+            foreach (var chargingStation in chargingPool.ChargingStations)
+            {
+
+                var stationPrices = PricesOf(chargingStation.PriceStatus);
+
+                foreach (var evse in chargingStation.EVSEs)
+                {
+
+                    var evsePrices = PricesOf(evse.PriceStatus);
+
+                    foreach (var ((_, chargingTariffId), prices) in told.Where(entry => entry.Key.EVSEId == evse.Id))
+                    {
+
+                        var withoutOwn = stationPrices.TryGetValue(chargingTariffId, out var stationPrice) ? POI3Mapper.ElementsText(stationPrice.Elements)
+                                       : poolPrices.   TryGetValue(chargingTariffId, out var poolPrice)    ? POI3Mapper.ElementsText(poolPrice.   Elements)
+                                       : ElementsOf(chargingTariffId);
+
+                        if (POI3Mapper.ElementsText(prices.Elements) == withoutOwn)
+                            evsePrices.Remove(chargingTariffId);
+                        else
+                            evsePrices[chargingTariffId] = prices;
+
+                    }
+
+                    ImportPriceStatus(nameof(POI.EVSE), evse.Id.ToString(), evse.PriceStatus, evsePrices, Timestamp);
+
+                }
+
+            }
+
+            #endregion
+
+        }
+
+        private static Dictionary<POI.ChargingTariff_Id, POI.ChargingTariffPrices> PricesOf(Timestamped<POI.ChargingPrices>? PriceStatus)
+
+            => PriceStatus?.Value.Prices.ToDictionary(price => price.ChargingTariffId) ?? [];
 
         #endregion
 
@@ -614,6 +777,43 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             if (result == POI.POIStatusUpdateResult.Refused)
                 RaiseError($"The status of the EVSE '{evseId}' can not be taken: {errorResponse}", []);
+
+        }
+
+        #endregion
+
+        #region (private) ImportPriceStatus(EntityType, EntityId, Current, Prices, Timestamp)
+
+        /// <summary>
+        /// The given prices as the price status of the given entity, unless it has these already.
+        /// </summary>
+        private void ImportPriceStatus(String                                                       EntityType,
+                                       String                                                       EntityId,
+                                       Timestamped<POI.ChargingPrices>?                             Current,
+                                       IReadOnlyDictionary<POI.ChargingTariff_Id, POI.ChargingTariffPrices>  Prices,
+                                       DateTimeOffset                                               Timestamp)
+        {
+
+            var priceStatus = new POI.ChargingPrices(Prices.Values);
+
+            if (priceStatus.Text == (Current?.Value ?? new POI.ChargingPrices()).Text)
+                return;
+
+            // What OCPI tells is the current price status, also where the one here is later.
+            if (Current.HasValue && Current.Value.Timestamp >= Timestamp)
+                Timestamp = Current.Value.Timestamp.AddMilliseconds(1);
+
+            var result = History.RuntimeStatus.TryUpdate(POI.POIRuntimeStatusKind.PriceStatus,
+                                                         EntityType,
+                                                         EntityId,
+                                                         priceStatus.Text,
+                                                         Timestamp,
+                                                         out _,
+                                                         out var errorResponse,
+                                                         DataSource: "OCPI");
+
+            if (result == POI.POIStatusUpdateResult.Refused)
+                RaiseError($"The prices of the {EntityType} '{EntityId}' can not be taken: {errorResponse}", []);
 
         }
 

@@ -17,6 +17,9 @@
 
 #region Usings
 
+using System.Text;
+using System.Security.Cryptography;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -85,6 +88,57 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                            Tariff_Id                       TariffId)
 
             => POI.ChargingTariff_Id.TryParse(OperatorId, TariffId.ToString());
+
+        /// <summary>
+        /// Between the tariff of a charging tariff and the hash of new prices of it: no charging tariff identification has it.
+        /// </summary>
+        public const Char PricesSeparator = '~';
+
+        /// <summary>
+        /// The tariff of the given charging tariff with the given new prices of its price status: DE*GEF*T1 with prices
+        /// is the tariff 1~{the first 8 hex digits of the SHA-256 of their elements}, the same for the same prices.
+        /// Without prices, the tariff of the charging tariff.
+        /// </summary>
+        public static Tariff_Id? ToOCPITariffId(this POI.ChargingTariff_Id     ChargingTariffId,
+                                                POI.ChargingTariffPrices?      Prices)
+
+            => Prices is null
+                   ? ChargingTariffId.ToOCPITariffId()
+                   : Tariff_Id.TryParse($"{ChargingTariffId.Suffix}{PricesSeparator}{PricesHash(Prices.Elements)}");
+
+        /// <summary>
+        /// Whether the given tariff is one of a charging tariff with new prices (see ToOCPITariffId(Prices)).
+        /// </summary>
+        public static Boolean HasPrices(this Tariff_Id TariffId)
+
+            => TariffId.ToString().LastIndexOf(PricesSeparator) > 0;
+
+        /// <summary>
+        /// The charging tariff of the given tariff of the given operator, also of one with new prices: 1~… is DE*GEF*T1.
+        /// </summary>
+        public static POI.ChargingTariff_Id? ToPOI3TariffIdOf(POI.ChargingStationOperator_Id  OperatorId,
+                                                             Tariff_Id                       TariffId)
+        {
+
+            var text       = TariffId.ToString();
+            var separator  = text.LastIndexOf(PricesSeparator);
+
+            return separator > 0
+                       ? POI.ChargingTariff_Id.TryParse(OperatorId, text[..separator])
+                       : ToPOI3TariffId(OperatorId, TariffId);
+
+        }
+
+        private static String PricesHash(IEnumerable<POI.ChargingTariffElement> Elements)
+
+            => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(ElementsText(Elements))))[..8];
+
+        /// <summary>
+        /// The text of the given charging tariff elements: their compact JSON, equal for equal elements.
+        /// </summary>
+        public static String ElementsText(IEnumerable<POI.ChargingTariffElement> Elements)
+
+            => new JArray(Elements.Select(element => element.ToJSON())).ToString(Newtonsoft.Json.Formatting.None);
 
         #endregion
 
@@ -317,12 +371,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
-            var tariffIds   = TariffIdsOf(EVSE, ChargingStation, ChargingPool, Operator).ToArray();
-            var connectors  = new List<Connector>();
+            // The tariffs with the prices in effect: since then, the connectors name other tariffs.
+            var prices          = PricesOf(EVSE, ChargingStation, ChargingPool, Operator);
+            var pricesChanged   = prices.Select(price => price.Timestamp).Append(EVSE.LastChangeDate).Max();
+            var tariffIds       = TariffIdsOf(EVSE, prices, Operator).ToArray();
+            var connectors      = new List<Connector>();
 
             foreach (var chargingConnector in EVSE.ChargingConnectors)
             {
-                var connector = chargingConnector.ToOCPI(EVSE, tariffIds, Operator, Warnings);
+                var connector = chargingConnector.ToOCPI(EVSE, tariffIds, Operator, Warnings, pricesChanged);
                 if (connector is not null)
                     connectors.Add(connector);
             }
@@ -330,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (connectors.Count == 0)
                 return null;
 
-            var lastUpdated = new[] { EVSE.LastChangeDate, EVSE.Status.Timestamp, EVSE.AdminStatus.Timestamp, NotBefore ?? DateTimeOffset.MinValue }.Max();
+            var lastUpdated = new[] { pricesChanged, EVSE.Status.Timestamp, EVSE.AdminStatus.Timestamp, NotBefore ?? DateTimeOffset.MinValue }.Max();
 
             return new EVSE(
 
@@ -359,17 +416,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         #endregion
 
-        #region ToOCPI(ChargingConnector, EVSE, TariffIds, Operator, Warnings)
+        #region ToOCPI(ChargingConnector, EVSE, TariffIds, Operator, Warnings, LastUpdated = null)
 
         /// <summary>
         /// The OCPI connector of the given charging connector: its plug type, and the current type and maximum voltage,
         /// current and power of its EVSE.
         /// </summary>
+        /// <param name="LastUpdated">Its 'last updated', when later than the last change of the EVSE, e.g. new prices of its tariffs.</param>
         public static Connector? ToOCPI(this POI.ChargingConnector      ChargingConnector,
                                         POI.EVSE                        EVSE,
                                         IEnumerable<Tariff_Id>          TariffIds,
                                         POI.ChargingStationOperator     Operator,
-                                        ICollection<Warning>            Warnings)
+                                        ICollection<Warning>            Warnings,
+                                        DateTimeOffset?                 LastUpdated   = null)
         {
 
             var connectorId  = Connector_Id.TryParse(ChargingConnector.Id.ToString());
@@ -407,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        TariffIds:              TariffIds,
                        TermsAndConditionsURL:  Operator.TermsAndConditionsURL,
                        Created:                EVSE.Created,
-                       LastUpdated:            EVSE.LastChangeDate,
+                       LastUpdated:            LastUpdated > EVSE.LastChangeDate ? LastUpdated.Value : EVSE.LastChangeDate,
                        CableLength:            ChargingConnector.CableLength,
                        CableWeight:            ChargingConnector.CableWeight,
                        CableManagementSystem:  ChargingConnector.CableManagementSystem,
@@ -419,17 +478,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         #endregion
 
-        #region ToOCPI(ChargingTariff, Warnings)
+        #region ToOCPI(ChargingTariff, Warnings, NotBefore = null, Prices = null)
 
         /// <summary>
         /// The OCPI tariff of the given charging tariff, or null when it has price components OCPI 2.3.0 does not know.
+        /// With new prices of it, e.g. of the price status of a charging pool, a tariff of its own: their elements
+        /// instead of the tariff's, the rest as the tariff has it (see ToOCPITariffId(Prices)).
         /// </summary>
-        public static Tariff? ToOCPI(this POI.ChargingTariff  ChargingTariff,
-                                     ICollection<Warning>     Warnings,
-                                     DateTimeOffset?          NotBefore   = null)
+        /// <param name="NotBefore">The earliest 'last updated' of the tariff, e.g. after the one published before.</param>
+        /// <param name="Prices">New prices of the charging tariff, with since when.</param>
+        public static Tariff? ToOCPI(this POI.ChargingTariff                    ChargingTariff,
+                                     ICollection<Warning>                       Warnings,
+                                     DateTimeOffset?                            NotBefore   = null,
+                                     Timestamped<POI.ChargingTariffPrices>?     Prices      = null)
         {
 
-            var tariffId = ChargingTariff.Id.ToOCPITariffId();
+            if (Prices.HasValue && Prices.Value.Value.ChargingTariffId != ChargingTariff.Id)
+                throw new ArgumentException($"The prices of the charging tariff '{Prices.Value.Value.ChargingTariffId}' are not those of '{ChargingTariff.Id}'!", nameof(Prices));
+
+            var tariffId = ChargingTariff.Id.ToOCPITariffId(Prices?.Value);
 
             if (!tariffId.HasValue)
             {
@@ -437,9 +504,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
-            var elements = new List<TariffElement>();
+            var elements     = new List<TariffElement>();
+            var lastUpdated  = new[] { ChargingTariff.LastChangeDate, Prices?.Timestamp ?? DateTimeOffset.MinValue, NotBefore ?? DateTimeOffset.MinValue }.Max();
 
-            foreach (var element in ChargingTariff.Elements)
+            foreach (var element in Prices?.Value.Elements ?? ChargingTariff.Elements)
             {
 
                 var priceComponents = new List<PriceComponent>();
@@ -491,9 +559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        End:            ChargingTariff.ValidUntil,
                        EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI($"charging tariff '{ChargingTariff.Id}'", Warnings),
                        Created:        ChargingTariff.Created,
-                       LastUpdated:    NotBefore.HasValue && NotBefore.Value > ChargingTariff.LastChangeDate
-                                           ? NotBefore.Value
-                                           : ChargingTariff.LastChangeDate
+                       LastUpdated:    lastUpdated
                    );
 
         }
@@ -811,8 +877,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (connectors.Count == 0)
                 return null;
 
+            // A tariff with new prices is its charging tariff: the prices are runtime data.
             var tariffIds = EVSE.Connectors.SelectMany(connector => connector.TariffIds).
-                                            Select    (tariffId  => ToPOI3TariffId(OperatorId, tariffId)).
+                                            Select    (tariffId  => ToPOI3TariffIdOf(OperatorId, tariffId)).
                                             Where     (tariffId  => tariffId.HasValue).
                                             Select    (tariffId  => tariffId!.Value).
                                             Distinct();
@@ -971,6 +1038,61 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
+            var elements = Tariff.ToPOI3Elements();
+
+            POI.ChargingTariffType? tariffType = null;
+
+            if (Tariff.TariffType.HasValue)
+            {
+                if (Enum.TryParse<POI.ChargingTariffType>(Tariff.TariffType.Value.ToString(), ignoreCase: false, out var type) &&
+                    Enum.IsDefined(type))
+                {
+                    tariffType = type;
+                }
+                else
+                    Warnings.Add(Warning.Create($"The tariff type '{Tariff.TariffType}' of the tariff '{Tariff.Id}' has no counterpart and is left out!"));
+            }
+
+            var minPrice = Tariff.MinPrice?.ToPOI3();
+            var maxPrice = Tariff.MaxPrice?.ToPOI3();
+
+            try
+            {
+                return new POI.ChargingTariff(
+                           Id:           tariffId.Value,
+                           Currency:     Tariff.Currency,
+                           Elements:     elements,
+                           Name:         ToI18NString(Tariff.TariffAltText),
+                           TariffURL:    Tariff.TariffAltURL,
+                           EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language, $"tariff '{Tariff.Id}'", Warnings),
+                           TariffType:   tariffType,
+                           MinPrice:     minPrice,
+                           MaxPrice:     maxPrice,
+                           ValidFrom:    Tariff.Start,
+                           ValidUntil:   Tariff.End,
+                           Created:      Tariff.Created,
+                           LastChange:   Tariff.LastUpdated
+                       );
+            }
+            // E.g. a minimum price above the maximum price.
+            catch (ArgumentException e)
+            {
+                Warnings.Add(Warning.Create(e.Message));
+                return null;
+            }
+
+        }
+
+        #endregion
+
+        #region ToPOI3Elements(Tariff)
+
+        /// <summary>
+        /// The charging tariff elements of the given OCPI tariff: prices excluding VAT, energy in Wh, power in W.
+        /// </summary>
+        public static IReadOnlyList<POI.ChargingTariffElement> ToPOI3Elements(this Tariff Tariff)
+        {
+
             var elements = new List<POI.ChargingTariffElement>();
 
             foreach (var element in Tariff.TariffElements)
@@ -1019,46 +1141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             }
 
-            POI.ChargingTariffType? tariffType = null;
-
-            if (Tariff.TariffType.HasValue)
-            {
-                if (Enum.TryParse<POI.ChargingTariffType>(Tariff.TariffType.Value.ToString(), ignoreCase: false, out var type) &&
-                    Enum.IsDefined(type))
-                {
-                    tariffType = type;
-                }
-                else
-                    Warnings.Add(Warning.Create($"The tariff type '{Tariff.TariffType}' of the tariff '{Tariff.Id}' has no counterpart and is left out!"));
-            }
-
-            var minPrice = Tariff.MinPrice?.ToPOI3();
-            var maxPrice = Tariff.MaxPrice?.ToPOI3();
-
-            try
-            {
-                return new POI.ChargingTariff(
-                           Id:           tariffId.Value,
-                           Currency:     Tariff.Currency,
-                           Elements:     elements,
-                           Name:         ToI18NString(Tariff.TariffAltText),
-                           TariffURL:    Tariff.TariffAltURL,
-                           EnergyMix:    Tariff.EnergyMix?.ToPOI3(Language, $"tariff '{Tariff.Id}'", Warnings),
-                           TariffType:   tariffType,
-                           MinPrice:     minPrice,
-                           MaxPrice:     maxPrice,
-                           ValidFrom:    Tariff.Start,
-                           ValidUntil:   Tariff.End,
-                           Created:      Tariff.Created,
-                           LastChange:   Tariff.LastUpdated
-                       );
-            }
-            // E.g. a minimum price above the maximum price.
-            catch (ArgumentException e)
-            {
-                Warnings.Add(Warning.Create(e.Message));
-                return null;
-            }
+            return elements;
 
         }
 
@@ -1315,15 +1398,31 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// The tariffs of an EVSE as it is at runtime: its own, else the one of its most specific groups, of the EVSE,
         /// charging station or charging pool groups it belongs to (ChargingStationOperator.EffectiveEVSE(…)).
         /// </summary>
-        private static IEnumerable<Tariff_Id> TariffIdsOf(POI.EVSE                     EVSE,
-                                                          POI.ChargingStation          ChargingStation,
-                                                          POI.ChargingPool             ChargingPool,
-                                                          POI.ChargingStationOperator  Operator)
+        private static IEnumerable<Tariff_Id> TariffIdsOf(POI.EVSE                                                EVSE,
+                                                          IReadOnlyList<Timestamped<POI.ChargingTariffPrices>>    Prices,
+                                                          POI.ChargingStationOperator                             Operator)
 
             => Operator.EffectiveEVSE(EVSE).ChargingTariffIds.
-                   Select(tariffId => tariffId.ToOCPITariffId()).
+                   Select(tariffId => tariffId.ToOCPITariffId(Prices.FirstOrDefault(price => price.Value.ChargingTariffId == tariffId).Value)).
                    Where (tariffId => tariffId.HasValue).
                    Select(tariffId => tariffId!.Value);
+
+        /// <summary>
+        /// The new prices in effect at the given EVSE of the charging tariffs it takes (see ChargingPrices.Effective),
+        /// with since when: the most specific price status naming a tariff, the EVSE's before its station's before its pool's.
+        /// </summary>
+        public static IReadOnlyList<Timestamped<POI.ChargingTariffPrices>> PricesOf(POI.EVSE                     EVSE,
+                                                                                    POI.ChargingStation          ChargingStation,
+                                                                                    POI.ChargingPool             ChargingPool,
+                                                                                    POI.ChargingStationOperator  Operator)
+        {
+
+            var tariffIds = Operator.EffectiveEVSE(EVSE).ChargingTariffIds.ToHashSet();
+
+            return [.. POI.ChargingPrices.Effective(ChargingPool, ChargingStation, EVSE).
+                           Where(price => tariffIds.Contains(price.Value.ChargingTariffId)) ];
+
+        }
 
         /// <summary>
         /// The OCPI capabilities of an EVSE: from the authentication modes, payment options and UI features of its

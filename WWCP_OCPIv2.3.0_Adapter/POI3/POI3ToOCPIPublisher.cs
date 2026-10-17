@@ -63,6 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         private readonly HashSet<(Party_Idv3 Party, Location_Id LocationId)>      locations    = [];
         private readonly HashSet<(Party_Idv3 Party, Tariff_Id   TariffId)>        tariffs      = [];
         private          Task?                                                    worker;
+        private          Int32                                                    pricesQueued;
 
         #endregion
 
@@ -176,11 +177,24 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         // Raised while the status schedule of the EVSE is locked: only queued here.
         private void StatusUpdated(POI.POIStatusUpdate StatusUpdate)
         {
+
             if (StatusUpdate.EntityType == nameof(POI.EVSE) &&
                 StatusUpdate.Kind is POI.POIRuntimeStatusKind.Status or POI.POIRuntimeStatusKind.AdminStatus)
             {
                 work.Writer.TryWrite(() => PublishEVSEStatusAsync(StatusUpdate.EntityId));
             }
+
+            // New prices change tariffs and the locations naming them: published as the head is, once for all
+            // price statuses reported until then, e.g. of every charging pool following the electricity market.
+            else if (StatusUpdate.Kind == POI.POIRuntimeStatusKind.PriceStatus &&
+                     Interlocked.Exchange(ref pricesQueued, 1) == 0)
+            {
+                work.Writer.TryWrite(() => {
+                    Interlocked.Exchange(ref pricesQueued, 0);
+                    return PublishHeadAsync();
+                });
+            }
+
         }
 
         #endregion
@@ -250,15 +264,22 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                 var party = chargingStationOperator.Id.ToOCPIParty();
 
-                foreach (var chargingTariff in chargingStationOperator.ChargingTariffs)
+                // Every charging tariff, and every one with the new prices in effect at an EVSE, a tariff of its own:
+                // published before the locations naming them.
+                var pricedTariffs = chargingStationOperator.ChargingTariffs.
+                                        Select(chargingTariff => (chargingTariff, (Timestamped<POI.ChargingTariffPrices>?) null)).
+                                        Concat(PricesInEffect(chargingStationOperator)).
+                                        ToArray();
+
+                foreach (var (chargingTariff, prices) in pricedTariffs)
                 {
 
                     var warnings  = new List<Warning>();
-                    var tariff    = chargingTariff.ToOCPI(warnings);
+                    var tariff    = chargingTariff.ToOCPI(warnings, Prices: prices);
 
                     if (tariff is null)
                     {
-                        RaiseError($"The charging tariff '{chargingTariff.Id}' can not be published!", warnings);
+                        RaiseError($"The charging tariff '{chargingTariff.Id}' can not be published{(prices.HasValue ? " with its new prices" : "")}!", warnings);
                         continue;
                     }
 
@@ -272,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                             continue;
 
                         if (tariff.LastUpdated <= stored.LastUpdated)
-                            tariff = chargingTariff.ToOCPI(warnings, stored.LastUpdated.AddMilliseconds(1))!;
+                            tariff = chargingTariff.ToOCPI(warnings, stored.LastUpdated.AddMilliseconds(1), prices)!;
 
                     }
 
@@ -329,6 +350,41 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             {
                 await CommonAPI.RemoveTariff(party, tariffId);
                 tariffs.Remove((party, tariffId));
+            }
+
+        }
+
+        #endregion
+
+        #region (private static) PricesInEffect(Operator)
+
+        /// <summary>
+        /// The charging tariffs of the given operator with the new prices in effect at its EVSEs, each prices once:
+        /// the same prices at many EVSEs are one tariff, since the earliest of them.
+        /// </summary>
+        private static IEnumerable<(POI.ChargingTariff, Timestamped<POI.ChargingTariffPrices>?)> PricesInEffect(POI.ChargingStationOperator Operator)
+        {
+
+            var pricesInEffect = new Dictionary<(POI.ChargingTariff_Id, String), Timestamped<POI.ChargingTariffPrices>>();
+
+            foreach (var chargingPool in Operator.EffectiveChargingPools)
+                foreach (var chargingStation in chargingPool.ChargingStations)
+                    foreach (var evse in chargingStation.EVSEs)
+                        foreach (var prices in POI3Mapper.PricesOf(evse, chargingStation, chargingPool, Operator))
+                        {
+
+                            var key = (prices.Value.ChargingTariffId, POI3Mapper.ElementsText(prices.Value.Elements));
+
+                            if (!pricesInEffect.TryGetValue(key, out var known) || prices.Timestamp < known.Timestamp)
+                                pricesInEffect[key] = prices;
+
+                        }
+
+            foreach (var ((chargingTariffId, _), prices) in pricesInEffect.OrderBy(entry => entry.Key.Item1.ToString(), StringComparer.Ordinal).
+                                                                           ThenBy (entry => entry.Key.Item2,            StringComparer.Ordinal))
+            {
+                if (Operator.TryGetChargingTariff(chargingTariffId, out var chargingTariff))
+                    yield return (chargingTariff, prices);
             }
 
         }
