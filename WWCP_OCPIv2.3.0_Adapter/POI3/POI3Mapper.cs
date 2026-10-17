@@ -845,7 +845,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         /// <summary>
         /// The parking spaces the charging stations of the given charging pool name, of parking operators or of charging
-        /// station operators, each once, in the order of their identifications.
+        /// station operators, each once, in the order of their identifications: as they are at runtime, with the properties
+        /// their parking space groups give them.
         /// </summary>
         public static IEnumerable<POI.ParkingSpace> ParkingSpacesOf(POI.ChargingPool    ChargingPool,
                                                                     POI.RoamingNetwork  RoamingNetwork)
@@ -853,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             => ChargingPool.ChargingStations.SelectMany(chargingStation => chargingStation.ParkingSpaceIds).
                                              Distinct().
                                              OrderBy   (parkingSpaceId  => parkingSpaceId.ToString(), StringComparer.Ordinal).
-                                             Select    (parkingSpaceId  => RoamingNetwork.TryGetParkingSpaceById(parkingSpaceId, out var parkingSpace) ? parkingSpace : null).
+                                             Select    (parkingSpaceId  => RoamingNetwork.TryGetEffectiveParkingSpaceById(parkingSpaceId, out var parkingSpace) ? parkingSpace : null).
                                              Where     (parkingSpace    => parkingSpace is not null).
                                              Select    (parkingSpace    => parkingSpace!);
 
