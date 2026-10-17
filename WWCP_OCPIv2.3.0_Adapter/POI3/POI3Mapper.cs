@@ -621,13 +621,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         #endregion
 
 
-        #region ToPOI3(Location, Operator, Existing, Language, Warnings)
+        #region ToPOI3(Location, Operator, Existing, Language, Warnings, Unchanged = null, Effective = null)
 
         /// <summary>
         /// The charging pool of the given OCPI location, as JSON: the existing one, if any, with what OCPI says about it.
         /// What only POI3 knows is kept, and so is what OCPI tells as it would tell the existing charging pool, e.g. a house
         /// number apart from its street. EVSEs stay in their charging stations, new ones go into the first charging station
         /// of the pool, or into a new one named after the location. EVSEs whose status is REMOVED are gone.
+        /// What it tells of the pool and its EVSEs as their groups give it stays in their groups: see
+        /// POIGroupMembers.KeepWhatGroupsGive(…).
         /// </summary>
         /// <param name="Location">An OCPI location.</param>
         /// <param name="OperatorId">The operator of the location.</param>
@@ -635,12 +637,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// <param name="Language">The language of texts OCPI gives without one.</param>
         /// <param name="Warnings">Where to tell what could not be mapped.</param>
         /// <param name="Unchanged">The existing charging pool as OCPI tells it, if any: what the location tells alike is kept as it is.</param>
+        /// <param name="Effective">The JSON of the existing charging pool as it is at runtime, its effective one, with the
+        /// properties its groups and those of its EVSEs give them, if any.</param>
         public static JObject? ToPOI3(this Location                    Location,
                                       POI.ChargingStationOperator_Id   OperatorId,
                                       JObject?                         Existing,
                                       Languages                        Language,
                                       ICollection<Warning>             Warnings,
-                                      Location?                        Unchanged   = null)
+                                      Location?                        Unchanged   = null,
+                                      JObject?                         Effective   = null)
         {
 
             var poolId = ToPOI3PoolId(OperatorId, Location.Id);
@@ -754,6 +759,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             Overlay(desired, mapped, PoolProperties.Where(property => !SameValue(unchanged, mapped, property)));
 
+            if (Effective is not null)
+                POI.POIGroupMembers.KeepWhatGroupsGive(desired, Existing, Effective, PoolProperties);
+
+            var effectiveEVSEs   = (Effective?["chargingStations"] as JArray ?? []).
+                                       OfType<JObject>().
+                                       SelectMany(station => (station["EVSEs"] as JArray ?? []).OfType<JObject>()).
+                                       ToDictionary(evse => evse["@id"]?.Value<String>() ?? "");
+
             var stations     = ArrayOf(desired, "chargingStations");
 
             var wanted       = mappedEVSEs.ToDictionary(evse => evse.Id.ToString(), evse => evse.ToJSON());
@@ -771,9 +784,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                     if (wanted.TryGetValue(evseId, out var mappedEVSE))
                     {
-                        var unchangedEVSE = unchangedEVSEs.GetValueOrDefault(evseId);
+
+                        var storedEVSE     = (JObject) evseJSON.DeepClone();
+                        var unchangedEVSE  = unchangedEVSEs.GetValueOrDefault(evseId);
+
                         Overlay(evseJSON, mappedEVSE, EVSEProperties.Where(property => !SameValue(unchangedEVSE, mappedEVSE, property)));
+
+                        if (effectiveEVSEs.GetValueOrDefault(evseId) is JObject effectiveEVSE)
+                            POI.POIGroupMembers.KeepWhatGroupsGive(evseJSON, storedEVSE, effectiveEVSE, EVSEProperties);
+
                         placed.Add(evseId);
+
                     }
 
                     // Gone at OCPI.

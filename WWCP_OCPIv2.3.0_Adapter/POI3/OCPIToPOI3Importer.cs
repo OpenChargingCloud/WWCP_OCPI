@@ -321,15 +321,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                var poolId     = POI3Mapper.ToPOI3PoolId(operatorId.Value, Location.Id);
                                var existing   = pools.OfType<JObject>().FirstOrDefault(pool => pool["@id"]?.Value<String>() == poolId?.ToString());
 
-                               // The existing charging pool as OCPI tells it: what the location tells alike is kept.
-                               // With the properties their groups give its charging stations, which so stay in the groups.
-                               var unchanged  = poolId.HasValue &&
+                               // The existing charging pool as it is at runtime, with the properties its groups and those
+                               // of its EVSEs give them, and as OCPI tells it: what the location tells alike is kept, what
+                               // the groups give stays in the groups.
+                               var effective  = poolId.HasValue &&
                                                 head.TryGetChargingStationOperatorById(operatorId.Value, out var chargingStationOperator) &&
                                                 chargingStationOperator.TryGetEffectiveChargingPool(poolId.Value, out var chargingPool)
-                                                    ? chargingPool.ToOCPI(head, [])
+                                                    ? chargingPool
                                                     : null;
 
-                               var desired    = Location.ToPOI3(operatorId.Value, existing, Language, warnings, unchanged);
+                               var unchanged  = effective?.ToOCPI(head, []);
+
+                               var desired    = Location.ToPOI3(operatorId.Value, existing, Language, warnings, unchanged, effective?.ToJSON());
 
                                if (desired is null)
                                    return false;
@@ -449,8 +452,20 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     named.Remove(parkingId);
                 }
 
-                // Named as before, also as written before.
-                var before = (station["parkingSpaceIds"] as JArray ?? []).Values<String>().OfType<String>().ToHashSet();
+                // Named as before, also as written before, or as it names them with its groups: those its groups give it stay
+                // theirs, a charging station group's parking spaces being those of its EVSEs at OCPI as well.
+                var before     = (station["parkingSpaceIds"] as JArray ?? []).Values<String>().OfType<String>().ToHashSet();
+
+                var effective  = chargingStationOperator is not null &&
+                                 POI.ChargingStation_Id.TryParse(station["@id"]?.Value<String>() ?? "", out var stationId) &&
+                                 chargingStationOperator.TryGetEffectiveChargingStation(stationId, out var effectiveStation)
+                                     ? effectiveStation.ParkingSpaceIds.Select(parkingSpaceId => parkingSpaceId.ToString()).ToHashSet()
+                                     : before;
+
+                if (named.SetEquals(before) || named.SetEquals(effective))
+                    continue;
+
+                named.ExceptWith(effective.Except(before));
 
                 if (named.SetEquals(before))
                     continue;

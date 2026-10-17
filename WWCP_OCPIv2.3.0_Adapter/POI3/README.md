@@ -208,6 +208,14 @@ station or pool, a tariff its name and description apart, EVSEs the tariffs of t
 stations and EVSEs the properties their groups give them: the existing charging pool is mapped as it is at runtime,
 its effective one. What a POI3 network publishes, imported back into it, commits nothing.
 
+What OCPI tells of a charging pool or EVSE as its groups give it stays in the groups (`POIGroupMembers.KeepWhatGroupsGive`,
+by the rules by which the groups give it at runtime): of an array it unites with theirs, e.g. the facilities of a pool,
+it takes as its own only what its groups do not give it, elements matched by their key (an image by its URL), and an array it takes whole - the charging
+tariffs and current types of an EVSE - becomes its own whole when OCPI tells another one. So a facility added at OCPI
+does not make the facilities of the pool's group its own, and they still go when its group no longer gives them. So do
+the parking spaces a charging station's groups give it: its EVSEs' `parking` names them, the import does not make them
+its own.
+
 ## Gaps
 
 What one side has and the other does not, or not alike:
