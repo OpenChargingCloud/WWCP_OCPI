@@ -84,7 +84,7 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | `openingTimes` (none: 24/7) | `opening_times` |
 | `chargingWhenClosed` | `charging_when_closed` |
 | `images` | `images` (content type ↔ file type, category by name) |
-| `energyMix`: energy sources, supplier, product | `energy_mix` (`is_green_energy` when every source is green): Gas → `GAS`, Coal/StoneCoal → `COAL`, Oil/OtherFossil → `GENERAL_FOSSIL`, NuclearFision/NuclearFusion → `NUCLEAR`, Sun → `SOLAR`, Wind → `WIND`, Geothermal/Biogas/OtherGreen → `GENERAL_GREEN` (import: `GAS` → Gas, `COAL` → Coal, `GENERAL_FOSSIL` → OtherFossil, `NUCLEAR` → NuclearFision, `SOLAR` → Sun, `WIND` → Wind, `WATER`/`GENERAL_GREEN` → OtherGreen) |
+| `energyMix`: energy sources, supplier, product | `energy_mix` (`is_green_energy` when every source is green): Gas → `GAS`, Coal/StoneCoal → `COAL`, Oil/OtherFossil → `GENERAL_FOSSIL`, NuclearFision/NuclearFusion → `NUCLEAR`, Sun → `SOLAR`, Wind → `WIND`, Geothermal/Biogas/OtherGreen → `GENERAL_GREEN` (import: `GAS` → Gas, `COAL` → Coal, `GENERAL_FOSSIL` → OtherFossil, `NUCLEAR` → NuclearFision, `SOLAR` → Sun, `WIND` → Wind, `WATER`/`GENERAL_GREEN` → OtherGreen); environmental impacts in g/kWh: CarbonDioxide ↔ `CARBON_DIOXIDE`, NuclearWaste ↔ `NUCLEAR_WASTE`, others are left out with a warning |
 | `hotline`, else the operator's | `help_phone` |
 | `services`, `standards` (the same names) | `services`, `standards` (Accessibility Extension) |
 | `assistanceServiceDetails` (first text) | `assistance_service_details` (import: in the given language) |
@@ -101,6 +101,8 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | pool `parkingRestrictions` (TAXI ↔ TAXIS) | `parking_restrictions` |
 | EVSE and station `images` | `images` |
 | `reachDistance` (m), `operationTimeout` (s), `extendedOperationTimeout`, `standards` | `reach_distance` (cm), `operation_timeout` (s), `extended_operation_timeout`, `standards` (Accessibility Extension) |
+| `floorLevel` | `floor_level` |
+| `acceptedEMobilityProviderIds`: `DE-GDF`, also as `DE*GDF` | `accepted_service_providers`: `DE-GDF` (import: an eMSP that is no e-mobility provider is left out with a warning) |
 
 | EVSE status | OCPI status |
 |---|---|
@@ -164,7 +166,7 @@ powers, and the union of their tariffs.
 | `tariffType` | `type` (the same names; import: a type POI3 does not know is left out with a warning) |
 | `validFrom`, `validUntil` | `start_date_time`, `end_date_time` (import: an end not after the start refuses the tariff with a warning) |
 | `minPrice`, `maxPrice`: excluding VAT, including VAT | `min_price`, `max_price`: `before_taxes`, `after_taxes` (import: a minimum above the maximum refuses the tariff with a warning) |
-| `energyMix` | `energy_mix` (energy sources as for locations) |
+| `energyMix` | `energy_mix` (energy sources and environmental impacts as for locations) |
 | element: price components, restrictions | `elements` |
 | price component `ENERGY`, `TIME`, `PARKING_TIME`, `FLAT`: price, VAT, step size | `ENERGY` (per kWh, step in Wh), `TIME`/`PARKING_TIME` (per hour, step in s), `FLAT` (step 1) |
 | restrictions: start/end time, start/end date, min/max energy (Wh), min/max current, min/max power (W), min/max duration (s), days of week, reservation | `start_time`, `end_time`, `start_date`, `end_date`, `min_kwh`/`max_kwh` (kWh), `min_current`/`max_current`, `min_power`/`max_power` (kW), `min_duration`/`max_duration`, `day_of_week`, `reservation` (`RESERVATION`, `RESERVATION_EXPIRES`) |
@@ -196,7 +198,8 @@ A location imported onto an existing charging pool sets only `name`, `address`, 
 `hotline`, `openingTimes`, `energyMix`, `images`, `facilities`, `arrivalInstructions`, `chargingWhenClosed`,
 `relatedLocations`, `services`, `assistanceServiceDetails` and `standards`; an existing EVSE only `physicalReference`,
 `currentTypes`, `maxVoltage`, `maxCurrent`, `maxPower`, `chargingConnectors`, `chargingTariffIds`, `images`,
-`geoLocation`, `reachDistance`, `operationTimeout`, `extendedOperationTimeout` and `standards`. Everything else of POI3
+`geoLocation`, `reachDistance`, `operationTimeout`, `extendedOperationTimeout`, `standards`, `floorLevel` and
+`acceptedEMobilityProviderIds`. Everything else of POI3
 stays as it is, e.g. descriptions, data licenses, brands, grid connection, energy meters, authentication modes, features,
 the access type (`accessibility`), EVSE charging modes and reservation duration. EVSEs no longer at OCPI, or `REMOVED`, are removed; new ones are added
 (see above).
@@ -229,7 +232,6 @@ What one side has and the other does not, or not alike:
 - **Location:** POI3 has no `publish`/`publish_allowed_to` (always published), no `owner`, no energy meters of locations.
   `assistance_service_details` is one text, POI3 has one per language. The house number is joined with the street, and only split
   again where the address is as before (see above).
-  Environmental impacts of energy mixes are not mapped (OCPI: g/kWh, POI3: in a percentage).
 - **Energy sources:** OCPI has fewer categories than POI3: stone coal, oil, nuclear fusion, geothermal and biogas come back
   as Coal, OtherFossil, NuclearFision and OtherGreen. POI3 has no water, which becomes OtherGreen; OCPI has no waste, which
   is left out (with a warning), as are unknown sources.
@@ -239,7 +241,7 @@ What one side has and the other does not, or not alike:
 - **Parking:** POI3 names parking spaces by charging stations, OCPI by EVSEs; the `access_level` of an EVSE's `parking`
   has no POI3 counterpart, and its `evse_position` is the parking space's. Names, descriptions, garages, sensors,
   products, `parkingRestrictions` and `euVehicleCategories` of parking spaces have no OCPI counterpart.
-- **EVSE:** POI3 has no floor level, `status_schedule` or `accepted_service_providers`; OCPI has no charging modes, reservation duration,
+- **EVSE:** POI3 has no `status_schedule`; OCPI has no charging modes, reservation duration,
   names or descriptions of EVSEs.
 - **Tariffs:** the POI3 price dimensions `MIN_CURRENT`/`MAX_CURRENT` have no OCPI 2.3.0 counterpart (such a tariff is not
   published). An OCPI price component without `vat` has no VAT; a POI3 one without `vat` has an unknown VAT.

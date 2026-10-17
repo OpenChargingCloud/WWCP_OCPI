@@ -408,7 +408,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        ReachDistance:             EVSE.ReachDistance,
                        OperationTimeout:          EVSE.OperationTimeout,
                        ExtendedOperationTimeout:  EVSE.ExtendedOperationTimeout,
-                       Standards:                 EVSE.Standards.Select(standard => Standard.Parse(standard.ToString()))
+                       Standards:                 EVSE.Standards.Select(standard => Standard.Parse(standard.ToString())),
+
+                       FloorLevel:                EVSE.FloorLevel,
+                       AcceptedServiceProviders:  ToOCPI(EVSE.AcceptedEMobilityProviderIds, EVSE.Id, Warnings)
 
                    );
 
@@ -921,6 +924,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        OperationTimeout:          EVSE.OperationTimeout >= TimeSpan.Zero ? EVSE.OperationTimeout : null,
                        ExtendedOperationTimeout:  EVSE.ExtendedOperationTimeout,
                        Standards:                 EVSE.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
+                       FloorLevel:                EVSE.FloorLevel,
+                       AcceptedEMobilityProviderIds:  ToPOI3(EVSE.AcceptedServiceProviders, evseId.Value, Warnings).Distinct(),
                        Created:             EVSE.Created,
                        LastChange:          EVSE.LastUpdated
                    );
@@ -1200,7 +1205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// </summary>
         internal static readonly String[] EVSEProperties = [
             "physicalReference", "currentTypes", "maxVoltage", "maxCurrent", "maxPower", "chargingConnectors",
-            "chargingTariffIds", "images", "geoLocation", "reachDistance", "operationTimeout", "extendedOperationTimeout", "standards"
+            "chargingTariffIds", "images", "geoLocation", "reachDistance", "operationTimeout", "extendedOperationTimeout", "standards",
+            "floorLevel", "acceptedEMobilityProviderIds"
         ];
 
         /// <summary>
@@ -1341,6 +1347,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             { EnergySourceCategory.GENERAL_GREEN,   POI.EnergySourceCategory.OtherGreen    }
         };
 
+        /// <summary>
+        /// The OCPI environmental impact categories of the POI3 ones, both in g/kWh.
+        /// </summary>
+        private static readonly Dictionary<POI.EnvironmentalImpact, EnvironmentalImpactCategory> ocpiEnvironmentalImpacts = new() {
+            { POI.EnvironmentalImpact.CarbonDioxide,  EnvironmentalImpactCategory.CARBON_DIOXIDE },
+            { POI.EnvironmentalImpact.NuclearWaste,   EnvironmentalImpactCategory.NUCLEAR_WASTE  }
+        };
+
         /// <param name="Of">What the energy mix belongs to, for warnings, e.g. "charging pool 'DE*GEF*P1'".</param>
         private static EnergyMix ToOCPI(this POI.EnergyMix    EnergyMix,
                                         String                Of,
@@ -1363,9 +1377,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                 source.Source == EnergySourceCategory.WIND          ||
                                                 source.Source == EnergySourceCategory.WATER);
 
+            var impacts = new List<EnvironmentalImpact>();
+
+            foreach (var impact in EnergyMix.EnvironmentalImpacts)
+            {
+                if (ocpiEnvironmentalImpacts.TryGetValue(impact.Category, out var category))
+                    impacts.Add(new EnvironmentalImpact(category, (Double) impact.GramsPerKWh));
+                else
+                    Warnings?.Add(Warning.Create($"The environmental impact '{impact.Category}' of the {Of} has no OCPI counterpart and is left out!"));
+            }
+
             return new EnergyMix(green,
                                  sources,
-                                 null,
+                                 impacts,
                                  FirstText(EnergyMix.SupplierName),
                                  FirstText(EnergyMix.ProductName));
 
@@ -1388,8 +1412,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     Warnings?.Add(Warning.Create($"The energy source '{source.Source}' of the {Of} has no POI3 counterpart and is left out!"));
             }
 
+            var impacts = new List<POI.EnvironmentalImpactAmount>();
+
+            foreach (var impact in EnergyMix.EnvironmentalImpacts)
+            {
+
+                var category = ocpiEnvironmentalImpacts.FirstOrDefault(entry => entry.Value == impact.Category).Key;
+
+                if (category.IsNullOrEmpty)
+                    Warnings?.Add(Warning.Create($"The environmental impact '{impact.Category}' of the {Of} has no POI3 counterpart and is left out!"));
+
+                else if (!Double.IsFinite(impact.Amount) || impact.Amount < 0 || impacts.Any(known => known.Category == category))
+                    Warnings?.Add(Warning.Create($"The environmental impact '{impact.Category}' of the {Of} is negative, no number or given twice, and is left out!"));
+
+                else
+                    impacts.Add(new POI.EnvironmentalImpactAmount(category, (Decimal) impact.Amount));
+
+            }
+
             return new (sources,
-                        [],
+                        impacts,
                         new ImmutableI18NString(I18NString.Create(Language, EnergyMix.SupplierName      ?? "")),
                         new ImmutableI18NString(I18NString.Create(Language, EnergyMix.EnergyProductName ?? "")));
 
@@ -1419,6 +1461,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// The tariffs of an EVSE as it is at runtime: its own, else the one of its most specific groups, of the EVSE,
         /// charging station or charging pool groups it belongs to (ChargingStationOperator.EffectiveEVSE(…)).
         /// </summary>
+        /// <summary>
+        /// The OCPI eMSPs of the given e-mobility providers: DE-GDF is DE-GDF.
+        /// </summary>
+        private static IEnumerable<EMSP_Id> ToOCPI(IEnumerable<POI.EMobilityProvider_Id>  EMobilityProviderIds,
+                                                   POI.EVSE_Id                            EVSEId,
+                                                   ICollection<Warning>                   Warnings)
+        {
+            foreach (var eMobilityProviderId in EMobilityProviderIds)
+            {
+                if (EMSP_Id.TryParse($"{eMobilityProviderId.CountryCode.Alpha2Code}-{eMobilityProviderId.Suffix}", out var emspId))
+                    yield return emspId;
+                else
+                    Warnings.Add(Warning.Create($"The e-mobility provider '{eMobilityProviderId}' the EVSE '{EVSEId}' accepts is no OCPI eMSP and is left out!"));
+            }
+        }
+
+        /// <summary>
+        /// The e-mobility providers of the given OCPI eMSPs, unless their party has not the three characters of a provider.
+        /// </summary>
+        private static IEnumerable<POI.EMobilityProvider_Id> ToPOI3(IEnumerable<EMSP_Id>  EMSPIds,
+                                                                    POI.EVSE_Id           EVSEId,
+                                                                    ICollection<Warning>  Warnings)
+        {
+            foreach (var emspId in EMSPIds)
+            {
+                if (POI.EMobilityProvider_Id.TryParse(emspId.ToString(), out var eMobilityProviderId))
+                    yield return eMobilityProviderId;
+                else
+                    Warnings.Add(Warning.Create($"The eMSP '{emspId}' the EVSE '{EVSEId}' accepts is no e-mobility provider and is left out!"));
+            }
+        }
+
         private static IEnumerable<Tariff_Id> TariffIdsOf(POI.EVSE                                                EVSE,
                                                           IReadOnlyList<Timestamped<POI.ChargingTariffPrices>>    Prices,
                                                           POI.ChargingStationOperator                             Operator)
