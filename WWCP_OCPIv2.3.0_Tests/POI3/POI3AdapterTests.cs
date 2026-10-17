@@ -494,7 +494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                 Assert.That(timed.TariffRestrictions?.MinkWh,                        Is.EqualTo(5m));
                 Assert.That(timed.TariffRestrictions?.MaxDuration,                   Is.EqualTo(TimeSpan.FromHours(1)));
                 Assert.That(timed.PriceComponents.First().StepSize,                  Is.EqualTo(60));
-                Assert.That(JToken.DeepEquals(expected, actual),                     Is.True, $"{expected}\n{actual}");
+                Assert.That(TestParties.SameByValue(expected, actual),               Is.True, $"{expected}\n{actual}");
                 Assert.That(warnings,                                                Is.Empty);
             });
 
