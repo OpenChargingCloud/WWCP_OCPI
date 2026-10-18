@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
     /// charging pools and locations, charging stations and EVSEs, charging connectors and connectors,
     /// charging tariffs and tariffs, and the status of EVSEs. See README.md for what does not map.
     /// </summary>
-    public static class POI3Mapper
+    public static partial class POI3Mapper
     {
 
         #region Identifications
@@ -107,25 +107,40 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                    : Tariff_Id.TryParse($"{ChargingTariffId.Suffix}{PricesSeparator}{PricesHash(Prices.Elements)}");
 
         /// <summary>
-        /// Whether the given tariff is one of a charging tariff with new prices (see ToOCPITariffId(Prices)).
+        /// Whether the given tariff is one of a charging tariff with new prices (see ToOCPITariffId(Prices)), also one
+        /// charging tariff offers make of it.
         /// </summary>
         public static Boolean HasPrices(this Tariff_Id TariffId)
 
-            => TariffId.ToString().LastIndexOf(PricesSeparator) > 0;
+            => OfTheChargingTariff(TariffId).LastIndexOf(PricesSeparator) > 0;
 
         /// <summary>
-        /// The charging tariff of the given tariff of the given operator, also of one with new prices: 1~… is DE*GEF*T1.
+        /// The charging tariff of the given tariff of the given operator, also of one with new prices and of one charging
+        /// tariff offers make of it: 1~… and 1+… are DE*GEF*T1.
         /// </summary>
         public static POI.ChargingTariff_Id? ToPOI3TariffIdOf(POI.ChargingStationOperator_Id  OperatorId,
                                                              Tariff_Id                       TariffId)
         {
 
-            var text       = TariffId.ToString();
+            var text       = OfTheChargingTariff(TariffId);
             var separator  = text.LastIndexOf(PricesSeparator);
 
             return separator > 0
                        ? POI.ChargingTariff_Id.TryParse(OperatorId, text[..separator])
-                       : ToPOI3TariffId(OperatorId, TariffId);
+                       : POI.ChargingTariff_Id.TryParse(OperatorId, text);
+
+        }
+
+        /// <summary>
+        /// The given tariff identification without the charging tariff offers a tariff of them names (see OfferSeparator).
+        /// </summary>
+        private static String OfTheChargingTariff(Tariff_Id TariffId)
+        {
+
+            var text   = TariffId.ToString();
+            var offer  = text.IndexOf(OfferSeparator);
+
+            return offer > 0 ? text[..offer] : text;
 
         }
 
@@ -215,10 +230,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// <param name="RoamingNetwork">The roaming network of the charging pool: for its operator, brands and tariffs.</param>
         /// <param name="Warnings">Where to tell what could not be mapped.</param>
         /// <param name="NotBefore">The earliest 'last updated' of the location, e.g. after the one published before.</param>
+        /// <param name="Offers">Where the charging tariff offers of its operator take the place of its charging tariffs, at the time it gives, and what they make of them is remembered; none, unless given.</param>
         public static Location? ToOCPI(this POI.ChargingPool    ChargingPool,
                                        POI.RoamingNetwork       RoamingNetwork,
                                        ICollection<Warning>     Warnings,
-                                       DateTimeOffset?          NotBefore   = null)
+                                       DateTimeOffset?          NotBefore   = null,
+                                       OfferedTariffsAt?        Offers      = null)
         {
 
             if (!RoamingNetwork.TryGetChargingStationOperatorById(ChargingPool.Id.OperatorId, out var chargingStationOperator))
@@ -260,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 foreach (var evse in chargingStation.EVSEs)
                 {
 
-                    var ocpiEVSE = evse.ToOCPI(chargingStation, ChargingPool, chargingStationOperator, Warnings);
+                    var ocpiEVSE = evse.ToOCPI(chargingStation, ChargingPool, chargingStationOperator, Warnings, Offers: Offers);
 
                     if (ocpiEVSE is not null)
                     {
@@ -347,14 +364,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
         /// <summary>
         /// The OCPI EVSE of the given EVSE of the given charging station, or null when it has no charging connectors,
-        /// which OCPI requires.
+        /// which OCPI requires. With the charging tariff offers of its operator, if given: the tariffs they make take the
+        /// place of the charging tariffs of its connectors (see OfferedTariffIdsOf); where those of the eMSPs of the
+        /// e-mobility providers they are for are others, a connector names none of its own, and the CommonAPI asks for
+        /// them by eMSP (CommonAPI.GetTariffIdsDelegate).
         /// </summary>
+        /// <param name="Offers">Where the charging tariff offers of its operator take the place of its charging tariffs, at the time it gives, and what they make of them is remembered; none, unless given.</param>
         public static EVSE? ToOCPI(this POI.EVSE                     EVSE,
                                    POI.ChargingStation               ChargingStation,
                                    POI.ChargingPool                  ChargingPool,
                                    POI.ChargingStationOperator       Operator,
                                    ICollection<Warning>              Warnings,
-                                   DateTimeOffset?                   NotBefore   = null)
+                                   DateTimeOffset?                   NotBefore   = null,
+                                   OfferedTariffsAt?                 Offers      = null)
         {
 
             var uid = EVSE_UId.TryParse(EVSE.Id.ToString());
@@ -376,18 +398,39 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             var pricesChanged   = prices.Select(price => price.Timestamp).Append(EVSE.LastChangeDate).Max();
             var tariffIds       = TariffIdsOf(EVSE, prices, Operator).ToArray();
             var connectors      = new List<Connector>();
+            var lastOffered     = DateTimeOffset.MinValue;
 
             foreach (var chargingConnector in EVSE.ChargingConnectors)
             {
 
+                // With the charging tariff offers taking the place of its charging tariffs, if given.
+                var offered   = Offers is null
+                                    ? null
+                                    : OfferedTariffIdsOf(EVSE.Id,
+                                                         chargingConnector.ChargingTariffIds.Length > 0
+                                                             ? chargingConnector.ChargingTariffIds
+                                                             : Operator.EffectiveEVSE(EVSE).ChargingTariffIds,
+                                                         prices,
+                                                         Operator,
+                                                         Offers.At,
+                                                         Warnings);
+
+                if (offered is not null)
+                    Offers!.Add(EVSE.Id.ToString(), chargingConnector.Id.ToString(), offered);
+
                 // Its own tariffs, else those of the EVSE.
                 var connector = chargingConnector.ToOCPI(EVSE,
-                                                         chargingConnector.ChargingTariffIds.Length > 0
-                                                             ? [.. TariffIdsOf(chargingConnector.ChargingTariffIds, prices)]
-                                                             : tariffIds,
+                                                         offered is not null
+                                                             ? offered.ByEMSP ? [] : offered.TariffIds
+                                                             : chargingConnector.ChargingTariffIds.Length > 0
+                                                                   ? [.. TariffIdsOf(chargingConnector.ChargingTariffIds, prices)]
+                                                                   : tariffIds,
                                                          Operator,
                                                          Warnings,
-                                                         pricesChanged);
+                                                         offered?.Since > pricesChanged ? offered.Since : pricesChanged);
+
+                if (offered?.Since > lastOffered)
+                    lastOffered = offered.Since.Value;
 
                 if (connector is not null)
                     connectors.Add(connector);
@@ -397,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (connectors.Count == 0)
                 return null;
 
-            var lastUpdated = new[] { pricesChanged, EVSE.Status.Timestamp, EVSE.AdminStatus.Timestamp, NotBefore ?? DateTimeOffset.MinValue }.Max();
+            var lastUpdated = new[] { pricesChanged, lastOffered, EVSE.Status.Timestamp, EVSE.AdminStatus.Timestamp, NotBefore ?? DateTimeOffset.MinValue }.Max();
 
             return new EVSE(
 
@@ -520,10 +563,57 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
-            var elements     = new List<TariffElement>();
-            var lastUpdated  = new[] { ChargingTariff.LastChangeDate, Prices?.Timestamp ?? DateTimeOffset.MinValue, NotBefore ?? DateTimeOffset.MinValue }.Max();
+            return TariffOf(ChargingTariff.Id.OperatorId,
+                            tariffId.Value,
+                            $"charging tariff '{ChargingTariff.Id}'",
+                            ChargingTariff.Currency,
+                            Prices?.Value.Elements ?? ChargingTariff.Elements,
+                            ChargingTariff.TariffType.HasValue ? TariffType.Parse(ChargingTariff.TariffType.Value.ToString()) : null,
+                            ToDisplayTexts(ChargingTariff.Name).Concat(ToDisplayTexts(ChargingTariff.Description)),
+                            ChargingTariff.TariffURL,
+                            ChargingTariff.MinPrice,
+                            ChargingTariff.MaxPrice,
+                            ChargingTariff.ValidFrom,
+                            ChargingTariff.ValidUntil,
+                            ChargingTariff.EnergyMix,
+                            ChargingTariff.Created,
+                            new[] { ChargingTariff.LastChangeDate, Prices?.Timestamp ?? DateTimeOffset.MinValue, NotBefore ?? DateTimeOffset.MinValue }.Max(),
+                            Warnings);
 
-            foreach (var element in Prices?.Value.Elements ?? ChargingTariff.Elements)
+        }
+
+        /// <summary>
+        /// The OCPI tariff of the given operator with the given identification, currency and elements, and what else it
+        /// tells; null, without a currency, or with price components OCPI 2.3.0 does not know.
+        /// </summary>
+        /// <param name="Of">What it is the tariff of, for a warning, e.g. "charging tariff 'DE*GEF*T1'".</param>
+        internal static Tariff? TariffOf(POI.ChargingStationOperator_Id          OperatorId,
+                                        Tariff_Id                               TariffId,
+                                        String                                  Of,
+                                        Currency?                               Currency,
+                                        IEnumerable<POI.ChargingTariffElement>  Elements,
+                                        TariffType?                             TariffType,
+                                        IEnumerable<DisplayText>                TariffAltText,
+                                        URL?                                    TariffAltURL,
+                                        POI.ChargingPriceLimit?                 MinPrice,
+                                        POI.ChargingPriceLimit?                 MaxPrice,
+                                        DateTimeOffset?                         Start,
+                                        DateTimeOffset?                         End,
+                                        POI.EnergyMix?                          EnergyMix,
+                                        DateTimeOffset                          Created,
+                                        DateTimeOffset                          LastUpdated,
+                                        ICollection<Warning>                    Warnings)
+        {
+
+            if (Currency is null)
+            {
+                Warnings.Add(Warning.Create($"The {Of} has no currency, which an OCPI tariff requires!"));
+                return null;
+            }
+
+            var elements = new List<TariffElement>();
+
+            foreach (var element in Elements)
             {
 
                 var priceComponents = new List<PriceComponent>();
@@ -541,7 +631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                     if (!dimension.HasValue)
                     {
-                        Warnings.Add(Warning.Create($"The price component '{priceComponent.Type}' of the charging tariff '{ChargingTariff.Id}' has no OCPI 2.3.0 dimension!"));
+                        Warnings.Add(Warning.Create($"The price component '{priceComponent.Type}' of the {Of} has no OCPI 2.3.0 dimension!"));
                         return null;
                     }
 
@@ -556,26 +646,26 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             }
 
-            var party = ChargingTariff.Id.OperatorId.ToOCPIParty();
+            var party = OperatorId.ToOCPIParty();
 
             return new Tariff(
                        CountryCode:    party.CountryCode,
                        PartyId:        party.PartyId,
-                       Id:             tariffId.Value,
-                       Currency:       ChargingTariff.Currency,
+                       Id:             TariffId,
+                       Currency:       Currency,
                        TariffElements: elements,
                        // POI3 prices exclude VAT.
                        TaxIncluded:    TaxIncluded.No,
-                       TariffType:     ChargingTariff.TariffType.HasValue ? TariffType.Parse(ChargingTariff.TariffType.Value.ToString()) : null,
-                       TariffAltText:  ToDisplayTexts(ChargingTariff.Name).Concat(ToDisplayTexts(ChargingTariff.Description)),
-                       TariffAltURL:   ChargingTariff.TariffURL,
-                       MinPrice:       ChargingTariff.MinPrice?.ToOCPI(),
-                       MaxPrice:       ChargingTariff.MaxPrice?.ToOCPI(),
-                       Start:          ChargingTariff.ValidFrom,
-                       End:            ChargingTariff.ValidUntil,
-                       EnergyMix:      ChargingTariff.EnergyMix?.ToOCPI($"charging tariff '{ChargingTariff.Id}'", Warnings),
-                       Created:        ChargingTariff.Created,
-                       LastUpdated:    lastUpdated
+                       TariffType:     TariffType,
+                       TariffAltText:  TariffAltText,
+                       TariffAltURL:   TariffAltURL,
+                       MinPrice:       MinPrice?.ToOCPI(),
+                       MaxPrice:       MaxPrice?.ToOCPI(),
+                       Start:          Start,
+                       End:            End,
+                       EnergyMix:      EnergyMix?.ToOCPI(Of, Warnings),
+                       Created:        Created,
+                       LastUpdated:    LastUpdated
                    );
 
         }
@@ -1317,7 +1407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             => Text?.Select(pair => pair.Text).FirstOrDefault(text => text.IsNotNullOrEmpty());
 
-        private static IEnumerable<DisplayText> ToDisplayTexts(IEnumerable<I18NPair>? Text)
+        internal static IEnumerable<DisplayText> ToDisplayTexts(IEnumerable<I18NPair>? Text)
 
             => Text?.Where (pair => pair.Text.IsNotNullOrEmpty()).
                      Select(pair => new DisplayText(pair.Language, pair.Text)).

@@ -530,6 +530,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return;
             }
 
+            // A tariff charging tariff offers make of a charging tariff, taking its place while they apply: neither a
+            // charging tariff nor its prices, the offers are POI3's.
+            if (Tariff.Id.IsOffered())
+                return;
+
             // A tariff with new prices of a charging tariff: the price status of the locations naming it.
             if (Tariff.Id.HasPrices())
             {
@@ -654,7 +659,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 if (!POI.EVSE_Id.TryParse(evse.EVSEId?.ToString() ?? evse.UId.ToString(), out var evseId))
                     continue;
 
-                foreach (var tariffId in evse.Connectors.SelectMany(connector => connector.TariffIds).Distinct())
+                // A tariff charging tariff offers make tells no prices: those of its charging tariff stay as they are.
+                foreach (var tariffId in evse.Connectors.SelectMany(connector => connector.TariffIds).Where(tariffId => !tariffId.IsOffered()).Distinct())
                 {
 
                     var chargingTariffId = POI3Mapper.ToPOI3TariffIdOf(OperatorId, tariffId);

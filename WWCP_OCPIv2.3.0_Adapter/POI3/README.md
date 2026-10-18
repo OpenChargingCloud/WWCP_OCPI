@@ -36,10 +36,12 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   stations and EVSEs, with the properties their templates give them (`EffectiveChargingPools`), e.g. the facilities of
   a pool, a feature `Reservable` or a physical reference of a station, the connectors of an EVSE, given once for all
   members naming a template; a change of a template changes the locations of its members, its `lastChange` being the
-  last change of these and of what embeds them. Groups give nothing; charging tariff offers are no tariffs of an
-  operator OCPI knows. New prices of the price status of charging pools, stations and EVSEs are tariffs of
-  their own, which the EVSEs name (see [Prices at runtime](#prices-at-runtime--tariffs-of-their-own)); a change of a
-  price status publishes the head again, once for all reported until then.
+  last change of these and of what embeds them. Groups give nothing. New prices of the price status of charging pools,
+  stations and EVSEs are tariffs of their own, which the EVSEs name (see [Prices at runtime](#prices-at-runtime--tariffs-of-their-own)); a change of a
+  price status publishes the head again, once for all reported until then. The charging tariff offers of the operators
+  take the place of their charging tariffs while they apply (see [Charging tariff offers](#charging-tariff-offers--tariffs-taking-the-place-of-charging-tariffs)):
+  the head is published again when the status of an offer changes, and when one begins or ends to apply. A charging
+  tariff is published as it is at runtime, with what its templates give it.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
   charging tariff as OCPI tells it, onto the one there is, with what only POI3 knows kept (see below). The difference is
   computed as a three-way merge whose left side is its base (`RoamingNetwork.TryMerge(head, head, desired)`), so only what
@@ -65,6 +67,7 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
 | charging connector `1` | connector `id` `1` |
 | charging tariff `DE*GEF*T1` | tariff `id` `1` |
 | charging tariff `DE*GEF*T1` with new prices of a price status | tariff `id` `1~` + the first 8 hex digits of the SHA-256 of the compact JSON of their elements, e.g. `1~3fa9c10b` (no charging tariff identification has a `~`) |
+| charging tariff `DE*GEF*T1` (also with new prices) with the charging tariff offer `gef-night` taking its place | tariff `id` `1+gef-night`; `1+` + the first 8 hex digits of the SHA-256 of the offers and the tariff type where there are several offers, the type is another than the charging tariff's, the offer identification has other characters than letters, digits, `_`, `.` and `-`, or the whole has more than 36 (no charging tariff identification has a `+`) |
 | charging station | — (import: new EVSEs go into the first charging station of the pool, or into `DE*GEF*S1` named after the location) |
 
 ### Charging pool ↔ location
@@ -199,6 +202,46 @@ connector names them, so:
   the CommonAPI does not hold (yet) tells nothing: the prices stay as they are. So what a POI3 network publishes,
   imported back into it, sets no price status again.
 
+### Charging tariff offers ↔ tariffs taking the place of charging tariffs
+
+A charging tariff offer of an operator announces another price for a time at the EVSEs it covers: a price of its own,
+or a discount on the charging tariffs of the EVSEs ([SPECIFICATION §9.4](https://github.com/OpenChargingCloud/WWCP_POI/blob/master/SPECIFICATION.md#94-charging-tariff-offers)).
+OCPI 2.3.0 allows a connector one tariff of each type at a time, and a charging tariff has no end, so an offer takes
+its place while it applies: the connectors of the EVSEs it covers name a tariff of the offer instead, as they name one
+of new prices.
+
+- **Which offers:** of the operator, `active`, without `maxSessionsPerContract` (OCPI can not tell a price for the
+  first session of a contract only), and not during an exceptional closing. Offers of e-mobility providers are no
+  tariffs of an operator: POI_API serves them.
+- **Which tariffs:** a charging tariff of the type `AD_HOC_PAYMENT` is for ad hoc sessions, one of another type for
+  sessions with a contract, one without a type for both. Where offers are for all the sessions of a charging tariff, a
+  tariff of theirs of its type takes its place; where they are for only the ad hoc sessions, or only the contracts, of
+  one without a type, a tariff of theirs of the type `AD_HOC_PAYMENT` or `REGULAR` comes beside it.
+- **What it says:** of an offer with a price of its own, its elements, currency, minimum and maximum price; of a
+  discount, the elements of the charging tariff with the prices of the dimensions it names, or of all, reduced by its
+  percentage, rounded to six decimal places, without dimensions its minimum and maximum price as well. `tariff_alt_text`
+  is the name and description of the offers, then of the charging tariff; `start_date_time`/`end_date_time` are the
+  latest `notBefore` and the earliest `notAfter` of the offers.
+- **Opening times:** where an offer applies within its regular openings only, its elements are restricted to them -
+  `day_of_week`, `start_time`, `end_time`, local times of the location; a period ending at midnight ends at `00:00`, one
+  crossing midnight is split there - each intersected with the restrictions an element has. The elements of the
+  charging tariff follow for the other times. An offer with a price of its own adds, within its openings, a price of 0
+  for every dimension the charging tariff prices, so that none of the charging tariff's applies then. Several offers
+  applying at other times, e.g. one by night and one by day, make one tariff of all of them. Exceptional openings and
+  closings are periods of absolute time OCPI can not restrict elements to: during an exceptional closing the connectors
+  name the charging tariff, during an exceptional opening the tariff of the offer at any time.
+- **For the contracts of some e-mobility providers:** an offer naming `eMobilityProviderIds` is for the contracts of
+  these only. Where the tariffs of their eMSPs are others than those of every other eMSP, the connectors name none of
+  their own: the CommonAPI asks the publisher for them by eMSP (`CommonAPI.GetTariffIdsDelegate`), the eMSP of the
+  e-mobility provider `DE-GDF` being the party `DE` `GDF`. The tariffs themselves are served to every eMSP.
+- **Publisher:** the tariffs of the offers are published with the charging tariffs, before the locations naming them;
+  one no connector names any more is removed. The head is published again when the status of an offer changes (the
+  runtime status tells when one becomes active or expires) and at the next time an offer begins or ends to apply, also
+  by an exceptional opening or closing (`POI3Mapper.NextOfferChange`).
+- **Importer:** a tariff of offers is no charging tariff and tells no prices: it is not imported, and the prices of its
+  charging tariff stay as they are. A connector naming it names its charging tariff (`1+…` and `1~…+…` are
+  `DE*GEF*T1`), so what a POI3 network publishes, imported back into it, commits nothing.
+
 ### What the import keeps
 
 A location imported onto an existing charging pool sets only `name`, `address`, `geoLocation`, `timeZone`, `parkingType`,
@@ -244,8 +287,8 @@ What one side has and the other does not, or not alike:
   is left out (with a warning), as are unknown sources.
 - **POI3 only:** descriptions, entrance/exit addresses and locations, location languages, payment options and authentication
   modes beyond the capabilities above, pool features, grid connection points, data licenses, templates and
-  `templateIds`, groups, charging tariff offers, brands (beyond the first as sub-operator), energy status of EVSEs and
-  stations, charging pool and station status.
+  `templateIds`, groups, charging tariff offers of e-mobility providers and those with `maxSessionsPerContract`, brands
+  (beyond the first as sub-operator), energy status of EVSEs and stations, charging pool and station status.
 - **Parking:** POI3 names parking spaces by charging stations, OCPI by EVSEs; the `access_level` of an EVSE's `parking`
   has no POI3 counterpart, and its `evse_position` is the parking space's. Names, descriptions, garages, sensors,
   products, `parkingRestrictions` and `euVehicleCategories` of parking spaces have no OCPI counterpart.
@@ -268,3 +311,8 @@ What one side has and the other does not, or not alike:
   template gives can not be removed by an import.
 - **Status timestamps:** the importer follows OCPI's status, also where the history holds a later one (e.g. the default
   status of an EVSE just imported): the CommonAPI keeps an EVSE only with a later `last_updated`.
+- **Charging tariff offers:** their regular openings are local times of the time zone of the charging pool; where it has
+  none, POI3 reads them in UTC, OCPI in the time zone of the location, that of its address. An offer with a price in
+  another currency than a charging tariff applies only where it applies at any time. A tariff of offers for the contracts
+  of some e-mobility providers is served to every eMSP, though only theirs name it. The import does not make offers of
+  tariffs.
