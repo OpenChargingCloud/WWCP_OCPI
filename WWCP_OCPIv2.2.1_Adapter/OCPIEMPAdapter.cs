@@ -346,8 +346,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               StatusType_2_WWCPEVSEStatusUpdate_Delegate?       CustomEVSEStatusUpdateConverter     = null,
                               CDR_2_WWCPChargeDetailRecord_Delegate?            CustomChargeDetailRecordConverter   = null,
 
-                              IncludeChargingStationOperatorIdDelegate?         IncludeChargingStationOperatorIds   = null,
-                              IncludeChargingStationOperatorDelegate?           IncludeChargingStationOperators     = null,
+                              WWCP.IncludeChargingStationOperatorIdDelegate?    IncludeChargingStationOperatorIds   = null,
+                              WWCP.IncludeChargingStationOperatorDelegate?      IncludeChargingStationOperators     = null,
                               IncludeChargingPoolIdDelegate?                    IncludeChargingPoolIds              = null,
                               IncludeChargingPoolDelegate?                      IncludeChargingPools                = null,
                               IncludeChargingStationIdDelegate?                 IncludeChargingStationIds           = null,

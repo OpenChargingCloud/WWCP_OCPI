@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.2.1\WWCP_OCPIv2.2.1.csproj" />
+    <ProjectReference Include="..\..\WWCP_POI\WWCP_POI3\WWCP_POI3.csproj" />
   </ItemGroup>
 
 </Project>
