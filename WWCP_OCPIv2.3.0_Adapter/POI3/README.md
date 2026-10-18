@@ -33,10 +33,11 @@ await importer.ImportAsync(locationHeldBefore);   // e.g. what the CommonAPI hel
   these are the operators of the head, so the data of an operator removed in the meantime stays.
   Pushing to remote EMSPs is the CommonAPI's business:
   the publisher only keeps its store up to date, which EMSPs pull from. It publishes the effective charging pools,
-  stations and EVSEs, with the properties their groups give them (`EffectiveChargingPools`), e.g. the facilities of a
-  pool, a feature `Reservable` or a physical reference of a station, the connectors of an EVSE, given once for all
-  members of a group; a change of a group changes the locations of its members, its `lastChange` being the last change
-  of these and of what embeds them. New prices of the price status of charging pools, stations and EVSEs are tariffs of
+  stations and EVSEs, with the properties their templates give them (`EffectiveChargingPools`), e.g. the facilities of
+  a pool, a feature `Reservable` or a physical reference of a station, the connectors of an EVSE, given once for all
+  members naming a template; a change of a template changes the locations of its members, its `lastChange` being the
+  last change of these and of what embeds them. Groups give nothing; charging tariff offers are no tariffs of an
+  operator OCPI knows. New prices of the price status of charging pools, stations and EVSEs are tariffs of
   their own, which the EVSEs name (see [Prices at runtime](#prices-at-runtime--tariffs-of-their-own)); a change of a
   price status publishes the head again, once for all reported until then.
 - **Importer:** every location or tariff added or changed becomes a change set against the head: the charging pool or
@@ -150,7 +151,7 @@ warning, and so is a `parking_id` of an EVSE that is no parking space. Parking s
 | EVSE `maxVoltage`, else 230 V AC / 400 V DC | `max_voltage` |
 | EVSE `maxCurrent`, else 16 A AC / 50 A DC | `max_amperage` |
 | EVSE `maxPower` | `max_electric_power` |
-| EVSE `chargingTariffIds`, else the `chargingTariffId` of its most specific EVSE, charging station or charging pool groups, as its effective EVSE has them | `tariff_ids` |
+| EVSE `chargingTariffIds`, else the `chargingTariffId` of the first of its EVSE templates naming one, else of its charging station's, else of its charging pool's, as its effective EVSE has them | `tariff_ids` |
 | operator `termsAndConditionsURL` | `terms_and_conditions` |
 
 Import: the EVSE takes the union of the current types of its connectors, the maximum of their voltages, amperages and
@@ -208,17 +209,17 @@ the access type (`accessibility`), EVSE charging modes and reservation duration.
 Of these, what OCPI tells as it would tell the existing charging pool, EVSE or charging tariff is kept as it is: the
 existing one is mapped to OCPI and back, and only where that differs from what OCPI tells does OCPI's value win. So a
 street keeps its house number apart, a city its language, an EVSE no coordinates of its own when it has those of its
-station or pool, a tariff its name and description apart, EVSEs the tariffs of their groups, and charging pools,
-stations and EVSEs the properties their groups give them: the existing charging pool is mapped as it is at runtime,
+station or pool, a tariff its name and description apart, EVSEs the tariffs of their templates, and charging pools,
+stations and EVSEs the properties their templates give them: the existing charging pool is mapped as it is at runtime,
 its effective one. What a POI3 network publishes, imported back into it, commits nothing.
 
-What OCPI tells of a charging pool or EVSE as its groups give it stays in the groups (`POIGroupMembers.KeepWhatGroupsGive`,
-by the rules by which the groups give it at runtime): of an array it unites with theirs, e.g. the facilities of a pool,
-it takes as its own only what its groups do not give it, elements matched by their key (an image by its URL), and an array it takes whole - the charging
-tariffs and current types of an EVSE - becomes its own whole when OCPI tells another one. So a facility added at OCPI
-does not make the facilities of the pool's group its own, and they still go when its group no longer gives them. So do
-the parking spaces a charging station's groups give it: its EVSEs' `parking` names them, the import does not make them
-its own.
+What OCPI tells of a charging pool or EVSE as its templates give it stays in the templates
+(`POITemplateMembers.KeepWhatTemplatesGive`, by the rules by which the templates give it at runtime): of an array it
+unites with theirs, e.g. the facilities of a pool, it takes as its own only what its templates do not give it, elements
+matched by their key (an image by its URL), and an array it takes whole - the charging tariffs and current types of an
+EVSE - becomes its own whole when OCPI tells another one. So a facility added at OCPI does not make the facilities of
+the pool's template its own, and they still go when it no longer names the template. So do the parking spaces a
+charging station's templates give it: its EVSEs' `parking` names them, the import does not make them its own.
 
 ## Gaps
 
@@ -237,8 +238,9 @@ What one side has and the other does not, or not alike:
   as Coal, OtherFossil, NuclearFision and OtherGreen. POI3 has no water, which becomes OtherGreen; OCPI has no waste, which
   is left out (with a warning), as are unknown sources.
 - **POI3 only:** descriptions, entrance/exit addresses and locations, location languages, payment options and authentication
-  modes beyond the capabilities above, pool features, grid connection points, data licenses, groups, brands (beyond the
-  first as sub-operator), energy status of EVSEs and stations, charging pool and station status.
+  modes beyond the capabilities above, pool features, grid connection points, data licenses, templates and
+  `templateIds`, groups, charging tariff offers, brands (beyond the first as sub-operator), energy status of EVSEs and
+  stations, charging pool and station status.
 - **Parking:** POI3 names parking spaces by charging stations, OCPI by EVSEs; the `access_level` of an EVSE's `parking`
   has no POI3 counterpart, and its `evse_position` is the parking space's. Names, descriptions, garages, sensors,
   products, `parkingRestrictions` and `euVehicleCategories` of parking spaces have no OCPI counterpart.
@@ -252,12 +254,12 @@ What one side has and the other does not, or not alike:
 - **Payment terminals** (the OCPI 2.3 Payments module) are not mapped.
 - **Identifications:** an OCPI party must have three characters to be an operator; a location id must fit a charging pool
   suffix (`[A-Za-z0-9][A-Za-z0-9*]{0,29}`) and a tariff id a charging tariff suffix; others are refused with a warning.
-- **Import of groups and operators:** the tariff an EVSE without tariffs of its own takes from its EVSE, station or
-  pool groups becomes the connector tariff on export; the import keeps it in its groups while the tariffs of a
+- **Import of templates and operators:** the tariff an EVSE without tariffs of its own takes from its EVSE, station
+  or pool templates becomes the connector tariff on export; the import keeps it in its templates while the tariffs of a
   connector are as before, else attaches them to the EVSE.
   Operators are never created by the import.
 - **Capabilities** are told for every EVSE, but are of the charging pool (authentication modes, payment options) or of
   the charging station (features): imported, those of all EVSEs of a pool, or of a station, are united. A capability a
-  group gives can not be removed by an import.
+  template gives can not be removed by an import.
 - **Status timestamps:** the importer follows OCPI's status, also where the history holds a later one (e.g. the default
   status of an EVSE just imported): the CommonAPI keeps an EVSE only with a later `last_updated`.
