@@ -24,6 +24,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using Newtonsoft.Json.Linq;
+
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_3_0.POI3;
 using cloud.charging.open.protocols.WWCP.POI.tests;
@@ -41,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
     /// they stay in their templates.
     /// </summary>
     [TestFixture]
-    public class POI3GroupAdapterTests
+    public class POI3TemplateAdapterTests
     {
 
         #region Data
@@ -67,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
         [SetUp]
         public void SetUp()
         {
-            directory  = Path.Combine(Path.GetTempPath(), $"WWCP_OCPI_POI3_GroupAdapterTests-{Guid.NewGuid():N}");
+            directory  = Path.Combine(Path.GetTempPath(), $"WWCP_OCPI_POI3_TemplateAdapterTests-{Guid.NewGuid():N}");
             Directory.CreateDirectory(directory);
             api        = new CommonAPI(
                              OurPartyData:      [ new PartyData(Party, Role.CPO, new BusinessDetails("GraphDefined CSO")) ],
@@ -253,6 +255,50 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
             lock (errors)
                 Assert.That(errors, Is.Empty);
+
+        }
+
+        #endregion
+
+        #region ARemovedEVSEMayHaveTheEVSEIdOfItsSuccessor()
+
+        /// <summary>
+        /// A CPO replaces an EVSE: the old one stays REMOVED, with the EVSE ID the new one has now, as OCPI allows. The
+        /// location is imported, here with its new name, and the REMOVED one is gone.
+        /// </summary>
+        [Test]
+        public async Task ARemovedEVSEMayHaveTheEVSEIdOfItsSuccessor()
+        {
+
+            var network    = NewNetwork();
+            var history    = POI.RoamingNetworkHistory.Start(network);
+            var revision   = history.Head.Commit.Revision;
+
+            await using var importer = new OCPIToPOI3Importer(api, history, changeSet => changeSet.SignedByAll(history.Head.RoamingNetwork));
+
+            importer.Start();
+
+            var published  = network.GetChargingStationOperatorById(GEF)!.EffectiveChargingPools.Single().ToOCPI(network, [], T0)!;
+            var evse       = published.EVSEs.Single();
+            var json       = published.ToJSON();
+
+            json["name"]   = "Biberweg Nord";
+            ((JArray) json["evses"]!).Add(new EVSE(EVSE_UId.Parse("old"), StatusType.REMOVED, evse.Connectors, evse.EVSEId, LastUpdated: T0).ToJSON());
+
+            var location   = Location.Parse(json);
+
+            Assert.That(location.EVSEs.Count(), Is.EqualTo(2));
+
+            Assert.That(async () => await importer.ImportAsync(location), Throws.Nothing);
+
+            var pool       = history.Head.RoamingNetwork.GetChargingStationOperatorById(GEF)!.ChargingPools.Single();
+
+            Assert.Multiple(() => {
+                Assert.That(history.Head.Commit.Revision,                     Is.EqualTo(revision + 1));
+                Assert.That(pool.Name.FirstText(),                            Is.EqualTo("Biberweg Nord"));
+                Assert.That(pool.EVSEs.Select(evse => evse.Id.ToString()),    Is.EqualTo(new[] { "DE*GEF*E1*1" }));
+                Assert.That(pool.ChargingStations.Single().ParkingSpaceIds,   Is.EqualTo(new[] { Space1 }));
+            });
 
         }
 
