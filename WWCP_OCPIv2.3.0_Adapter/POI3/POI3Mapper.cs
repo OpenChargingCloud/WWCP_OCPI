@@ -379,9 +379,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             foreach (var chargingConnector in EVSE.ChargingConnectors)
             {
-                var connector = chargingConnector.ToOCPI(EVSE, tariffIds, Operator, Warnings, pricesChanged);
+
+                // Its own tariffs, else those of the EVSE.
+                var connector = chargingConnector.ToOCPI(EVSE,
+                                                         chargingConnector.ChargingTariffIds.Length > 0
+                                                             ? [.. TariffIdsOf(chargingConnector.ChargingTariffIds, prices)]
+                                                             : tariffIds,
+                                                         Operator,
+                                                         Warnings,
+                                                         pricesChanged);
+
                 if (connector is not null)
                     connectors.Add(connector);
+
             }
 
             if (connectors.Count == 0)
@@ -453,10 +463,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
-            var isDC         = EVSE.CurrentTypes.HasFlag(POI.CurrentTypes.DC);
-            var powerType    = isDC                                              ? PowerTypes.DC
-                             : EVSE.CurrentTypes.HasFlag(POI.CurrentTypes.AC_ThreePhases) ? PowerTypes.AC_3_PHASE
-                             : EVSE.CurrentTypes.HasFlag(POI.CurrentTypes.AC_OnePhase)    ? PowerTypes.AC_1_PHASE
+            // Its own current types and limits, else those of its EVSE.
+            var currentTypes = ChargingConnector.CurrentTypesAt(EVSE);
+            var isDC         = currentTypes.HasFlag(POI.CurrentTypes.DC);
+            var powerType    = isDC                                                  ? PowerTypes.DC
+                             : currentTypes.HasFlag(POI.CurrentTypes.AC_ThreePhases) ? PowerTypes.AC_3_PHASE
+                             : currentTypes.HasFlag(POI.CurrentTypes.AC_OnePhase)    ? PowerTypes.AC_1_PHASE
                              : PowerTypes.UNKNOWN;
 
             return new Connector(
@@ -464,9 +476,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                        Standard:               standard.Value,
                        Format:                 ChargingConnector.Format == POI.ChargingConnectorFormat.CABLE ? ConnectorFormats.CABLE : ConnectorFormats.SOCKET,
                        PowerType:              powerType,
-                       MaxVoltage:             EVSE.MaxVoltage ?? (isDC ? Volt.  FromV(400) : Volt.  FromV(230)),
-                       MaxAmperage:            EVSE.MaxCurrent ?? (isDC ? Ampere.FromA(50)  : Ampere.FromA(16)),
-                       MaxElectricPower:       EVSE.MaxPower,
+                       MaxVoltage:             ChargingConnector.MaxVoltageAt(EVSE) ?? (isDC ? Volt.  FromV(400) : Volt.  FromV(230)),
+                       MaxAmperage:            ChargingConnector.MaxCurrentAt(EVSE) ?? (isDC ? Ampere.FromA(50)  : Ampere.FromA(16)),
+                       MaxElectricPower:       ChargingConnector.MaxPowerAt  (EVSE),
                        TariffIds:              TariffIds,
                        TermsAndConditionsURL:  Operator.TermsAndConditionsURL,
                        Created:                EVSE.Created,
@@ -860,7 +872,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return null;
             }
 
-            var connectors   = new List<POI.ChargingConnector>();
+            // Each with what it tells, and how to create it with what it has of its own.
+            var connectors   = new List<(Connector                     OCPI,
+                                         POI.CurrentTypes              CurrentTypes,
+                                         POI.ChargingTariff_Id[]       TariffIds,
+                                         Func<POI.CurrentTypes?, Volt?, Ampere?, Watt?, POI.ChargingTariff_Id[]?, POI.ChargingConnector> Create)>();
             var currentTypes = POI.CurrentTypes.Unspecified;
 
             foreach (var connector in EVSE.Connectors)
@@ -880,45 +896,83 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 if (!isCable && (connector.CableLength.HasValue || connector.CableWeight.HasValue || connector.CableManagementSystem.HasValue))
                     Warnings.Add(Warning.Create($"The connector '{connector.Id}' of the EVSE '{evseId}' is a socket: its cable is left out!"));
 
-                connectors.Add(new POI.ChargingConnector(POI.ChargingConnector_Id.Parse(connector.Id.ToString()),
-                                                         type.Value,
-                                                         Format:                 isCable ? POI.ChargingConnectorFormat.CABLE : POI.ChargingConnectorFormat.SOCKET,
-                                                         CableLength:            isCable && connector.CableLength?.m     > 0 ? connector.CableLength : null,
-                                                         CableWeight:            isCable && connector.CableWeight?.Value > 0 ? connector.CableWeight : null,
-                                                         CableManagementSystem:  isCable ? connector.CableManagementSystem : null,
-                                                         Standards:              connector.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
-                                                         Images:                 connector.Images.Select(ToPOI3)));
+                var connectorCurrentTypes = connector.PowerType switch {
+                                                PowerTypes.DC          => POI.CurrentTypes.DC,
+                                                PowerTypes.AC_3_PHASE  => POI.CurrentTypes.AC_ThreePhases,
+                                                PowerTypes.AC_1_PHASE  => POI.CurrentTypes.AC_OnePhase,
+                                                PowerTypes.AC_2_PHASE or
+                                                PowerTypes.AC_2_PHASE_SPLIT
+                                                                       => POI.CurrentTypes.AC_OnePhase,
+                                                _                      => POI.CurrentTypes.Unspecified
+                                            };
 
-                currentTypes |= connector.PowerType switch {
-                                    PowerTypes.DC          => POI.CurrentTypes.DC,
-                                    PowerTypes.AC_3_PHASE  => POI.CurrentTypes.AC_ThreePhases,
-                                    PowerTypes.AC_1_PHASE  => POI.CurrentTypes.AC_OnePhase,
-                                    PowerTypes.AC_2_PHASE or
-                                    PowerTypes.AC_2_PHASE_SPLIT
-                                                           => POI.CurrentTypes.AC_OnePhase,
-                                    _                      => POI.CurrentTypes.Unspecified
-                                };
+                var connectorTariffIds    = connector.TariffIds.
+                                                Select (tariffId => ToPOI3TariffIdOf(OperatorId, tariffId)).
+                                                Where  (tariffId => tariffId.HasValue).
+                                                Select (tariffId => tariffId!.Value).
+                                                Distinct().
+                                                OrderBy(tariffId => tariffId.ToString(), StringComparer.Ordinal).
+                                                ToArray();
+
+                connectors.Add((connector,
+                                connectorCurrentTypes,
+                                connectorTariffIds,
+                                (ownCurrentTypes, ownMaxVoltage, ownMaxCurrent, ownMaxPower, ownTariffIds) =>
+                                    new POI.ChargingConnector(POI.ChargingConnector_Id.Parse(connector.Id.ToString()),
+                                                              type.Value,
+                                                              Format:                 isCable ? POI.ChargingConnectorFormat.CABLE : POI.ChargingConnectorFormat.SOCKET,
+                                                              CableLength:            isCable && connector.CableLength?.m     > 0 ? connector.CableLength : null,
+                                                              CableWeight:            isCable && connector.CableWeight?.Value > 0 ? connector.CableWeight : null,
+                                                              CableManagementSystem:  isCable ? connector.CableManagementSystem : null,
+                                                              Standards:              connector.Standards.Select(standard => POI.Standard.Parse(standard.ToString())),
+                                                              Images:                 connector.Images.Select(ToPOI3),
+                                                              CurrentTypes:       ownCurrentTypes,
+                                                              MaxVoltage:         ownMaxVoltage,
+                                                              MaxCurrent:         ownMaxCurrent,
+                                                              MaxPower:           ownMaxPower,
+                                                              ChargingTariffIds:  ownTariffIds)));
+
+                currentTypes |= connectorCurrentTypes;
 
             }
 
             if (connectors.Count == 0)
                 return null;
 
+            // The EVSE: the highest limits of its connectors, all their current types, and the tariffs most of them have.
             // A tariff with new prices is its charging tariff: the prices are runtime data.
-            var tariffIds = EVSE.Connectors.SelectMany(connector => connector.TariffIds).
-                                            Select    (tariffId  => ToPOI3TariffIdOf(OperatorId, tariffId)).
-                                            Where     (tariffId  => tariffId.HasValue).
-                                            Select    (tariffId  => tariffId!.Value).
-                                            Distinct();
+            var maxVoltage          = connectors.Max(connector => connector.OCPI.MaxVoltage);
+            var maxCurrent          = connectors.Max(connector => connector.OCPI.MaxAmperage);
+            var maxPower            = connectors.Select(connector => connector.OCPI.MaxElectricPower).Where(power => power.HasValue).Max();
+            var tariffIds           = connectors.GroupBy         (connector => String.Join(",", connector.TariffIds)).
+                                                 OrderByDescending(group     => group.Count()).
+                                                 First().
+                                                 First().
+                                                 TariffIds;
+
+            // What a connector tells other than its EVSE is its own.
+            var chargingConnectors  = connectors.Select(connector => connector.Create(
+                                                            connector.CurrentTypes != currentTypes && connector.CurrentTypes != POI.CurrentTypes.Unspecified
+                                                                ? connector.CurrentTypes
+                                                                : null,
+                                                            connector.OCPI.MaxVoltage.Equals(maxVoltage)  ? null : connector.OCPI.MaxVoltage,
+                                                            connector.OCPI.MaxAmperage.Equals(maxCurrent) ? null : connector.OCPI.MaxAmperage,
+                                                            connector.OCPI.MaxElectricPower.HasValue && !connector.OCPI.MaxElectricPower.Equals(maxPower)
+                                                                ? connector.OCPI.MaxElectricPower
+                                                                : null,
+                                                            connector.TariffIds.Length > 0 && !connector.TariffIds.SequenceEqual(tariffIds)
+                                                                ? connector.TariffIds
+                                                                : null)).
+                                                 ToArray();
 
             return new POI.EVSE(
                        Id:                  evseId.Value,
                        PhysicalReference:   EVSE.PhysicalReference,
                        CurrentTypes:        currentTypes,
-                       MaxVoltage:          EVSE.Connectors.Max(connector => connector.MaxVoltage),
-                       MaxCurrent:          EVSE.Connectors.Max(connector => connector.MaxAmperage),
-                       MaxPower:            EVSE.Connectors.Select(connector => connector.MaxElectricPower).Where(power => power.HasValue).Max(),
-                       ChargingConnectors:  connectors,
+                       MaxVoltage:          maxVoltage,
+                       MaxCurrent:          maxCurrent,
+                       MaxPower:            maxPower,
+                       ChargingConnectors:  chargingConnectors,
                        ChargingTariffIds:   tariffIds,
                        Images:              EVSE.Images.Select(ToPOI3),
                        GeoLocation:         EVSE.Coordinates,
@@ -1500,13 +1554,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                           IReadOnlyList<Timestamped<POI.ChargingTariffPrices>>    Prices,
                                                           POI.ChargingStationOperator                             Operator)
 
-            => Operator.EffectiveEVSE(EVSE).ChargingTariffIds.
+            => TariffIdsOf(Operator.EffectiveEVSE(EVSE).ChargingTariffIds, Prices);
+
+        private static IEnumerable<Tariff_Id> TariffIdsOf(IEnumerable<POI.ChargingTariff_Id>                      ChargingTariffIds,
+                                                          IReadOnlyList<Timestamped<POI.ChargingTariffPrices>>    Prices)
+
+            => ChargingTariffIds.
                    Select(tariffId => tariffId.ToOCPITariffId(Prices.FirstOrDefault(price => price.Value.ChargingTariffId == tariffId).Value)).
                    Where (tariffId => tariffId.HasValue).
                    Select(tariffId => tariffId!.Value);
 
         /// <summary>
-        /// The new prices in effect at the given EVSE of the charging tariffs it takes (see ChargingPrices.Effective),
+        /// The new prices in effect at the given EVSE of the charging tariffs it and its connectors take (see ChargingPrices.Effective),
         /// with since when: the most specific price status naming a tariff, the EVSE's before its station's before its pool's.
         /// </summary>
         public static IReadOnlyList<Timestamped<POI.ChargingTariffPrices>> PricesOf(POI.EVSE                     EVSE,
@@ -1515,7 +1574,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                                                     POI.ChargingStationOperator  Operator)
         {
 
-            var tariffIds = Operator.EffectiveEVSE(EVSE).ChargingTariffIds.ToHashSet();
+            var effective  = Operator.EffectiveEVSE(EVSE);
+            var tariffIds  = effective.ChargingTariffIds.
+                                 Concat(effective.ChargingConnectors.SelectMany(chargingConnector => chargingConnector.ChargingTariffIds)).
+                                 ToHashSet();
 
             return [.. POI.ChargingPrices.Effective(ChargingPool, ChargingStation, EVSE).
                            Where(price => tariffIds.Contains(price.Value.ChargingTariffId)) ];

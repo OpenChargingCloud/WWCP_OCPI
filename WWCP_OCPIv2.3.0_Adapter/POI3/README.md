@@ -147,11 +147,16 @@ warning, and so is a `parking_id` of an EVSE that is no parking space. Parking s
 | connector `type` | `standard` (the names are OCPI's) |
 | `format` (absent: `SOCKET`) | `format` |
 | `cableLength` (m), `cableWeight` (kg), `cableManagementSystem`, `standards`, `images` | `cable_length` (cm), `cable_weight` (kg), `cable_management_system`, `standards`, `images` (Accessibility Extension; import: the cable of a `SOCKET` is left out with a warning) |
-| EVSE `currentTypes`: DC, AC_ThreePhases, AC_OnePhase | `power_type`: `DC`, `AC_3_PHASE`, `AC_1_PHASE` |
-| EVSE `maxVoltage`, else 230 V AC / 400 V DC | `max_voltage` |
-| EVSE `maxCurrent`, else 16 A AC / 50 A DC | `max_amperage` |
-| EVSE `maxPower` | `max_electric_power` |
-| EVSE `chargingTariffIds`, else the `chargingTariffId` of the first of its EVSE templates naming one, else of its charging station's, else of its charging pool's, as its effective EVSE has them | `tariff_ids` |
+| connector `currentTypes`, else the EVSE's: DC, AC_ThreePhases, AC_OnePhase | `power_type`: `DC`, `AC_3_PHASE`, `AC_1_PHASE` |
+| connector `maxVoltage`, else the EVSE's, else 230 V AC / 400 V DC | `max_voltage` |
+| connector `maxCurrent`, else the EVSE's, else 16 A AC / 50 A DC | `max_amperage` |
+| connector `maxPower`, else the EVSE's | `max_electric_power` |
+| connector `chargingTariffIds`, else the EVSE's `chargingTariffIds`, else the `chargingTariffId` of the first of its EVSE templates naming one, else of its charging station's, else of its charging pool's, as its effective EVSE has them | `tariff_ids` |
+
+Import: the EVSE takes the highest `max_voltage`, `max_amperage` and `max_electric_power` of its connectors, the
+current types of all of them, and the tariffs most of them name (of as many, those of the first); what a connector tells
+other than that is its own, e.g. the 50 kW and the tariff of a CHAdeMO connector beside a CCS one of the EVSE's 150 kW.
+A connector without a power of its own takes the EVSE's.
 | operator `termsAndConditionsURL` | `terms_and_conditions` |
 
 Import: the EVSE takes the union of the current types of its connectors, the maximum of their voltages, amperages and
@@ -229,8 +234,8 @@ What one side has and the other does not, or not alike:
   coordinates, images, features as capabilities) or are lost (manufacturer, model, calibration and certification info,
   vehicle types, accessibility, max power, parking spaces, hotline, opening times, brands); on import EVSEs go into existing
   or one new station per location.
-- **Connectors:** POI3 has no per-connector voltage, amperage, power or tariffs, and no connector capabilities
-  (ISO 15118 Plug & Charge): they come from the EVSE. `lockable` has no OCPI counterpart. A plug type OCPI does not know leaves the connector out (with a warning).
+- **Connectors:** POI3 has no connector capabilities (ISO 15118 Plug & Charge). A connector telling no tariffs where
+  the EVSE has some takes the EVSE's on import. `lockable` has no OCPI counterpart. A plug type OCPI does not know leaves the connector out (with a warning).
 - **Location:** POI3 has no `publish`/`publish_allowed_to` (always published), no `owner`, no energy meters of locations.
   `assistance_service_details` is one text, POI3 has one per language. The house number is joined with the street, and only split
   again where the address is as before (see above).
