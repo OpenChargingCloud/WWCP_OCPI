@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                 }
 
-                // With the properties their groups give its charging stations.
+                // With the properties their templates give its charging stations.
                 foreach (var chargingPool in chargingStationOperator.EffectiveChargingPools)
                 {
 
@@ -411,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 return;
             }
 
-            // As its location tells it: with the properties their groups give its charging stations.
+            // As its location tells it: with the properties their templates give its charging stations.
             foreach (var chargingPool in chargingStationOperator.EffectiveChargingPools)
             {
                 foreach (var chargingStation in chargingPool.ChargingStations)

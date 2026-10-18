@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// geo location, which OCPI requires.
         /// </summary>
         /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="RoamingNetwork">The roaming network of the charging pool: for its operator, brands and groups.</param>
+        /// <param name="RoamingNetwork">The roaming network of the charging pool: for its operator, brands and tariffs.</param>
         /// <param name="Warnings">Where to tell what could not be mapped.</param>
         /// <param name="NotBefore">The earliest 'last updated' of the location, e.g. after the one published before.</param>
         public static Location? ToOCPI(this POI.ChargingPool    ChargingPool,
@@ -632,8 +632,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// What only POI3 knows is kept, and so is what OCPI tells as it would tell the existing charging pool, e.g. a house
         /// number apart from its street. EVSEs stay in their charging stations, new ones go into the first charging station
         /// of the pool, or into a new one named after the location. EVSEs whose status is REMOVED are gone.
-        /// What it tells of the pool and its EVSEs as their groups give it stays in their groups: see
-        /// POIGroupMembers.KeepWhatGroupsGive(…).
+        /// What it tells of the pool and its EVSEs as their templates give it stays in their templates: see
+        /// POITemplateMembers.KeepWhatTemplatesGive(…).
         /// </summary>
         /// <param name="Location">An OCPI location.</param>
         /// <param name="OperatorId">The operator of the location.</param>
@@ -642,7 +642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// <param name="Warnings">Where to tell what could not be mapped.</param>
         /// <param name="Unchanged">The existing charging pool as OCPI tells it, if any: what the location tells alike is kept as it is.</param>
         /// <param name="Effective">The JSON of the existing charging pool as it is at runtime, its effective one, with the
-        /// properties its groups and those of its EVSEs give them, if any.</param>
+        /// properties its templates and those of its EVSEs give them, if any.</param>
         public static JObject? ToPOI3(this Location                    Location,
                                       POI.ChargingStationOperator_Id   OperatorId,
                                       JObject?                         Existing,
@@ -764,7 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             Overlay(desired, mapped, PoolProperties.Where(property => !SameValue(unchanged, mapped, property)));
 
             if (Effective is not null)
-                POI.POIGroupMembers.KeepWhatGroupsGive(desired, Existing, Effective, PoolProperties);
+                POI.POITemplateMembers.KeepWhatTemplatesGive(desired, Existing, Effective, PoolProperties);
 
             var effectiveEVSEs   = (Effective?["chargingStations"] as JArray ?? []).
                                        OfType<JObject>().
@@ -795,7 +795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                         Overlay(evseJSON, mappedEVSE, EVSEProperties.Where(property => !SameValue(unchangedEVSE, mappedEVSE, property)));
 
                         if (effectiveEVSEs.GetValueOrDefault(evseId) is JObject effectiveEVSE)
-                            POI.POIGroupMembers.KeepWhatGroupsGive(evseJSON, storedEVSE, effectiveEVSE, EVSEProperties);
+                            POI.POITemplateMembers.KeepWhatTemplatesGive(evseJSON, storedEVSE, effectiveEVSE, EVSEProperties);
 
                         placed.Add(evseId);
 
@@ -942,7 +942,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// <summary>
         /// The parking spaces the charging stations of the given charging pool name, of parking operators or of charging
         /// station operators, each once, in the order of their identifications: as they are at runtime, with the properties
-        /// their parking space groups give them.
+        /// their parking space templates give them.
         /// </summary>
         public static IEnumerable<POI.ParkingSpace> ParkingSpacesOf(POI.ChargingPool    ChargingPool,
                                                                     POI.RoamingNetwork  RoamingNetwork)
@@ -1461,8 +1461,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         }
 
         /// <summary>
-        /// The tariffs of an EVSE as it is at runtime: its own, else the one of its most specific groups, of the EVSE,
-        /// charging station or charging pool groups it belongs to (ChargingStationOperator.EffectiveEVSE(…)).
+        /// The tariffs of an EVSE as it is at runtime: its own, else the one of the first of its EVSE templates naming one,
+        /// else of its charging station's, else of its charging pool's (ChargingStationOperator.EffectiveEVSE(…)).
         /// </summary>
         /// <summary>
         /// The OCPI eMSPs of the given e-mobility providers: DE-GDF is DE-GDF.
@@ -1610,8 +1610,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// What the capabilities of the EVSEs of the given location tell other than those of the existing charging pool
         /// as OCPI tells it, onto the pool and its charging stations: a capability told now adds the authentication mode
         /// and payment option, or the feature of the station, giving it; one no longer told removes everything giving it.
-        /// Everything else stays, e.g. an RFID authentication mode with its card types, or a QR code. What a group gives
-        /// stays in the group.
+        /// Everything else stays, e.g. an RFID authentication mode with its card types, or a QR code. What a template gives
+        /// stays in the template.
         /// </summary>
         private static void ImportCapabilities(JObject    Desired,
                                                JObject    Existing,
@@ -1654,7 +1654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             if (added.Length > 0 || removed.Length > 0)
             {
 
-                // As it is at runtime, with what its groups give it.
+                // As it is at runtime, with what its templates give it.
                 var source           = Effective ?? Existing;
                 var newCapabilities  = added.Select(entry => entry.Capability).ToHashSet();
 
@@ -1694,7 +1694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 Set("uiFeatures",           [.. ui.     Select(feature => (JToken) feature)]);
 
                 if (Effective is not null)
-                    POI.POIGroupMembers.KeepWhatGroupsGive(Desired, Existing, Effective, poolCapabilityProperties);
+                    POI.POITemplateMembers.KeepWhatTemplatesGive(Desired, Existing, Effective, poolCapabilityProperties);
 
             }
 
@@ -1733,7 +1733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 var stationId         = station["@id"]?.Value<String>() ?? "";
                 var effectiveStation  = effectiveStations.GetValueOrDefault(stationId);
 
-                // As it is at runtime, with what its groups give it.
+                // As it is at runtime, with what its templates give it.
                 var features          = ((effectiveStation ?? station)["features"] as JArray ?? []).
                                             Values<String>().
                                             OfType<String>().
@@ -1749,7 +1749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     station.Remove("features");
 
                 if (effectiveStation is not null)
-                    POI.POIGroupMembers.KeepWhatGroupsGive(station, storedStations.GetValueOrDefault(stationId), effectiveStation, [ "features" ]);
+                    POI.POITemplateMembers.KeepWhatTemplatesGive(station, storedStations.GetValueOrDefault(stationId), effectiveStation, [ "features" ]);
 
             }
 

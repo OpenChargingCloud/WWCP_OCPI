@@ -37,8 +37,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
     /// <summary>
     /// A POI3 charging pool whose address and facilities, a charging station whose parking space, and a parking space whose
-    /// roof and length only their groups give: the OCPI location has them, as they are at runtime, and imported back
-    /// they stay in their groups.
+    /// roof and length only their templates give: the OCPI location has them, as they are at runtime, and imported back
+    /// they stay in their templates.
     /// </summary>
     [TestFixture]
     public class POI3GroupAdapterTests
@@ -106,13 +106,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
         #endregion
 
-        #region NewNetwork(StationGroup = false, PoolFacilities = null)
+        #region NewNetwork(StationTemplate = false, PoolFacilities = null)
 
         /// <summary>
-        /// A charging pool whose address and the facility CAFE its group gives, and a parking space whose roof and length
-        /// its group gives; with a station group, the charging station is given a second parking space by it.
+        /// A charging pool whose address and the facility CAFE its template gives, and a parking space whose roof and length
+        /// its template gives; with a station template, the charging station is given a second parking space by it.
         /// </summary>
-        private static POI.RoamingNetwork NewNetwork(Boolean                     StationGroup     = false,
+        private static POI.RoamingNetwork NewNetwork(Boolean                     StationTemplate  = false,
                                                      IEnumerable<POI.Facility>?  PoolFacilities   = null)
 
             => new POI.RoamingNetwork(POI.RoamingNetwork_Id.Parse("rn1"),
@@ -122,31 +122,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
                                                     ChargingPools:          [ new POI.ChargingPool(P1,
                                                                                                    GeoLocation:       GeoCoordinate.Parse(50.92, 11.58),
                                                                                                    Facilities:        PoolFacilities,
+                                                                                                   TemplateIds:       [ POI.ChargingPoolTemplate_Id.Parse("DE*GEF*PT1") ],
                                                                                                    Created:           Created,
                                                                                                    ChargingStations:  [ new POI.ChargingStation(S1,
                                                                                                                                                 ParkingSpaceIds:  [ Space1 ],
+                                                                                                                                                TemplateIds:      StationTemplate ? [ POI.ChargingStationTemplate_Id.Parse("DE*GEF*ST1") ] : null,
                                                                                                                                                 Created:          Created,
                                                                                                                                                 EVSEs:            [ new POI.EVSE(POI.EVSE_Id.Parse("DE*GEF*E1*1"),
                                                                                                                                                                                  CurrentTypes:        POI.CurrentTypes.AC_ThreePhases,
                                                                                                                                                                                  ChargingConnectors:  [ new POI.ChargingConnector(POI.ChargingConnector_Id.Parse("1"), POI.ChargingConnectorType.IEC_62196_T2) ],
                                                                                                                                                                                  Created:             Created) ]) ]) ],
-                                                    ChargingPoolGroups:     [ new POI.ChargingPoolGroup(POI.ChargingPoolGroup_Id.Parse("DE*GEF*PG1"),
-                                                                                                        ChargingPoolIds:  [ P1 ],
+                                                    ChargingPoolTemplates:  [ new POI.ChargingPoolTemplate(POI.ChargingPoolTemplate_Id.Parse("DE*GEF*PT1"),
                                                                                                         Address:          new Address("Biberweg", "07749", I18NString.Create(Languages.de, "Jena"), Country.Germany, HouseNumber: "18"),
                                                                                                         Facilities:       [ POI.Facility.CAFE ],
                                                                                                         Created:          Created) ],
-                                                    ChargingStationGroups:  StationGroup
-                                                                                ? [ new POI.ChargingStationGroup(POI.ChargingStationGroup_Id.Parse("DE*GEF*SG1"),
-                                                                                                                 ChargingStationIds:  [ S1 ],
+                                                    ChargingStationTemplates:  StationTemplate
+                                                                                ? [ new POI.ChargingStationTemplate(POI.ChargingStationTemplate_Id.Parse("DE*GEF*ST1"),
                                                                                                                  ParkingSpaceIds:     [ Space2 ],
                                                                                                                  Created:             Created) ]
                                                                                 : null) ],
                    ParkingOperators:          [ new POI.ParkingOperator(POI.ParkingOperator_Id.Parse("DE*PAR"),
                                                     Created:             Created,
-                                                    ParkingSpaces:       [ new POI.ParkingSpace(Space1, Created: Created),
-                                                                           new POI.ParkingSpace(Space2, Created: Created) ],
-                                                    ParkingSpaceGroups:  [ new POI.ParkingSpaceGroup(POI.ParkingSpaceGroup_Id.Parse("level-1"),
-                                                                                                     ParkingSpaceIds:  [ Space1 ],
+                                                    ParkingSpaces:          [ new POI.ParkingSpace(Space1, TemplateIds: [ POI.ParkingSpaceTemplate_Id.Parse("level-1") ], Created: Created),
+                                                                              new POI.ParkingSpace(Space2, Created: Created) ],
+                                                    ParkingSpaceTemplates:  [ new POI.ParkingSpaceTemplate(POI.ParkingSpaceTemplate_Id.Parse("level-1"),
                                                                                                      Roofed:           true,
                                                                                                      Length:           Meter.From_m(5),
                                                                                                      Created:          Created) ]) ]).WithKeys();
@@ -172,17 +171,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
         #endregion
 
 
-        #region WhatGroupsGiveIsInTheLocation()
+        #region WhatTemplatesGiveIsInTheLocation()
 
         [Test]
-        public void WhatGroupsGiveIsInTheLocation()
+        public void WhatTemplatesGiveIsInTheLocation()
         {
 
             var network   = NewNetwork();
             var gef       = network.GetChargingStationOperatorById(GEF)!;
             var warnings  = new List<Warning>();
 
-            // As it is given, without the address its group gives it, it is no location.
+            // As it is given, without the address its template gives it, it is no location.
             var stored    = gef.ChargingPools.Single().ToOCPI(network, warnings);
 
             // As it is at runtime, as the publisher publishes it.
@@ -202,18 +201,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
 
         #endregion
 
-        #region WhatGroupsGiveStaysInTheGroupsOnImport()
+        #region WhatTemplatesGiveStaysInTheTemplatesOnImport()
 
         /// <summary>
         /// Imported back as it is published, the location commits nothing, though the parking of its EVSE names the
-        /// parking space the group of its charging station gives it. With a facility added at OCPI, the pool takes only
-        /// that one as its own: the one of its group stays in its group, and goes with it.
+        /// parking space the template of its charging station gives it. With a facility added at OCPI, the pool takes only
+        /// that one as its own: the one of its template stays in its template, and goes with it.
         /// </summary>
         [Test]
-        public async Task WhatGroupsGiveStaysInTheGroupsOnImport()
+        public async Task WhatTemplatesGiveStaysInTheTemplatesOnImport()
         {
 
-            var network   = NewNetwork(StationGroup: true);
+            var network   = NewNetwork(StationTemplate: true);
             var history   = POI.RoamingNetworkHistory.Start(network);
             var revision  = history.Head.Commit.Revision;
             var errors    = new List<String>();
@@ -236,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.POI3
             Assert.That(history.Head.Commit.Revision, Is.EqualTo(revision), "Imported back as published, nothing is to be committed. " + String.Join("\n", errors));
 
             // What a CPO pushes: a facility of the pool's own added.
-            var source    = NewNetwork(StationGroup: true, PoolFacilities: [ POI.Facility.SUPERMARKET ]);
+            var source    = NewNetwork(StationTemplate: true, PoolFacilities: [ POI.Facility.SUPERMARKET ]);
             var added     = source.GetChargingStationOperatorById(GEF)!.EffectiveChargingPools.Single().ToOCPI(source, warnings, T0)!;
 
             await importer.ImportAsync(added);
