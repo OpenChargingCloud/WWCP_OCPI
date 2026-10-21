@@ -153,7 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
         /// </summary>
         public static String ElementsText(IEnumerable<POI.ChargingTariffElement> Elements)
 
-            => new JArray(Elements.Select(element => element.ToJSON())).ToString(Newtonsoft.Json.Formatting.None);
+            => new JArray(Elements.Select(element => element.ToJSON(Embedded: true))).ToString(Newtonsoft.Json.Formatting.None);
 
         #endregion
 
@@ -819,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 Standards:                 Location.Standards.Select(standard => POI.Standard.       Parse(standard.ToString())),
                                 Created:              Location.Created,
                                 LastChange:           Location.LastUpdated
-                            ).ToJSON();
+                            ).ToJSON(Embedded: true);
 
             #endregion
 
@@ -844,7 +844,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                                          Features:    FeaturesOf(capabilities),
                                                          Created:     Location.Created,
                                                          LastChange:  Location.LastUpdated
-                                                     ).ToJSON()
+                                                     ).ToJSON(Embedded: true)
                                                  );
 
                 return mapped;
@@ -875,7 +875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             var stations     = ArrayOf(desired, "chargingStations");
 
-            var wanted       = mappedEVSEs.ToDictionary(evse => evse.Id.ToString(), evse => evse.ToJSON());
+            var wanted       = mappedEVSEs.ToDictionary(evse => evse.Id.ToString(), evse => evse.ToJSON(Embedded: true));
             var placed       = new HashSet<String>();
 
             foreach (var station in stations.OfType<JObject>())
@@ -925,7 +925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                 else if (POI.ChargingStation_Id.TryParse(poolId.Value, "") is POI.ChargingStation_Id stationId)
                 {
-                    var station = new POI.ChargingStation(Id: stationId, Created: Location.Created, LastChange: Location.LastUpdated).ToJSON();
+                    var station = new POI.ChargingStation(Id: stationId, Created: Location.Created, LastChange: Location.LastUpdated).ToJSON(Embedded: true);
                     station["EVSEs"] = new JArray(newEVSEs);
                     stations.Add(station);
                 }
@@ -1817,7 +1817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                 var modes            = (source["authenticationModes"] as JArray ?? []).
                                            Where (mode => !removedModes.Contains(mode["type"]?.Value<String>() ?? "")).
                                            Select(mode => mode.DeepClone()).
-                                           Concat(AuthenticationModesOf(newCapabilities).Select(mode => mode.ToJSON())).
+                                           Concat(AuthenticationModesOf(newCapabilities).Select(mode => mode.ToJSON(Embedded: true))).
                                            ToArray();
 
                 var options          = (source["paymentOptions"] as JArray ?? []).
