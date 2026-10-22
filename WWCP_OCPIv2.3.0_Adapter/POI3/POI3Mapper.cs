@@ -811,7 +811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 RelatedLocations:     Location.RelatedLocations.Select(relatedLocation => new POI.AdditionalGeoLocation(
                                                                                                               relatedLocation.GeoLocation,
                                                                                                               relatedLocation.Name.HasValue
-                                                                                                                  ? new ImmutableI18NString(I18NString.Create(relatedLocation.Name.Value.Language, relatedLocation.Name.Value.Text))
+                                                                                                                  ? ImmutableI18NString.Create(relatedLocation.Name.Value.Language, relatedLocation.Name.Value.Text)
                                                                                                                   : null
                                                                                                           )),
                                 Services:                  Location.Services. Select(service  => POI.LocationService.Parse(service. ToString())),
@@ -1579,8 +1579,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
             return new (sources,
                         impacts,
-                        new ImmutableI18NString(I18NString.Create(Language, EnergyMix.SupplierName      ?? "")),
-                        new ImmutableI18NString(I18NString.Create(Language, EnergyMix.EnergyProductName ?? "")));
+                        ImmutableI18NString.Create(Language, EnergyMix.SupplierName      ?? ""),
+                        ImmutableI18NString.Create(Language, EnergyMix.EnergyProductName ?? ""));
 
         }
 

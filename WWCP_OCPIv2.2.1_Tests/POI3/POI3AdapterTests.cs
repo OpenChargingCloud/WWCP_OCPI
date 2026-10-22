@@ -319,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
                                         String?  Logo      = null)
 
             => new (POI.Brand_Id.Parse(Id),
-                    new ImmutableI18NString(I18NString.Create(Languages.en, Name)),
+                    ImmutableI18NString.Create(Languages.en, Name),
                     Logo:      Logo     is not null ? URL.Parse(Logo)     : null,
                     Homepage:  Homepage is not null ? URL.Parse(Homepage) : null);
 
@@ -415,8 +415,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
             var energyMix  = new POI.EnergyMix([ new PercentageOf<POI.EnergySourceCategory>(POI.EnergySourceCategory.Sun,  60),
                                                  new PercentageOf<POI.EnergySourceCategory>(POI.EnergySourceCategory.Wind, 40) ],
                                                [],
-                                               new ImmutableI18NString(I18NString.Create(Languages.en, "Stadtwerke Jena")),
-                                               new ImmutableI18NString(I18NString.Create(Languages.en, "Ökostrom")));
+                                               ImmutableI18NString.Create(Languages.en, "Stadtwerke Jena"),
+                                               ImmutableI18NString.Create(Languages.en, "Ökostrom"));
 
             var network    = ANetwork();
             var warnings   = new List<Warning>();

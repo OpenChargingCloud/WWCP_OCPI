@@ -812,7 +812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
                 return;
 
             var changeSet  = head.CreateChangeSet(difference.Changes,
-                                                  new ImmutableI18NString(I18NString.Create(Languages.en, Description)),
+                                                  ImmutableI18NString.Create(Languages.en, Description),
                                                   CreatedAt: CreatedAt);
 
             var result     = History.Commit(Sign(changeSet), VerifyChangeSetSignature);

@@ -63,8 +63,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
                                                                                  [ new POI.EnvironmentalImpactAmount(POI.EnvironmentalImpact.CarbonDioxide, 12.5m),
                                                                                    new POI.EnvironmentalImpactAmount(POI.EnvironmentalImpact.NuclearWaste,  0),
                                                                                    new POI.EnvironmentalImpactAmount(POI.EnvironmentalImpact.Parse("Methane"), 3) ],
-                                                                                 new ImmutableI18NString(I18NString.Create(Languages.en, "Supplier")),
-                                                                                 new ImmutableI18NString(I18NString.Create(Languages.en, "Wind"))),
+                                                                                 ImmutableI18NString.Create(Languages.en, "Supplier"),
+                                                                                 ImmutableI18NString.Create(Languages.en, "Wind")),
                                                    Created:    Created);
 
             var warnings  = new List<Warning>();
