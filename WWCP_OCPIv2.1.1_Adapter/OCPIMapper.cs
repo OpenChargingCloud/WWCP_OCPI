@@ -699,12 +699,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this TransparencySoftware)
 
-        public static TransparencySoftware ToOCPI(this WWCP.POI.TransparencySoftware TransparencySoftware)
+        /// <param name="Vendor">The vendor OCPI names: the name of the manufacturer of the release, which embeds it.</param>
+        public static TransparencySoftware ToOCPI(this WWCP.POI.TransparencySoftware  TransparencySoftware,
+                                                  String                              Vendor)
 
             => new (TransparencySoftware.Name.              Select(name    => new DisplayText(name.Language, name.Text)),
                     TransparencySoftware.Version.           ToString(),
                     TransparencySoftware.OpenSourceLicenses.Select(license => license.ToOCPI()),
-                    TransparencySoftware.Vendor,
+                    Vendor,
                     TransparencySoftware.Logo,
                     TransparencySoftware.HowToUse,
                     TransparencySoftware.MoreInformation,
@@ -716,10 +718,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static TransparencySoftwareStatus ToOCPI(this WWCP.POI.TransparencySoftwareStatus TransparencySoftwareStatus)
 
-            => new (TransparencySoftwareStatus.TransparencySoftware.ToOCPI(),
+            => new (TransparencySoftwareStatus.TransparencySoftware.ToOCPI(TransparencySoftwareStatus.Vendor ?? ""),
                     TransparencySoftwareStatus.LegalStatus.         ToOCPI(),
                     TransparencySoftwareStatus.Certificate?.DocumentNumber ?? TransparencySoftwareStatus.Certificate?.Id.ToString(),
-                    TransparencySoftwareStatus.Certificate?.Issuer,
+                    TransparencySoftwareStatus.CertificateIssuer,
                     TransparencySoftwareStatus.Certificate?.NotBefore,
                     TransparencySoftwareStatus.Certificate?.NotAfter);
 
