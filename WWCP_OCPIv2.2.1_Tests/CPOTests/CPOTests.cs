@@ -179,44 +179,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                 var response = await graphDefinedEMSP.GetVersions();
 
-                // HTTP/1.1 200 OK
-                // Date:                          Sun, 25 Dec 2022 23:16:31 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // Vary:                          Accept
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                165
-                // X-Request-ID:                  nM7djM37h56hQz8t8hKMznnhGYj3CK
-                // X-Correlation-ID:              53YKxAnt2zM9bGp2AvjK6t83txbCK3
-                // 
-                // {
-                //     "data": [{
-                //         "version":  "2.2",
-                //         "url":      "http://127.0.0.1:7235/versions/2.2"
-                //     }],
-                //     "status_code":      1000,
-                //     "status_message":  "Hello world!",
-                //     "timestamp":       "2022-12-25T23:16:31.228Z"
-                // }
-
-                Assert.That(response,                                                       Is.Not.Null);
-                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(200));
-                Assert.That(response.StatusCode.Value,                                      Is.EqualTo(1000));
-                Assert.That(response.StatusMessage,                                         Is.EqualTo("Hello world!"));
-                Assert.That(Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
-
-                //ClassicAssert.IsNotNull(response.Request);
-
-                var versions = response.Data;
-                Assert.That(versions,              Is.Not.Null);
-                Assert.That(response.Data.Count(), Is.EqualTo(1));
-
-                var version = versions.First();
-                Assert.That(version.Id,  Is.EqualTo(Version.Id));
-                Assert.That(version.URL.ToString(), Does.EndWith($":{emsp1HTTPServer!.TCPPort}/ocpi/versions/{Version.Id}"));
+                // A token of nobody here is refused before the route, at the
+                // versions already - the locations being open data opens the
+                // routes of open data to it, and not the versions.
+                Assert.That(response,                                                      Is.Not.Null);
+                Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(401));
+                Assert.That(response.StatusCode.Value,                                     Is.EqualTo(2000));
+                Assert.That(response.StatusMessage,                                        Is.EqualTo("Unknown access token!"));
+                Assert.That(response.Data,                                                 Is.Null.Or.Empty);
 
             }
 
@@ -607,13 +577,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.GetCredentials();
 
-                // A token EMSP #1 does not know: its credentials are not given
-                // to anybody it does not know.
-                Assert.That(response2,                                                       Is.Not.Null);
-                Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(401));
-                Assert.That(response2.StatusCode.Value,                                      Is.EqualTo(2000));
-                Assert.That(response2.StatusMessage,                                         Is.EqualTo("Unknown access token!"));
-                Assert.That(response2.Data,                                                  Is.Null);
+                // A token of nobody here is refused before the route, at the
+                // versions already - the locations being open data opens the
+                // routes of open data to it, and not the versions.
+                Assert.That(response1,                                                      Is.Not.Null);
+                Assert.That(response1.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(401));
+                Assert.That(response1.StatusCode.Value,                                     Is.EqualTo(2000));
+                Assert.That(response1.StatusMessage,                                        Is.EqualTo("Unknown access token!"));
+
+                // ... and so its credentials are neither given nor taken.
+                Assert.That(response2,                                                      Is.Not.Null);
+                Assert.That(response2.StatusCode.Value,                                     Is.Not.EqualTo(1000));
+                Assert.That(response2.Data,                                                 Is.Null);
 
             }
 
@@ -1150,33 +1125,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                            )
                                                        );
 
-                // HTTP/1.1 405 Method Not Allowed
-                // Date:                          Mon, 26 Dec 2022 15:29:55 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                151
-                // X-Request-ID:                  zd4A4h2Kp6vY28nYQC1j616bd6569d
-                // X-Correlation-ID:              An625Y7Yv1Un5K8AS33G2pUCbpCpjC
-                // 
-                // {
-                //     "status_code":     2000,
-                //     "status_message": "You need to be registered before trying to invoke this protected method!",
-                //     "timestamp":      "2022-12-26T15:29:55.424Z"
-                // }
+                // A token of nobody here is refused before the route, at the
+                // versions already - the locations being open data opens the
+                // routes of open data to it, and not the versions.
+                Assert.That(response1,                                                      Is.Not.Null);
+                Assert.That(response1.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(401));
+                Assert.That(response1.StatusCode.Value,                                     Is.EqualTo(2000));
+                Assert.That(response1.StatusMessage,                                        Is.EqualTo("Unknown access token!"));
 
+                // ... and so its credentials are neither given nor taken.
                 Assert.That(response2,                                                      Is.Not.Null);
-                Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(405));
-                Assert.That(response2.StatusCode.Value,                                     Is.EqualTo(2000));
-                Assert.That(response2.StatusMessage,                                        Is.EqualTo("You need to be registered before trying to invoke this protected method!"));
-                Assert.That(Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10), Is.True);
-
-                //ClassicAssert.IsNotNull(response.Request);
-
-                Assert.That(response2.Data, Is.Null);
+                Assert.That(response2.StatusCode.Value,                                     Is.Not.EqualTo(1000));
+                Assert.That(response2.Data,                                                 Is.Null);
 
             }
 

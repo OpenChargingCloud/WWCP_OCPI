@@ -2819,7 +2819,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                            );
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData);
 
             #endregion
 
@@ -2932,7 +2934,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                         });
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData);
 
             #endregion
 
@@ -3041,7 +3045,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                         });
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData);
 
             #endregion
 
@@ -3143,7 +3149,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                         });
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData);
 
             #endregion
 
@@ -3293,7 +3301,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                            );
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.TariffsAsOpenData);
 
             #endregion
 
@@ -3398,7 +3408,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                         });
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.TariffsAsOpenData);
 
             #endregion
 

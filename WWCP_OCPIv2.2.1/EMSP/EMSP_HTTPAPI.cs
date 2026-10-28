@@ -10580,7 +10580,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                         });
 
-                }
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData
             );
 
             #endregion
@@ -10706,7 +10708,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                         });
 
-                }
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData
             );
 
             #endregion
@@ -10880,7 +10884,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                }
                         });
 
-                }
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData
             );
 
             #endregion
@@ -11444,7 +11450,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                }
                         });
 
-                }
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData
             );
 
             #endregion

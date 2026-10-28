@@ -266,9 +266,91 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                 Assert.That(withIt.JSON?["data"]?.Value<String>("token"),      Is.EqualTo(totpToken.ToString()));
             });
 
-            // 2.2.1 refuses no token error before the route, as 2.3.0 does with
-            // the reason: the request is nobody's then, and the credentials say no.
-            IsRefused(without, "The credentials asked for with the token of a party that signs in with a TOTP, but without it");
+            IsRefused(without, "The credentials asked for with the token of a party that signs in with a TOTP, but without it",
+                      "Invalid Time-based One-Time Password (TOTP)!");
+
+        }
+
+        #endregion
+
+        #region TheVersionDetailsAreRefusedToAnUnknownToken()
+
+        /// <summary>
+        /// A caller with a token of nobody here is answered 401 at the details
+        /// of this version, before the route is asked - not 1000 and the
+        /// endpoints, as a request of nobody.
+        /// </summary>
+        [Test]
+        public async Task TheVersionDetailsAreRefusedToAnUnknownToken()
+        {
+
+            var answer = await Send(await VersionDetailsURL(), $"Token {unknown}");
+
+            IsRefused(answer, "The details of this version asked for with a token of nobody here");
+
+        }
+
+        #endregion
+
+        #region TheVersionsAreRefusedToAnUnknownTokenThoughTheLocationsAreOpenData()
+
+        /// <summary>
+        /// The locations being open data opens the routes of open data to a
+        /// token of nobody here, and not the versions.
+        /// </summary>
+        [Test]
+        public async Task TheVersionsAreRefusedToAnUnknownTokenThoughTheLocationsAreOpenData()
+        {
+
+            Assert.That(api.BaseAPI.LocationsAsOpenData, Is.True, "This test wants the locations as open data.");
+
+            var answer = await Send($"http://127.0.0.1:{port}/ocpi/versions", $"Token {unknown}");
+
+            IsRefused(answer, "The versions asked for with a token of nobody here");
+
+        }
+
+        #endregion
+
+        #region ARouteOfOpenDataTakesAnUnknownTokenAsNoneAndNoWrongTOTP()
+
+        /// <summary>
+        /// A route of open data is asked with a token of nobody here as with no
+        /// token - the request is nobody's - where any other route is refused
+        /// before it is asked; a wrong TOTP is refused before either.
+        /// </summary>
+        [Test]
+        public async Task ARouteOfOpenDataTakesAnUnknownTokenAsNoneAndNoWrongTOTP()
+        {
+
+            static Task<OCPIResponse.Builder> WhoAsked(OCPIRequest Request)
+
+                => Task.FromResult(
+                       new OCPIResponse.Builder(Request) {
+                           StatusCode           = StatusCode.Success,
+                           StatusMessage        = Request.RemoteParty is null ? "nobody" : "somebody",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                      HTTPStatusCode  = HTTPStatusCode.OK
+                                                  }
+                       }
+                   );
+
+            api.AddOCPIMethod(HTTPMethod.GET, HTTPPath.Parse("/ocpi/v2.2.1/open"),   WhoAsked, OpenData: true);
+            api.AddOCPIMethod(HTTPMethod.GET, HTTPPath.Parse("/ocpi/v2.2.1/closed"), WhoAsked);
+
+            var open               = await Send($"http://127.0.0.1:{port}/ocpi/v2.2.1/open",   $"Token {unknown}");
+            var openWithoutAToken  = await Send($"http://127.0.0.1:{port}/ocpi/v2.2.1/open",   Authorization: null);
+            var openWithWrongTOTP  = await Send($"http://127.0.0.1:{port}/ocpi/v2.2.1/open",   $"Token {totpToken}", TOTP: "000000");
+            var closed             = await Send($"http://127.0.0.1:{port}/ocpi/v2.2.1/closed", $"Token {unknown}");
+
+            Assert.Multiple(() => {
+                Assert.That(open.Status,                                             Is.EqualTo(200),      open.Text);
+                Assert.That(open.JSON?.Value<String>("status_message"),              Is.EqualTo("nobody"), open.Text);
+                Assert.That(openWithoutAToken.JSON?.Value<String>("status_message"), Is.EqualTo("nobody"), openWithoutAToken.Text);
+            });
+
+            IsRefused(openWithWrongTOTP, "A route of open data asked with a wrong TOTP", "Invalid Time-based One-Time Password (TOTP)!");
+            IsRefused(closed,            "A route not of open data asked with a token of nobody here");
 
         }
 
@@ -315,6 +397,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                                                                      config.Alphabet);
 
             return current;
+
+        }
+
+        #endregion
+
+        #region (private) VersionDetailsURL()
+
+        /// <summary>
+        /// Where the details of this version are, as the other side finds them
+        /// with its token in the versions.
+        /// </summary>
+        private async Task<String> VersionDetailsURL()
+        {
+
+            var versions  = await Send($"http://127.0.0.1:{port}/ocpi/versions", $"Token {token}");
+            var details   = (versions.JSON?["data"] as JArray)?.FirstOrDefault(version => version.Value<String>("version") == "2.2.1")?.Value<String>("url");
+
+            Assert.That(details, Is.Not.Null, $"The versions list does not list 2.2.1: {versions.Text}");
+
+            return details!;
 
         }
 

@@ -616,9 +616,6 @@ namespace cloud.charging.open.protocols.OCPI
                     accessTokenErrorMessages.Remove("Unknown access token!");
                 }
 
-                if (CommonAPI.LocationsAsOpenData && accessTokenErrorMessages.Contains("Unknown access token!"))
-                    accessTokenErrorMessages.Remove("Unknown access token!");
-
             }
 
             PresentedAccessTokens = new[] { accessTokenRAW, accessTokenBASE64 }.
@@ -626,6 +623,15 @@ namespace cloud.charging.open.protocols.OCPI
                                         Select  (accessToken => accessToken!.Value).
                                         Distinct().
                                         ToArray ();
+
+            // A token no remote party has, which the table of this API's access
+            // tokens blocks, is not unknown: it is refused, and told so.
+            if (RemoteParty is null &&
+                PresentedAccessTokens.Any(CommonAPI.AccessTokenIsBlocked) &&
+                accessTokenErrorMessages.Remove("Unknown access token!"))
+            {
+                accessTokenErrorMessages.Add("Invalid or blocked access token!");
+            }
 
             HTTPRequest.SubprotocolRequest = this;
 

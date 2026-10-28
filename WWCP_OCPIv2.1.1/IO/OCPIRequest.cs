@@ -50,7 +50,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          HTTPMethod           HTTPMethod,
                                          HTTPPath             URLTemplate,
                                          OCPIRequestDelegate  OCPIRequestHandler,
-                                         URLReplacement       AllowReplacement   = URLReplacement.Fail)
+                                         URLReplacement       AllowReplacement   = URLReplacement.Fail,
+                                         Boolean              OpenData           = false)
 
             => AddOCPIMethod(
 
@@ -66,7 +67,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    null, //OCPIResponseLogger,
 
                    null, //DefaultErrorHandler,
-                   AllowReplacement
+                   AllowReplacement,
+                   OpenData
 
                );
 
@@ -79,7 +81,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          OCPIRequestDelegate     OCPIRequestHandler,
 
                                          HTTPDelegate?           DefaultErrorHandler   = null,
-                                         URLReplacement          AllowReplacement      = URLReplacement.Fail)
+                                         URLReplacement          AllowReplacement      = URLReplacement.Fail,
+                                         Boolean                 OpenData              = false)
 
             => AddOCPIMethod(
 
@@ -95,7 +98,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    OCPIResponseLogger,
 
                    DefaultErrorHandler,
-                   AllowReplacement
+                   AllowReplacement,
+                   OpenData
 
                );
 
@@ -114,6 +118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// 
         /// <param name="DefaultErrorHandler">The default error handler.</param>
         /// <param name="OCPIRequestHandler">The method to call.</param>
+        /// <param name="AllowReplacement">Whether a handler of the same URL template may be replaced.</param>
+        /// <param name="OpenData">Whether the route serves open data - locations, tariffs - and so takes a token of nobody here as no token, which it answers itself; every other route refuses one with 401 before it is asked.</param>
         public static void AddOCPIMethod(this CommonAPI           CommonAPI,
                                          HTTPMethod               HTTPMethod,
                                          HTTPPath                 URLTemplate,
@@ -124,7 +130,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                          OCPIResponseLogHandler?  OCPIResponseLogger    = null,
 
                                          HTTPDelegate?            DefaultErrorHandler   = null,
-                                         URLReplacement           AllowReplacement      = URLReplacement.Fail)
+                                         URLReplacement           AllowReplacement      = URLReplacement.Fail,
+                                         Boolean                  OpenData              = false)
 
         {
 
@@ -144,6 +151,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         if (httpRequest.SubprotocolRequest is OCPIRequest ocpiRequest)
                         {
+
+                            // A token of nobody here, or a TOTP that is not its party's:
+                            // refused before the route, with why - not passed on as a
+                            // request of nobody, which every route would have to refuse
+                            // itself. Only a route of open data takes an unknown token,
+                            // as no token at all.
+                            if (ocpiRequest.IsRefusedBeforeTheRoute(OpenData))
+                                return ocpiRequest.TokenRefused();
 
                             var ocpiResponseBuilder  = await OCPIRequestHandler(ocpiRequest);
 
@@ -397,6 +412,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CPO_Id?            CPOId               { get; }
 
+        /// <summary>
+        /// Why the token of this request makes it nobody's request: a token of
+        /// nobody here, a TOTP that is not its party's. Empty where it is
+        /// somebody's, or where there is no token.
+        /// </summary>
+        public IEnumerable<String> AccessTokenErrorMessages    { get; }
+
+        /// <summary>
+        /// What a token of nobody here is told.
+        /// </summary>
+        public const String UnknownAccessToken = "Unknown access token!";
+
 
         /// <summary>
         /// The HTTP query string.
@@ -450,13 +477,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
 
+            var accessTokenErrorMessages   = new List<String>();
+            this.AccessTokenErrorMessages  = accessTokenErrorMessages;
+
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value,
-                                                  totp,
-                                                  null,
-                                                  out var partiesAccessInfos))
+                if (!CommonAPI.TryGetRemoteParties(AccessToken.Value,
+                                                   totp,
+                                                   null,
+                                                   out var partiesAccessInfos,
+                                                   out var accessTokenErrorMessage))
+                {
+                    accessTokenErrorMessages.Add(accessTokenErrorMessage ?? UnknownAccessToken);
+                }
+
+                else
                 {
 
                     if (partiesAccessInfos.Count() == 1)
@@ -565,6 +601,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => new (HTTPRequest,
                     CommonAPI);
+
+
+        #region IsRefusedBeforeTheRoute(OpenData) / TokenRefused()
+
+        /// <summary>
+        /// Whether this request is answered 401 before its route is asked: its
+        /// token is of nobody here, or its TOTP is not its party's. A route of
+        /// open data takes an unknown token as it takes no token, and a wrong
+        /// TOTP never.
+        /// </summary>
+        /// <param name="OpenData">Whether the route serves open data.</param>
+        public Boolean IsRefusedBeforeTheRoute(Boolean OpenData)
+
+            => AccessTokenErrorMessages.Any(message => !OpenData || message != UnknownAccessToken);
+
+        /// <summary>
+        /// The 401 of a request refused before its route, with why.
+        /// </summary>
+        public HTTPResponse.Builder TokenRefused()
+
+            => new (HTTPRequest) {
+                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                   Server                     = CommonAPI.HTTPServiceName,
+                   Date                       = Timestamp.Now,
+                   AccessControlAllowOrigin   = "*",
+                   AccessControlAllowHeaders  = [ "Authorization" ],
+                   ContentType                = HTTPContentType.Application.JSON_UTF8,
+                   Content                    = new OCPIResponse(
+                                                   this,
+                                                   StatusCode.ClientErrors.GenericClientError,
+                                                   AccessTokenErrorMessages.First(),
+                                                   AccessTokenErrorMessages.Count() > 1
+                                                       ? AccessTokenErrorMessages.Skip(1).AggregateWith(", ")
+                                                       : null,
+                                                   Timestamp.Now
+                                               ).ToJSON().ToUTF8Bytes(),
+                   Connection                 = ConnectionType.KeepAlive,
+                   Vary                       = "Accept"
+               };
+
+        #endregion
 
 
 

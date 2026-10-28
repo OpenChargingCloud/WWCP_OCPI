@@ -856,7 +856,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                }
                            );
 
-                });
+                },
+
+                OpenData: CommonAPI.BaseAPI.LocationsAsOpenData);
 
                 //    return Task.FromResult(
                 //        new OCPIResponse.Builder(Request) {

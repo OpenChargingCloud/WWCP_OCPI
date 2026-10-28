@@ -7063,7 +7063,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            TOTPHTTPHeader?                                       TOTP,
                                            Byte[]?                                               TLSExporterMaterial,
                                            out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties)
+
+            => TryGetRemoteParties(AccessToken,
+                                   TOTP,
+                                   TLSExporterMaterial,
+                                   out RemoteParties,
+                                   out _);
+
+        /// <summary>
+        /// The remote parties the given token, and its TOTP where its access
+        /// asks for one, is of - or why there are none: "Unknown access token!"
+        /// for a token of nobody here, "Invalid Time-based One-Time Password
+        /// (TOTP)!" for a TOTP that is not its party's, as 2.2.1 and 2.3.0 say it.
+        /// </summary>
+        public Boolean TryGetRemoteParties(AccessToken                                           AccessToken,
+                                           TOTPHTTPHeader?                                       TOTP,
+                                           Byte[]?                                               TLSExporterMaterial,
+                                           out IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>  RemoteParties,
+                                           out String?                                           ErrorMessage)
         {
+
+            var wrongTOTP = false;
 
             var remoteParties = new List<Tuple<RemoteParty, LocalAccessInfo>>();
 
@@ -7097,6 +7117,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (TOTP?.Value == current || TOTP?.Value == previous || TOTP?.Value == next)
                             remoteParties.Add(new Tuple<RemoteParty, LocalAccessInfo>(remoteParty, localAccessInfo));
 
+                        else
+                            wrongTOTP = true;
+
                     }
 
                     else
@@ -7105,7 +7128,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
             }
 
-            RemoteParties = remoteParties;
+            RemoteParties  = remoteParties;
+            ErrorMessage   = remoteParties.Count > 0 ? null
+                           : wrongTOTP               ? "Invalid Time-based One-Time Password (TOTP)!"
+                           :                           "Unknown access token!";
 
             return remoteParties.Count > 0;
 
