@@ -262,6 +262,15 @@ namespace cloud.charging.open.protocols.OCPI
         public Boolean                  LocationsAsOpenData        { get; }
 
         /// <summary>
+        /// Which remote addresses the OCPI clients of this API may connect to, or null for any: the versions URL a
+        /// peer hands in with its credentials, the URLs its versions lead to, and every module endpoint after them are
+        /// dialled only where it allows, checked against every address they resolve to. A peer holding a token of ours
+        /// otherwise has this API call the hosts of the network it runs in for it, with the token in the header.
+        /// See org.GraphDefined.Vanaheimr.Hermod.SSH.NetworkAcl.DenyNonPublicNetworks().
+        /// </summary>
+        public org.GraphDefined.Vanaheimr.Hermod.SSH.NetworkAcl?  RemoteNetworkAcl  { get; set; }
+
+        /// <summary>
         /// Allow anonymous access to tariffs as Open Data.
         /// </summary>
         public Boolean                  TariffsAsOpenData          { get; }

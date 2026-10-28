@@ -404,6 +404,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         {
 
             this.CommonAPI          = CommonAPI;
+
+            // A URL a peer handed in is dialled only where the API allows: see CommonHTTPAPI.RemoteNetworkAcl.
+            this.RemoteNetworkAcl           = CommonAPI.BaseAPI.RemoteNetworkAcl;
+            this.NewHTTPClient.RemoteNetworkAcl  = CommonAPI.BaseAPI.RemoteNetworkAcl;
             this.RemoteParty        = RemoteParty;
 
             if (!RemoteParty.RemoteAccessInfos.Any())
@@ -1187,7 +1191,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                      DNSClient:                             NewHTTPClient.DNSClient
 
-                                 );
+                                 ) {
+                                     RemoteNetworkAcl                       = NewHTTPClient.RemoteNetworkAcl
+                                 };
 
                 }
 
