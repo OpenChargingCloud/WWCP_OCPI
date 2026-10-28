@@ -1632,6 +1632,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
             String?                    notSaved          = null;
+            var                        sent              = false;
+            var                        storedHere        = !HasLocalToken(Credentials.Token);
 
             do
             {
@@ -1665,6 +1667,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         #region Upstream HTTP request...
+
+                        sent = true;
 
                         var httpResponse = await NewHTTPClient.PUT(
                                                      Path:                  remoteURL.Value.Path,
@@ -1784,6 +1788,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             while (transmissionRetry++ < MaxNumberOfRetries &&
                    response.HTTPResponse?.HTTPStatusCode.IsReasonForRetransmission == true);
 
+
+            // A renewal that definitely failed takes back the token it stored: nothing
+            // was sent, or the other side answered without credentials. Where it was
+            // sent and no answer came - a timeout, a connection that broke, a gateway
+            // that gave up waiting - the other side may hold it: it stays, pending,
+            // and the next registration with this party sends it again.
+            if (response.Data is null && ((!sent && storedHere) || Answered(response.HTTPResponse)))
+                notSaved ??= await WithdrawCredentialTokenB(Credentials.Token, eventTrackingId);
 
             #region Send OnPutCredentialsHTTPResponse event
 
@@ -2146,11 +2158,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             OCPIResponse<Credentials> response;
             String?                   notSaved = null;
+            var                       sent     = false;
+
+            // A token an earlier registration sent without seeing the answer is sent again.
+            var credentialTokenB  = CredentialTokenB ?? PendingCredentialTokenB() ?? AccessToken.NewRandom();
+            var storedHere        = !HasLocalToken(credentialTokenB);
 
             try
             {
-
-                var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
                 var remoteURL         = await GetModuleRemoteURL(
                                                   Module_Id.Credentials,
@@ -2185,6 +2200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       );
 
                     #region Upstream HTTP request... meanwhile the other side will access our 'versions endpoint'!
+
+                    sent = true;
 
                     var httpResponse = await NewHTTPClient.POST(
                                                  Path:                  remoteURL.Value.Path,
@@ -2323,6 +2340,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 response = OCPIResponse<String, Credentials>.Exception(e);
             }
 
+
+            // A registration that definitely failed takes back the token it stored: nothing
+            // was sent, or the other side answered without credentials. Where it was
+            // sent and no answer came - a timeout, a connection that broke, a gateway
+            // that gave up waiting - the other side may hold it: it stays, pending,
+            // and the next registration with this party sends it again.
+            if (response.Data is null && ((!sent && storedHere) || Answered(response.HTTPResponse)))
+                notSaved ??= await WithdrawCredentialTokenB(credentialTokenB, eventTrackingId);
 
             #region Update counters
 
@@ -2472,6 +2497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new LocalAccessInfo(
                                             CredentialTokenB,
                                             AccessStatus.ALLOWED,
+                                            Pending: true,
                                             AccessTokenIsBase64Encoded: false
                                         )
                                     ],
@@ -2487,6 +2513,77 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : null;
 
         }
+
+        #endregion
+
+        #region (private) PendingCredentialTokenB() / HasLocalToken(Token) / WithdrawCredentialTokenB(CredentialTokenB, EventTrackingId) / Answered(HTTPResponse)
+
+        /// <summary>
+        /// The token a registration with this party sent last without seeing
+        /// the answer - which the next one sends again rather than a new one,
+        /// so that attempts left open do not leave one more valid token each -
+        /// or null where there is none.
+        /// </summary>
+        private AccessToken? PendingCredentialTokenB()
+
+            => (CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty).
+                   LocalAccessInfos.LastOrDefault(localAccessInfo => localAccessInfo.Pending)?.AccessToken;
+
+        /// <summary>
+        /// Whether this party already has the given token of ours, pending or
+        /// in effect: one that was there before is not a registration's to take
+        /// back where nothing was sent.
+        /// </summary>
+        private Boolean HasLocalToken(AccessToken Token)
+
+            => (CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty).
+                   LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == Token);
+
+        /// <summary>
+        /// Take back the token a registration or a renewal stored before it was
+        /// sent, where that definitely failed. A pending token only: one in
+        /// effect is what the other side calls with, and not this to take.
+        /// </summary>
+        /// <returns>Null where the file took it, or where there was nothing to take back; otherwise why it did not.</returns>
+        private async Task<String?> WithdrawCredentialTokenB(AccessToken       CredentialTokenB,
+                                                             EventTracking_Id  EventTrackingId)
+        {
+
+            var party = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
+
+            if (!party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == CredentialTokenB && localAccessInfo.Pending))
+                return null;
+
+            var stored = await CommonAPI.AddOrUpdateRemoteParty(
+                                    party.CountryCode,
+                                    party.PartyId,
+                                    party.Role,
+                                    party.BusinessDetails,
+                                    [ .. party.LocalAccessInfos.Where(localAccessInfo => localAccessInfo.AccessToken != CredentialTokenB) ],
+                                    party.RemoteAccessInfos,
+                                    party.Status,
+                                    party.VisibleVersionIds,
+                                    party.Created,
+                                    EventTrackingId: EventTrackingId
+                                );
+
+            return stored.NotSaved
+                       ? $"The token that was not taken could not be taken back - {stored.ErrorResponse ?? "the file of the remote parties refused."}"
+                       : null;
+
+        }
+
+        /// <summary>
+        /// Whether the other side answered - and so decided - rather than
+        /// leaving the outcome open: no answer at all, a connection that failed
+        /// (Hermod's ClientError, code 0) or a gateway that gave up waiting
+        /// (408, 502, 504) may each have reached it.
+        /// </summary>
+        private static Boolean Answered(HTTPResponse? HTTPResponse)
+
+            => HTTPResponse is not null &&
+               HTTPResponse.HTTPStatusCode != HTTPStatusCode.ClientError &&
+               !HTTPResponse.HTTPStatusCode.IsReasonForRetransmission;
 
         #endregion
 

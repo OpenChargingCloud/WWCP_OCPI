@@ -83,6 +83,18 @@ namespace cloud.charging.open.protocols.OCPI
         public Boolean           AllowDowngrades               { get; }
 
         /// <summary>
+        /// Whether this token was stored for a registration or a renewal whose
+        /// answer has not been seen: sent, and then the connection timed out or
+        /// broke, so that the other side may hold it or may not. It opens our
+        /// door all the same - the other side may call with it - and the next
+        /// registration with the same party sends it again rather than a new
+        /// one, so that unanswered attempts do not leave one more valid token
+        /// each. The answer that settles both sides replaces it.
+        /// </summary>
+        [Optional]
+        public Boolean           Pending                       { get; }
+
+        /// <summary>
         /// Optional incoming request and response modifiers.
         /// </summary>
         public HTTPModifiers?    IN                            { get; set; }
@@ -102,6 +114,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="NotAfter">This local access information should not be used after this timestamp.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        /// <param name="Pending">Whether this token was sent for a registration or a renewal whose answer was not seen.</param>
         public LocalAccessInfo(AccessToken      AccessToken,
 
                                AccessStatus?    Status                       = AccessStatus.ALLOWED,
@@ -110,7 +123,8 @@ namespace cloud.charging.open.protocols.OCPI
                                DateTimeOffset?  NotBefore                    = null,
                                DateTimeOffset?  NotAfter                     = null,
                                Boolean?         AccessTokenIsBase64Encoded   = true,
-                               Boolean?         AllowDowngrades              = false)
+                               Boolean?         AllowDowngrades              = false,
+                               Boolean          Pending                      = false)
         {
 
             this.AccessToken                 = AccessToken;
@@ -122,6 +136,7 @@ namespace cloud.charging.open.protocols.OCPI
             this.NotAfter                    = NotAfter;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
+            this.Pending                     = Pending;
 
             unchecked
             {
@@ -132,8 +147,9 @@ namespace cloud.charging.open.protocols.OCPI
                                (this.TOTPConfig?.               GetHashCode() ?? 0) * 17 ^
                                (this.NotBefore?.                GetHashCode() ?? 0) * 11 ^
                                (this.NotAfter?.                 GetHashCode() ?? 0) *  7 ^
-                                this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
-                                this.AllowDowngrades.           GetHashCode();
+                                this.AccessTokenIsBase64Encoded.GetHashCode()       *  5 ^
+                                this.AllowDowngrades.           GetHashCode()       *  3 ^
+                                this.Pending.                   GetHashCode();
 
             }
 
@@ -302,6 +318,19 @@ namespace cloud.charging.open.protocols.OCPI
 
                 #endregion
 
+                #region Parse Pending                       [optional]
+
+                if (JSON.ParseOptional("pending",
+                                       "pending",
+                                       out Boolean? Pending,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 LocalAccessInfo = new LocalAccessInfo(
 
@@ -313,7 +342,8 @@ namespace cloud.charging.open.protocols.OCPI
                                       NotBefore,
                                       NotAfter,
                                       AccessTokenIsBase64Encoded,
-                                      AllowDowngrades
+                                      AllowDowngrades,
+                                      Pending ?? false
 
                                   );
 
@@ -365,7 +395,12 @@ namespace cloud.charging.open.protocols.OCPI
                                : null,
 
                                  new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
-                                 new JProperty("allowDowngrades",              AllowDowngrades)
+                                 new JProperty("allowDowngrades",              AllowDowngrades),
+
+                           // Only where it is: a token in effect looks as it always did.
+                           Pending
+                               ? new JProperty("pending",                      true)
+                               : null
 
                        );
 
@@ -394,7 +429,8 @@ namespace cloud.charging.open.protocols.OCPI
                    NotBefore,
                    NotAfter,
                    AccessTokenIsBase64Encoded,
-                   AllowDowngrades
+                   AllowDowngrades,
+                   Pending
 
                );
 
@@ -557,6 +593,9 @@ namespace cloud.charging.open.protocols.OCPI
             if (c == 0)
                 c = AllowDowngrades.           CompareTo(LocalAccessInfo.AllowDowngrades);
 
+            if (c == 0)
+                c = Pending.                   CompareTo(LocalAccessInfo.Pending);
+
             return c;
 
         }
@@ -594,6 +633,7 @@ namespace cloud.charging.open.protocols.OCPI
                Status.                    Equals(LocalAccessInfo.Status)                     &&
                AccessTokenIsBase64Encoded.Equals(LocalAccessInfo.AccessTokenIsBase64Encoded) &&
                AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades)            &&
+               Pending.                   Equals(LocalAccessInfo.Pending)                    &&
 
              ((TOTPConfig is null      &&  LocalAccessInfo.TOTPConfig is null)     ||
               (TOTPConfig is not null  &&  LocalAccessInfo.TOTPConfig is not null && TOTPConfig.     Equals(LocalAccessInfo.TOTPConfig     ))) &&
@@ -627,7 +667,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public override String ToString()
 
-            => $"'{AccessToken}' ({Status}) {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}";
+            => $"'{AccessToken}' ({Status}) {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}{(Pending ? " [pending]" : "")}";
 
         #endregion
 

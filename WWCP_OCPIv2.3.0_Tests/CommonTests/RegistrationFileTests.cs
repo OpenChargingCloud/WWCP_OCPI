@@ -230,6 +230,88 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         #endregion
 
 
+        #region ARegistrationTheOtherSideRefusedTakesItsTokenBack()
+
+        /// <summary>
+        /// A registration the other side refused - an answer, and a decision -
+        /// takes back the token it stored for the other side to call back with:
+        /// a press of Register that came to nothing leaves no token of ours
+        /// behind, now or at the next start.
+        /// </summary>
+        [Test]
+        public async Task ARegistrationTheOtherSideRefusedTakesItsTokenBack()
+        {
+
+            var ourToken    = AccessToken.NewRandom();
+            var party       = await AddTheOtherSide(ourToken);
+
+            other.RefusesRegistrations = true;
+
+            var registered  = await AClient(party).TryRegister();
+
+            Assert.Multiple(() => {
+                Assert.That(other.RegisteredWith,         Has.Count.EqualTo(1),            "The registration was not sent.");
+                Assert.That(registered.Response.Data,     Is.Null,                         "The registration the other side refused is said to have gone through.");
+                Assert.That(registered.NotSaved,          Is.False,                        $"The registration is said to be unsaved: {registered.Reason}");
+                Assert.That(LocalTokensOf(api),           Is.EqualTo(new[] { ourToken }),  "The token of the refused registration still opens our door.");
+            });
+
+            Assert.That(LocalTokensOf(ACommonAPI()), Is.EqualTo(new[] { ourToken }), "The next start knows the token of the refused registration.");
+
+        }
+
+        #endregion
+
+        #region ARegistrationLeftOpenKeepsItsTokenAndSendsItAgain()
+
+        /// <summary>
+        /// A registration sent and left open - a gateway that gave up waiting -
+        /// may have reached the other side: its token stays, pending, and the
+        /// next registration sends it again rather than a new one, after a
+        /// restart as well. The registration that goes through puts it in
+        /// effect, pending no more.
+        /// </summary>
+        [Test]
+        public async Task ARegistrationLeftOpenKeepsItsTokenAndSendsItAgain()
+        {
+
+            var ourToken  = AccessToken.NewRandom();
+            var party     = await AddTheOtherSide(ourToken);
+
+            other.RegistrationsTimeOut = true;
+
+            var first     = await AClient(party).TryRegister();
+            var second    = await AClient(party).TryRegister();
+            var tokenB    = other.RegisteredWith.FirstOrDefault();
+
+            Assert.Multiple(() => {
+                Assert.That(first. Response.Data,                                   Is.Null,                                         "The registration left open is said to have gone through.");
+                Assert.That(second.Response.Data,                                   Is.Null,                                         "The registration left open is said to have gone through.");
+                Assert.That(other.RegisteredWith.Distinct().ToArray(),              Is.EqualTo(new[] { tokenB }),                    "The registration sent again does not send the token left open.");
+                Assert.That(LocalTokensOf(api).Select(token => token.ToString()),   Is.EqualTo(new[] { ourToken.ToString(), tokenB }), "The token left open is not kept, once, beside the one in effect.");
+                Assert.That(PendingTokensOf(api).Select(token => token.ToString()), Is.EqualTo(new[] { tokenB }),                    "The token left open is not said to be pending.");
+            });
+
+            api = ACommonAPI();
+
+            other.RegistrationsTimeOut = false;
+
+            var third = await AClient(api.RemoteParties.First(remoteParty => remoteParty.Id == id)).TryRegister();
+
+            Assert.Multiple(() => {
+                Assert.That(third.Response.Data?.Token.ToString(),                  Is.EqualTo(tokenC),            $"The registration did not go through: {third.Response.StatusMessage}");
+                Assert.That(other.RegisteredWith.Last(),                            Is.EqualTo(tokenB),            "The next start does not send the token left open.");
+                Assert.That(LocalTokensOf(api).Select(token => token.ToString()),   Is.EqualTo(new[] { tokenB }),  "The token that went through is not the one in effect alone.");
+                Assert.That(PendingTokensOf(api),                                   Is.Empty,                      "The token that went through is still said to be pending.");
+            });
+
+            Assert.That(PendingTokensOf(ACommonAPI()), Is.Empty, "The next start still says the token that went through is pending.");
+
+        }
+
+        #endregion
+
+
         #region ARenewalItsFileTakesIsSaved()
 
         /// <summary>
@@ -377,14 +459,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
                 Assert.That(other.CalledBack?.StatusCode,        Is.EqualTo(1000),          $"The other side called back with the new token, and was answered {other.CalledBack}.");
                 Assert.That(renewed.Response.StatusCode.Value,   Is.EqualTo(3000),          $"The refusal of the other side is not handed back: {renewed.Response.StatusMessage}");
                 Assert.That(renewed.NotSaved,                    Is.False,                  $"The renewal is said to be unsaved: {renewed.Reason}");
-                Assert.That(LocalTokensOf(api),                  Does.Contain(ourToken),    "The token the other side still holds does not open our door any more.");
+                Assert.That(LocalTokensOf(api),                  Is.EqualTo(new[] { ourToken }),  "The token the other side still holds does not open our door any more - or the refused new one still does.");
                 Assert.That(RemoteTokenOf(api),                  Is.EqualTo(tokenA),        "The token the other side still has is not the one we call it with any more.");
             });
 
             var again = ACommonAPI();
 
             Assert.Multiple(() => {
-                Assert.That(LocalTokensOf(again),  Does.Contain(ourToken),  "The next start does not know the token the other side still holds.");
+                Assert.That(LocalTokensOf(again),  Is.EqualTo(new[] { ourToken }),  "The next start does not know the token the other side still holds - or knows the refused new one.");
                 Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenA),      "The next start does not know the token the other side still has.");
             });
 
@@ -413,12 +495,18 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
             other.TimesOutOnce     = true;
             other.RefusesRenewals  = true;
 
+            // What the second sending finds, before the answer that refuses it.
+            AccessToken[]? whileSentAgain = null;
+
+            other.WhenCredentialsArrive = () => whileSentAgain = LocalTokensOf(api);
+
             var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
 
             Assert.Multiple(() => {
                 Assert.That(other.Renewals,                     Is.EqualTo(2),                             "The renewal was not sent once more after the gateway timed out.");
                 Assert.That(renewed.Response.StatusCode.Value,  Is.EqualTo(3000),                          $"The refusal of the other side is not handed back: {renewed.Response.StatusMessage}");
-                Assert.That(LocalTokensOf(api),                 Is.EqualTo(new[] { ourToken, newToken }),  "The new token is not there once, beside the one the other side holds.");
+                Assert.That(whileSentAgain,                     Is.EqualTo(new[] { ourToken, newToken }),  "The new token is not there once, beside the one the other side holds, while it is sent once more.");
+                Assert.That(LocalTokensOf(api),                 Is.EqualTo(new[] { ourToken }),            "The new token the other side refused is not taken back.");
             });
 
         }
@@ -995,6 +1083,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         /// <summary>
         /// The local tokens of the other side.
         /// </summary>
+        private static AccessToken[] PendingTokensOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.LocalAccessInfos.Where(info => info.Pending).Select(info => info.AccessToken)).
+                   ToArray();
+
         private static AccessToken[] LocalTokensOf(CommonAPI API)
 
             => API.RemoteParties.
@@ -1159,6 +1254,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
             /// <summary>Whether the first renewal is answered as a gateway answers one that took too long: HTTP 504, a reason to send it once more.</summary>
             public Boolean                             TimesOutOnce           { get; set; }
 
+            /// <summary>Whether a registration is refused: HTTP 405 with OCPI 2000, as an endpoint that will not take these credentials answers - an answer, and a decision.</summary>
+            public Boolean                             RefusesRegistrations   { get; set; }
+
+            /// <summary>Whether every registration is answered as a gateway answers one that took too long: HTTP 504 - sent, and left open.</summary>
+            public Boolean                             RegistrationsTimeOut   { get; set; }
+
+            /// <summary>The tokens the registrations that arrived carried, as they arrived.</summary>
+            public List<String?>                       RegisteredWith         { get; } = [];
+
             /// <summary>How many renewals arrived.</summary>
             public Int32                               Renewals               { get; private set; }
 
@@ -1256,6 +1360,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
                     request => {
 
                         other.ReceivedCredentials = JObject.Parse(request.HTTPBodyAsUTF8String ?? "{}");
+                        other.RegisteredWith.Add(other.ReceivedCredentials.Value<String>("token"));
+
+                        if (other.RegistrationsTimeOut)
+                            return Task.FromResult(Refused(request, HTTPStatusCode.GatewayTimeout,    3000, "The gateway timed out."));
+
+                        if (other.RefusesRegistrations)
+                            return Task.FromResult(Refused(request, HTTPStatusCode.MethodNotAllowed,  2000, "These credentials are not taken here."));
+
                         other.WhenCredentialsArrive?.Invoke();
 
                         return Task.FromResult(JSON(request, TheirCredentials(origin)));
