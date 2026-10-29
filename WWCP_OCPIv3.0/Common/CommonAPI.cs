@@ -19,6 +19,7 @@
 
 using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
@@ -2956,76 +2957,121 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
+            #region Our roles to answer with, before anything is changed
+
+            // The answer names this platform's own parties: without one it
+            // cannot be made, and the other side must not lose token A for an
+            // answer that never comes.
+            var ourRoles                  = parties.Values.Select(partyData => partyData.ToCredentialsRole()).ToArray();
+
+            if (ourRoles.Length == 0)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = StatusCode.ServerErrors.GenericServerError,
+                           StatusMessage        = "This platform has no parties to answer with, and nothing was changed: the token of this request is still valid.",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                               AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                               AccessControlAllowHeaders  = [ "Authorization" ]
+                           }
+                       };
+
+            #endregion
+
             var CREDENTIALS_TOKEN_C       = AccessToken.NewRandom();
 
-            // Remove the old access token
+            var answer                    = new Credentials(
+                                                CREDENTIALS_TOKEN_C,
+                                                BaseAPI.OurVersionsURL,
+                                                ourRoles
+                                            ).ToJSON();
+
+            var reachedAs                 = oldRemoteParty.RemoteAccessInfos.FirstOrDefault();
+
+            // The credentials of the other side, CREDENTIALS_TOKEN_C in place
+            // of CREDENTIALS_TOKEN_A, in one line: where the file refuses it,
+            // nothing has changed, and token A is still valid. Reached as it
+            // was, but for its new versions URL and token.
+            var stored = await AddOrUpdateRemoteParty(
+
+                                   new RemoteParty(
+
+                                       oldRemoteParty.Id,                                        // Id
+                                       receivedCredentials.Roles,                                // CredentialsRoles
+
+                                       CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
+                                       receivedCredentials.URL,                                  // RemoteVersionsURL
+                                       receivedCredentials.Token,                                // RemoteAccessToken
+                                       reachedAs?.AccessTokenIsBase64Encoded,
+                                       reachedAs?.TOTPConfig,
+
+                                       reachedAs?.PreferIPv4,
+                                       reachedAs?.RemoteCertificateValidator,
+                                       reachedAs?.LocalCertificateSelector,
+                                       reachedAs?.ClientCertificates,
+                                       reachedAs?.ClientCertificateContext,
+                                       reachedAs?.ClientCertificateChain,
+                                       reachedAs?.TLSProtocols,
+                                       reachedAs?.ContentType,
+                                       reachedAs?.Accept,
+                                       reachedAs?.HTTPUserAgent,
+                                       reachedAs?.RequestTimeout,
+                                       reachedAs?.TransmissionRetryDelay,
+                                       reachedAs?.MaxNumberOfRetries,
+                                       reachedAs?.InternalBufferSize,
+                                       reachedAs?.UseHTTPPipelining,
+                                       reachedAs?.OUT,
+
+                                       RemoteAccessStatus.ONLINE,                                // RemoteStatus
+                                       otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
+                                       Version.Id,                                               // SelectedVersionId
+                                       reachedAs?.NotBefore,
+                                       reachedAs?.NotAfter,
+                                       null,                                                     // RemoteAllowDowngrades
+
+                                       null,                                                     // LocalAccessTokenBase64Encoding
+                                       null,                                                     // LocalTOTPConfig
+                                       null,                                                     // HTTP Modifiers
+                                       null,                                                     // LocalAccessNotBefore
+                                       null,                                                     // LocalAccessNotAfter
+                                       null,                                                     // LocalAllowDowngrades
+                                       AccessStatus.ALLOWED,                                     // LocalAccessStatus
+
+                                       PartyStatus.ENABLED,                                      // PartyStatus
+                                       oldRemoteParty.VisibleVersionIds,
+
+                                       oldRemoteParty.Created,
+                                       Timestamp.Now                                             // LastUpdated
+
+                                   ),
+
+                                   Request.HTTPRequest.EventTrackingId,
+                                   Request.HTTPRequest.User?.Id                                  // CurrentUserId
+
+                               );
+
+            if (!stored.IsSuccess)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = StatusCode.ServerErrors.GenericServerError,
+                           StatusMessage        = "The credentials could not be stored here, and nothing was changed: the token of this request is still valid. Please try again later.",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                               AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                               AccessControlAllowHeaders  = [ "Authorization" ]
+                           }
+                       };
+
+            // Token A, from any other remote party that still has it.
             await RemoveAccessToken(
-                      CREDENTIALS_TOKEN_A.Value
-                  );
-
-            // Store credential of the other side!
-            await AddOrUpdateRemoteParty(
-
-                      oldRemoteParty.Id,                                        // Id
-                      receivedCredentials.Roles,                                // CredentialsRoles
-
-                      CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
-                      receivedCredentials.URL,                                  // RemoteVersionsURL
-                      receivedCredentials.Token,                                // RemoteAccessToken
-                      null,                                                     // RemoteAccessTokenBase64Encoding
-                      null,                                                     // RemoteTOTPConfig
-
-                      null,                                                     // PreferIPv4
-                      null,                                                     // RemoteCertificateValidator
-                      null,                                                     // LocalCertificateSelector
-                      null,                                                     // ClientCertificates
-                      null,                                                     // ClientCertificateContext
-                      null,                                                     // ClientCertificateChain
-                      null,                                                     // TLSProtocols
-                      null,                                                     // ContentType
-                      null,                                                     // Accept
-                      null,                                                     // HTTPUserAgent
-                      null,                                                     // RequestTimeout
-                      null,                                                     // TransmissionRetryDelay
-                      null,                                                     // MaxNumberOfRetries
-                      null,                                                     // InternalBufferSize
-                      null,                                                     // UseHTTPPipelining
-                      null,                                                     // HTTP Modifiers
-
-                      RemoteAccessStatus.ONLINE,                                // RemoteStatus
-                      otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
-                      Version.Id,                                               // SelectedVersionId
-                      null,                                                     // RemoteAccessNotBefore
-                      null,                                                     // RemoteAccessNotAfter
-                      null,                                                     // RemoteAllowDowngrades
-
-                      null,                                                     // LocalAccessTokenBase64Encoding
-                      null,                                                     // LocalTOTPConfig
-                      null,                                                     // HTTP Modifiers
-                      null,                                                     // LocalAccessNotBefore
-                      null,                                                     // LocalAccessNotAfter
-                      null,                                                     // LocalAllowDowngrades
-                      AccessStatus.ALLOWED,                                     // LocalAccessStatus
-
-                      PartyStatus.ENABLED,                                      // PartyStatus
-                      null,                                                     // VisibleVersionIds
-
-                      oldRemoteParty.Created,
-                      Timestamp.Now,                                            // LastUpdated
+                      CREDENTIALS_TOKEN_A.Value,
                       Request.HTTPRequest.EventTrackingId,
-                      Request.HTTPRequest.User?.Id                              // CurrentUserId
-
+                      Request.HTTPRequest.User?.Id
                   );
 
 
             return new OCPIResponse.Builder(Request) {
                            StatusCode           = StatusCode.Success,
                            StatusMessage        = "Hello world!",
-                           Data                 = new Credentials(
-                                                      CREDENTIALS_TOKEN_C,
-                                                      BaseAPI.OurVersionsURL,
-                                                      parties.Values.Select(partyData => partyData.ToCredentialsRole())
-                                                  ).ToJSON(),
+                           Data                 = answer,
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
                                AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
@@ -3048,8 +3094,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         User_Id?           CurrentUserId       = null,
                                         CancellationToken  CancellationToken   = default)
 
-            => BaseAPI.WriteToDatabase(
-                   RemotePartyDBFileName,
+            => LogRemotePartyLine(
                    Command,
                    null,
                    EventTrackingId,
@@ -3067,8 +3112,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         User_Id?           CurrentUserId       = null,
                                         CancellationToken  CancellationToken   = default)
 
-            => BaseAPI.WriteToDatabase(
-                   RemotePartyDBFileName,
+            => LogRemotePartyLine(
                    Command,
                    Text is not null
                        ? JToken.Parse(Text)
@@ -3088,8 +3132,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         User_Id?           CurrentUserId       = null,
                                         CancellationToken  CancellationToken   = default)
 
-            => BaseAPI.WriteToDatabase(
-                   RemotePartyDBFileName,
+            => LogRemotePartyLine(
                    Command,
                    JSON,
                    EventTrackingId,
@@ -3107,8 +3150,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                         User_Id?           CurrentUserId       = null,
                                         CancellationToken  CancellationToken   = default)
 
-            => BaseAPI.WriteToDatabase(
-                   RemotePartyDBFileName,
+            => LogRemotePartyLine(
                    Command,
                    Number,
                    EventTrackingId,
@@ -3125,13 +3167,204 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                User_Id?           CurrentUserId       = null,
                                                CancellationToken  CancellationToken   = default)
 
-            => BaseAPI.WriteCommentToDatabase(
-                   RemotePartyDBFileName,
+            => LogRemotePartyCommentLine(
                    Text,
                    EventTrackingId,
                    CurrentUserId,
                    CancellationToken
                );
+
+        #endregion
+
+
+        #region OnRemotePartyNotSaved
+
+        /// <summary>
+        /// A line the file of the remote parties refused: its command, the file
+        /// and why.
+        /// </summary>
+        public delegate Task OnRemotePartyNotSavedDelegate(DateTimeOffset  Timestamp,
+                                                           String          Command,
+                                                           String          FileName,
+                                                           Exception       Exception);
+
+        /// <summary>
+        /// The file of the remote parties refused a line.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Where the line was a peer's credentials, the change is taken back,
+        /// and the peer is told no more than that it was not done, and nothing
+        /// of the files here. This says it all, to whoever made this API, to
+        /// say it where somebody reads it.
+        /// </para>
+        /// <para>
+        /// Told while the change is under way and the remote parties are
+        /// locked: a handler that changes them waits for itself.
+        /// </para>
+        /// </remarks>
+        public event OnRemotePartyNotSavedDelegate? OnRemotePartyNotSaved;
+
+        #endregion
+
+        #region (private) LockRemoteParties         ()
+
+        /// <summary>
+        /// Hold every other line of the remote parties off until the change at
+        /// hand and its line are done.
+        /// </summary>
+        /// <remarks>
+        /// So that a change taken back where its file refused it puts back what
+        /// was there, not what another change made of it meanwhile, and that the
+        /// file has the lines in the order the changes were made. Not reentrant:
+        /// what holds it calls nothing that takes it again.
+        /// </remarks>
+        private async Task<IDisposable> LockRemoteParties(CancellationToken CancellationToken = default)
+        {
+
+            await remotePartiesLock.WaitAsync(CancellationToken);
+
+            return new RemotePartiesLock(remotePartiesLock);
+
+        }
+
+        private sealed class RemotePartiesLock(SemaphoreSlim Semaphore) : IDisposable
+        {
+
+            private Int32 released;
+
+            public void Dispose()
+            {
+                if (Interlocked.Exchange(ref released, 1) == 0)
+                    Semaphore.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region (private) WriteRemotePartyLine      (Command, JToken, EventTrackingId, CurrentUserId, CancellationToken)
+
+        /// <summary>
+        /// One line into the file of the remote parties, first-hand. Where the
+        /// file refuses it, OnRemotePartyNotSaved is told, and why is answered.
+        /// </summary>
+        /// <remarks>
+        /// Not through the queue the assets are written through: that queue
+        /// can only tell OnDatabaseLineNotWritten that the file refused a line,
+        /// long after the change was believed. With the remote parties locked -
+        /// see LockRemoteParties.
+        /// </remarks>
+        /// <returns>Null where the file took it; otherwise why it did not.</returns>
+        private async Task<String?> WriteRemotePartyLine(String             Command,
+                                                         JToken?            JToken,
+                                                         EventTracking_Id   EventTrackingId,
+                                                         User_Id?           CurrentUserId,
+                                                         CancellationToken  CancellationToken   = default)
+        {
+
+            try
+            {
+
+                await BaseAPI.AppendToDatabase(
+                          RemotePartyDBFileName,
+                          Command,
+                          JToken,
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
+
+                return null;
+
+            }
+            catch (Exception e)
+            {
+
+                await LogEvent(
+                          OnRemotePartyNotSaved,
+                          loggingDelegate => loggingDelegate.Invoke(
+                              Timestamp.Now,
+                              Command,
+                              RemotePartyDBFileName,
+                              e
+                          )
+                      );
+
+                return $"'{Path.GetFileName(RemotePartyDBFileName)}' could not be written: {e.Message}";
+
+            }
+
+        }
+
+        #endregion
+
+        #region (private) LogRemotePartyLine        (Command, JToken, EventTrackingId, CurrentUserId, CancellationToken)
+
+        /// <summary>
+        /// Write down a change of the remote parties that was made already, and
+        /// tell the debug log where their file did not take it.
+        /// </summary>
+        /// <remarks>
+        /// Through the same writer as WriteRemotePartyLine, so that the file has
+        /// one writer.
+        /// </remarks>
+        private async ValueTask LogRemotePartyLine(String             Command,
+                                                   JToken?            JToken,
+                                                   EventTracking_Id   EventTrackingId,
+                                                   User_Id?           CurrentUserId,
+                                                   CancellationToken  CancellationToken   = default)
+        {
+
+            using var locked = await LockRemoteParties(CancellationToken);
+
+            var notSaved = await WriteRemotePartyLine(
+                                     Command,
+                                     JToken,
+                                     EventTrackingId,
+                                     CurrentUserId,
+                                     CancellationToken
+                                 );
+
+            if (notSaved is not null)
+                DebugX.Log($"[ERROR] {notSaved}");
+
+        }
+
+        #endregion
+
+        #region (private) LogRemotePartyCommentLine (Text,            EventTrackingId, CurrentUserId, CancellationToken)
+
+        /// <summary>
+        /// Write a comment into the file of the remote parties - see
+        /// LogRemotePartyLine.
+        /// </summary>
+        private async ValueTask LogRemotePartyCommentLine(String             Text,
+                                                          EventTracking_Id   EventTrackingId,
+                                                          User_Id?           CurrentUserId,
+                                                          CancellationToken  CancellationToken   = default)
+        {
+
+            using var locked = await LockRemoteParties(CancellationToken);
+
+            try
+            {
+
+                await BaseAPI.AppendCommentToDatabase(
+                          RemotePartyDBFileName,
+                          Text,
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
+
+            }
+            catch (Exception e)
+            {
+                DebugX.Log($"[ERROR] '{Path.GetFileName(RemotePartyDBFileName)}' could not be written: {e.Message}");
+            }
+
+        }
 
         #endregion
 
@@ -4692,6 +4925,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         private readonly ConcurrentDictionary<RemoteParty_Id, RemoteParty> remoteParties = new();
 
         /// <summary>
+        /// Held while a change of the remote parties and its line are made - see
+        /// LockRemoteParties.
+        /// </summary>
+        private readonly SemaphoreSlim remotePartiesLock = new (1, 1);
+
+        /// <summary>
         /// Return an enumeration of all remote parties.
         /// </summary>
         public IEnumerable<RemoteParty> RemoteParties
@@ -6129,6 +6368,94 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        : AddOrUpdateResult<RemoteParty>.Updated(
                              EventTracking_Id.New,
                              newRemoteParty
+                         );
+
+        }
+
+        #endregion
+
+        #region (private) AddOrUpdateRemoteParty   (NewRemoteParty, EventTrackingId, CurrentUserId)
+
+        /// <summary>
+        /// Add a remote party, or replace the one of its identification, and
+        /// keep the change only where its file took it.
+        /// </summary>
+        /// <remarks>
+        /// Into memory first, then written down. Where the file refused, what
+        /// was there before is put back: the party it replaced, or none where
+        /// it added one.
+        /// </remarks>
+        /// <param name="NewRemoteParty">The remote party.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating log entries.</param>
+        /// <param name="CurrentUserId">An optional user identification for correlating log entries.</param>
+        private async Task<AddOrUpdateResult<RemoteParty>> AddOrUpdateRemoteParty(RemoteParty        NewRemoteParty,
+                                                                                  EventTracking_Id?  EventTrackingId,
+                                                                                  User_Id?           CurrentUserId)
+        {
+
+            using var locked = await LockRemoteParties();
+
+            var          added     = false;
+            RemoteParty? replaced  = null;
+
+            remoteParties.AddOrUpdate(
+                NewRemoteParty.Id,
+                // Add
+                id => {
+                    added     = true;
+                    replaced  = null;
+                    return NewRemoteParty;
+                },
+                // Update
+                (id, oldRemoteParty) => {
+                    added     = false;
+                    replaced  = oldRemoteParty;
+                    return NewRemoteParty;
+                }
+            );
+
+            var notSaved = await WriteRemotePartyLine(
+                                     CommonHTTPAPI.addOrUpdateRemoteParty,
+                                     NewRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId
+                                 );
+
+            if (notSaved is not null)
+            {
+
+                if (replaced is null)
+                    remoteParties.TryRemove(
+                        new KeyValuePair<RemoteParty_Id, RemoteParty>(
+                            NewRemoteParty.Id,
+                            NewRemoteParty
+                        )
+                    );
+
+                else
+                    remoteParties.TryUpdate(
+                        NewRemoteParty.Id,
+                        replaced,
+                        NewRemoteParty
+                    );
+
+                return AddOrUpdateResult<RemoteParty>.Failed(
+                           EventTracking_Id.New,
+                           NewRemoteParty,
+                           notSaved,
+                           NotSaved: true
+                       );
+
+            }
+
+            return added
+                       ? AddOrUpdateResult<RemoteParty>.Created(
+                             EventTracking_Id.New,
+                             NewRemoteParty
+                         )
+                       : AddOrUpdateResult<RemoteParty>.Updated(
+                             EventTracking_Id.New,
+                             NewRemoteParty
                          );
 
         }
@@ -13712,6 +14039,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         }
 
         #endregion
+
+        #endregion
+
+
+        #region (private) LogEvent (Logger, LogHandler, ...)
+
+        private Task LogEvent<TDelegate>(TDelegate?                                         Logger,
+                                         Func<TDelegate, Task>                              LogHandler,
+                                         [CallerArgumentExpression(nameof(Logger))] String  EventName     = "",
+                                         [CallerMemberName()]                       String  OCPICommand   = "")
+
+            where TDelegate : Delegate
+
+            => LogEvent(
+                   nameof(CommonAPI),
+                   Logger,
+                   LogHandler,
+                   EventName,
+                   OCPICommand
+               );
 
         #endregion
 
