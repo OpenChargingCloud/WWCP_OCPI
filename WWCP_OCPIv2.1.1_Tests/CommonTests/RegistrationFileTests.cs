@@ -743,6 +743,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
+        #region TheOtherSideRenewingKeepsHowItIsReached()
+
+        /// <summary>
+        /// The other side renewing its credentials here, where it is reached
+        /// as it asks to be, changes the tokens and nothing else of how
+        /// it is reached: its client certificate, the TLS versions, IPv4 first,
+        /// the timeout, the retries, the user agent, until when its token may
+        /// be used and whether downgrades are allowed are as they were, and so
+        /// are when it was added and the versions it sees - now and at the
+        /// next start.
+        /// </summary>
+        [Test]
+        public async Task TheOtherSideRenewingKeepsHowItIsReached()
+        {
+
+            var       tokenOfOurs  = AccessToken.NewRandom();
+            using var certificate  = AClientCertificate();
+
+            await Listening();
+
+            var party                          = await AddTheOtherSide(tokenOfOurs, certificate);
+
+            var credentials                    = await CredentialsURL(tokenOfOurs);
+
+            var (status, statusCode, answer)   = await Send(HTTPMethod.PUT, credentials, tokenOfOurs);
+
+            Assert.That(statusCode, Is.EqualTo(1000), $"The renewal answered {status}: {answer}");
+
+            ReachedAsItWas(party, certificate);
+
+        }
+
+        #endregion
+
         #region TheOtherSideRegisteringWhileTheFileRefusesKeepsItsToken()
 
         /// <summary>
@@ -1006,7 +1040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         /// <summary>
         /// A request of the other side to this API, with the given token -
-        /// its credentials as the body of a POST - and what it was answered:
+        /// its credentials as the body of a POST or PUT - and what it was answered:
         /// the HTTP status, the OCPI status code, and the answer.
         /// </summary>
         private async Task<(Int32 Status, Int32? StatusCode, JObject? Answer)> Send(HTTPMethod   Method,
@@ -1022,7 +1056,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                                                                          ? $"Token {Convert.ToBase64String(Encoding.UTF8.GetBytes(Token.ToString()))}"
                                                                          : $"Token {Token}");
 
-            if (Method == HTTPMethod.POST)
+            if (Method == HTTPMethod.POST || Method == HTTPMethod.PUT)
                 request.Content = new StringContent(
                                       new JObject(
                                           new JProperty("token",  tokenC),
@@ -1080,7 +1114,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// The same, reached as a peer may ask to be: with the given client
         /// certificate, over the TLS versions it takes, IPv4 first, with a
         /// timeout, retries, a content type, the types it accepts and a user
-        /// agent of its own, and its token not to be used after a given time.
+        /// agent of its own, its token not to be used after a given time, and
+        /// downgrades allowed.
         /// </summary>
         private async Task<RemoteParty> AddTheOtherSide(AccessToken       OurToken,
                                                         X509Certificate2  ClientCertificate)
@@ -1102,6 +1137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                                                 RequestTimeout:         timeout,
                                                 MaxNumberOfRetries:     retries,
                                                 RemoteAccessNotAfter:   notAfter,
+                                                RemoteAllowDowngrades:  true,
                                                 VisibleVersionIds:      [ Version.Id ]);
 
             Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
@@ -1176,6 +1212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 Assert.That(now?.Accept?.ToString(),                               Is.EqualTo(accept.ToString()),                    "The types it accepts are not the ones they were.");
                 Assert.That(now?.VersionIds,                                       Is.EqualTo(new[] { Version.Id }),                 "The versions of the other side are not the one it speaks.");
                 Assert.That(now?.NotAfter,                                         Is.EqualTo(notAfter),                             "The token of the other side may be used for another time than it might.");
+                Assert.That(now?.AllowDowngrades,                                  Is.True,                                          "Downgrades are not allowed any more.");
                 Assert.That(CreatedOf(api),                                        Is.EqualTo(Party.Created),                        "The other side is said to have been added anew.");
                 Assert.That(VisibleVersionsOf(api),                                Is.EqualTo(new[] { Version.Id }),                 "The other side sees other versions than it saw.");
             });
@@ -1194,6 +1231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 Assert.That(again?.Accept?.ToString(),                             Is.EqualTo(accept.ToString()),                    "The next start does not know the types it accepts.");
                 Assert.That(again?.VersionIds,                                     Is.EqualTo(new[] { Version.Id }),                 "The next start does not know the versions of the other side.");
                 Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                             "The next start does not know until when the token of the other side may be used.");
+                Assert.That(again?.AllowDowngrades,                                Is.True,                                          "The next start does not allow downgrades.");
             });
 
         }

@@ -5254,6 +5254,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             // window, how it is encoded: an operator gave them to this peer.
             var local                     = oldRemoteParty.LocalAccessInfos.ReplacedBy(CREDENTIALS_TOKEN_C, Request.LocalAccessInfo?.AccessToken);
 
+            // How the other side is reached stays as it was - its client
+            // certificates above all - but for its new versions URL and token.
+            var remote                    = oldRemoteParty.RemoteAccessInfos.FirstOrDefault();
+
             // The credentials of the other side, CREDENTIALS_TOKEN_C in place
             // of CREDENTIALS_TOKEN_A, in one line: where the file refuses it,
             // nothing has changed, and token A is still valid.
@@ -5265,32 +5269,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    CREDENTIALS_TOKEN_C,                                      // LocalAccessToken
                                    receivedCredentials.URL,                                  // RemoteVersionsURL
                                    receivedCredentials.Token,                                // RemoteAccessToken
-                                   null,                                                     // RemoteAccessTokenBase64Encoding
-                                   null,                                                     // RemoteTOTPConfig
+                                   remote?.AccessTokenIsBase64Encoded,                       // RemoteAccessTokenBase64Encoding
+                                   remote?.TOTPConfig,                                       // RemoteTOTPConfig
 
-                                   null,                                                     // PreferIPv4
-                                   null,                                                     // RemoteCertificateValidator
-                                   null,                                                     // LocalCertificateSelector
-                                   null,                                                     // ClientCertificates
-                                   null,                                                     // ClientCertificateContext
-                                   null,                                                     // ClientCertificateChain
-                                   null,                                                     // TLSProtocols
-                                   null,                                                     // ContentType
-                                   null,                                                     // Accept
-                                   null,                                                     // HTTPUserAgent
-                                   null,                                                     // RequestTimeout
-                                   null,                                                     // TransmissionRetryDelay
-                                   null,                                                     // MaxNumberOfRetries
-                                   null,                                                     // InternalBufferSize
-                                   null,                                                     // UseHTTPPipelining
-                                   null,                                                     // HTTP Modifiers
+                                   remote?.PreferIPv4,                                       // PreferIPv4
+                                   remote?.RemoteCertificateValidator,                       // RemoteCertificateValidator
+                                   remote?.LocalCertificateSelector,                         // LocalCertificateSelector
+                                   remote?.ClientCertificates,                               // ClientCertificates
+                                   remote?.ClientCertificateContext,                         // ClientCertificateContext
+                                   remote?.ClientCertificateChain,                           // ClientCertificateChain
+                                   remote?.TLSProtocols,                                     // TLSProtocols
+                                   remote?.ContentType,                                      // ContentType
+                                   remote?.Accept,                                           // Accept
+                                   remote?.HTTPUserAgent,                                    // HTTPUserAgent
+                                   remote?.RequestTimeout,                                   // RequestTimeout
+                                   remote?.TransmissionRetryDelay,                           // TransmissionRetryDelay
+                                   remote?.MaxNumberOfRetries,                               // MaxNumberOfRetries
+                                   remote?.InternalBufferSize,                               // InternalBufferSize
+                                   remote?.UseHTTPPipelining,                                // UseHTTPPipelining
+                                   remote?.OUT,                                              // HTTP Modifiers
 
                                    RemoteAccessStatus.ONLINE,                                // RemoteStatus
                                    otherVersions.Data?.Select(version => version.Id) ?? [],  // RemoteVersionIds
                                    Version.Id,                                               // SelectedVersionId
-                                   null,                                                     // RemoteAccessNotBefore
-                                   null,                                                     // RemoteAccessNotAfter
-                                   null,                                                     // RemoteAllowDowngrades
+                                   remote?.NotBefore,                                        // RemoteAccessNotBefore
+                                   remote?.NotAfter,                                         // RemoteAccessNotAfter
+                                   remote?.AllowDowngrades,                                  // RemoteAllowDowngrades
 
                                    local?.AccessTokenIsBase64Encoded,                        // LocalAccessTokenBase64Encoding
                                    local?.TOTPConfig,                                        // LocalTOTPConfig
@@ -5301,7 +5305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                    AccessStatus.ALLOWED,                                     // LocalAccessStatus
 
                                    PartyStatus.ENABLED,                                      // PartyStatus
-                                   null,                                                     // VisibleVersionIds
+                                   oldRemoteParty.VisibleVersionIds,                         // VisibleVersionIds
 
                                    oldRemoteParty.Created,
                                    Timestamp.Now,                                            // LastUpdated

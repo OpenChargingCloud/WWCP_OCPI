@@ -3191,7 +3191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    Version.Id,                                               // SelectedVersionId
                                    oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotBefore,
                                    oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotAfter,
-                                   null,                                                     // RemoteAllowDowngrades
+                                   oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.AllowDowngrades,
 
                                    local?.AccessTokenIsBase64Encoded,                        // LocalAccessTokenBase64Encoding
                                    local?.TOTPConfig,                                        // LocalTOTPConfig

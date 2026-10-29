@@ -3074,7 +3074,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        Version.Id,                                               // SelectedVersionId
                                        reachedAs?.NotBefore,
                                        reachedAs?.NotAfter,
-                                       null,                                                     // RemoteAllowDowngrades
+                                       reachedAs?.AllowDowngrades,
 
                                        local?.AccessTokenIsBase64Encoded,                        // LocalAccessTokenBase64Encoding
                                        local?.TOTPConfig,                                        // LocalTOTPConfig
