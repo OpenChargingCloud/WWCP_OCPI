@@ -32,8 +32,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
     /// <param name="Response">The other side's answer - or, where nothing was sent, why not.</param>
     /// <param name="NotSaved">Whether the file of the remote parties refused a line: before anything was sent, where the response has no data - nothing has changed; or after the other side accepted - the change is in effect, and written down later.</param>
     /// <param name="Reason">Why the file refused, as AddResult and RemoveResult say it.</param>
+    /// <param name="Warning">What of an answer the other side accepted with was not taken - other roles than it holds here, say: its new tokens are in effect and stored all the same, because it uses them already.</param>
     public sealed record CredentialsResult(OCPIResponse<Credentials>  Response,
                                            Boolean                    NotSaved   = false,
-                                           String?                    Reason     = null);
+                                           String?                    Reason     = null,
+                                           String?                    Warning    = null);
 
 }

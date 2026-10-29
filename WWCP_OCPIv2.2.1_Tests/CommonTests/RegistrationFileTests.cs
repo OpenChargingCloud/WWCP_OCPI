@@ -432,6 +432,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARenewalAnsweredWithOtherRolesKeepsItsNewTokens()
+
+        /// <summary>
+        /// A renewal the other side accepted with other roles than it holds
+        /// here: it uses the new tokens already, so they are in effect and
+        /// stored, now and at the next start; its roles stay as they were,
+        /// and the result says what was not taken.
+        /// </summary>
+        [Test]
+        public async Task ARenewalAnsweredWithOtherRolesKeepsItsNewTokens()
+        {
+
+            var newToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSide(AccessToken.NewRandom());
+
+            other.AnswersRenewalsAs = "CCC";
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.Multiple(() => {
+                Assert.That(renewed.Response.Data?.Token.ToString(),      Is.EqualTo(tokenC),             $"The other side did not accept the renewal: {renewed.Response.StatusMessage}");
+                Assert.That(renewed.Warning,                              Does.Contain("CCC"),          "The result does not say the other side answered with other roles.");
+                Assert.That(renewed.NotSaved,                             Is.False,                       $"The renewal is said to be unsaved: {renewed.Reason}");
+                Assert.That(LocalTokensOf(api),                           Is.EqualTo(new[] { newToken }), "The token the other side calls back with is not the new one alone.");
+                Assert.That(RemoteTokenOf(api),                           Is.EqualTo(tokenC),             "The token the other side handed out is not the one in effect.");
+                Assert.That(PartyIdsOf(api),                              Is.EqualTo(new[] { "BBB" }),    "The roles the other side answered with replaced those it holds here.");
+            });
+
+            var again = ACommonAPI();
+
+            Assert.Multiple(() => {
+                Assert.That(LocalTokensOf(again),  Is.EqualTo(new[] { newToken }),  "The next start does not know the token the other side calls back with.");
+                Assert.That(RemoteTokenOf(again),  Is.EqualTo(tokenC),              "The next start does not know the token the other side handed out.");
+                Assert.That(PartyIdsOf(again),     Is.EqualTo(new[] { "BBB" }),     "The roles the other side answered with replaced those it holds here at the next start.");
+            });
+
+        }
+
+        #endregion
+
         #region ARenewalTheOtherSideRefusedLeavesTheTokensInEffect()
 
         /// <summary>
@@ -1108,6 +1151,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                    FirstOrDefault();
 
         /// <summary>
+        /// The party identifications of the other side, as this API has it.
+        /// </summary>
+        private static String[] PartyIdsOf(CommonAPI API)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.Roles.Select(role => role.PartyId.PartyId.ToString())).
+                   ToArray();
+
+        /// <summary>
         /// When the other side was added, as this API has it, or null.
         /// </summary>
         private static DateTimeOffset? CreatedOf(CommonAPI API)
@@ -1250,6 +1303,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
             /// <summary>Whether a renewal is refused once it has called back - OCPI 3000 with HTTP 500, as this library's own receiver refuses one its file cannot take: nothing changed there.</summary>
             public Boolean                             RefusesRenewals        { get; set; }
+
+            /// <summary>The party its answer to a renewal says it is: another than the one it registered as, where set.</summary>
+            public String                              AnswersRenewalsAs      { get; set; } = "BBB";
 
             /// <summary>Whether the first renewal is answered as a gateway answers one that took too long: HTTP 504, a reason to send it once more.</summary>
             public Boolean                             TimesOutOnce           { get; set; }
@@ -1395,7 +1451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                         if (other.RefusesRenewals)
                             return Refused(request, HTTPStatusCode.InternalServerError,  3000, "The credentials could not be stored here, and nothing was changed.");
 
-                        return JSON(request, TheirCredentials(origin));
+                        return JSON(request, TheirCredentials(origin, other.AnswersRenewalsAs));
 
                     },
                     HTTPMethod.PUT
@@ -1409,7 +1465,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
             /// The credentials it answers with: token C, and where its versions
             /// are.
             /// </summary>
-            private static JObject TheirCredentials(String Origin)
+            private static JObject TheirCredentials(String  Origin,
+                                                    String  PartyId   = "BBB")
 
                 => new (
                        new JProperty("token",  tokenC),
@@ -1417,7 +1474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
                        new JProperty("roles",  new JArray(
                            new JObject(
                                new JProperty("role",              "CPO"),
-                               new JProperty("party_id",          "BBB"),
+                               new JProperty("party_id",          PartyId),
                                new JProperty("country_code",      "DE"),
                                new JProperty("business_details",  new JObject(
                                    new JProperty("name",  "Their CPO")

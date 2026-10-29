@@ -1566,6 +1566,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// takes, or when the base API is disposed. NotSaved, and the response
         /// is the other side's.
         /// </para>
+        /// <para>
+        /// Where the other side accepted as another party than it is here,
+        /// its new tokens are taken and stored all the same, because it uses
+        /// them already, and its party stays as it was: the warning of the
+        /// result says so.
+        /// </para>
         /// </remarks>
         /// <param name="Credentials">The credentials to store/put at/onto the remote API.</param>
         /// 
@@ -1638,6 +1644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
             String?                    notSaved          = null;
+            String?                    warning           = null;
             var                        sent              = false;
             var                        storedHere        = !HasLocalToken(Credentials.Token);
 
@@ -1708,76 +1715,80 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (response.Data is not null)
                         {
 
+                            // The other side uses the new tokens from its answer on - also where
+                            // it answers as another party than it is here: it has switched
+                            // already. So they are taken and stored, its party stays as it was,
+                            // and the result says what was not taken.
+                            TokenAuth = TokenAuthFor(response.Data.Token);
+
                             // Validate, that neither the country code, nor the party identification had been changed -
                             // those of the other side, in its answer: the credentials we sent carry our own!
-                            if (response.Data.CountryCode == RemoteParty.CountryCode &&
-                                response.Data.PartyId     == RemoteParty.PartyId)
-                            {
+                            var sameParty = response.Data.CountryCode == RemoteParty.CountryCode &&
+                                            response.Data.PartyId     == RemoteParty.PartyId;
 
-                                TokenAuth = TokenAuthFor(response.Data.Token);
+                            if (!sameParty)
+                                warning = $"The other side answered as another party than it is here - {response.Data.CountryCode}*{response.Data.PartyId} instead of {RemoteParty.CountryCode}*{RemoteParty.PartyId}: its new token is in effect and stored, its party stays as it was.";
 
+                            // How the other side is reached stays as it is - its client
+                            // certificates above all, without which a peer that asks for
+                            // them would shut us out after the renewal - and so does the
+                            // rest of the party, when it was added and the versions it sees:
+                            // only the tokens and the versions it speaks are new.
+                            var party   = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
+                            var remote  = party.RemoteAccessInfos.FirstOrDefault();
 
-                                // How the other side is reached stays as it is - its client
-                                // certificates above all, without which a peer that asks for
-                                // them would shut us out after the renewal - and so does the
-                                // rest of the party, when it was added and the versions it sees:
-                                // only the tokens and the versions it speaks are new.
-                                var party   = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
-                                var remote  = party.RemoteAccessInfos.FirstOrDefault();
+                            // Only the access token and the business details are allowed to be changed!
+                            var result = await CommonAPI.AddOrUpdateRemoteParty(
 
-                                // Only the access token and the business details are allowed to be changed!
-                                var result = await CommonAPI.AddOrUpdateRemoteParty(
+                                                   CountryCode:         RemoteParty.CountryCode,
+                                                   PartyId:             RemoteParty.PartyId,
+                                                   Role:                RemoteRole ?? (CommonAPI.OurRole == Role.EMSP
+                                                                                           ? Role.CPO
+                                                                                           : Role.EMSP),
+                                                   BusinessDetails:     sameParty ? response.Data.BusinessDetails : party.BusinessDetails,
 
-                                                       CountryCode:         RemoteParty.CountryCode,
-                                                       PartyId:             RemoteParty.PartyId,
-                                                       Role:                RemoteRole ?? (CommonAPI.OurRole == Role.EMSP
-                                                                                               ? Role.CPO
-                                                                                               : Role.EMSP),
-                                                       BusinessDetails:     response.Data.BusinessDetails,
+                                                   Status:              PartyStatus.ENABLED,
 
-                                                       Status:              PartyStatus.ENABLED,
+                                                   LocalAccessToken:    Credentials.Token,
+                                                   RemoteVersionsURL:   response.Data.URL,
+                                                   RemoteAccessToken:   response.Data.Token,
+                                                   RemoteStatus:        RemoteAccessStatus.ONLINE,
+                                                   RemoteVersionIds:    [ Version.Id ],
+                                                   SelectedVersionId:   Version.Id,
 
-                                                       LocalAccessToken:    Credentials.Token,
-                                                       RemoteVersionsURL:   response.Data.URL,
-                                                       RemoteAccessToken:   response.Data.Token,
-                                                       RemoteStatus:        RemoteAccessStatus.ONLINE,
-                                                       RemoteVersionIds:    [ Version.Id ],
-                                                       SelectedVersionId:   Version.Id,
+                                                   RemoteAccessTokenBase64Encoding:  remote?.AccessTokenIsBase64Encoded,
+                                                   RemoteTOTPConfig:                 remote?.TOTPConfig,
+                                                   PreferIPv4:                       remote?.PreferIPv4,
+                                                   RemoteCertificateValidator:       remote?.RemoteCertificateValidator,
+                                                   LocalCertificateSelector:         remote?.LocalCertificateSelector,
+                                                   ClientCertificates:               remote?.ClientCertificates,
+                                                   ClientCertificateContext:         remote?.ClientCertificateContext,
+                                                   ClientCertificateChain:           remote?.ClientCertificateChain,
+                                                   TLSProtocols:                     remote?.TLSProtocols,
+                                                   ContentType:                      remote?.ContentType,
+                                                   Accept:                           remote?.Accept,
+                                                   HTTPUserAgent:                    remote?.HTTPUserAgent,
+                                                   RequestTimeout:                   remote?.RequestTimeout,
+                                                   TransmissionRetryDelay:           remote?.TransmissionRetryDelay,
+                                                   MaxNumberOfRetries:               remote?.MaxNumberOfRetries,
+                                                   InternalBufferSize:               remote?.InternalBufferSize,
+                                                   UseHTTPPipelining:                remote?.UseHTTPPipelining,
+                                                   OUT:                              remote?.OUT,
+                                                   RemoteAccessNotBefore:            remote?.NotBefore,
+                                                   RemoteAccessNotAfter:             remote?.NotAfter,
+                                                   RemoteAllowDowngrades:            remote?.AllowDowngrades,
+                                                   VisibleVersionIds:                party.VisibleVersionIds,
+                                                   Created:                          party.Created,
 
-                                                       RemoteAccessTokenBase64Encoding:  remote?.AccessTokenIsBase64Encoded,
-                                                       RemoteTOTPConfig:                 remote?.TOTPConfig,
-                                                       PreferIPv4:                       remote?.PreferIPv4,
-                                                       RemoteCertificateValidator:       remote?.RemoteCertificateValidator,
-                                                       LocalCertificateSelector:         remote?.LocalCertificateSelector,
-                                                       ClientCertificates:               remote?.ClientCertificates,
-                                                       ClientCertificateContext:         remote?.ClientCertificateContext,
-                                                       ClientCertificateChain:           remote?.ClientCertificateChain,
-                                                       TLSProtocols:                     remote?.TLSProtocols,
-                                                       ContentType:                      remote?.ContentType,
-                                                       Accept:                           remote?.Accept,
-                                                       HTTPUserAgent:                    remote?.HTTPUserAgent,
-                                                       RequestTimeout:                   remote?.RequestTimeout,
-                                                       TransmissionRetryDelay:           remote?.TransmissionRetryDelay,
-                                                       MaxNumberOfRetries:               remote?.MaxNumberOfRetries,
-                                                       InternalBufferSize:               remote?.InternalBufferSize,
-                                                       UseHTTPPipelining:                remote?.UseHTTPPipelining,
-                                                       OUT:                              remote?.OUT,
-                                                       RemoteAccessNotBefore:            remote?.NotBefore,
-                                                       RemoteAccessNotAfter:             remote?.NotAfter,
-                                                       RemoteAllowDowngrades:            remote?.AllowDowngrades,
-                                                       VisibleVersionIds:                party.VisibleVersionIds,
-                                                       Created:                          party.Created,
+                                                   LocalAccessStatus:   AccessStatus.ALLOWED,
+                                                   KeepWhereNotSaved:   true
 
-                                                       LocalAccessStatus:   AccessStatus.ALLOWED,
-                                                       KeepWhereNotSaved:   true
+                                               );
 
-                                                   );
+                            if (result.NotSaved)
+                                notSaved = result.ErrorResponse;
 
-                                if (result.NotSaved)
-                                    notSaved = result.ErrorResponse;
-
-                            }
-                            else
+                            if (!result.IsSuccess)
                                 DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
 
                         }
@@ -1834,7 +1845,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             return new CredentialsResult(
                        response,
                        notSaved is not null,
-                       notSaved
+                       notSaved,
+                       warning
                    );
 
         }

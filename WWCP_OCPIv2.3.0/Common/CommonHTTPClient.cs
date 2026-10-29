@@ -1601,6 +1601,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// takes, or when the base API is disposed. NotSaved, and the response
         /// is the other side's.
         /// </para>
+        /// <para>
+        /// Where the other side accepted with other roles than it holds here,
+        /// its new tokens are taken and stored all the same, because it uses
+        /// them already, and its roles stay as they were: the warning of the
+        /// result says so.
+        /// </para>
         /// </remarks>
         /// <param name="Credentials">The credentials to store/put at/onto the remote API.</param>
         /// 
@@ -1671,6 +1677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             Byte                       transmissionRetry = 0;
             OCPIResponse<Credentials>  response;
             String?                    notSaved          = null;
+            String?                    warning           = null;
             var                        sent              = false;
             var                        storedHere        = !HasLocalToken(Credentials.Token);
 
@@ -1745,97 +1752,81 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         if (response.Data is not null)
                         {
 
+                            // The other side uses the new tokens from its answer on - also where
+                            // it answers with other roles than it holds here: it has switched
+                            // already. So they are taken and stored, its roles stay as they were,
+                            // and the result says what was not taken.
                             TokenAuth = TokenAuthFor(response.Data.Token);
 
                             var oldRemoteParty = this.RemoteParty;
 
-                            // Validate, that neither the credentials roles had not been changed!
-                            if (oldRemoteParty is not null &&
-                                oldRemoteParty.Roles.Count() == response.Data.Roles.Count())
+                            if (oldRemoteParty is null)
+                                warning = "This client knows no remote party: the new tokens are in effect for it alone, and nothing was stored.";
+
+                            else
                             {
 
-                                var failed = false;
+                                // Validate, that the credentials roles had not been changed!
+                                var sameRoles = SameRoles(oldRemoteParty.Roles, response.Data.Roles);
 
-                                foreach (var receivedCredentialsRole in response.Data.Roles)
-                                {
+                                if (!sameRoles)
+                                    warning = $"The other side answered with other roles than it holds here - {Described(response.Data.Roles)} instead of {Described(oldRemoteParty.Roles)}: its new token is in effect and stored, its roles stay as they were.";
 
-                                    CredentialsRole? existingCredentialsRole = null;
+                                // How the other side is reached stays as it is - its client
+                                // certificates above all, without which a peer that asks for
+                                // them would shut us out after the renewal - and so does the
+                                // rest of the party, when it was added and the versions it sees:
+                                // only the tokens and the versions it speaks are new.
+                                var party   = CommonAPI.GetRemoteParty(oldRemoteParty.Id) ?? oldRemoteParty;
+                                var remote  = party.RemoteAccessInfos.FirstOrDefault();
 
-                                    foreach (var oldCredentialsRole in oldRemoteParty.Roles)
-                                    {
-                                        if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
-                                            oldCredentialsRole.Role    == receivedCredentialsRole.Role)
-                                        {
-                                            existingCredentialsRole = receivedCredentialsRole;
-                                            break;
-                                        }
-                                    }
+                                // Only the access token and the business details are allowed to be changed!
+                                var result = await CommonAPI.AddOrUpdateRemoteParty(
+                                                       Id:                  oldRemoteParty.Id,
+                                                       CredentialsRoles:    sameRoles ? response.Data.Roles : oldRemoteParty.Roles,
 
-                                    if (existingCredentialsRole is null)
-                                        failed = true;
+                                                       Status:              PartyStatus.ENABLED,
 
-                                }
+                                                       LocalAccessToken:    Credentials.Token,
+                                                       RemoteVersionsURL:   response.Data.URL,
+                                                       RemoteAccessToken:   response.Data.Token,
+                                                       RemoteStatus:        RemoteAccessStatus.ONLINE,
+                                                       RemoteVersionIds:    [Version.Id ],
+                                                       SelectedVersionId:   Version.Id,
 
-                                if (!failed)
-                                {
+                                                       RemoteAccessTokenBase64Encoding:  remote?.AccessTokenIsBase64Encoded,
+                                                       RemoteTOTPConfig:                 remote?.TOTPConfig,
+                                                       PreferIPv4:                       remote?.PreferIPv4,
+                                                       RemoteCertificateValidator:       remote?.RemoteCertificateValidator,
+                                                       LocalCertificateSelector:         remote?.LocalCertificateSelector,
+                                                       ClientCertificates:               remote?.ClientCertificates,
+                                                       ClientCertificateContext:         remote?.ClientCertificateContext,
+                                                       ClientCertificateChain:           remote?.ClientCertificateChain,
+                                                       TLSProtocols:                     remote?.TLSProtocols,
+                                                       ContentType:                      remote?.ContentType,
+                                                       Accept:                           remote?.Accept,
+                                                       HTTPUserAgent:                    remote?.HTTPUserAgent,
+                                                       RequestTimeout:                   remote?.RequestTimeout,
+                                                       TransmissionRetryDelay:           remote?.TransmissionRetryDelay,
+                                                       MaxNumberOfRetries:               remote?.MaxNumberOfRetries,
+                                                       InternalBufferSize:               remote?.InternalBufferSize,
+                                                       UseHTTPPipelining:                remote?.UseHTTPPipelining,
+                                                       OUT:                              remote?.OUT,
+                                                       RemoteAccessNotBefore:            remote?.NotBefore,
+                                                       RemoteAccessNotAfter:             remote?.NotAfter,
+                                                       RemoteAllowDowngrades:            remote?.AllowDowngrades,
+                                                       VisibleVersionIds:                party.VisibleVersionIds,
+                                                       Created:                          party.Created,
 
-                                    // How the other side is reached stays as it is - its client
-                                    // certificates above all, without which a peer that asks for
-                                    // them would shut us out after the renewal - and so does the
-                                    // rest of the party, when it was added and the versions it sees:
-                                    // only the tokens and the versions it speaks are new.
-                                    var party   = CommonAPI.GetRemoteParty(oldRemoteParty.Id) ?? oldRemoteParty;
-                                    var remote  = party.RemoteAccessInfos.FirstOrDefault();
+                                                       LocalAccessStatus:   AccessStatus.ALLOWED,
+                                                       KeepWhereNotSaved:   true
+                                                   );
 
-                                    // Only the access token and the business details are allowed to be changed!
-                                    var result = await CommonAPI.AddOrUpdateRemoteParty(
-                                                           Id:                  oldRemoteParty.Id,
-                                                           CredentialsRoles:    response.Data.Roles,
+                                if (result.NotSaved)
+                                    notSaved = result.ErrorResponse;
 
-                                                           Status:              PartyStatus.ENABLED,
-
-                                                           LocalAccessToken:    Credentials.Token,
-                                                           RemoteVersionsURL:   response.Data.URL,
-                                                           RemoteAccessToken:   response.Data.Token,
-                                                           RemoteStatus:        RemoteAccessStatus.ONLINE,
-                                                           RemoteVersionIds:    [Version.Id ],
-                                                           SelectedVersionId:   Version.Id,
-
-                                                           RemoteAccessTokenBase64Encoding:  remote?.AccessTokenIsBase64Encoded,
-                                                           RemoteTOTPConfig:                 remote?.TOTPConfig,
-                                                           PreferIPv4:                       remote?.PreferIPv4,
-                                                           RemoteCertificateValidator:       remote?.RemoteCertificateValidator,
-                                                           LocalCertificateSelector:         remote?.LocalCertificateSelector,
-                                                           ClientCertificates:               remote?.ClientCertificates,
-                                                           ClientCertificateContext:         remote?.ClientCertificateContext,
-                                                           ClientCertificateChain:           remote?.ClientCertificateChain,
-                                                           TLSProtocols:                     remote?.TLSProtocols,
-                                                           ContentType:                      remote?.ContentType,
-                                                           Accept:                           remote?.Accept,
-                                                           HTTPUserAgent:                    remote?.HTTPUserAgent,
-                                                           RequestTimeout:                   remote?.RequestTimeout,
-                                                           TransmissionRetryDelay:           remote?.TransmissionRetryDelay,
-                                                           MaxNumberOfRetries:               remote?.MaxNumberOfRetries,
-                                                           InternalBufferSize:               remote?.InternalBufferSize,
-                                                           UseHTTPPipelining:                remote?.UseHTTPPipelining,
-                                                           OUT:                              remote?.OUT,
-                                                           RemoteAccessNotBefore:            remote?.NotBefore,
-                                                           RemoteAccessNotAfter:             remote?.NotAfter,
-                                                           RemoteAllowDowngrades:            remote?.AllowDowngrades,
-                                                           VisibleVersionIds:                party.VisibleVersionIds,
-                                                           Created:                          party.Created,
-
-                                                           LocalAccessStatus:   AccessStatus.ALLOWED,
-                                                           KeepWhereNotSaved:   true
-                                                       );
-
-                                    if (result.NotSaved)
-                                        notSaved = result.ErrorResponse;
-
-                                    if (!result.IsSuccess)
-                                        DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
-
-                                }
+                                if (!result.IsSuccess)
+                                    DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
 
                             }
 
@@ -1902,10 +1893,30 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             return new CredentialsResult(
                        response,
                        notSaved is not null,
-                       notSaved
+                       notSaved,
+                       warning
                    );
 
         }
+
+        #endregion
+
+        #region (private static) SameRoles(Held, Answered) / Described(Roles)
+
+        /// <summary>
+        /// Whether the roles the other side answered with are those it holds
+        /// here: as many, and each of them by its party and role.
+        /// </summary>
+        private static Boolean SameRoles(IEnumerable<CredentialsRole>  Held,
+                                         IEnumerable<CredentialsRole>  Answered)
+
+            => Held.Count() == Answered.Count() &&
+               Answered.All(answered => Held.Any(held => held.PartyId == answered.PartyId &&
+                                                         held.Role    == answered.Role));
+
+        private static String Described(IEnumerable<CredentialsRole> Roles)
+
+            => String.Join(", ", Roles.Select(role => $"{role.PartyId} {role.Role}"));
 
         #endregion
 
