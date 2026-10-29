@@ -1397,6 +1397,10 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 #region Generate HUB and EMSP TLS Certificates
 
+                // The servers' certificates name the host their clients dial -
+                // localhost - which a server checks the origin of a request
+                // against as well (RFC 9110, Section 7.4).
+
                 var serverCertificateIssuerName  = serverCACertificate?.SubjectDN;
                 var serverCAPrivateKey           = serverCAKeyPair?.    Private;
 
@@ -1417,7 +1421,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                          ? PKI.SignServerCertificate(
                                                                cpo1TLSServerCSR,
                                                                serverCertificateIssuerName,
-                                                               serverCAPrivateKey
+                                                               serverCAPrivateKey,
+                                                               DNSNames: [ "localhost" ]
                                                            )?.ToDotNet2(cpo1TLSServerKeyPair.Private)
 
                                                          : null;
@@ -1470,7 +1475,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                          ? PKI.SignServerCertificate(
                                                                cpo2TLSServerCSR,
                                                                serverCertificateIssuerName,
-                                                               serverCAPrivateKey
+                                                               serverCAPrivateKey,
+                                                               DNSNames: [ "localhost" ]
                                                            )?.ToDotNet2(cpo2TLSServerKeyPair.Private)
 
                                                          : null;
@@ -1523,7 +1529,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                          ? PKI.SignServerCertificate(
                                                                hub1TLSServerCSR,
                                                                serverCertificateIssuerName,
-                                                               serverCAPrivateKey
+                                                               serverCAPrivateKey,
+                                                               DNSNames: [ "localhost" ]
                                                            )?.ToDotNet2(hub1TLSServerKeyPair.Private)
 
                                                          : null;
@@ -1587,7 +1594,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                          ? PKI.SignServerCertificate(
                                                                emsp1TLSServerCSR,
                                                                serverCertificateIssuerName,
-                                                               serverCAPrivateKey
+                                                               serverCAPrivateKey,
+                                                               DNSNames: [ "localhost" ]
                                                            )?.ToDotNet2(emsp1TLSServerKeyPair.Private)
 
                                                          : null;
@@ -1640,7 +1648,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
                                                          ? PKI.SignServerCertificate(
                                                                emsp2TLSServerCSR,
                                                                serverCertificateIssuerName,
-                                                               serverCAPrivateKey
+                                                               serverCAPrivateKey,
+                                                               DNSNames: [ "localhost" ]
                                                            )?.ToDotNet2(emsp2TLSServerKeyPair.Private)
 
                                                          : null;

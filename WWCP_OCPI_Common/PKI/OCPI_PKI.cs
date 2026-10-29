@@ -985,9 +985,17 @@ namespace cloud.charging.open.protocols.OCPI
 
 
 
+        /// <summary>
+        /// Sign the given server certificate signing request.
+        /// </summary>
+        /// <param name="csr">The certificate signing request.</param>
+        /// <param name="issuer">The issuer of the certificate.</param>
+        /// <param name="issuerPrivateKey">The private key of the issuer.</param>
+        /// <param name="DNSNames">The DNS names the issuer vouches for, as the subject alternative names of the certificate: a client that checks the name it dials - and a server that checks the origin a request names - finds them there. None by default.</param>
         public X509Certificate? SignServerCertificate(Pkcs10CertificationRequest  csr,
                                                       X509Name                    issuer,
-                                                      AsymmetricKeyParameter      issuerPrivateKey)
+                                                      AsymmetricKeyParameter      issuerPrivateKey,
+                                                      IEnumerable<String>?        DNSNames   = null)
         {
 
             try
@@ -1068,6 +1076,13 @@ namespace cloud.charging.open.protocols.OCPI
                     new ExtendedKeyUsage(KeyPurposeID.IdKPServerAuth));
                 //certGen.AddExtension(X509Extensions.SubjectAlternativeName, false,
                 //    new GeneralNames(sanList.ToArray()));
+
+                var dnsNames = DNSNames?.Distinct().ToArray() ?? [];
+
+                if (dnsNames.Length > 0)
+                    certGen.AddExtension(X509Extensions.SubjectAlternativeName, false,
+                        new GeneralNames(dnsNames.Select(dnsName => new GeneralName(GeneralName.DnsName, dnsName)).ToArray()));
+
                 certGen.AddExtension(X509Extensions.SubjectKeyIdentifier, false,
                     new SubjectKeyIdentifierStructure(clientPublicKey));
 
