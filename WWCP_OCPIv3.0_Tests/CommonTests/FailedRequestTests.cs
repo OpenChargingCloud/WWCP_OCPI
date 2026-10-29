@@ -46,10 +46,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
     /// Two ways to throw: a route of this test's own whose handler throws,
     /// and a remote party whose TOTP secret is too short to make a password
     /// with, which makes reading a request with its token throw - the request
-    /// itself, before any handler. Not in the versions list: this version
-    /// hands neither itself nor its remote parties to the API every version
-    /// hangs off, so the list does not read their tokens; the other versions
-    /// test it.
+    /// itself, before any handler. Not in the versions list, which reads the
+    /// same tokens and which the other versions test.
     ///
     /// And a Basic authentication whose password is no TOTP, which threw the
     /// same way before its token was looked at, does not fail at all.
@@ -498,21 +496,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
         /// <summary>
         /// Where this version's credentials are, as the other side finds them
-        /// with its token: the details of this version, which the versions
-        /// list does not list - see the remarks of this class.
+        /// with its token in the details of this version.
         /// </summary>
-        /// <remarks>
-        /// The credentials name this API's own parties, which its constructor
-        /// does not add: without one, they cannot be made at all.
-        /// </remarks>
         private async Task<String> CredentialsURL()
         {
-
-            var ours         = await api.AddParty(Party_Idv3.From(CountryCode.Parse("DE"), Party_Id.Parse("GEF")),
-                                                  Role.CPO,
-                                                  new BusinessDetails("GraphDefined CSO"));
-
-            Assert.That(ours.IsSuccess, Is.True, $"Our own party could not be added: {ours.ErrorResponse}");
 
             var version      = await Send($"http://127.0.0.1:{port}/ocpi/v3.0/versions/3.0", $"Token {token}");
             var credentials  = (version.JSON?["data"]?["endpoints"] as JArray)?.FirstOrDefault(endpoint => endpoint.Value<String>("identifier") == "credentials")?.Value<String>("url");

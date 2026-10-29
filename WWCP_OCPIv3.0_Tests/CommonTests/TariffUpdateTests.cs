@@ -107,13 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             var tariff  = ATariff();
 
-            var party   = await api.AddParty(ourPartyId, Role.CPO, new BusinessDetails("GraphDefined CSO"));
             var added   = await api.AddOrUpdateTariff(tariff);
 
-            Assert.Multiple(() => {
-                Assert.That(party.IsSuccess, Is.True, $"Our party could not be added: {party.ErrorResponse}");
-                Assert.That(added.IsSuccess, Is.True, $"The tariff could not be added: {added.ErrorResponse}");
-            });
+            Assert.That(added.IsSuccess, Is.True, $"The tariff could not be added: {added.ErrorResponse}");
 
             var patched = await api.TryPatchTariff(
                                     tariff,

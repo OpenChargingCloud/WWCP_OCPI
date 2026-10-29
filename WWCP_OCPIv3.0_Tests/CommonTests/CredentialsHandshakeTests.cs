@@ -122,7 +122,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         public async Task ARegistrationPutsTokenCInPlaceOfTokenA()
         {
 
-            await AddOurParty();
             await AddTheOtherSideToCome();
 
             var credentials                    = await CredentialsURL(tokenA);
@@ -168,7 +167,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         public async Task ARegistrationTheFileRefusesChangesNothing()
         {
 
-            await AddOurParty();
             await AddTheOtherSideToCome();
 
             var credentials  = await CredentialsURL(tokenA);
@@ -207,40 +205,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
         #endregion
 
-        #region ARegistrationWithoutPartiesOfOursChangesNothing()
-
-        /// <summary>
-        /// Without a party of this platform to name, no answer can be made: the
-        /// registration is answered OCPI 3000 with HTTP 500 before anything is
-        /// changed, and token A registers once there is one.
-        /// </summary>
-        [Test]
-        public async Task ARegistrationWithoutPartiesOfOursChangesNothing()
-        {
-
-            await AddTheOtherSideToCome();
-
-            var credentials                    = await CredentialsURL(tokenA);
-
-            var (status, statusCode, answer)   = await Send(HTTPMethod.POST, credentials, tokenA);
-
-            Assert.Multiple(() => {
-                Assert.That(status,              Is.EqualTo(500),                $"The registration without parties of ours is not answered 500: {answer}");
-                Assert.That(statusCode,          Is.EqualTo(3000),               $"The registration without parties of ours is not answered OCPI 3000: {answer}");
-                Assert.That(LocalTokensOf(api),  Is.EqualTo(new[] { tokenA }),   "Token A is gone, though no answer could be made.");
-                Assert.That(RemoteTokenOf(api),  Is.Null,                        "The token the other side sent is kept, though no answer could be made.");
-            });
-
-            await AddOurParty();
-
-            var (_, again, _) = await Send(HTTPMethod.POST, credentials, tokenA);
-
-            Assert.That(again, Is.EqualTo(1000), "Token A could not register once there was a party of ours.");
-
-        }
-
-        #endregion
-
         #region NewCredentialsKeepHowTheOtherSideIsReached()
 
         /// <summary>
@@ -251,8 +215,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         [Test]
         public async Task NewCredentialsKeepHowTheOtherSideIsReached()
         {
-
-            await AddOurParty();
 
             var added = await api.AddRemoteParty(id,
                                                  TheirRoles,
@@ -303,7 +265,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         public async Task ARegistrationIsNotFollowedWhereTheAPIDoesNotDial()
         {
 
-            await AddOurParty();
             await AddTheOtherSideToCome();
 
             var credentials                    = await CredentialsURL(tokenA);
@@ -324,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
-        #region (private) Listening() / AddOurParty() / AddTheOtherSideToCome() / TheirRoles
+        #region (private) Listening() / AddTheOtherSideToCome() / TheirRoles
 
         /// <summary>
         /// This test's Common API, listening on a port nobody was listening on
@@ -349,21 +310,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
                 { }
 
             }
-
-        }
-
-        /// <summary>
-        /// The party of this platform the credentials name, which the
-        /// constructor of this version does not add (OCPI-ISSUES.md O3).
-        /// </summary>
-        private async Task AddOurParty()
-        {
-
-            var ours = await api.AddParty(Party_Idv3.From(CountryCode.Parse("DE"), Party_Id.Parse("GEF")),
-                                          Role.CPO,
-                                          new BusinessDetails("GraphDefined CSO"));
-
-            Assert.That(ours.IsSuccess, Is.True, $"Our own party could not be added: {ours.ErrorResponse}");
 
         }
 

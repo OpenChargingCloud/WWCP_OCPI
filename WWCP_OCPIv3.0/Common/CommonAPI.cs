@@ -1948,7 +1948,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                 )
                                               : null;
 
-            AddVersionInformation(
+            // In the versions list of the base API, as every version is: a
+            // version only this API knew of could be found by nobody.
+            this.BaseAPI.AddVersionInformation(
                 new VersionInformation(
                     Version.Id,
                     URL.Concat(
@@ -1959,13 +1961,29 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 )
             ).GetAwaiter().GetResult();
 
+            // The versions list is served by the base API, and a partner
+            // presents its access token to it; the partners themselves live
+            // here. So the base API is told where to look - as 2.x tell it.
+            this.BaseAPI.AddRemotePartyProvider(() => remoteParties.Values);
+
+            // Our own parties, those the credentials name, first - and before
+            // the assets database is read back, whose replay files every asset
+            // under the party it belongs to and drops what belongs to none.
+            foreach (var credentialsRole in OurCredentialRoles.Distinct())
+                parties.TryAdd(
+                    credentialsRole.PartyId,
+                    new PartyData(
+                        credentialsRole.PartyId,
+                        credentialsRole.Role,
+                        credentialsRole.BusinessDetails,
+                        credentialsRole.AllowDowngrades
+                    )
+                );
+
             ReadRemotePartyDatabaseFile().GetAwaiter().GetResult();
             ReadAssetsDatabaseFile().     GetAwaiter().GetResult();
 
             RegisterURLTemplates();
-
-            //foreach (var partyData in OurPartyData)
-            //    parties.TryAdd(partyData.Id, partyData);
 
         }
 
@@ -2484,6 +2502,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     #endregion
 
+                    // The credentials name this platform's own parties, and
+                    // there are none to name.
+                    if (parties.IsEmpty)
+                        return Task.FromResult(NoPartiesOfOurOwn(request));
+
                     return Task.FromResult(
                         new OCPIResponse.Builder(request) {
                             StatusCode           = StatusCode.Success,
@@ -2705,6 +2728,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
+
+        #region (private) NoPartiesOfOurOwn(Request)
+
+        /// <summary>
+        /// The answer to GET credentials where they would name this platform's
+        /// own parties, and there are none: an error, said so. POST and PUT say
+        /// it as well, before anything is changed - see POSTOrPUTCredentials.
+        /// </summary>
+        private OCPIResponse.Builder NoPartiesOfOurOwn(OCPIRequest Request)
+
+            => new (Request) {
+                   StatusCode           = StatusCode.ServerErrors.GenericServerError,
+                   StatusMessage        = "This platform has no party of its own to name in its credentials!",
+                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                       HTTPStatusCode             = HTTPStatusCode.InternalServerError,
+                       AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT, HTTPMethod.DELETE ],
+                       AccessControlAllowHeaders  = [ "Authorization" ]
+                   }
+               };
+
+        #endregion
 
         #region (private) POSTOrPUTCredentials(Request)
 

@@ -41,8 +41,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
     /// AddParty wrote down only the party's identification, and the next
     /// start passed over that line: the party was gone, and every asset of it
     /// with it, as the replay drops what belongs to a party it does not know.
-    /// In 3.0 no party is given at the start, so every party was gone at
-    /// every start, and every asset with it.
+    /// In 3.0, where only the parties its credentials name are given at the
+    /// start, every other party was gone at every start, and every asset with
+    /// it.
     /// </para>
     /// <para>
     /// The next start is a Common API made anew on the same directory, which
@@ -117,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             Assert.That(added.IsSuccess, Is.True, $"The party could not be added: {added.ErrorResponse}");
 
-            Assert.That((await NextStart()).Parties.Select(AsText), Is.EquivalentTo(new[] { AsText(added.Data!) }),
+            Assert.That((await NextStart()).Parties.Where(party => party.Id != ourPartyId).Select(AsText), Is.EquivalentTo(new[] { AsText(added.Data!) }),
                         "The next start does not know the party added as it was added.");
 
         }
@@ -168,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
                       EventTracking_Id.New
                   );
 
-            Assert.That((await NextStart()).Parties.Select(AsText), Is.Empty,
+            Assert.That((await NextStart()).Parties.Where(party => party.Id != ourPartyId).Select(AsText), Is.Empty,
                         "The next start made a party from its identification alone.");
 
         }

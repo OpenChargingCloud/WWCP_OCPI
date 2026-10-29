@@ -89,12 +89,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             api        = ACommonAPI();
 
-            // A tariff is filed under its party, and in 3.0 no party is given
-            // at the start: every one is added, and is there at the next
-            // start since 2bf8aa31.
-            var party  = await api.AddParty(ourPartyId, Role.CPO, new BusinessDetails("GraphDefined CSO"));
-
-            Assert.That(party.IsSuccess, Is.True, $"Our party could not be added: {party.ErrorResponse}");
+            // What a test here adds is filed under our party: the one the
+            // credentials name, given at the start.
 
         }
 
