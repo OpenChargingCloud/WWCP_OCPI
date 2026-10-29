@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 Assert.That(versionDetail, Is.Not.Null);
 
                 var endpoints = versionDetail.Endpoints;
-                Assert.That(endpoints.Count(), Is.EqualTo(8));
+                Assert.That(endpoints.Count(), Is.EqualTo(7));
                 //ClassicAssert.AreEqual(Version_Id.Parse("2.2"), endpoints.Id);
                 //ClassicAssert.AreEqual(emspVersionsAPIURL + "2.2", endpoints.URL);
 

@@ -207,6 +207,31 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
+        #region TheVersionDetailsAnnounceNoModuleNoModuleAPIServes()
+
+        /// <summary>
+        /// OCPI 3.0 has no module API serving the CPO or the EMSP modules yet:
+        /// the version details announce none of them to a peer, though this
+        /// platform is a CPO and the peer an EMSP - nor charging profiles - but
+        /// the credentials alone.
+        /// </summary>
+        [Test]
+        public async Task TheVersionDetailsAnnounceNoModuleNoModuleAPIServes()
+        {
+
+            var version      = await Send($"http://127.0.0.1:{port}/ocpi/v3.0/versions/3.0", $"Token {token}");
+            var identifiers  = ((version.JSON?["data"]?["endpoints"] as JArray) ?? []).Select(endpoint => endpoint.Value<String>("identifier"));
+
+            Assert.Multiple(() => {
+                Assert.That(version.Status,  Is.EqualTo(200),                    version.Text);
+                Assert.That(identifiers,     Is.EqualTo(new[] { "credentials" }), $"A module is announced that no module API serves: {version.Text}");
+            });
+
+        }
+
+        #endregion
+
+
         #region (private) Send(URL, Authorization)
 
         /// <summary>

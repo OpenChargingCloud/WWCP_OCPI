@@ -4754,6 +4754,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             RegisterURLTemplates();
 
+            // Where the version details find the modules served here.
+            CommonAPI.EMSPModulesPath = this.URLPathPrefix;
+
             // The remote CPOs and their assets, as the file of the assets
             // of the Common API has them - see RemoteCPOAssets.
             RemoteCPOAssets.Read(CommonAPI, remoteCPOs).GetAwaiter().GetResult();

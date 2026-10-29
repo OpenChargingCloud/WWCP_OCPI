@@ -179,11 +179,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                 //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/sessions"
                 //             },
                 //             {
-                //                 "identifier":  "chargingprofiles",
-                //                 "role":        "SENDER",
-                //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/chargingprofiles"
-                //             },
-                //             {
                 //                 "identifier":  "cdrs",
                 //                 "role":        "SENDER",
                 //                 "url":         "http://127.0.0.1:7234/2.2.1/cpo/cdrs"
@@ -221,13 +216,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                     Assert.That(versionId == Version.Id, Is.True);
 
                     var endpoints      = versionDetail.Endpoints;
-                    Assert.That(endpoints.Count(), Is.EqualTo(8));
+                    Assert.That(endpoints.Count(), Is.EqualTo(7));
 
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"      && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"        && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"          && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"         && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
-                    Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "chargingprofiles" && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"             && endpoint.Role == InterfaceRoles.SENDER),   Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"         && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);
                     Assert.That(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"           && endpoint.Role == InterfaceRoles.RECEIVER), Is.True);

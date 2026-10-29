@@ -3173,6 +3173,9 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             RegisterURLTemplates();
 
+            // Where the version details find the modules served here.
+            CommonAPI.EMSPModulesPath = this.URLPathPrefix;
+
         }
 
         #endregion

@@ -1723,6 +1723,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             RegisterURLTemplates();
 
+            // Where the version details find the modules served here.
+            CommonAPI.CPOModulesPath = this.URLPathPrefix;
+
         }
 
         #endregion

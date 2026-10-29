@@ -1414,6 +1414,23 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Func<EVSE, Boolean>           KeepRemovedEVSEs           { get; }
 
         /// <summary>
+        /// Where the CPO_HTTPAPI built on this Common API serves its modules,
+        /// once one is built: the version details announce them there, and
+        /// not before - a platform with the CPO role that builds none announces
+        /// none of them. OCPI 3.0 has no CPO module API serving them yet.
+        /// </summary>
+        public HTTPPath?                CPOModulesPath             { get; internal set; }
+
+        /// <summary>
+        /// Where the EMSP_HTTPAPI built on this Common API serves its modules,
+        /// once one is built: the version details announce them there, and
+        /// not before - a platform with the EMSP role that builds none
+        /// announces none of them. OCPI 3.0 has no EMSP module API serving
+        /// them yet.
+        /// </summary>
+        public HTTPPath?                EMSPModulesPath            { get; internal set; }
+
+        /// <summary>
         /// The CommonAPI logger.
         /// </summary>
         public CommonAPILogger?              Logger                     { get; set; }
@@ -2159,17 +2176,30 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     #endregion
 
 
+                    #region Served(ModulesPath, Path)
+
+                    // A module of a module API built on this Common API, at the path it
+                    // serves it at; the additional URL path prefix is in the URLs announced,
+                    // never in the paths served.
+                    URL Served(HTTPPath ModulesPath, String Path)
+
+                        => URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
+                                         (request.Host + (BaseAPI.AdditionalURLPathPrefix + ModulesPath.ToString() + Path)).Replace("//", "/"));
+
+                    #endregion
+
+
                     #region The other side is a CPO...
 
-                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.CPO) == true)
+                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.CPO) == true &&
+                        EMSPModulesPath is HTTPPath emspModulesPath)
                     {
 
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Locations,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) + 
-                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))
+                                Served(emspModulesPath, "locations")
                             )
                         );
 
@@ -2177,8 +2207,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Tariffs,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))
+                                Served(emspModulesPath, "tariffs")
                             )
                         );
 
@@ -2186,18 +2215,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Sessions,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))
-                            )
-                        );
-
-                        // When the EMSP acts as smart charging receiver so that a SCSP can talk to him!
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.ChargingProfiles,
-                                InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                                Served(emspModulesPath, "sessions")
                             )
                         );
 
@@ -2205,8 +2223,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.CDRs,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))
+                                Served(emspModulesPath, "cdrs")
                             )
                         );
 
@@ -2215,8 +2232,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Commands,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))
+                                Served(emspModulesPath, "commands")
                             )
                         );
 
@@ -2224,8 +2240,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Tokens,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))
+                                Served(emspModulesPath, "tokens")
                             )
                         );
 
@@ -2238,6 +2253,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     #region We are a CPO, the other side is unauthenticated and we export locations and AdHoc tariffs as Open Data...
 
                     if (request.RemoteParty is null &&
+                        CPOModulesPath is HTTPPath openDataPath &&
                         parties.Values.Any(party => party.Role == Role.CPO))
                     {
 
@@ -2246,8 +2262,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                 new VersionEndpoint(
                                     Module_Id.Locations,
                                     InterfaceRoles.SENDER,
-                                    URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                        (request.Host + (prefix + "cpo/locations")))
+                                    Served(openDataPath, "locations")
                                 )
                             );
 
@@ -2256,8 +2271,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                 new VersionEndpoint(
                                     Module_Id.Tariffs,
                                     InterfaceRoles.SENDER,
-                                    URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                        (request.Host + (prefix + "cpo/tariffs")))
+                                    Served(openDataPath, "tariffs")
                                 )
                             );
 
@@ -2267,15 +2281,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     #region The other side is an EMSP...
 
-                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.EMSP) == true)
+                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Role.EMSP) == true &&
+                        CPOModulesPath is HTTPPath cpoModulesPath)
                     {
 
                         endpoints.Add(
                             new VersionEndpoint(
                                 Module_Id.Locations,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))
+                                Served(cpoModulesPath, "locations")
                             )
                         );
 
@@ -2283,8 +2297,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Tariffs,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))
+                                Served(cpoModulesPath, "tariffs")
                             )
                         );
 
@@ -2292,17 +2305,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Sessions,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))
-                            )
-                        );
-
-                        endpoints.Add(
-                            new VersionEndpoint(
-                                Module_Id.ChargingProfiles,
-                                InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))
+                                Served(cpoModulesPath, "sessions")
                             )
                         );
 
@@ -2310,8 +2313,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.CDRs,
                                 InterfaceRoles.SENDER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))
+                                Served(cpoModulesPath, "cdrs")
                             )
                         );
 
@@ -2320,8 +2322,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Commands,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))
+                                Served(cpoModulesPath, "commands")
                             )
                         );
 
@@ -2329,8 +2330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             new VersionEndpoint(
                                 Module_Id.Tokens,
                                 InterfaceRoles.RECEIVER,
-                                URL.Parse((BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix) +
-                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))
+                                Served(cpoModulesPath, "tokens")
                             )
                         );
 
