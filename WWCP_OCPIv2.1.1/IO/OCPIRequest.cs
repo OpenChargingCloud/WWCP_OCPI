@@ -507,8 +507,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                RemoteParty.PartyId,
                                                RemoteParty.Role,
                                                RemoteParty.BusinessDetails,
-                                               RemoteParty.LocalAccessInfos.First().NotBefore,
-                                               RemoteParty.LocalAccessInfos.First().NotAfter,
+                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).NotBefore,
+                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).NotAfter,
                                                RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                            );
 

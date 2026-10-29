@@ -347,6 +347,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
+        #region TheRequestNamesTheValidityOfTheTokenItCameWith()
+
+        /// <summary>
+        /// A party with two tokens of ours, each valid for a time of its own -
+        /// as every registration and renewal leaves one pending beside the one
+        /// in effect for a while - is let in with the second: the request
+        /// names when that one may be used, not when the first may.
+        /// </summary>
+        [Test]
+        public async Task TheRequestNamesTheValidityOfTheTokenItCameWith()
+        {
+
+            var first   = AccessToken.Parse("their-first-token-of-ours");
+            var second  = AccessToken.Parse("their-second-token-of-ours");
+
+            var added   = await api.AddRemoteParty(CountryCode.Parse("DE"),
+                                                  Party_Id.   Parse("DDD"),
+                                                  Role.EMSP,
+                                                  new BusinessDetails("An EMSP with two tokens of ours"),
+
+                                                  [
+                                                      new LocalAccessInfo(first,  NotBefore: new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero), NotAfter: new DateTimeOffset(2034, 1, 1, 0, 0, 0, TimeSpan.Zero), AccessTokenIsBase64Encoded: false),
+                                                      new LocalAccessInfo(second, NotBefore: new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero), NotAfter: new DateTimeOffset(2035, 1, 1, 0, 0, 0, TimeSpan.Zero), AccessTokenIsBase64Encoded: false)
+                                                  ],
+                                                  []);
+
+            Assert.That(added.IsSuccess, Is.True, $"The party with two tokens could not be added: {added.ErrorResponse}");
+
+            var url     = await CredentialsURL();
+
+            LocalAccessInfo2? named = null;
+
+            api.OnGetCredentialsRequest += (timestamp, httpAPI, request, cancellationToken) => {
+                named = request.LocalAccessInfo;
+                return Task.CompletedTask;
+            };
+
+            var answer  = await Send(url, $"Token {second}");
+
+            Assert.Multiple(() => {
+                Assert.That(answer.JSON?.Value<Int32?>("status_code"),  Is.EqualTo(1000),                                                     answer.Text);
+                Assert.That(named?.AccessToken,                         Is.EqualTo(second),                                                   "The request names another token than it came with.");
+                Assert.That(named?.NotBefore,                           Is.EqualTo(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero)),  "The request names when another token of the party may be used from.");
+                Assert.That(named?.NotAfter,                            Is.EqualTo(new DateTimeOffset(2035, 1, 1, 0, 0, 0, TimeSpan.Zero)),  "The request names until when another token of the party may be used.");
+            });
+
+        }
+
+        #endregion
+
+
         #region (private) IsRefused(Answer, What, Why = "Unknown access token!")
 
         /// <summary>

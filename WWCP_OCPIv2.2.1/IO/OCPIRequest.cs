@@ -571,8 +571,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        AccessToken.    Value,
                                        localAccessInfo.Status,
                                        RemoteParty.    Roles,
-                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotBefore,
-                                       RemoteParty.LocalAccessInfos. FirstOrDefault()?.NotAfter,
+                                       localAccessInfo.NotBefore,
+                                       localAccessInfo.NotAfter,
                                        RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                    );
 
