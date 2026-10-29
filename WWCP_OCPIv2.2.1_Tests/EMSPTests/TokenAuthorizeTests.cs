@@ -32,7 +32,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
     /// <remarks>
     /// OCPI says of the type of the token: "Default if omitted: RFID". The
     /// EMSP compared the type of its token with no type at all where a CPO
-    /// left it out, and every token was unknown to it.
+    /// left it out, and every token was unknown to it. And what EMSP #1 allows
+    /// from its own tokens, a filter of its own may take back.
     /// </remarks>
     [TestFixture]
     public class TokenAuthorizeTests : ANodeTests
@@ -98,14 +99,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
 
         #endregion
 
+        #region AFilterTakesAnAuthorizationBack()
 
-        #region (private) Authorize(Type)
+        /// <summary>
+        /// A filter on the authorizations EMSP #1 answers from its own tokens
+        /// takes one back - asked with the token, and with the party asked.
+        /// </summary>
+        [Test]
+        public async Task AFilterTakesAnAuthorizationBack()
+        {
+
+            TokenStatus? asked    = null;
+            Party_Idv3?  askedTo  = null;
+
+            var response = await Authorize(TokenType.RFID,
+                                            Filter: (from, to, tokenStatus, location, cancellationToken) => {
+                                                asked    = tokenStatus;
+                                                askedTo  = to;
+                                                return Task.FromResult<AllowedType?>(AllowedType.NOT_ALLOWED);
+                                            });
+
+            Assert.Multiple(() => {
+                Assert.That(response.StatusCode.Value,  Is.EqualTo(1000), response.StatusMessage);
+                Assert.That(response.Data?.Allowed,     Is.EqualTo(AllowedType.NOT_ALLOWED), "The filter did not take the authorization back.");
+                Assert.That(asked?.Token.Id,            Is.EqualTo(tokenId));
+                Assert.That(asked?.Status,              Is.EqualTo(AllowedType.ALLOWED));
+                Assert.That(askedTo,                    Is.Not.Null);
+            });
+
+        }
+
+        #endregion
+
+        #region AFilterThatSaysNothingLeavesItAsItIs()
+
+        /// <summary>
+        /// A filter that answers null leaves the authorization as the token
+        /// has it.
+        /// </summary>
+        [Test]
+        public async Task AFilterThatSaysNothingLeavesItAsItIs()
+        {
+
+            var response = await Authorize(TokenType.RFID,
+                                           Filter: (from, to, tokenStatus, location, cancellationToken) => Task.FromResult<AllowedType?>(null));
+
+            Assert.That(response.Data?.Allowed, Is.EqualTo(AllowedType.ALLOWED), response.StatusMessage);
+
+        }
+
+        #endregion
+
+        #region AFilterNeverAllowsWhatTheTokenDoesNot()
+
+        /// <summary>
+        /// A blocked token stays blocked whatever a filter says: a filter
+        /// narrows, and is not even asked where there is nothing to narrow.
+        /// </summary>
+        [Test]
+        public async Task AFilterNeverAllowsWhatTheTokenDoesNot()
+        {
+
+            var asked = false;
+
+            var response = await Authorize(TokenType.RFID,
+                                           Status: AllowedType.BLOCKED,
+                                           Filter: (from, to, tokenStatus, location, cancellationToken) => {
+                                               asked = true;
+                                               return Task.FromResult<AllowedType?>(AllowedType.ALLOWED);
+                                           });
+
+            Assert.Multiple(() => {
+                Assert.That(response.Data?.Allowed,  Is.EqualTo(AllowedType.BLOCKED), "A filter allowed a blocked token.");
+                Assert.That(asked,                   Is.False, "A filter was asked of a token that is not allowed anyway.");
+            });
+
+        }
+
+        #endregion
+
+        #region AFilterThatFailsAllowsNothing()
+
+        /// <summary>
+        /// A filter that throws allows nothing.
+        /// </summary>
+        [Test]
+        public async Task AFilterThatFailsAllowsNothing()
+        {
+
+            var response = await Authorize(TokenType.RFID,
+                                           Filter: (from, to, tokenStatus, location, cancellationToken) => throw new InvalidOperationException("The filter's own store is down."));
+
+            Assert.That(response.Data?.Allowed, Is.EqualTo(AllowedType.NOT_ALLOWED), response.StatusMessage);
+
+        }
+
+        #endregion
+
+
+        #region (private) Authorize(Type, Status = ALLOWED, Filter = null)
 
         /// <summary>
         /// EMSP #1 has an RFID token, which the CPO asks it to authorize -
         /// with the given type, or none.
         /// </summary>
-        private async Task<OCPIResponse<AuthorizationInfo>> Authorize(TokenType? Type)
+        private async Task<OCPIResponse<AuthorizationInfo>> Authorize(TokenType?                                       Type,
+                                                                      AllowedType?                                     Status   = null,
+                                                                      EMSP_HTTPAPI.OnLocalTokenAuthorizationDelegate?  Filter   = null)
         {
 
             var added = await emsp1CommonAPI!.AddToken(
@@ -119,10 +219,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.EMSPTests
                                       true,
                                       WhitelistType.NEVER
                                   ),
-                                  AllowedType.ALLOWED
+                                  Status ?? AllowedType.ALLOWED
                               );
 
             Assert.That(added.IsSuccess, Is.True, $"EMSP #1 could not add its token: {added.ErrorResponse}");
+
+            if (Filter is not null)
+                emsp1EMSPAPI!.OnLocalTokenAuthorization += Filter;
 
             var emsp = cpoCPOAPI?.GetEMSPClient(
                            CountryCode: CountryCode.Parse("DE"),

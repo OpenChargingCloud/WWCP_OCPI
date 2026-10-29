@@ -2908,6 +2908,35 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
 
 
+        /// <summary>
+        /// A filter on an authorization this EMSP answers from its own tokens:
+        /// null to leave it as it is, or what it is to be instead.
+        /// </summary>
+        /// <param name="From">The CPO asking - the one the request names, or the one CPO its token is of - or null where neither tells.</param>
+        /// <param name="To">The party of this EMSP asked.</param>
+        /// <param name="TokenStatus">The token, and what this EMSP allows it.</param>
+        /// <param name="LocationReference">Where the CPO wants to charge: the location and those of its EVSEs that exist there, or null where it did not say.</param>
+        /// <param name="CancellationToken">A token to cancel the filter.</param>
+        public delegate Task<AllowedType?> OnLocalTokenAuthorizationDelegate(Party_Idv3?         From,
+                                                                             Party_Idv3          To,
+                                                                             TokenStatus         TokenStatus,
+                                                                             LocationReference?  LocationReference,
+                                                                             CancellationToken   CancellationToken);
+
+        /// <summary>
+        /// Filters on the authorizations this EMSP answers from its own tokens,
+        /// where nobody subscribed to OnRFIDAuthToken answers them instead.
+        /// </summary>
+        /// <remarks>
+        /// Asked after the token, the location and its EVSEs were checked, and
+        /// only where those allow it: a filter narrows, and never widens. The
+        /// first that answers anything but null or ALLOWED decides - a token
+        /// handed out for one charging station, refused at every other - and
+        /// one that throws allows nothing.
+        /// </remarks>
+        public event OnLocalTokenAuthorizationDelegate? OnLocalTokenAuthorization;
+
+
         #region Domain Events
 
         #region OnPutLocation    (Request/-Response)
@@ -7812,9 +7841,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                             }
 
 
-                            //ToDo: Add a event/delegate for additional location filters!
-
-
                             if (locationReference.Value.EVSEUIds.SafeAny())
                             {
 
@@ -7857,11 +7883,54 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                                 }
 
+                            }
 
+                        }
 
-                                //ToDo: Add a event/delegate for additional EVSE filters!
+                        #endregion
+
+                        #region OnLocalTokenAuthorization: filters that may take it back
+
+                        if (authorizationInfo is not null &&
+                            authorizationInfo.Allowed == AllowedType.ALLOWED &&
+                            OnLocalTokenAuthorization is OnLocalTokenAuthorizationDelegate filters)
+                        {
+
+                            var cpoRoles  = request.LocalAccessInfo?.Roles.Where(role => role.Role == Role.CPO).ToArray() ?? [];
+                            var from      = request.From ?? (cpoRoles.Length == 1 ? cpoRoles[0].PartyId : null);
+
+                            AllowedType? filtered = null;
+
+                            foreach (var filter in filters.GetInvocationList().Cast<OnLocalTokenAuthorizationDelegate>())
+                            {
+
+                                try
+                                {
+                                    filtered = await filter(
+                                                         from,
+                                                         request.To ?? CommonAPI.DefaultPartyId,
+                                                         _tokenStatus,
+                                                         locationReference,
+                                                         request.HTTPRequest.CancellationToken
+                                                     );
+                                }
+                                catch (Exception)
+                                {
+                                    filtered = AllowedType.NOT_ALLOWED;
+                                }
+
+                                if (filtered.HasValue && filtered.Value != AllowedType.ALLOWED)
+                                    break;
 
                             }
+
+                            if (filtered.HasValue && filtered.Value != AllowedType.ALLOWED)
+                                authorizationInfo = new AuthorizationInfo(
+                                                        filtered.Value,
+                                                        authorizationInfo.Token,
+                                                        authorizationInfo.Location,
+                                                        authorizationInfo.AuthorizationReference
+                                                    );
 
                         }
 
