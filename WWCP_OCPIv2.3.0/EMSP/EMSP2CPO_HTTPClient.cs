@@ -3596,7 +3596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                       LocationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"RESERVE_NOW/{commandId}",
                                       EVSEUId,
                                       AuthorizationReference,
@@ -3797,7 +3797,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                       ReservationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"CANCEL_RESERVATION/{commandId}",
                                       commandId,
                                       requestId,
@@ -3998,7 +3998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                       LocationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"START_SESSION/{commandId}",
                                       EVSEUId,
                                       ConnectorId,
@@ -4199,7 +4199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                       SessionId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"STOP_SESSION/{commandId}",
                                       commandId,
                                       requestId,
@@ -4393,7 +4393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.EMSP.HTTP
                                       ConnectorId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"UNLOCK_CONNECTOR/{commandId}",
                                       commandId,
                                       requestId,

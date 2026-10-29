@@ -3091,7 +3091,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                       LocationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          $"v{SelectedOCPIVersionId}/emsp"
+                                          $"v{SelectedOCPIVersionId}/hub"
                                       ) + $"RESERVE_NOW/{commandId}",
                                       EVSEUId,
                                       AuthorizationReference,
@@ -3281,7 +3281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                       ReservationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          $"v{SelectedOCPIVersionId}/emsp"
+                                          $"v{SelectedOCPIVersionId}/hub"
                                       ) + $"CANCEL_RESERVATION/{commandId}",
                                       commandId,
                                       requestId,
@@ -3472,7 +3472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                          LocationId,
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
-                                             $"v{SelectedOCPIVersionId}/emsp"
+                                             $"v{SelectedOCPIVersionId}/hub"
                                          ) + $"START_SESSION/{commandId}",
                                          EVSEUId,
                                          ConnectorId,
@@ -3663,7 +3663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                       SessionId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/hub"
                                       ) + $"STOP_SESSION/{commandId}",
                                       commandId,
                                       requestId,
@@ -3850,7 +3850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
                                       ConnectorId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          $"v{SelectedOCPIVersionId}/emsp"
+                                          $"v{SelectedOCPIVersionId}/hub"
                                       ) + $"UNLOCK_CONNECTOR/{commandId}",
                                       commandId,
                                       requestId,
@@ -4050,8 +4050,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
 
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
-                                             $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED{commandId}",
+                                             $"v{SelectedOCPIVersionId}/hub"
+                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,
@@ -4256,8 +4256,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HUB.HTTP
 
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
-                                             $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED{commandId}",
+                                             $"v{SelectedOCPIVersionId}/hub"
+                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,

@@ -3769,7 +3769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                       SessionId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + $"STOP_SESSION/{commandId}",
                                       commandId,
                                       requestId,
@@ -4172,7 +4172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
                                              $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED{commandId}",
+                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,
@@ -4385,7 +4385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
                                              $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED{commandId}",
+                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,

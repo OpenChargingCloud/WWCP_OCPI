@@ -3094,7 +3094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                       LocationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + "RESERVE_NOW" + commandId.ToString(),
                                       EVSEUId,
                                       commandId,
@@ -3288,7 +3288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                       ReservationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + "CANCEL_RESERVATION" + commandId.ToString(),
                                       commandId,
                                       requestId,
@@ -3474,7 +3474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                       LocationId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + "START_SESSION" + commandId.ToString(),
                                       EVSEUId,
                                       commandId,
@@ -3659,7 +3659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                       SessionId,
                                       CommonAPI.GetModuleURL(
                                           Module_Id.Commands,
-                                          SelectedOCPIVersionId.ToString() + "/emsp"
+                                          $"v{SelectedOCPIVersionId}/emsp"
                                       ) + "STOP_SESSION" + commandId.ToString(),
                                       commandId,
                                       requestId,
@@ -3854,7 +3854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                           ConnectorId,
                                           CommonAPI.GetModuleURL(
                                               Module_Id.Commands,
-                                              SelectedOCPIVersionId.ToString() + "/emsp"
+                                              $"v{SelectedOCPIVersionId}/emsp"
                                           ) + "UNLOCK_CONNECTOR" + commandId.ToString(),
                                           commandId,
                                           requestId,
@@ -4054,7 +4054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
                                              $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED{commandId}",
+                                         ) + $"NOTIFY_WEB_PAYMENT_STARTED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,
@@ -4259,7 +4259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                          CommonAPI.GetModuleURL(
                                              Module_Id.Commands,
                                              $"v{SelectedOCPIVersionId}/emsp"
-                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED{commandId}",
+                                         ) + $"NOTIFY_WEB_PAYMENT_FAILED/{commandId}",
 
                                          LocationId,
                                          EVSEUId,
