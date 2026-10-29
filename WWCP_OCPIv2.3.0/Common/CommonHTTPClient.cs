@@ -1779,6 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 // only the tokens and the versions it speaks are new.
                                 var party   = CommonAPI.GetRemoteParty(oldRemoteParty.Id) ?? oldRemoteParty;
                                 var remote  = party.RemoteAccessInfos.FirstOrDefault();
+                                var local   = party.LocalAccessInfos.ReplacedBy(Credentials.Token);
 
                                 // Only the access token and the business details are allowed to be changed!
                                 var result = await CommonAPI.AddOrUpdateRemoteParty(
@@ -1817,6 +1818,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                        RemoteAllowDowngrades:            remote?.AllowDowngrades,
                                                        VisibleVersionIds:                party.VisibleVersionIds,
                                                        Created:                          party.Created,
+                                                       LocalAccessTokenBase64Encoding:   local?.AccessTokenIsBase64Encoded,
+                                                       LocalTOTPConfig:                  local?.TOTPConfig,
+                                                       IN:                               local?.IN,
+                                                       LocalAccessNotBefore:             local?.NotBefore,
+                                                       LocalAccessNotAfter:              local?.NotAfter,
+                                                       LocalAllowDowngrades:             local?.AllowDowngrades,
 
                                                        LocalAccessStatus:   AccessStatus.ALLOWED,
                                                        KeepWhereNotSaved:   true
@@ -2388,6 +2395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         // sees: only the tokens and the versions it speaks are new.
                                         var party   = CommonAPI.GetRemoteParty(oldRemoteParty.Id) ?? oldRemoteParty;
                                         var remote  = party.RemoteAccessInfos.FirstOrDefault();
+                                        var local   = party.LocalAccessInfos.ReplacedBy(credentialTokenB);
 
                                         // Only the access token and the business details are allowed to be changed!
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateRemoteParty(
@@ -2424,12 +2432,12 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                                                           remote?.NotAfter,                    // RemoteAccessNotAfter
                                                                           remote?.AllowDowngrades,             // RemoteAllowDowngrades
 
-                                                                          null,                                // LocalAccessTokenBase64Encoding
-                                                                          null,                                // LocalTOTPConfig
-                                                                          null,                                // HTTP Modifiers
-                                                                          null,                                // LocalAccessNotBefore
-                                                                          null,                                // LocalAccessNotAfter
-                                                                          null,                                // LocalAllowDowngrades
+                                                                          local?.AccessTokenIsBase64Encoded,   // LocalAccessTokenBase64Encoding
+                                                                          local?.TOTPConfig,                   // LocalTOTPConfig
+                                                                          local?.IN,                           // HTTP Modifiers
+                                                                          local?.NotBefore,                    // LocalAccessNotBefore
+                                                                          local?.NotAfter,                     // LocalAccessNotAfter
+                                                                          local?.AllowDowngrades,              // LocalAllowDowngrades
                                                                           AccessStatus.ALLOWED,                // LocalAccessStatus
 
                                                                           PartyStatus.ENABLED,                 // PartyStatus
@@ -2613,6 +2621,11 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             // both sides hold until the next one is answered.
             var party   = CommonAPI.GetRemoteParty(RemoteParty.Id) ?? RemoteParty;
 
+            // The settings of the token it takes the place of, as the
+            // AddOrUpdate after the answer keeps them: the other side may
+            // call back with it before it answers.
+            var local   = party.LocalAccessInfos.ReplacedBy(CredentialTokenB);
+
             // Already there where the same request is sent once more.
             if (party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == CredentialTokenB))
                 return null;
@@ -2625,7 +2638,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                         new LocalAccessInfo(
                                             CredentialTokenB,
                                             AccessStatus.ALLOWED,
-                                            Pending: true
+                                            TOTPConfig:                  local?.TOTPConfig,
+                                            IN:                          local?.IN,
+                                            NotBefore:                   local?.NotBefore,
+                                            NotAfter:                    local?.NotAfter,
+                                            AccessTokenIsBase64Encoded:  local?.AccessTokenIsBase64Encoded ?? true,
+                                            AllowDowngrades:             local?.AllowDowngrades,
+                                            Pending:                     true
                                         )
                                     ],
                                     party.RemoteAccessInfos,

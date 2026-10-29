@@ -3371,6 +3371,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var CREDENTIALS_TOKEN_C       = AccessToken.NewRandom();
 
+            // Token C keeps the settings of token A - its TOTP, its validity
+            // window, how it is encoded: an operator gave them to this peer.
+            var local                     = oldRemoteParty.LocalAccessInfos.ReplacedBy(CREDENTIALS_TOKEN_C, Request.LocalAccessInfo?.AccessToken);
+
             var oldRemotePartyRemoteAccessInfos = oldRemoteParty.RemoteAccessInfos.FirstOrDefault();
 
             // The credentials of the other side, CREDENTIALS_TOKEN_C in place
@@ -3411,12 +3415,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                    oldRemoteParty.RemoteAccessInfos.FirstOrDefault()?.NotAfter,
                                    null,                                                     // RemoteAllowDowngrades
 
-                                   null,                                                     // LocalAccessTokenBase64Encoding
-                                   null,                                                     // LocalTOTPConfig
-                                   null,                                                     // HTTP Modifier
-                                   null,                                                     // LocalAccessNotBefore
-                                   null,                                                     // LocalAccessNotAfter
-                                   null,                                                     // LocalAllowDowngrades
+                                   local?.AccessTokenIsBase64Encoded,                        // LocalAccessTokenBase64Encoding
+                                   local?.TOTPConfig,                                        // LocalTOTPConfig
+                                   local?.IN,                                                // HTTP Modifiers
+                                   local?.NotBefore,                                         // LocalAccessNotBefore
+                                   local?.NotAfter,                                          // LocalAccessNotAfter
+                                   local?.AllowDowngrades,                                   // LocalAllowDowngrades
                                    AccessStatus.ALLOWED,                                     // LocalAccessStatus
 
                                    null,                                                     // PartyStatus

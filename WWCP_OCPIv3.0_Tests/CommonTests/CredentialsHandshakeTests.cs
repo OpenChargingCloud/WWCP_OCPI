@@ -133,9 +133,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
             var tokenC                         = AccessToken.Parse(answer?["data"]?.Value<String>("token") ?? "");
 
             var (withA, _, _)                  = await Send(HTTPMethod.GET, credentials, tokenA);
-            // Token C as tokens are sent by default, Base64: what our local
-            // token was set to is not taken over (OCPI-ISSUES.md O6).
-            var (withC, withCCode, _)          = await Send(HTTPMethod.GET, credentials, tokenC, Base64: true);
+            // Token C as token A was set to be sent: as it is, not Base64.
+            var (withC, withCCode, _)          = await Send(HTTPMethod.GET, credentials, tokenC);
 
             Assert.Multiple(() => {
                 Assert.That(tokenC,              Is.Not.EqualTo(tokenA),             "The registration answered token A again.");

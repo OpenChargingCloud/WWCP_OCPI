@@ -72,6 +72,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         private const           SslProtocols    tls         = SslProtocols.Tls12 | SslProtocols.Tls13;
         private static readonly HTTPContentType contentType = HTTPContentType.Application.JSON_UTF8;
         private static readonly AcceptTypes     accept      = AcceptTypes.FromHTTPContentTypes(HTTPContentType.Application.JSON_UTF8);
+        private static readonly DateTimeOffset  ourNotBefore  = new (2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private static readonly DateTimeOffset  ourNotAfter   = new (2035, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private const           String          ourTOTP       = "a-shared-secret-of-ours-and-theirs-long-enough-for-totp";
 
         private String       directory  = default!;
         private CommonAPI    api        = default!;
@@ -829,7 +832,103 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
-        #region (private) Listening() / Listening(TokenOfOurs) / CredentialsURL(Token) / Send(Method, URL, Token)
+        #region ARenewalKeepsTheSettingsOfOurToken()
+
+        /// <summary>
+        /// The new token of a renewal keeps what was set for the token of ours
+        /// it takes the place of - sent Base64, not as it is; not before and
+        /// not after given times; downgrades allowed: an operator set them for
+        /// the other side, not for one token of it. The other side calls back
+        /// with it as it called with the old one, before it answers. The next
+        /// start knows them too.
+        /// </summary>
+        [Test]
+        public async Task ARenewalKeepsTheSettingsOfOurToken()
+        {
+
+            var newToken  = AccessToken.NewRandom();
+
+            await Listening();
+
+            var party     = await AddTheOtherSideWithOurTokenSet(AccessToken.NewRandom(), WithTOTP: false);
+
+            other.CallsBackBase64 = true;
+
+            var renewed   = await AClient(party).TryPutCredentials(OurCredentials(newToken));
+
+            Assert.That(renewed.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The renewal did not go through: {renewed.Response.StatusMessage} (called back: {other.CalledBack})");
+
+            SetAsItWas(LocalAccessOf(api,          newToken), WithTOTP: false, "The new token");
+            SetAsItWas(LocalAccessOf(ACommonAPI(), newToken), WithTOTP: false, "The new token at the next start");
+
+        }
+
+        #endregion
+
+        #region ARegistrationKeepsTheSettingsOfOurToken()
+
+        /// <summary>
+        /// Token B of a registration keeps what was set for the token of ours
+        /// it takes the place of - its TOTP, sent as it is, not before and not
+        /// after given times, downgrades allowed - now and at the next start.
+        /// </summary>
+        [Test]
+        public async Task ARegistrationKeepsTheSettingsOfOurToken()
+        {
+
+            var party       = await AddTheOtherSideWithOurTokenSet(AccessToken.NewRandom(), WithTOTP: true);
+
+            var registered  = await AClient(party).TryRegister();
+            var tokenB      = AccessToken.Parse(other.ReceivedCredentials?.Value<String>("token") ?? "");
+
+            Assert.That(registered.Response.Data?.Token.ToString(), Is.EqualTo(tokenC), $"The registration did not go through: {registered.Response.StatusMessage}");
+
+            SetAsItWas(LocalAccessOf(api,          tokenB), WithTOTP: true, "Token B");
+            SetAsItWas(LocalAccessOf(ACommonAPI(), tokenB), WithTOTP: true, "Token B at the next start");
+
+        }
+
+        #endregion
+
+        #region TheOtherSideRegisteringKeepsTheSettingsOfItsToken()
+
+        /// <summary>
+        /// Token C, which the other side registering here is answered with,
+        /// keeps what was set for token A it came with - sent as it is, not
+        /// before and not after given times, downgrades allowed - now and at
+        /// the next start: the other side calls with token C as it called with
+        /// token A. Sent as it is: the routes of 2.1.1 take a token as it is,
+        /// whatever is set for it.
+        /// </summary>
+        [Test]
+        public async Task TheOtherSideRegisteringKeepsTheSettingsOfItsToken()
+        {
+
+            var tokenOfOurs                    = AccessToken.NewRandom();
+
+            await Listening(tokenOfOurs, Set: true);
+
+            var credentials                    = await CredentialsURL(tokenOfOurs);
+
+            var (status, statusCode, answer)   = await Send(HTTPMethod.POST, credentials, tokenOfOurs);
+
+            Assert.That(statusCode, Is.EqualTo(1000), $"The registration answered {status}: {answer}");
+
+            var tokenOfOursNow                 = AccessToken.Parse(answer?["data"]?.Value<String>("token") ?? "");
+
+            var (_, withItCode, withIt)        = await Send(HTTPMethod.GET, credentials, tokenOfOursNow);
+
+            Assert.That(withItCode, Is.EqualTo(1000), $"Token C is not let in: {withIt}");
+
+            SetAsItWas(LocalAccessOf(api,          tokenOfOursNow), WithTOTP: false, "Token C");
+            SetAsItWas(LocalAccessOf(ACommonAPI(), tokenOfOursNow), WithTOTP: false, "Token C at the next start");
+
+        }
+
+        #endregion
+
+
+        #region (private) Listening() / Listening(TokenOfOurs, Set = false) / CredentialsURL(Token, Base64 = false) / Send(Method, URL, Token, Base64 = false)
 
         /// <summary>
         /// This test's Common API made anew, listening on a port nobody was
@@ -859,9 +958,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
         /// <summary>
         /// The same, with the other side to come: the given token of ours,
-        /// handed out and not yet used.
+        /// handed out and not yet used - set as AddTheOtherSideWithOurTokenSet
+        /// sets it, but for a TOTP, where asked to be.
         /// </summary>
-        private async Task Listening(AccessToken TokenOfOurs)
+        private async Task Listening(AccessToken  TokenOfOurs,
+                                     Boolean      Set   = false)
         {
 
             await Listening();
@@ -870,7 +971,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                                                 Party_Id.   Parse("BBB"),
                                                 Role.EMSP,
                                                 new BusinessDetails("Their EMSP"),
-                                                TokenOfOurs);
+                                                TokenOfOurs,
+                                                LocalAccessTokenBase64Encoding:  Set ? true         : null,
+                                                LocalAccessNotBefore:            Set ? ourNotBefore : null,
+                                                LocalAccessNotAfter:             Set ? ourNotAfter  : null,
+                                                LocalAllowDowngrades:            Set);
 
             Assert.That(added.IsSuccess, Is.True, $"The other side to come could not be added: {added.ErrorResponse}");
 
@@ -881,15 +986,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// it with the given token: the versions, then the details of this
         /// version.
         /// </summary>
-        private async Task<String> CredentialsURL(AccessToken Token)
+        private async Task<String> CredentialsURL(AccessToken  Token,
+                                                  Boolean      Base64   = false)
         {
 
-            var (_, _, versions)  = await Send(HTTPMethod.GET, $"http://127.0.0.1:{port}/ocpi/versions", Token);
+            var (_, _, versions)  = await Send(HTTPMethod.GET, $"http://127.0.0.1:{port}/ocpi/versions", Token, Base64);
             var details           = (versions?["data"] as JArray)?.First(version => version.Value<String>("version") == "2.1.1").Value<String>("url");
 
             Assert.That(details, Is.Not.Null, $"This API does not list 2.1.1: {versions}");
 
-            var (_, _, version)   = await Send(HTTPMethod.GET, details!, Token);
+            var (_, _, version)   = await Send(HTTPMethod.GET, details!, Token, Base64);
             var credentials       = (version?["data"]?["endpoints"] as JArray)?.First(endpoint => endpoint.Value<String>("identifier") == "credentials").Value<String>("url");
 
             Assert.That(credentials, Is.Not.Null, $"This API has no credentials endpoint: {version}");
@@ -905,13 +1011,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// </summary>
         private async Task<(Int32 Status, Int32? StatusCode, JObject? Answer)> Send(HTTPMethod   Method,
                                                                                    String       URL,
-                                                                                   AccessToken  Token)
+                                                                                   AccessToken  Token,
+                                                                                   Boolean      Base64   = false)
         {
 
             using var http     = new HttpClient();
             using var request  = new HttpRequestMessage(new HttpMethod(Method.ToString()), URL);
 
-            request.Headers.TryAddWithoutValidation("Authorization", $"Token {Token}");
+            request.Headers.TryAddWithoutValidation("Authorization", Base64
+                                                                         ? $"Token {Convert.ToBase64String(Encoding.UTF8.GetBytes(Token.ToString()))}"
+                                                                         : $"Token {Token}");
 
             if (Method == HTTPMethod.POST)
                 request.Content = new StringContent(
@@ -1085,6 +1194,72 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 Assert.That(again?.Accept?.ToString(),                             Is.EqualTo(accept.ToString()),                    "The next start does not know the types it accepts.");
                 Assert.That(again?.VersionIds,                                     Is.EqualTo(new[] { Version.Id }),                 "The next start does not know the versions of the other side.");
                 Assert.That(again?.NotAfter,                                       Is.EqualTo(notAfter),                             "The next start does not know until when the token of the other side may be used.");
+            });
+
+        }
+
+        #endregion
+
+        #region (private) AddTheOtherSideWithOurTokenSet(OurToken, WithTOTP) / LocalAccessOf(API, Token) / SetAsItWas(LocalAccess, WithTOTP, What)
+
+        /// <summary>
+        /// The other side as a remote party, the given token of ours set as an
+        /// operator may set it: sent Base64, not as it is; not before and not
+        /// after given times; downgrades allowed - and a TOTP, where asked for.
+        /// </summary>
+        private async Task<RemoteParty> AddTheOtherSideWithOurTokenSet(AccessToken  OurToken,
+                                                                       Boolean      WithTOTP)
+        {
+
+            var added = await api.AddRemoteParty(CountryCode.Parse("DE"),
+                                                Party_Id.   Parse("BBB"),
+                                                Role.EMSP,
+                                                new BusinessDetails("Their EMSP"),
+                                                OurToken,
+                                                other.VersionsURL,
+                                                AccessToken.Parse(tokenA),
+                                                LocalAccessTokenBase64Encoding:  true,
+                                                LocalTOTPConfig:                 WithTOTP ? new TOTPConfig(ourTOTP) : null,
+                                                LocalAccessNotBefore:            ourNotBefore,
+                                                LocalAccessNotAfter:             ourNotAfter,
+                                                LocalAllowDowngrades:            true,
+                                                VisibleVersionIds:               [ Version.Id ]);
+
+            Assert.That(added.IsSuccess, Is.True, $"The other side could not be added: {added.ErrorResponse}");
+
+            return added.Data!;
+
+        }
+
+        /// <summary>
+        /// The local access of the other side with the given token, or null.
+        /// </summary>
+        private static LocalAccessInfo? LocalAccessOf(CommonAPI    API,
+                                                      AccessToken  Token)
+
+            => API.RemoteParties.
+                   Where     (party => party.Id == id).
+                   SelectMany(party => party.LocalAccessInfos).
+                   FirstOrDefault(info => info.AccessToken == Token);
+
+        /// <summary>
+        /// The given local access is set as AddTheOtherSideWithOurTokenSet and
+        /// Listening(TokenOfOurs, Set: true) set the token of ours before it.
+        /// </summary>
+        private static void SetAsItWas(LocalAccessInfo?  LocalAccess,
+                                       Boolean           WithTOTP,
+                                       String            What)
+        {
+
+            Assert.That(LocalAccess, Is.Not.Null, $"{What} is not there.");
+
+            Assert.Multiple(() => {
+                Assert.That(LocalAccess!.AccessTokenIsBase64Encoded,  Is.True,                                     $"{What} is to be sent as it is, though the token before it was Base64.");
+                Assert.That(LocalAccess. NotBefore,                   Is.EqualTo(ourNotBefore),                    $"{What} is valid from another time than the token before it.");
+                Assert.That(LocalAccess. NotAfter,                    Is.EqualTo(ourNotAfter),                     $"{What} is valid until another time than the token before it.");
+                Assert.That(LocalAccess. AllowDowngrades,             Is.True,                                     $"{What} allows no downgrades, though the token before it did.");
+                Assert.That(LocalAccess. TOTPConfig?.SharedSecret,    Is.EqualTo(WithTOTP ? ourTOTP : null),       $"{What} has another TOTP than the token before it.");
+                Assert.That(LocalAccess. Pending,                     Is.False,                                    $"{What} is still pending.");
             });
 
         }
@@ -1280,6 +1455,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             /// <summary>Something to do once credentials have arrived, before the answer goes back.</summary>
             public Action?                             WhenCredentialsArrive  { get; set; }
 
+            /// <summary>Whether it calls the sender of a renewal back with the token it sent Base64, not as it is.</summary>
+            public Boolean                             CallsBackBase64        { get; set; }
+
             /// <summary>What the versions of the sender of a renewal answered the token it sent: the HTTP status and the OCPI status code.</summary>
             public (Int32 Status, Int32? StatusCode)?  CalledBack             { get; private set; }
 
@@ -1424,7 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
 
                         other.WhenCredentialsArrive?.Invoke();
 
-                        other.CalledBack = await CallBack(other.ReceivedCredentials);
+                        other.CalledBack = await CallBack(other.ReceivedCredentials, other.CallsBackBase64);
 
                         if (other.CalledBack.Value.StatusCode != 1000)
                             return Refused(request, HTTPStatusCode.MethodNotAllowed,     2000, "Could not fetch VERSIONS information!");
@@ -1464,7 +1642,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             /// the token they carry - and what they answered: the HTTP status and
             /// the OCPI status code, none where nobody answered.
             /// </summary>
-            private static async Task<(Int32 Status, Int32? StatusCode)> CallBack(JObject Credentials)
+            private static async Task<(Int32 Status, Int32? StatusCode)> CallBack(JObject  Credentials,
+                                                                                  Boolean  Base64)
             {
 
                 try
@@ -1473,7 +1652,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                     using var http     = new HttpClient();
                     using var request  = new HttpRequestMessage(HttpMethod.Get, Credentials.Value<String>("url"));
 
-                    request.Headers.TryAddWithoutValidation("Authorization", $"Token {Credentials.Value<String>("token")}");
+                    request.Headers.TryAddWithoutValidation("Authorization", Base64
+                                                                                 ? $"Token {Convert.ToBase64String(Encoding.UTF8.GetBytes(Credentials.Value<String>("token") ?? ""))}"
+                                                                                 : $"Token {Credentials.Value<String>("token")}");
 
                     using var response = await http.SendAsync(request);
 

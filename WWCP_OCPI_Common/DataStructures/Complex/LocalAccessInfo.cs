@@ -31,6 +31,46 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
+    /// Extension methods for local access information.
+    /// </summary>
+    public static class LocalAccessInfoExtensions
+    {
+
+        #region ReplacedBy(this LocalAccessInfos, NewToken, Current = null)
+
+        /// <summary>
+        /// The local access a new token of ours takes the place of, whose
+        /// settings the new token keeps - its TOTP, its validity window, how
+        /// it is encoded, whether it allows downgrades, its HTTP modifiers -
+        /// as an operator gave them to the other side, not to one token of
+        /// it: the one of the given current token, else the last one in
+        /// effect, else the last one pending, never the new token itself.
+        /// Null where there is none.
+        /// </summary>
+        /// <param name="LocalAccessInfos">The local access information of a party.</param>
+        /// <param name="NewToken">The new token of ours.</param>
+        /// <param name="Current">The token the other side holds now, where known.</param>
+        public static LocalAccessInfo? ReplacedBy(this IEnumerable<LocalAccessInfo>  LocalAccessInfos,
+                                                  AccessToken                        NewToken,
+                                                  AccessToken?                       Current   = null)
+        {
+
+            var others = LocalAccessInfos.Where(localAccessInfo => localAccessInfo.AccessToken != NewToken).ToArray();
+
+            return (Current.HasValue
+                        ? others.FirstOrDefault(localAccessInfo => localAccessInfo.AccessToken == Current.Value)
+                        : null)
+                   ?? others.LastOrDefault(localAccessInfo => !localAccessInfo.Pending)
+                   ?? others.LastOrDefault();
+
+        }
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// Local Access information.
     /// </summary>
     public sealed class LocalAccessInfo : IEquatable<LocalAccessInfo>,
