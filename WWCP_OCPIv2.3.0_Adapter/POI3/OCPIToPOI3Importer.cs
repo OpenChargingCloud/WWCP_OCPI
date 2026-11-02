@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     continue;
                 }
 
-                var mappedJSON  = mapped.ToJSON();
+                var mappedJSON  = mapped.ToJSON(Embedded: true);
                 var existing    = spaces?.OfType<JObject>().FirstOrDefault(space => POI.ParkingSpace_Id.TryParse(space["@id"]?.Value<String>() ?? "", out var id) && id == mapped.Id);
 
                 if (existing is null)
@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
 
                     // The existing parking space as OCPI tells it: what the parking tells alike is kept.
                     var unchanged = chargingStationOperator is not null && chargingStationOperator.TryGetParkingSpace(mapped.Id, out var existingSpace)
-                                        ? existingSpace.ToOCPI().ToPOI3(Location.Created, Location.LastUpdated, [])?.ToJSON()
+                                        ? existingSpace.ToOCPI().ToPOI3(Location.Created, Location.LastUpdated, [])?.ToJSON(Embedded: true)
                                         : null;
 
                     POI3Mapper.Overlay(existing, mappedJSON, POI3Mapper.ParkingSpaceProperties.Where(property => !POI3Mapper.SameValue(unchanged, mappedJSON, property)));
@@ -555,7 +555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                var tariffs    = POI3Mapper.ArrayOf(operatorJSON, "chargingTariffs");
 
                                var existing   = tariffs.OfType<JObject>().FirstOrDefault(tariff => tariff["@id"]?.Value<String>() == chargingTariff.Id.ToString());
-                               var desired    = chargingTariff.ToJSON();
+                               var desired    = chargingTariff.ToJSON(Embedded: true);
 
                                if (existing is not null)
                                {
@@ -564,7 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                    // e.g. a name and a description OCPI tells as one text.
                                    var unchanged  = head.TryGetChargingStationOperatorById(operatorId.Value, out var chargingStationOperator) &&
                                                     chargingStationOperator.TryGetChargingTariff(chargingTariff.Id, out var existingTariff)
-                                                        ? existingTariff.ToOCPI([])?.ToPOI3(operatorId.Value, Language, [])?.ToJSON()
+                                                        ? existingTariff.ToOCPI([])?.ToPOI3(operatorId.Value, Language, [])?.ToJSON(Embedded: true)
                                                         : null;
 
                                    // What only POI3 knows is kept.
@@ -931,6 +931,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     RaiseError($"{Description} can not be imported!", warnings);
                 return;
             }
+
+            // What the change made of the operator, written as POI writes it: the roaming network refuses any other
+            // written form, e.g. a list without elements or elements in another order (RoamingNetwork.WrittenForm.cs).
+            if (!POI.ChargingStationOperator.TryParse(operatorJSON, out var changedOperator, out var operatorError))
+            {
+                RaiseError($"{Description} is no valid roaming network data: {operatorError}", warnings);
+                return;
+            }
+
+            operatorJSON.Replace(changedOperator.ToJSON(Embedded: true));
 
             if (!POI.RoamingNetwork.TryParse(networkJSON, out var desired, out var parseError))
             {
