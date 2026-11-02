@@ -553,7 +553,7 @@
 //                                      AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
 //                                      AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
 //                                      ContentDisposition          = download
-//                                                                        ? @"attachment; filename = ""locations.json"""
+//                                                                        ? HTTPContentDisposition.Attachment("locations.json")
 //                                                                        : null,
 //                                      ContentType                 = HTTPContentType.Application.JSON_UTF8,
 //                                      Content                     = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
@@ -638,7 +638,7 @@
 //                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
 //                                      ContentDisposition         = download
-//                                                                       ? @"attachment; filename = ""sessions.json"""
+//                                                                       ? HTTPContentDisposition.Attachment("sessions.json")
 //                                                                       : null,
 //                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
 //                                      Content                    = new JArray(CommonAPI.GetSessions().Select(session => session.ToJSON())).ToUTF8Bytes(),
@@ -693,7 +693,7 @@
 //                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
 //                                      ContentDisposition         = download
-//                                                                       ? @"attachment; filename = ""tariffs.json"""
+//                                                                       ? HTTPContentDisposition.Attachment("tariffs.json")
 //                                                                       : null,
 //                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
 //                                      Content                    = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
@@ -748,7 +748,7 @@
 //                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
 //                                      ContentDisposition         = download
-//                                                                       ? @"attachment; filename = ""cdrs.json"""
+//                                                                       ? HTTPContentDisposition.Attachment("cdrs.json")
 //                                                                       : null,
 //                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
 //                                      Content                    = new JArray(CommonAPI.GetCDRs().Select(cdr => cdr.ToJSON())).ToUTF8Bytes(),
@@ -832,7 +832,7 @@
 //                                      AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
 //                                      AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
 //                                      ContentDisposition         = download
-//                                                                       ? @"attachment; filename = ""tokens.json"""
+//                                                                       ? HTTPContentDisposition.Attachment("tokens.json")
 //                                                                       : null,
 //                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
 //                                      Content                    = new JArray(CommonAPI.GetTokens().Select(token => token.ToJSON())).ToUTF8Bytes(),
