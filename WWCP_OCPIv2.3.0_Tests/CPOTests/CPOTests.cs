@@ -1010,7 +1010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 Assert.That(response2,                                                      Is.Not.Null);
                 Assert.That(response2.HTTPResponse?.HTTPStatusCode.Code,                    Is.EqualTo(405));
                 Assert.That(response2.StatusCode.Value,                                     Is.EqualTo(2000));
-                Assert.That(response2.StatusMessage,                                        Is.EqualTo("The given access token 'emp1-2-cso:token' is not yet registered!"));
+                Assert.That(response2.StatusMessage,                                        Is.EqualTo("The given access token is not yet registered!"));
                 Assert.That(Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 //ClassicAssert.IsNotNull(response.Request);
@@ -1254,7 +1254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
                 Assert.That(response,                                                       Is.Not.Null);
                 Assert.That(response.HTTPResponse?.HTTPStatusCode.Code,                     Is.EqualTo(405));
                 Assert.That(response.StatusCode.Value,                                      Is.EqualTo(2000));
-                Assert.That(response.StatusMessage,                                         Is.EqualTo("The given access token 'emp1-2-cso:token' is already registered!"));
+                Assert.That(response.StatusMessage,                                         Is.EqualTo("The given access token is already registered!"));
                 Assert.That(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10), Is.True);
 
                 // Refused: the CPO still calls EMSP #1 with the token it had.
