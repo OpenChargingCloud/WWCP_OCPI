@@ -732,6 +732,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
         #endregion
 
 
+        #region ATimeZoneOfNoRegionIsNone()
+
+        [Test]
+        public void ATimeZoneOfNoRegionIsNone()
+        {
+
+            var network   = ANetwork();
+            var location  = network.GetChargingStationOperatorById(GEF)!.ChargingPools.Single().ToOCPI(network, [])!;
+
+            JObject? Imported(String TimeZone, List<Warning> Warnings)
+
+                => new Location(location.CountryCode, location.PartyId, location.Id, true, location.Address, location.City,
+                                location.Country, location.Coordinates, TimeZone, Created: Created, LastUpdated: T0).
+                       ToPOI3(GEF, null, Languages.en, Warnings);
+
+            var regionWarnings  = new List<Warning>();
+            var utcWarnings     = new List<Warning>();
+            var offsetWarnings  = new List<Warning>();
+
+            var region          = Imported("Europe/Berlin", regionWarnings);
+            // Written for a charging pool without a time zone: none again, no warning.
+            var utc             = Imported("UTC",           utcWarnings);
+            // A time zone of no region: none, warned of.
+            var offset          = Imported("Etc/GMT-1",     offsetWarnings);
+
+            Assert.Multiple(() => {
+
+                Assert.That(region?["timeZone"]?.Value<String>(),   Is.EqualTo("Europe/Berlin"));
+                Assert.That(regionWarnings,                         Is.Empty);
+
+                Assert.That(utc,                                    Is.Not.Null);
+                Assert.That(utc?["timeZone"],                       Is.Null);
+                Assert.That(utcWarnings,                            Is.Empty);
+
+                Assert.That(offset,                                 Is.Not.Null);
+                Assert.That(offset?["timeZone"],                    Is.Null);
+                Assert.That(offsetWarnings.Single().Text.FirstText(), Does.Contain("Etc/GMT-1"));
+
+            });
+
+        }
+
+        #endregion
+
+
         #region ThePublisherRemovesWhatIsGone()
 
         [Test]

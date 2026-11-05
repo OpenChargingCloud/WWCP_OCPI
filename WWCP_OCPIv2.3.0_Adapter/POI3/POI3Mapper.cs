@@ -794,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                 OpeningTimes:         Location.OpeningTimes is not null ? new ImmutableOpeningTimes(Location.OpeningTimes.ToPOI3()) : null,
                                 EnergyMix:            Location.EnergyMix?.ToPOI3(Language, $"location '{Location.Id}'", Warnings),
                                 Images:               Location.Images.Select(ToPOI3),
-                                TimeZone:             Time_Zone.TryParse(Location.TimeZone),
+                                TimeZone:             TimeZoneOf(Location, Warnings),
                                 Facilities:           Location.Facilities.Select(facility => POI.Facility.TryParse(facility.ToString())).
                                                                           Where (facility => facility.HasValue).
                                                                           Select(facility => facility!.Value),
@@ -1993,6 +1993,32 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
             return options;
 
         }
+
+        #region (private static) TimeZoneOf(Location, Warnings)
+
+        /// <summary>
+        /// The time zone of the given location as a charging pool may have it: one of a region of the IANA time zone
+        /// database this reader knows. "UTC", written for a charging pool without one, is none; any other is none, warned of.
+        /// </summary>
+        private static Time_Zone? TimeZoneOf(Location              Location,
+                                             ICollection<Warning>  Warnings)
+        {
+
+            if (String.IsNullOrWhiteSpace(Location.TimeZone) || Location.TimeZone == "UTC")
+                return null;
+
+            if (Time_Zone.TryParse(Location.TimeZone) is Time_Zone timeZone &&
+                POI.POITimeZones.TryFind(timeZone, out _))
+            {
+                return timeZone;
+            }
+
+            Warnings.Add(Warning.Create($"The time zone '{Location.TimeZone}' of the location '{Location.Id}' is no time zone of a region of the IANA time zone database this reader knows: the charging pool has none!"));
+            return null;
+
+        }
+
+        #endregion
 
         private static IEnumerable<ParkingRestriction> ParkingRestrictionsOf(POI.ChargingPool ChargingPool)
 
