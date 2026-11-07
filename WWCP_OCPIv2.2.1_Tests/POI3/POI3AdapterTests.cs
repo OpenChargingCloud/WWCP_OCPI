@@ -583,6 +583,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
 
         #endregion
 
+        #region WhatIsPublishedIsDatedWhenItIsStored()
+
+        /// <summary>
+        /// A change dated before a pull with 'date_from', e.g. committed late after waiting for its co-signatures, is
+        /// stored with the time it is stored: dated by its signer, the next pull would miss it (OCPI-ISSUES.md O13).
+        /// </summary>
+        [Test]
+        public async Task WhatIsPublishedIsDatedWhenItIsStored()
+        {
+
+            var history    = POI.RoamingNetworkHistory.Start(ANetwork());
+            var errors     = new List<String>();
+
+            await using var publisher = new POI3ToOCPIPublisher(history, api);
+            publisher.OnError += (sender, description, warnings) => { lock (errors) errors.Add(description); };
+
+            await publisher.StartAsync();
+
+            var locationId = Location_Id.Parse("1");
+
+            // A pull with 'date_from' now, then a change signed days before.
+            var pulled = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
+            var head   = history.Head.RoamingNetwork;
+
+            Assert.That(history.Commit(head.CreateSignedChangeSet([ POI.RoamingNetworkChange.UpdateProperty(head.GetChargingStationOperatorById(GEF)!.EVSEs.Single(), "maxPower", null, 11000) ],
+                                                                  CreatedAt: T0)).IsCommitted);
+
+            Assert.That(await Eventually(() => api.TryGetLocation(Party, locationId, out var location) &&
+                                               location.EVSEs.Single().Connectors.Single().MaxElectricPower?.Value == 11000),
+                        Is.True, "The changed maximum power was not published.");
+
+            // A status since days before as well.
+            var pulledAgain = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
+
+            history.RuntimeStatus.TryUpdate(POI.POIRuntimeStatusKind.Status, nameof(POI.EVSE), E1.ToString(), "charging", T0.AddMinutes(1), out _, out _);
+
+            Assert.That(await Eventually(() => api.TryGetLocation(Party, locationId, out var location) &&
+                                               location.EVSEs.Single().Status == StatusType.CHARGING),
+                        Is.True, "The changed status was not published.");
+
+            api.TryGetLocation(Party, locationId, out var published);
+
+            Assert.Multiple(() => {
+
+                Assert.That(published!.LastUpdated,               Is.GreaterThanOrEqualTo(pulledAgain));
+                Assert.That(published.EVSEs.Single().LastUpdated, Is.GreaterThanOrEqualTo(pulledAgain));
+                Assert.That(published.LastUpdated,                Is.GreaterThanOrEqualTo(pulled));
+
+                lock (errors)
+                    Assert.That(errors, Is.Empty);
+
+            });
+
+        }
+
+        #endregion
+
         #region TheImporterCommitsWhatTheCommonAPIReceives()
 
         [Test]

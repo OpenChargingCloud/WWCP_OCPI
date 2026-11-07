@@ -289,16 +289,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
                     currentTariffs.Add((party, tariff.Id));
                     tariffs.       Add((party, tariff.Id));
 
+                    DateTimeOffset? storedAt = null;
+
                     if (CommonAPI.TryGetTariff(party, tariff.Id, out var stored))
                     {
 
                         if (SameContent(stored.ToJSON(), tariff.ToJSON()))
                             continue;
 
-                        if (tariff.LastUpdated <= stored.LastUpdated)
-                            tariff = chargingTariff.ToOCPI(warnings, stored.LastUpdated.AddMilliseconds(1), prices)!;
+                        storedAt = stored.LastUpdated;
 
                     }
+
+                    var notBefore = NotBefore(storedAt);
+
+                    if (tariff.LastUpdated < notBefore)
+                        tariff = chargingTariff.ToOCPI(warnings, notBefore, prices)!;
 
                     var result = await CommonAPI.AddOrUpdateTariff(tariff);
 
@@ -323,16 +329,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
                     currentLocations.Add((party, location.Id));
                     locations.       Add((party, location.Id));
 
+                    DateTimeOffset? storedAt = null;
+
                     if (CommonAPI.TryGetLocation(party, location.Id, out var stored))
                     {
 
                         if (SameContent(stored.ToJSON(), location.ToJSON()))
                             continue;
 
-                        if (location.LastUpdated <= stored.LastUpdated)
-                            location = chargingPool.ToOCPI(head, warnings, stored.LastUpdated.AddMilliseconds(1))!;
+                        storedAt = stored.LastUpdated;
 
                     }
+
+                    var notBefore = NotBefore(storedAt);
+
+                    if (location.LastUpdated < notBefore)
+                        location = chargingPool.ToOCPI(head, warnings, notBefore)!;
 
                     var result = await CommonAPI.AddOrUpdateLocation(location);
 
@@ -432,6 +444,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
                     if (ocpiEVSE is null)
                         return;
 
+                    DateTimeOffset? storedAt = null;
+
                     if (location.TryGetEVSE(ocpiEVSE.UId, out var stored))
                     {
 
@@ -442,10 +456,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
                             return;
                         }
 
-                        if (ocpiEVSE.LastUpdated <= stored.LastUpdated)
-                            ocpiEVSE = evse.ToOCPI(chargingStation, chargingPool, chargingStationOperator, warnings, stored.LastUpdated.AddMilliseconds(1))!;
+                        storedAt = stored.LastUpdated;
 
                     }
+
+                    var notBefore = NotBefore(storedAt);
+
+                    if (ocpiEVSE.LastUpdated < notBefore)
+                        ocpiEVSE = evse.ToOCPI(chargingStation, chargingPool, chargingStationOperator, warnings, notBefore)!;
 
                     var result = await CommonAPI.AddOrUpdateEVSE(location, ocpiEVSE);
 
@@ -456,6 +474,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.POI3
 
                 }
             }
+
+        }
+
+        #endregion
+
+        #region (private static) NotBefore(Stored)
+
+        /// <summary>
+        /// The earliest 'last updated' of what is stored now: the time it is stored, and after the one stored before.
+        /// Not the last change in POI alone: that is the time its signer chose, and a change committed late, e.g. after
+        /// waiting for its co-signatures, would be dated before a pull with 'date_from' had passed, and missed (O13).
+        /// </summary>
+        /// <param name="Stored">The 'last updated' of the one stored before, if any.</param>
+        private static DateTimeOffset NotBefore(DateTimeOffset? Stored)
+        {
+
+            var now = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
+
+            return Stored.HasValue && Stored.Value >= now
+                       ? Stored.Value.AddMilliseconds(1)
+                       : now;
 
         }
 
