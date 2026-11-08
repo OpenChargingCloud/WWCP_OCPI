@@ -457,98 +457,143 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CorrelationId    = Request.TryParseHeaderStruct               (HTTPHeaders.X_Correlation_ID, Correlation_Id.TryParse, Correlation_Id.NewRandom(IsLocal: true));
             var  totp             = Request.TryParseHeaderField<TOTPHTTPHeader>("TOTP",                       TOTPHTTPHeader.TryParse);
 
-            if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                OCPI.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
+            // The token is read as it was sent, and BASE64-decoded where it
+            // reads as BASE64, and it is the token of a party in either reading -
+            // as the versions list of the base API reads it. Read as it was sent
+            // only, a token a party sends BASE64-encoded, as our own clients send
+            // it unless told otherwise, was let in at the versions list and
+            // refused at every route of 2.1.1; read only as the access of its
+            // party says it is sent, a token a party sends as it is, as 2.1.1
+            // has it, would be refused wherever that access says nothing.
+            AccessToken?  accessTokenRAW     = null;
+            AccessToken?  accessTokenBASE64  = null;
+
+            if (Request.Authorization is HTTPTokenAuthentication tokenAuth)
             {
-                this.AccessToken = accessToken;
+
+                if (OCPI.AccessToken.TryParse          (tokenAuth.Token, out var parsedAccessToken))
+                    accessTokenRAW     = parsedAccessToken;
+
+                if (OCPI.AccessToken.TryParseFromBASE64(tokenAuth.Token, out var decodedAccessToken))
+                    accessTokenBASE64  = decodedAccessToken;
+
             }
 
-            else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
-                OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
+            else if (Request.Authorization is HTTPBasicAuthentication basicAuth)
             {
 
-                this.AccessToken  = accessToken;
+                if (OCPI.AccessToken.TryParse          (basicAuth.Username, out var parsedAccessToken))
+                    accessTokenRAW     = parsedAccessToken;
+
+                if (OCPI.AccessToken.TryParseFromBASE64(basicAuth.Username, out var decodedAccessToken))
+                    accessTokenBASE64  = decodedAccessToken;
 
                 // The password is a TOTP only where it reads as one. Anything
                 // else, an empty one among them, is none - and not an exception
                 // thrown at whoever sent it, before its token was looked at.
-                if (TOTPHTTPHeader.TryParse(BasicAuth.Password, out var totpOfThePassword, out _))
-                    totp          = totpOfThePassword;
+                if (TOTPHTTPHeader.TryParse(basicAuth.Password, out var totpOfThePassword, out _))
+                    totp               = totpOfThePassword;
 
             }
 
             var accessTokenErrorMessages   = new List<String>();
             this.AccessTokenErrorMessages  = accessTokenErrorMessages;
 
-            if (this.AccessToken.HasValue)
+            // As it was sent first, as 2.1.1 has it, and BASE64-decoded where
+            // that reading is of nobody here. Where neither is, both say why.
+            IEnumerable<Tuple<RemoteParty, LocalAccessInfo>>? partiesAccessInfos = null;
+
+            foreach (var reading in new[] { accessTokenRAW, accessTokenBASE64 })
             {
 
-                if (!CommonAPI.TryGetRemoteParties(AccessToken.Value,
-                                                   totp,
-                                                   null,
-                                                   out var partiesAccessInfos,
-                                                   out var accessTokenErrorMessage))
+                if (!reading.HasValue || partiesAccessInfos is not null)
+                    continue;
+
+                if (CommonAPI.TryGetRemoteParties(reading.Value,
+                                                  totp,
+                                                  null,
+                                                  out var partiesOfThisReading,
+                                                  out var accessTokenErrorMessage))
                 {
+                    this.AccessToken    = reading;
+                    partiesAccessInfos  = partiesOfThisReading;
+                }
+
+                else if (!accessTokenErrorMessages.Contains(accessTokenErrorMessage ?? UnknownAccessToken))
                     accessTokenErrorMessages.Add(accessTokenErrorMessage ?? UnknownAccessToken);
-                }
 
-                else
+            }
+
+            if (partiesAccessInfos is not null)
+                accessTokenErrorMessages.Clear();
+
+            // A token of nobody here and a TOTP not its party's: the TOTP says
+            // more, as 2.2.1 has it.
+            else if (accessTokenErrorMessages.Count > 1)
+                accessTokenErrorMessages.Remove(UnknownAccessToken);
+
+            // Where the token reads as neither, it is taken as it was sent, as
+            // before, though nobody has it.
+            if (!this.AccessToken.HasValue)
+                this.AccessToken = accessTokenRAW;
+
+            if (partiesAccessInfos is not null)
+            {
+
+                if (partiesAccessInfos.Count() == 1)
                 {
 
-                    if (partiesAccessInfos.Count() == 1)
-                    {
+                    RemoteParty      = partiesAccessInfos.First().Item1;
 
-                        RemoteParty      = partiesAccessInfos.First().Item1;
+                    var localAccess  = partiesAccessInfos.First().Item2;
 
-                        LocalAccessInfo  = new LocalAccessInfo2(
-                                               AccessToken.Value,
-                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).Status,
-                                               RemoteParty.CountryCode,
-                                               RemoteParty.PartyId,
-                                               RemoteParty.Role,
-                                               RemoteParty.BusinessDetails,
-                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).NotBefore,
-                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).NotAfter,
-                                               RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
-                                           );
+                    LocalAccessInfo  = new LocalAccessInfo2(
+                                           AccessToken!.Value,
+                                           localAccess.Status,
+                                           RemoteParty.CountryCode,
+                                           RemoteParty.PartyId,
+                                           RemoteParty.Role,
+                                           RemoteParty.BusinessDetails,
+                                           localAccess.NotBefore,
+                                           localAccess.NotAfter,
+                                           RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                       );
 
-                        CPOId            = RemoteParty.Role == Role.CPO
-                                              ? CPO_Id. Parse($"{LocalAccessInfo.CountryCode}*{LocalAccessInfo.PartyId}")
-                                              : null;
+                    CPOId            = RemoteParty.Role == Role.CPO
+                                          ? CPO_Id. Parse($"{LocalAccessInfo.CountryCode}*{LocalAccessInfo.PartyId}")
+                                          : null;
 
-                        EMSPId           = RemoteParty.Role == Role.EMSP
-                                              ? EMSP_Id.Parse($"{LocalAccessInfo.CountryCode}-{LocalAccessInfo.PartyId}")
-                                              : null;
-
-                    }
-
-                    //else if (parties.Count() > 1      &&
-                    //         FromCountryCode.HasValue &&
-                    //         FromPartyId.    HasValue)
-                    //{
-
-                    //    var filteredParties = parties.Where(party => party.CountryCode == FromCountryCode.Value &&
-                    //                                                 party.PartyId     == FromPartyId.    Value).ToArray();
-
-                    //    if (filteredParties.Count() == 1)
-                    //    {
-
-                    //        this.AccessInfo   = new AccessInfo(AccessToken.Value,
-                    //                                           filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                    //                                           null,
-                    //                                           parties.First().BusinessDetails,
-                    //                                           parties.First().CountryCode,
-                    //                                           parties.First().PartyId);
-
-                    //        this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
-
-                    //        this.RemoteParty  = filteredParties.First();
-
-                    //    }
-
-                    //}
+                    EMSPId           = RemoteParty.Role == Role.EMSP
+                                          ? EMSP_Id.Parse($"{LocalAccessInfo.CountryCode}-{LocalAccessInfo.PartyId}")
+                                          : null;
 
                 }
+
+                //else if (parties.Count() > 1      &&
+                //         FromCountryCode.HasValue &&
+                //         FromPartyId.    HasValue)
+                //{
+
+                //    var filteredParties = parties.Where(party => party.CountryCode == FromCountryCode.Value &&
+                //                                                 party.PartyId     == FromPartyId.    Value).ToArray();
+
+                //    if (filteredParties.Count() == 1)
+                //    {
+
+                //        this.AccessInfo   = new AccessInfo(AccessToken.Value,
+                //                                           filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                //                                           null,
+                //                                           parties.First().BusinessDetails,
+                //                                           parties.First().CountryCode,
+                //                                           parties.First().PartyId);
+
+                //        this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+
+                //        this.RemoteParty  = filteredParties.First();
+
+                //    }
+
+                //}
 
 
             //    if (CommonAPI.TryGetAccessInfo(this.AccessToken.Value, out AccessInfo accessInfo))

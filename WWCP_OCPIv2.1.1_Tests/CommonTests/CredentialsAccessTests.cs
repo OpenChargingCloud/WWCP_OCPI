@@ -347,6 +347,89 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         #endregion
 
 
+        #region ATokenSentBASE64EncodedIsLetInAtTheRoutesOfThisVersion()
+
+        /// <summary>
+        /// A party whose access says nothing of how it sends its token - it is
+        /// BASE64-encoded then, as our own clients send it - is let in with it
+        /// BASE64-encoded at the details of this version and at its credentials,
+        /// as at the versions list, and given its token as it is.
+        /// </summary>
+        /// <remarks>
+        /// 2.1.1 read a token only as it was sent: such a party was let in at
+        /// the versions list and refused at every route of 2.1.1 with "Unknown
+        /// access token!".
+        /// </remarks>
+        [Test]
+        public async Task ATokenSentBASE64EncodedIsLetInAtTheRoutesOfThisVersion()
+        {
+
+            var base64Token  = AccessToken.Parse("their-base64-token-of-ours");
+            var encoded      = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(base64Token.ToString()));
+
+            var added        = await api.AddRemoteParty(CountryCode.Parse("DE"),
+                                                       Party_Id.   Parse("EEE"),
+                                                       Role.EMSP,
+                                                       new BusinessDetails("An EMSP that sends its token BASE64-encoded"),
+                                                       base64Token);
+
+            Assert.That(added.IsSuccess, Is.True, $"The party could not be added: {added.ErrorResponse}");
+
+            var versions     = await Send($"http://127.0.0.1:{port}/ocpi/versions", $"Token {encoded}");
+            var details      = await Send(await VersionDetailsURL(),              $"Token {encoded}");
+            var credentials  = await Send(await CredentialsURL(),                 $"Token {encoded}");
+
+            Assert.Multiple(() => {
+
+                Assert.That(versions.   Status,                                  Is.EqualTo(200),                      $"The versions list: {versions.Text}");
+
+                Assert.That(details.    Status,                                  Is.EqualTo(200),                      $"The details of this version: {details.Text}");
+                Assert.That(details.    JSON?.Value<Int32?>("status_code"),      Is.EqualTo(1000),                     $"The details of this version: {details.Text}");
+
+                Assert.That(credentials.Status,                                  Is.EqualTo(200),                      $"The credentials: {credentials.Text}");
+                Assert.That(credentials.JSON?.Value<Int32?>("status_code"),      Is.EqualTo(1000),                     $"The credentials: {credentials.Text}");
+                Assert.That(credentials.JSON?["data"]?.Value<String>("token"),   Is.EqualTo(base64Token.ToString()),  "The credentials do not hold the token as it is.");
+
+            });
+
+        }
+
+        #endregion
+
+        #region ATokenSentAsItIsIsLetInWhateverItsAccessSays()
+
+        /// <summary>
+        /// A party whose access says nothing of how it sends its token is let in
+        /// at the credentials with it as it is, too, as 2.1.1 has a token sent:
+        /// reading its token only as its access says would shut it out.
+        /// </summary>
+        [Test]
+        public async Task ATokenSentAsItIsIsLetInWhateverItsAccessSays()
+        {
+
+            var rawToken  = AccessToken.Parse("their-other-token-of-ours");
+
+            var added     = await api.AddRemoteParty(CountryCode.Parse("DE"),
+                                                    Party_Id.   Parse("FFF"),
+                                                    Role.EMSP,
+                                                    new BusinessDetails("An EMSP that sends its token as it is"),
+                                                    rawToken);
+
+            Assert.That(added.IsSuccess, Is.True, $"The party could not be added: {added.ErrorResponse}");
+
+            var answer    = await Send(await CredentialsURL(), $"Token {rawToken}");
+
+            Assert.Multiple(() => {
+                Assert.That(answer.Status,                                  Is.EqualTo(200),                   answer.Text);
+                Assert.That(answer.JSON?.Value<Int32?>("status_code"),      Is.EqualTo(1000),                  answer.Text);
+                Assert.That(answer.JSON?["data"]?.Value<String>("token"),   Is.EqualTo(rawToken.ToString()),  "The credentials do not hold the token they were asked with.");
+            });
+
+        }
+
+        #endregion
+
+
         #region TheRequestNamesTheValidityOfTheTokenItCameWith()
 
         /// <summary>
