@@ -1874,7 +1874,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The official URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
+        /// <param name="URLPathPrefix">An optional URL path prefix, below that of the base API, as 2.x have theirs.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
@@ -1914,9 +1914,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          String?                       LogfileName               = null,
                          OCPILogfileCreatorDelegate?   LogfileCreator            = null)
 
+            // Below the path of the base API, as 2.x are: a path given was
+            // a whole path here and one below the base API's in 2.x, so one
+            // platform serving both had its versions in different places.
             : base(Description     ?? I18NString.Create($"OCPI{Version.String} Common HTTP API"),
                    BaseAPI.HTTPBaseAPI,
-                   URLPathPrefix,
+                   BaseAPI.URLPathPrefix + URLPathPrefix,
                    BasePath,
 
                    ExternalDNSName,
@@ -1973,7 +1976,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     URL.Concat(
                         (BaseAPI.OurVersionsURL.Scheme?.Prefix ?? URIScheme.https.Prefix),
                         BaseAPI.HTTPBaseAPI.ExternalDNSName ?? ("localhost:" + BaseAPI.HTTPBaseAPI.HTTPServer.TCPPort),
-                        URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
+                        BaseAPI.URLPathPrefix + URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}"
                     )
                 )
             ).GetAwaiter().GetResult();

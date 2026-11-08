@@ -38,7 +38,9 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
     /// <summary>
     /// OCPI 2.2.1 and 3.0 on one HTTP API and below one path, as a platform
     /// serving both versions has them: each version is answered at its own
-    /// routes by its own Common API, and a version served by neither by none.
+    /// routes by its own Common API, and a version served by neither by none -
+    /// both given no path of their own, as the RoamingHub gives none, and both
+    /// given the same one, which each puts below the path of the base API.
     /// </summary>
     /// <remarks>
     /// 3.0 registered its routes as templates of the version id,
@@ -46,15 +48,24 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
     /// register their own version: they matched every version's routes, and
     /// where they came before 2.2.1's, a 2.2.1 peer was answered by 3.0 - and
     /// refused, its token being of nobody there.
+    /// And 3.0 took a path given as a whole path, where 2.x put that of the
+    /// base API before it: given none, 3.0 was served at the root of the HTTP
+    /// API, and given one, elsewhere than 2.2.1 given the same.
     /// </remarks>
-    [TestFixture]
-    public class VersionRoutesTests
+    [TestFixture("")]
+    [TestFixture("/cso")]
+    public class VersionRoutesTests(String OwnPath)
     {
 
         #region Data
 
         private static readonly AccessToken  token2_2_1  = AccessToken.Parse("their-2.2.1-token-of-ours");
         private static readonly AccessToken  token3_0    = AccessToken.Parse("their-3.0-token-of-ours");
+
+        /// <summary>
+        /// The path both versions are given, below that of the base API, or none.
+        /// </summary>
+        private readonly        HTTPPath?    ownPathPrefix  = OwnPath.Length > 0 ? HTTPPath.Parse(OwnPath) : null;
 
         private String               directory  = default!;
         private CommonHTTPAPI        baseAPI    = default!;
@@ -165,8 +176,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
             var url3_0         = DetailsURL(versions3_0,   "3.0");
 
             Assert.Multiple(() => {
-                Assert.That(url2_2_1,  Does.EndWith($":{port}/ocpi/versions/2.2.1"),  $"The versions list does not list 2.2.1 where it is: {versions2_2_1.Text}");
-                Assert.That(url3_0,    Does.EndWith($":{port}/ocpi/versions/3.0"),    $"The versions list does not list 3.0 where it is: {versions3_0.Text}");
+                Assert.That(url2_2_1,  Does.EndWith($":{port}/ocpi{OwnPath}/versions/2.2.1"),  $"The versions list does not list 2.2.1 where it is: {versions2_2_1.Text}");
+                Assert.That(url3_0,    Does.EndWith($":{port}/ocpi{OwnPath}/versions/3.0"),    $"The versions list does not list 3.0 where it is: {versions3_0.Text}");
             });
 
             var details2_2_1   = await Send(url2_2_1!, $"Token {token2_2_1}");
@@ -199,12 +210,12 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
         public async Task EachVersionsCredentialsAreThoseOfItsOwnCommonAPI()
         {
 
-            var url2_2_1          = CredentialsURL(await Send($"http://127.0.0.1:{port}/ocpi/versions/2.2.1", $"Token {token2_2_1}"));
-            var url3_0            = CredentialsURL(await Send($"http://127.0.0.1:{port}/ocpi/versions/3.0",   $"Token {token3_0}"));
+            var url2_2_1          = CredentialsURL(await Send($"http://127.0.0.1:{port}/ocpi{OwnPath}/versions/2.2.1", $"Token {token2_2_1}"));
+            var url3_0            = CredentialsURL(await Send($"http://127.0.0.1:{port}/ocpi{OwnPath}/versions/3.0",   $"Token {token3_0}"));
 
             Assert.Multiple(() => {
-                Assert.That(url2_2_1,  Does.EndWith($":{port}/ocpi/v2.2.1/credentials"),  "2.2.1 announces its credentials elsewhere.");
-                Assert.That(url3_0,    Does.EndWith($":{port}/ocpi/v3.0/credentials"),    "3.0 announces its credentials elsewhere.");
+                Assert.That(url2_2_1,  Does.EndWith($":{port}/ocpi{OwnPath}/v2.2.1/credentials"),  "2.2.1 announces its credentials elsewhere.");
+                Assert.That(url3_0,    Does.EndWith($":{port}/ocpi{OwnPath}/v3.0/credentials"),    "3.0 announces its credentials elsewhere.");
             });
 
             var credentials2_2_1  = await Send(url2_2_1!, $"Token {token2_2_1}");
@@ -237,8 +248,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
         public async Task AVersionServedByNoneIsAnsweredByNone()
         {
 
-            var details      = await Send($"http://127.0.0.1:{port}/ocpi/versions/2.1.1",  $"Token {token3_0}");
-            var credentials  = await Send($"http://127.0.0.1:{port}/ocpi/v2.1.1/credentials", $"Token {token3_0}");
+            var details      = await Send($"http://127.0.0.1:{port}/ocpi{OwnPath}/versions/2.1.1",  $"Token {token3_0}");
+            var credentials  = await Send($"http://127.0.0.1:{port}/ocpi{OwnPath}/v2.1.1/credentials", $"Token {token3_0}");
 
             Assert.Multiple(() => {
                 Assert.That(details.    Status,  Is.EqualTo(404),  $"The details of 2.1.1, served by none, were answered: {details.Text}");
@@ -341,8 +352,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
 
         /// <summary>
         /// A 2.2.1 Common API below the path both versions share: that of the
-        /// base API, which 2.x put before a path of their own, given none here,
-        /// as the RoamingHub gives none.
+        /// base API, which 2.x put before the path they are given.
         /// </summary>
         private v2_2_1.CommonAPI ACommonAPIv2_2_1(CommonHTTPAPI BaseAPI)
 
@@ -359,6 +369,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
 
                    BaseAPI:           BaseAPI,
 
+                   URLPathPrefix:     ownPathPrefix,
                    DatabaseFilePath:  directory,
                    DisableLogging:    true,
                    LoggingPath:       directory
@@ -366,8 +377,8 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
                );
 
         /// <summary>
-        /// A 3.0 Common API below the path both versions share, which 3.0 is
-        /// given whole: it puts no path of the base API before it.
+        /// A 3.0 Common API below the path both versions share: that of the
+        /// base API, which 3.0 puts before the path it is given, as 2.x do.
         /// </summary>
         private v3_0.CommonAPI ACommonAPIv3_0(CommonHTTPAPI BaseAPI)
 
@@ -384,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
 
                    BaseAPI:             BaseAPI,
 
-                   URLPathPrefix:       HTTPPath.Parse("/ocpi"),
+                   URLPathPrefix:       ownPathPrefix,
                    DatabaseFilePath:    directory,
                    DisableLogging:      true,
                    LoggingPath:         directory

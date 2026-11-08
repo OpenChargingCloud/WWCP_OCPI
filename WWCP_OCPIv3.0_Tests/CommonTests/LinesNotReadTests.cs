@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
                    BaseAPI:             ACommonHTTPAPI(),
 
-                   URLPathPrefix:       HTTPPath.Parse("/ocpi/v3.0"),
+                   URLPathPrefix:       HTTPPath.Parse("/v3.0"),
                    DatabaseFilePath:    directory,
                    DisableLogging:      true,
                    LoggingPath:         directory
