@@ -601,38 +601,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.POI3
 
             await publisher.StartAsync();
 
-            var locationId = Location_Id.Parse("1");
+            var             locationId   = Location_Id.Parse("1");
+            DateTimeOffset? pulledAgain  = null;
 
             // A pull with 'date_from' now, then a change signed days before.
             var pulled = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
             var head   = history.Head.RoamingNetwork;
 
+            // What a failure is to tell: when it pulled, what is stored, and what the publisher reported.
+            String Diagnosis()
+            {
+
+                api.TryGetLocation(Party, locationId, out var location);
+
+                lock (errors)
+                    return $"Pulled at {pulled.ToISO8601()}, again at {pulledAgain?.ToISO8601() ?? "-"}, now {Timestamp.Now.ToISO8601()}; " +
+                           $"stored: {location?.ToJSON().ToString(Newtonsoft.Json.Formatting.None) ?? "none"}; " +
+                           $"errors: {(errors.Count > 0 ? String.Join(" | ", errors) : "none")}";
+
+            }
+
             Assert.That(history.Commit(head.CreateSignedChangeSet([ POI.RoamingNetworkChange.UpdateProperty(head.GetChargingStationOperatorById(GEF)!.EVSEs.Single(), "maxPower", null, 11000) ],
-                                                                  CreatedAt: T0)).IsCommitted);
+                                                                  CreatedAt: T0)).IsCommitted, Diagnosis);
 
             Assert.That(await Eventually(() => api.TryGetLocation(Party, locationId, out var location) &&
                                                location.EVSEs.Single().Connectors.Single().MaxElectricPower?.Value == 11000),
-                        Is.True, "The changed maximum power was not published.");
+                        Is.True, () => $"The changed maximum power was not published. {Diagnosis()}");
 
             // A status since days before as well.
-            var pulledAgain = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
+            pulledAgain = DateTimeOffset.FromUnixTimeMilliseconds(Timestamp.Now.ToUnixTimeMilliseconds());
 
             history.RuntimeStatus.TryUpdate(POI.POIRuntimeStatusKind.Status, nameof(POI.EVSE), E1.ToString(), "charging", T0.AddMinutes(1), out _, out _);
 
             Assert.That(await Eventually(() => api.TryGetLocation(Party, locationId, out var location) &&
                                                location.EVSEs.Single().Status == StatusType.CHARGING),
-                        Is.True, "The changed status was not published.");
+                        Is.True, () => $"The changed status was not published. {Diagnosis()}");
 
             api.TryGetLocation(Party, locationId, out var published);
 
             Assert.Multiple(() => {
 
-                Assert.That(published!.LastUpdated,               Is.GreaterThanOrEqualTo(pulledAgain));
-                Assert.That(published.EVSEs.Single().LastUpdated, Is.GreaterThanOrEqualTo(pulledAgain));
-                Assert.That(published.LastUpdated,                Is.GreaterThanOrEqualTo(pulled));
+                Assert.That(published!.LastUpdated,               Is.GreaterThanOrEqualTo(pulledAgain), Diagnosis);
+                Assert.That(published.EVSEs.Single().LastUpdated, Is.GreaterThanOrEqualTo(pulledAgain), Diagnosis);
+                Assert.That(published.LastUpdated,                Is.GreaterThanOrEqualTo(pulled),      Diagnosis);
 
                 lock (errors)
-                    Assert.That(errors, Is.Empty);
+                    Assert.That(errors, Is.Empty, Diagnosis);
 
             });
 
