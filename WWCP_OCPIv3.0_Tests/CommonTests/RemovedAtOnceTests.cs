@@ -342,6 +342,135 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
+        // The lines of files written before: what removed one token or every
+        // one of a kind was written down as the next start then read it.
+
+        #region ATokenRemovedAsATokenStatusIsGoneAtTheNextStart()
+
+        /// <summary>
+        /// A token removed, its line written as a token status - as the next
+        /// start read the line of a token removed before - is gone at the next
+        /// start as well, and the token kept is there.
+        /// </summary>
+        [Test]
+        public async Task ATokenRemovedAsATokenStatusIsGoneAtTheNextStart()
+        {
+
+            var removed  = AToken("TOKEN0001");
+
+            var added1   = await api.AddToken(removed);
+            var added2   = await api.AddToken(AToken("TOKEN0002"));
+
+            Assert.Multiple(() => {
+                Assert.That(added1.IsSuccess, Is.True, $"The token to remove could not be added: {added1.ErrorResponse}");
+                Assert.That(added2.IsSuccess, Is.True, $"The token to keep could not be added: {added2.ErrorResponse}");
+            });
+
+            await api.LogAsset(CommonHTTPAPI.removeToken, new TokenStatus(removed, AllowedType.ALLOWED).ToJSON(), EventTracking_Id.New);
+
+            Assert.That(IdsOf((await NextStart()).GetTokens()), Is.EquivalentTo(new[] { "TOKEN0002" }),
+                        "The next start knows the token removed as a token status, or not the one kept.");
+
+        }
+
+        #endregion
+
+        #region EveryTokenRemovedWithoutAListIsGoneAndTheSessionsAreThere(Command)
+
+        /// <summary>
+        /// Every token removed at once, its line written without the tokens
+        /// removed - under either name it had - is gone at the next start, and
+        /// the sessions are all there.
+        /// </summary>
+        [TestCase(CommonHTTPAPI.removeAllTokens)]
+        [TestCase(CommonHTTPAPI.removeAllTokenStatus)]
+        public async Task EveryTokenRemovedWithoutAListIsGoneAndTheSessionsAreThere(String Command)
+        {
+
+            var added1  = await api.AddToken  (AToken  ("TOKEN0001"));
+            var added2  = await api.AddToken  (AToken  ("TOKEN0002"));
+            var added3  = await api.AddSession(ASession("SESSION0001"));
+
+            Assert.Multiple(() => {
+                Assert.That(added1.IsSuccess, Is.True, $"The first token could not be added: {added1.ErrorResponse}");
+                Assert.That(added2.IsSuccess, Is.True, $"The second token could not be added: {added2.ErrorResponse}");
+                Assert.That(added3.IsSuccess, Is.True, $"The session could not be added: {added3.ErrorResponse}");
+            });
+
+            await api.LogAsset(Command, EventTracking_Id.New);
+
+            var next    = await NextStart();
+
+            Assert.Multiple(() => {
+                Assert.That(IdsOf(next.GetTokens()),   Is.Empty,                                   $"The next start knows a token removed by a line \"{Command}\" without a list.");
+                Assert.That(IdsOf(next.GetSessions()), Is.EquivalentTo(new[] { "SESSION0001" }), "The next start does not know the session.");
+            });
+
+        }
+
+        #endregion
+
+        #region EverySessionRemovedWithoutAListIsGoneAndTheTokensAreThere()
+
+        /// <summary>
+        /// Every session removed at once, its line written without the sessions
+        /// removed, is gone at the next start, and the tokens are all there.
+        /// </summary>
+        [Test]
+        public async Task EverySessionRemovedWithoutAListIsGoneAndTheTokensAreThere()
+        {
+
+            var added1  = await api.AddToken  (AToken  ("TOKEN0001"));
+            var added2  = await api.AddSession(ASession("SESSION0001"));
+            var added3  = await api.AddSession(ASession("SESSION0002"));
+
+            Assert.Multiple(() => {
+                Assert.That(added1.IsSuccess, Is.True, $"The token could not be added: {added1.ErrorResponse}");
+                Assert.That(added2.IsSuccess, Is.True, $"The first session could not be added: {added2.ErrorResponse}");
+                Assert.That(added3.IsSuccess, Is.True, $"The second session could not be added: {added3.ErrorResponse}");
+            });
+
+            await api.LogAsset(CommonHTTPAPI.removeAllSessions, EventTracking_Id.New);
+
+            var next    = await NextStart();
+
+            Assert.Multiple(() => {
+                Assert.That(IdsOf(next.GetSessions()), Is.Empty,                                 "The next start knows a session removed by a line without a list.");
+                Assert.That(IdsOf(next.GetTokens()),   Is.EquivalentTo(new[] { "TOKEN0001" }), "The next start does not know the token.");
+            });
+
+        }
+
+        #endregion
+
+        #region EveryCDRRemovedWithoutAListIsGoneAtTheNextStart()
+
+        /// <summary>
+        /// Every CDR removed at once, its line written without the CDRs removed,
+        /// is gone at the next start.
+        /// </summary>
+        [Test]
+        public async Task EveryCDRRemovedWithoutAListIsGoneAtTheNextStart()
+        {
+
+            var added1  = await api.AddCDR(ACDR("CDR0001"));
+            var added2  = await api.AddCDR(ACDR("CDR0002"));
+
+            Assert.Multiple(() => {
+                Assert.That(added1.IsSuccess, Is.True, $"The first CDR could not be added: {added1.ErrorResponse}");
+                Assert.That(added2.IsSuccess, Is.True, $"The second CDR could not be added: {added2.ErrorResponse}");
+            });
+
+            await api.LogAsset(CommonHTTPAPI.removeAllChargeDetailRecords, EventTracking_Id.New);
+
+            Assert.That(IdsOf((await NextStart()).GetCDRs()), Is.Empty,
+                        "The next start knows a CDR removed by a line without a list.");
+
+        }
+
+        #endregion
+
+
         #region (private static) AToken / ASession / ACDR / ACDRToken
 
         /// <summary>

@@ -151,6 +151,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #endregion
 
+        #region ARemoteLocationAddedIfNotThereIsThereAtTheNextStart()
+
+        /// <summary>
+        /// A remote location added if it was not there is there at the next
+        /// start, read back from the line written for it as such.
+        /// </summary>
+        /// <remarks>
+        /// AddRemoteLocationIfNotExists wrote its line as AddRemoteLocation
+        /// does, and the line of a location added if it was not there, which
+        /// the next start reads, was written by nobody.
+        /// </remarks>
+        [Test]
+        public async Task ARemoteLocationAddedIfNotThereIsThereAtTheNextStart()
+        {
+
+            var location  = ALocation("LOCATION0001");
+            var added     = await emsp.AddRemoteLocationIfNotExists(location);
+
+            Assert.That(added.IsSuccess, Is.True, $"The remote location could not be added: {added.ErrorResponse}");
+
+            var next      = await NextStart();
+
+            Assert.Multiple(() => {
+
+                Assert.That(next.GetRemoteLocations(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(location) }),
+                            "The next start does not know the remote location added if it was not there.");
+
+                Assert.That(CommandsIn(api.AssetsDBFileName), Does.Contain(CommonHTTPAPI.addRemoteLocationIfNotExists).And.Not.Contain(CommonHTTPAPI.addRemoteLocation),
+                            "The remote location added if it was not there is not written down as such.");
+
+            });
+
+        }
+
+        #endregion
+
         #region ARemoteLocationRemovedIsGoneAtTheNextStart()
 
         [Test]
@@ -341,6 +377,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
         #region ARemoteSessionAddedIfNotThereIsThereAtTheNextStart()
 
+        /// <summary>
+        /// A remote session added if it was not there is there at the next
+        /// start, read back from the line written for it as such.
+        /// </summary>
+        /// <remarks>
+        /// AddRemoteSessionIfNotExists wrote its line as AddRemoteSession does,
+        /// and the line of a session added if it was not there, which the next
+        /// start reads, was written by nobody.
+        /// </remarks>
         [Test]
         public async Task ARemoteSessionAddedIfNotThereIsThereAtTheNextStart()
         {
@@ -350,8 +395,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
 
             Assert.That(added.IsSuccess, Is.True, $"The remote session could not be added: {added.ErrorResponse}");
 
-            Assert.That((await NextStart()).GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(session) }),
-                        "The next start does not know the remote session added if it was not there.");
+            var next     = await NextStart();
+
+            Assert.Multiple(() => {
+
+                Assert.That(next.GetRemoteSessions(remoteCPOId).Select(AsJSON), Is.EquivalentTo(new[] { AsJSON(session) }),
+                            "The next start does not know the remote session added if it was not there.");
+
+                Assert.That(CommandsIn(api.AssetsDBFileName), Does.Contain(CommonHTTPAPI.addRemoteSessionIfNotExists).And.Not.Contain(CommonHTTPAPI.addRemoteSession),
+                            "The remote session added if it was not there is not written down as such.");
+
+            });
 
         }
 
@@ -778,6 +832,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         private static String AsText(PartyData Party)
 
             => $"{Party.Id} {Party.Role} {Party.AllowDowngrades} {Party.BusinessDetails.ToJSON().ToString(Newtonsoft.Json.Formatting.None)}";
+
+        #endregion
+
+        #region (private static) CommandsIn(FileName)
+
+        /// <summary>
+        /// The commands of the lines in a file, in the order they are in it.
+        /// </summary>
+        private static IEnumerable<String> CommandsIn(String FileName)
+
+            => File.ReadLines(FileName).
+                    Where (line => line.StartsWith('{')).
+                    Select(line => Newtonsoft.Json.Linq.JObject.Parse(line).Properties().First().Name).
+                    ToArray();
 
         #endregion
 

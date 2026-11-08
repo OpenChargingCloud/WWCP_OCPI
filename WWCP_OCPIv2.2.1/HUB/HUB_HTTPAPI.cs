@@ -2565,7 +2565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteLocation.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.addRemoteLocation,
+                              CommonHTTPAPI.addRemoteLocationIfNotExists,
                               RemoteLocation.ToJSON(
                                   //true,
                                   //true,
@@ -5564,7 +5564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteSession.CommonAPI = CommonAPI;
 
                     await CommonAPI.LogAsset(
-                              CommonHTTPAPI.addRemoteSession,
+                              CommonHTTPAPI.addRemoteSessionIfNotExists,
                               RemoteSession.ToJSON(
                                   //true,
                                   //true,
