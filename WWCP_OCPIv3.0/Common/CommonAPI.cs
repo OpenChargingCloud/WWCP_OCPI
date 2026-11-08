@@ -2027,15 +2027,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         private void RegisterURLTemplates()
         {
 
-            #region OPTIONS     ~/versions/{versionId}
+            // The routes of this version are those of this version alone, as
+            // those of 2.x are: as templates of the version id, they were every
+            // version's, and on an HTTP API shared with 2.x, this version
+            // answered the credentials of a version served by none.
 
-            // --------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/{id}
-            // --------------------------------------------------------
+            #region OPTIONS     ~/versions/3.0
+
+            // -------------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/3.0
+            // -------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "versions/{versionId}",
+                URLPathPrefix + $"versions/{Version.Id}",
                 OCPIRequestHandler: request =>
 
                     Task.FromResult(
@@ -2057,15 +2062,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
-            #region GET         ~/versions/{versionId}
+            #region GET         ~/versions/3.0
 
-            // ---------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
-            // ---------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/3.0
+            // --------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "versions/{versionId}",
+                URLPathPrefix + $"versions/{Version.Id}",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetVersionRequest,
                 OCPIResponseLogger:  GetVersionResponse,
@@ -2092,60 +2097,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     #endregion
 
-                    #region Get version identification URL parameter
 
-                    if (request.ParsedURLParameters.Length < 1)
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                StatusMessage        = "Version identification is missing!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    if (!Version_Id.TryParse(request.ParsedURLParameters[0], out var versionId))
-                    {
-
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                StatusMessage        = "Version identification is invalid!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    }
-
-                    #endregion
-
-                    #region Only allow OCPI version v3.0
-
-                    if (versionId.ToString() != Version.Id.ToString())
-                        return Task.FromResult(
-                            new OCPIResponse.Builder(request) {
-                                StatusCode           = StatusCode.ClientErrors.GenericClientError,
-                                StatusMessage        = "This OCPI version is not supported!",
-                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
-                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                    AccessControlAllowMethods  = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
-                                    AccessControlAllowHeaders  = [ "Authorization" ]
-                                }
-                            });
-
-                    #endregion
-
-
-                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + $"v{versionId}";
+                    var prefix = URLPathPrefix + BaseAPI.AdditionalURLPathPrefix + Version.String;
 
                     #region Common credential endpoints...
 
@@ -2346,7 +2299,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             StatusCode           = StatusCode.Success,
                             StatusMessage        = "Hello world!",
                             Data                 = new VersionDetail(
-                                                       versionId,
+                                                       Version.Id,
                                                        endpoints
                                                    ).ToJSON(
                                                          CustomVersionDetailSerializer,
@@ -2373,15 +2326,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             #endregion
 
 
-            #region OPTIONS     ~/{versionId}/credentials
+            #region OPTIONS     ~/v3.0/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.2/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/v3.0/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.OPTIONS,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 OCPIRequestHandler: request => {
 
                     #region Defaults
@@ -2447,15 +2400,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
-            #region GET         ~/{versionId}/credentials
+            #region GET         ~/v3.0/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.GET,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   GetCredentialsRequest,
                 OCPIResponseLogger:  GetCredentialsResponse,
@@ -2537,17 +2490,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
-            #region POST        ~/{versionId}/credentials
+            #region POST        ~/v3.0/credentials
 
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v3.0/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.POST,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PostCredentialsRequest,
                 OCPIResponseLogger:  PostCredentialsResponse,
@@ -2585,17 +2538,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
-            #region PUT         ~/{versionId}/credentials
+            #region PUT         ~/v3.0/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.PUT,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   PutCredentialsRequest,
                 OCPIResponseLogger:  PutCredentialsResponse,
@@ -2662,17 +2615,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             #endregion
 
-            #region DELETE      ~/{versionId}/credentials
+            #region DELETE      ~/v3.0/credentials
 
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/v3.0/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(
 
                 HTTPMethod.DELETE,
-                URLPathPrefix + "{versionId}/credentials",
+                URLPathPrefix + $"{Version.String}/credentials",
                 HTTPContentType.Application.JSON_UTF8,
                 OCPIRequestLogger:   DeleteCredentialsRequest,
                 OCPIResponseLogger:  DeleteCredentialsResponse,
