@@ -1301,8 +1301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                                            MaxCurrent:   restrictions.MaxCurrent,
                                            MinPower:     restrictions.MinPower * 1000,
                                            MaxPower:     restrictions.MaxPower * 1000,
-                                           MinDuration:  restrictions.MinDuration.HasValue ? (Decimal) restrictions.MinDuration.Value.TotalSeconds : null,
-                                           MaxDuration:  restrictions.MaxDuration.HasValue ? (Decimal) restrictions.MaxDuration.Value.TotalSeconds : null,
+                                           MinDuration:  restrictions.MinDuration.HasValue ? restrictions.MinDuration.Value.TotalSeconds.AsDecimal() : null,
+                                           MaxDuration:  restrictions.MaxDuration.HasValue ? restrictions.MaxDuration.Value.TotalSeconds.AsDecimal() : null,
                                            DaysOfWeek:   restrictions.DayOfWeek,
                                            Reservation:  restrictions.Reservation switch {
                                                              ReservationRestrictions.RESERVATION          => POI.ChargingReservationRestriction.RESERVATION,
@@ -1573,7 +1573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.POI3
                     Warnings?.Add(Warning.Create($"The environmental impact '{impact.Category}' of the {Of} is negative, no number or given twice, and is left out!"));
 
                 else
-                    impacts.Add(new POI.EnvironmentalImpactAmount(category, (Decimal) impact.Amount));
+                    impacts.Add(new POI.EnvironmentalImpactAmount(category, impact.Amount.AsDecimal()));
 
             }
 

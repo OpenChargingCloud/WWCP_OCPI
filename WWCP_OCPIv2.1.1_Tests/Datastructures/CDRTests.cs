@@ -1930,7 +1930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp2.Energy,                                Is.EqualTo(WattHour.FromWh (15929.608862144420131291028447M)));
             Assert.That(cp2.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp2.EnergyStepSize,                        Is.EqualTo(1000));
-            Assert.That(cp2.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122498704672427971M)));
+            Assert.That(cp2.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122538293216630199M)));
 
             Assert.That(cp2.Duration,                              Is.EqualTo(new TimeSpan(2, 59, 25)));
             Assert.That(cp2.TotalDuration,                         Is.EqualTo(new TimeSpan(3, 00, 00)));
@@ -1961,7 +1961,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp3.Energy,                                Is.EqualTo(WattHour.FromWh (43580.391137855579868708971553M)));
             Assert.That(cp3.EnergyPrice,                           Is.EqualTo(0.44M));
             Assert.That(cp3.EnergyStepSize,                        Is.EqualTo(1000));
-            Assert.That(cp3.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122494881718378492M)));
+            Assert.That(cp3.PowerAverage,                          Is.EqualTo(Watt.    FromW (5327.1334792122538293216630198M)));
 
             Assert.That(cp3.Duration,                              Is.EqualTo(new TimeSpan( 8, 10, 51)));
             Assert.That(cp3.TotalDuration,                         Is.EqualTo(new TimeSpan(11, 10, 51)));
@@ -1972,7 +1972,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.That(cp3.Dimensions.ElementAt(0).Type,          Is.EqualTo(CDRDimensionType.ENERGY));
             Assert.That(cp3.Dimensions.ElementAt(0).Volume,        Is.EqualTo(43.580391137855579868708971553M)); // KWh
             Assert.That(cp3.Dimensions.ElementAt(1).Type,          Is.EqualTo(CDRDimensionType.TIME));
-            Assert.That(cp3.Dimensions.ElementAt(1).Volume,        Is.EqualTo( 8.18083333333334M));              // hours
+            Assert.That(cp3.Dimensions.ElementAt(1).Volume,        Is.EqualTo( 8.180833333333333333333333333M));              // hours
 
             Assert.That(cp3.PriceComponents.Count,                 Is.EqualTo(2));
             Assert.That(cp3.PriceComponents.ElementAt(0).Key,      Is.EqualTo(TariffDimension.ENERGY));

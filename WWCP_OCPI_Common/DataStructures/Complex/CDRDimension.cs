@@ -378,7 +378,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static CDRDimension PARKING_TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.PARKING_TIME,
-                    (Decimal) Volume.TotalHours);
+                    Volume.Ticks / (Decimal) TimeSpan.TicksPerHour);
 
         #endregion
 
@@ -403,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static CDRDimension RESERVATION_TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.RESERVATION_TIME,
-                    (Decimal) Volume.TotalHours);
+                    Volume.Ticks / (Decimal) TimeSpan.TicksPerHour);
 
         #endregion
 
@@ -427,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPI
         public static CDRDimension TIME(TimeSpan Volume)
 
             => new (CDRDimensionType.TIME,
-                    (Decimal) Volume.TotalHours);
+                    Volume.Ticks / (Decimal) TimeSpan.TicksPerHour);
 
         #endregion
 

@@ -215,8 +215,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                 ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
                         var imputedValue  = WattHour.FromWh((nextMV.WattHours - previousMV.Value.WattHours).Value /
-                                                            Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Value.Timestamp).TotalSeconds) *
-                                                            Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Value.Timestamp).TotalSeconds)) + previousMV.Value.WattHours;
+                                                            ((nextMV.            Timestamp      - previousMV.Value.Timestamp).Ticks / (Decimal) TimeSpan.TicksPerSecond) *
+                                                            ((chargingPeriods[i].StartTimestamp - previousMV.Value.Timestamp).Ticks / (Decimal) TimeSpan.TicksPerSecond)) + previousMV.Value.WattHours;
 
                         chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
                                                                     chargingPeriods[i].StartTimestamp,
@@ -240,7 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
                         chargingPeriod.Energy        = periodStopMeteringValue.Value.WattHours - periodStartMeteringValue.Value.WattHours;
-                        chargingPeriod.PowerAverage  = Watt.FromW(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
+                        chargingPeriod.PowerAverage  = Watt.FromW(chargingPeriod.Energy.Value / (chargingPeriod.Duration.Ticks / (Decimal) TimeSpan.TicksPerHour));
 
                         cdrCostDetails.      TotalEnergy   = cdrCostDetails.TotalEnergy + chargingPeriod.Energy;
 
@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 {
 
                     timeSums.Value.BilledTime      = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
-                    timeSums.Value.TimeCost        = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
+                    timeSums.Value.TimeCost        = (timeSums.Value.BilledTime.Ticks / (Decimal) TimeSpan.TicksPerHour) * timeSums.Value.Price;
 
                     cdrCostDetails.BilledTime            = cdrCostDetails.BilledTime.Add(timeSums.Value.BilledTime);
                     cdrCostDetails.TotalTimeCost        += timeSums.Value.TimeCost;
