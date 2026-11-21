@@ -1333,7 +1333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        httpResponse,
                                        requestId,
                                        correlationId,
-                                       json => Credentials.Parse(
+                                       json => OCPIv2_2_1.Credentials.Parse(
                                                    json,
                                                    CustomCredentialsParser
                                                )
@@ -2359,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        httpResponse,
                                        requestId,
                                        correlationId,
-                                       json => Credentials.Parse(json)
+                                       json => OCPIv2_2_1.Credentials.Parse(json)
                                    );
 
                         if (response.Data is not null)

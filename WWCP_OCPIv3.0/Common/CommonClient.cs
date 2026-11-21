@@ -1427,7 +1427,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => Credentials.Parse(json,
+                                                                          json => OCPIv3_0.Credentials.Parse(json,
                                                                                                     CustomCredentialsParser));
 
                     }
@@ -2304,7 +2304,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
                                                                       requestId,
                                                                       correlationId,
-                                                                      json => Credentials.Parse(json));
+                                                                      json => OCPIv3_0.Credentials.Parse(json));
 
                     if (response.Data is not null)
                     {
