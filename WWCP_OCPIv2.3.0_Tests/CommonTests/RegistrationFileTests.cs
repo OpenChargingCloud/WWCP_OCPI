@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         private CommonAPI    api        = default!;
         private OtherSide    other      = default!;
         private HTTPServer?  listening;
-        private UInt16       port;
+        private IPPort       port;
 
         #endregion
 
@@ -973,7 +973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
             {
 
                 port      = OtherSide.FreePort();
-                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                 api       = ACommonAPI(listening, port);
 
                 try
@@ -1418,7 +1418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         /// </summary>
         private CommonAPI ACommonAPI()
 
-            => ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), 3999);
+            => ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), IPPort.Parse(3999));
 
         /// <summary>
         /// The same on the given HTTP server, which says it is on the given
@@ -1426,7 +1426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
         /// default - not let through with the locations as open data.
         /// </summary>
         private CommonAPI ACommonAPI(HTTPServer  Server,
-                                     UInt16      Port)
+                                     IPPort      Port)
 
             => new (
 
@@ -1563,7 +1563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
                 {
 
                     var port   = FreePort();
-                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                     var other  = Made(server, port);
 
                     try
@@ -1578,14 +1578,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
 
             }
 
-            public static UInt16 FreePort()
+            public static IPPort FreePort()
             {
 
                 var listener = new TcpListener(System.Net.IPAddress.Loopback, 0);
 
                 listener.Start();
 
-                var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+                var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
 
                 listener.Stop();
 
@@ -1593,7 +1593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests.CommonTests
 
             }
 
-            private static OtherSide Made(HTTPServer Server, UInt16 Port)
+            private static OtherSide Made(HTTPServer Server, IPPort Port)
             {
 
                 var origin  = $"http://127.0.0.1:{Port}";

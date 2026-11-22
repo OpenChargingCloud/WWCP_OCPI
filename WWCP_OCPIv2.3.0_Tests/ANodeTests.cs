@@ -199,17 +199,17 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
 
             cpoHTTPServer         = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         IPPort.Parse((FreePort()).ToUInt16())
                                     );
 
             emsp1HTTPServer       = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         IPPort.Parse((FreePort()).ToUInt16())
                                     );
 
             emsp2HTTPServer       = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         IPPort.Parse((FreePort()).ToUInt16())
                                     );
 
             #endregion
@@ -648,14 +648,14 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0.UnitTests
         /// <summary>
         /// A port nobody was listening on a moment ago.
         /// </summary>
-        private static UInt16 FreePort()
+        private static IPPort FreePort()
         {
 
             var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
 
             listener.Start();
 
-            var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+            var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
 
             listener.Stop();
 

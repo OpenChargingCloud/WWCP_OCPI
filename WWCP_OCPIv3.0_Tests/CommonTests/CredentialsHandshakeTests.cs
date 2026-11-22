@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         private CommonAPI    api        = default!;
         private OtherSide    other      = default!;
         private HTTPServer?  listening;
-        private UInt16       port;
+        private IPPort       port;
 
         #endregion
 
@@ -253,15 +253,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         #endregion
 
 
-        #region ARegistrationIsNotFollowedWhereTheAPIDoesNotDial()
+        #region ARegistrationIsNotFollowedWhereTheAPIDoesNotConnect()
 
         /// <summary>
-        /// The versions URL a peer hands in is dialled only where the API
+        /// The versions URL a peer hands in is connected to only where the API
         /// allows (POI3-ISSUES.md S19): where it does not, nothing is asked
         /// there, the registration is refused, and token A is still valid.
         /// </summary>
         [Test]
-        public async Task ARegistrationIsNotFollowedWhereTheAPIDoesNotDial()
+        public async Task ARegistrationIsNotFollowedWhereTheAPIDoesNotConnect()
         {
 
             await AddTheOtherSideToCome();
@@ -273,8 +273,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
             var (status, statusCode, answer)   = await Send(HTTPMethod.POST, credentials, tokenA);
 
             Assert.Multiple(() => {
-                Assert.That(statusCode,          Is.Not.EqualTo(1000),            $"The registration was answered {status}, though the API may not dial its versions URL: {answer}");
-                Assert.That(other.VersionsAsked, Is.Zero,                         "The versions of the other side were asked, though the API may not dial them.");
+                Assert.That(statusCode,          Is.Not.EqualTo(1000),            $"The registration was answered {status}, though the API may not connect to its versions URL: {answer}");
+                Assert.That(other.VersionsAsked, Is.Zero,                         "The versions of the other side were asked, though the API may not connect to them.");
                 Assert.That(LocalTokensOf(api),  Is.EqualTo(new[] { tokenA }),    "Token A is gone, though the registration was refused.");
                 Assert.That(RemoteTokenOf(api),  Is.Null,                         "The token the other side sent is kept, though the registration was refused.");
             });
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
         /// which says it is on the given port.
         /// </summary>
         private CommonAPI ACommonAPI(HTTPServer  Server,
-                                     UInt16      Port)
+                                     IPPort      Port)
 
             => new (
 
@@ -589,14 +589,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             }
 
-            public static UInt16 FreePort()
+            public static IPPort FreePort()
             {
 
                 var listener = new TcpListener(System.Net.IPAddress.Loopback, 0);
 
                 listener.Start();
 
-                var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+                var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
 
                 listener.Stop();
 
@@ -604,7 +604,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             }
 
-            private static OtherSide Made(HTTPServer Server, UInt16 Port)
+            private static OtherSide Made(HTTPServer Server, IPPort Port)
             {
 
                 var origin  = $"http://127.0.0.1:{Port}";

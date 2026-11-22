@@ -72,7 +72,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
         private v2_2_1.CommonAPI     api2_2_1   = default!;
         private v3_0.  CommonAPI     api3_0     = default!;
         private HTTPServer?          server;
-        private UInt16               port;
+        private IPPort               port;
 
         #endregion
 
@@ -317,14 +317,14 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
         /// <summary>
         /// A port nobody was listening on a moment ago.
         /// </summary>
-        private static UInt16 FreePort()
+        private static IPPort FreePort()
         {
 
             var listener = new TcpListener(System.Net.IPAddress.Loopback, 0);
 
             listener.Start();
 
-            var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+            var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
 
             listener.Stop();
 
@@ -337,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
         /// says it is on the given port.
         /// </summary>
         private CommonHTTPAPI ABaseAPI(HTTPServer  Server,
-                                       UInt16      Port)
+                                       IPPort      Port)
 
             => new (
                    HTTPAPI:         new HTTPExtAPI(

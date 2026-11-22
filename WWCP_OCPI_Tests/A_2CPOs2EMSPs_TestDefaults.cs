@@ -1397,7 +1397,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests
 
                 #region Generate HUB and EMSP TLS Certificates
 
-                // The servers' certificates name the host their clients dial -
+                // The servers' certificates name the host their clients connect to -
                 // localhost - which a server checks the origin of a request
                 // against as well (RFC 9110, Section 7.4).
 

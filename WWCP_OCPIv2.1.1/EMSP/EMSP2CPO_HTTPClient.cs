@@ -2614,7 +2614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Token.Parse(json)
+                                   json => Token.Parse(json, CountryCode, PartyId)
                                );
 
                     Counters.GetToken.IncResponses_OK();
@@ -2675,6 +2675,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
+        /// <remarks>
+        /// A token of OCPI 2.1.1 does not say whose it is: the URL does,
+        /// {tokens}/{country_code}/{party_id}/{token_uid}, as everywhere the
+        /// CPO is sent and asked for tokens.
+        /// </remarks>
         /// <param name="Token">The token to store/put at/onto the remote API.</param>
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -2750,7 +2755,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     #region Upstream HTTP request...
 
                     var httpResponse = await httpClient.PUT(
-                                                 Path:                  httpClient.RemoteURL.Path + Token.Id.ToString(),
+                                                 Path:                  httpClient.RemoteURL.Path + Token.CountryCode.ToString() +
+                                                                                                    Token.PartyId.    ToString() +
+                                                                                                    Token.Id.         ToString(),
                                                  Content:               Token.ToJSON().ToUTF8Bytes(JSONFormatting),
                                                  Authentication:        TokenAuth,
                                                  RequestBuilder:        requestBuilder => {
@@ -2772,7 +2779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Token.Parse(json)
+                                   json => Token.Parse(json, Token.CountryCode, Token.PartyId)
                                );
 
                     Counters.PutToken.IncResponses_OK();
@@ -2941,7 +2948,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                    httpResponse,
                                    requestId,
                                    correlationId,
-                                   json => Token.Parse(json)
+                                   json => Token.Parse(json, CountryCode, PartyId)
                                );
 
                     Counters.PatchToken.IncResponses_OK();

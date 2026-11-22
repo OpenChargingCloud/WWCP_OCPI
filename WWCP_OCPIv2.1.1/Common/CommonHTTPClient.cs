@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.CommonAPI    = CommonAPI;
 
-            // A URL a peer handed in is dialled only where the API allows: see CommonHTTPAPI.RemoteNetworkAcl.
+            // A URL a peer handed in is connected to only where the API allows: see CommonHTTPAPI.RemoteNetworkAcl.
             this.RemoteNetworkAcl           = CommonAPI.BaseAPI.RemoteNetworkAcl;
             this.NewHTTPClient.RemoteNetworkAcl  = CommonAPI.BaseAPI.RemoteNetworkAcl;
             this.RemoteParty  = RemoteParty;

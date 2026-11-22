@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         private String       directory  = default!;
         private CommonAPI    api        = default!;
         private HTTPServer?  server;
-        private UInt16       port;
+        private IPPort       port;
 
         #endregion
 
@@ -287,14 +287,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         /// <summary>
         /// A port nobody was listening on a moment ago.
         /// </summary>
-        private static UInt16 FreePort()
+        private static IPPort FreePort()
         {
 
             var listener = new TcpListener(System.Net.IPAddress.Loopback, 0);
 
             listener.Start();
 
-            var port = (UInt16) ((System.Net.IPEndPoint) listener.LocalEndpoint).Port;
+            var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
 
             listener.Stop();
 
@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
         /// server, which says it is on the given port.
         /// </summary>
         private CommonAPI ACommonAPI(HTTPServer  Server,
-                                     UInt16      Port)
+                                     IPPort      Port)
 
             => new (
 

@@ -991,7 +991,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="csr">The certificate signing request.</param>
         /// <param name="issuer">The issuer of the certificate.</param>
         /// <param name="issuerPrivateKey">The private key of the issuer.</param>
-        /// <param name="DNSNames">The DNS names the issuer vouches for, as the subject alternative names of the certificate: a client that checks the name it dials - and a server that checks the origin a request names - finds them there. None by default.</param>
+        /// <param name="DNSNames">The DNS names the issuer vouches for, as the subject alternative names of the certificate: a client that checks the name it connects to - and a server that checks the origin a request names - finds them there. None by default.</param>
         public X509Certificate? SignServerCertificate(Pkcs10CertificationRequest  csr,
                                                       X509Name                    issuer,
                                                       AsymmetricKeyParameter      issuerPrivateKey,
