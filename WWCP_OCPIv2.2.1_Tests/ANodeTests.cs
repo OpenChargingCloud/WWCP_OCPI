@@ -202,17 +202,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             cpoHTTPServer         = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         FreePort()
                                     );
 
             emsp1HTTPServer       = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         FreePort()
                                     );
 
             emsp2HTTPServer       = new HTTPServer(
                                         IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         IPPort.Parse(FreePort())
+                                        TCPPort:         FreePort()
                                     );
 
             #endregion

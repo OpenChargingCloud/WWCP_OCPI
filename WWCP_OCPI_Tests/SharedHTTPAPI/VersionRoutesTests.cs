@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPI.UnitTests.SharedHTTPAPI
             {
 
                 port      = FreePort();
-                server    = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                server    = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                 baseAPI   = ABaseAPI(server, port);
                 api2_2_1  = ACommonAPIv2_2_1(baseAPI);
                 api3_0    = ACommonAPIv3_0  (baseAPI);

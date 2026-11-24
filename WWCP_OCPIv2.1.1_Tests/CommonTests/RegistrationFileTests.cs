@@ -975,7 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
             {
 
                 port      = OtherSide.FreePort();
-                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                 api       = ACommonAPI(listening, port);
 
                 try
@@ -1399,7 +1399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
         /// </summary>
         private CommonAPI ACommonAPI()
 
-            => ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), 3999);
+            => ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), IPPort.Parse(3999));
 
         /// <summary>
         /// The same on the given HTTP server, which says it is on the given
@@ -1540,7 +1540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CommonTests
                 {
 
                     var port   = FreePort();
-                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                     var other  = Made(server, port);
 
                     try

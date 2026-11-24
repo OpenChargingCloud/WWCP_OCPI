@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.CommonTests
             {
 
                 port    = FreePort();
-                server  = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                server  = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                 api     = ACommonAPI(server, port);
 
                 try

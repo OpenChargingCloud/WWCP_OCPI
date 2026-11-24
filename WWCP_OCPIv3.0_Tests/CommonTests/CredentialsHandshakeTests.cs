@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
             {
 
                 port      = OtherSide.FreePort();
-                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                listening = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                 api       = ACommonAPI(listening, port);
 
                 try
@@ -462,7 +462,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
 
             await api.BaseAPI.DisposeAsync();
 
-            return ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), 3999);
+            return ACommonAPI(new HTTPServer(TCPPort: IPPort.Parse(3999)), IPPort.Parse(3999));
 
         }
 
@@ -574,7 +574,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.CommonTests
                 {
 
                     var port   = FreePort();
-                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: IPPort.Parse(port));
+                    var server = new HTTPServer(IPAddress: IPv4Address.Localhost, TCPPort: port);
                     var other  = Made(server, port);
 
                     try
