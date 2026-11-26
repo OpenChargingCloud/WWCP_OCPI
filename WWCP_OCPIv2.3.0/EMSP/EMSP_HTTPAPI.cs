@@ -9850,7 +9850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                 Processor(
                     String.Concat(
-                        $"PutLocation response for for '{location.Id}'",
+                        $"PutLocation response for '{location.Id}'",
                         " => ",
                         $"({(UInt64) runtime.TotalMilliseconds} ms)"
                     )
