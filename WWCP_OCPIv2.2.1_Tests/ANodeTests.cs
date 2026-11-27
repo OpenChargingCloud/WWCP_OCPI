@@ -200,20 +200,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 HTTP Servers
 
-            cpoHTTPServer         = new HTTPServer(
-                                        IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         FreePort()
-                                    );
-
-            emsp1HTTPServer       = new HTTPServer(
-                                        IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         FreePort()
-                                    );
-
-            emsp2HTTPServer       = new HTTPServer(
-                                        IPAddress:         IPv4Address.Localhost,
-                                        TCPPort:         FreePort()
-                                    );
+            // Started right away, on a port the system chooses as it binds it:
+            // what this set-up makes of the servers' ports is made of the port
+            // each one holds. A port found free and let go again, to be bound
+            // only at the end of this set-up, could be taken in between by a
+            // test running at the same time, and the set-up then failed with
+            // AddressAlreadyInUse (TheResultOfAReservationComesBack, 2.2.1).
+            cpoHTTPServer         = await AStartedServer();
+            emsp1HTTPServer       = await AStartedServer();
+            emsp2HTTPServer       = await AStartedServer();
 
             #endregion
 
@@ -625,10 +620,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            await cpoHTTPServer.  Start();
-            await emsp1HTTPServer.Start();
-            await emsp2HTTPServer.Start();
-
         }
 
         #endregion
@@ -645,23 +636,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
         #endregion
 
-        #region (private) FreePort() / ABaseAPI(HTTPAPI)
+        #region (private) AStartedServer() / ABaseAPI(HTTPAPI)
 
         /// <summary>
-        /// A port nobody was listening on a moment ago.
+        /// An HTTP server of this machine, started on a port the system chose
+        /// as it bound it - so nobody could take it in between.
         /// </summary>
-        private static IPPort FreePort()
+        private static async Task<HTTPServer> AStartedServer()
         {
 
-            var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+            var server = new HTTPServer(
+                             IPAddress:  IPv4Address.Localhost,
+                             TCPPort:    IPPort.Zero
+                         );
 
-            listener.Start();
+            await server.Start();
 
-            var port = IPPort.Parse(((System.Net.IPEndPoint) listener.LocalEndpoint).Port);
-
-            listener.Stop();
-
-            return port;
+            return server;
 
         }
 
